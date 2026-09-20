@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>منصّة المحتوى</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link id="dynFonts" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+ 
+<!-- ================== إعدادات سريعة (عدّلها أنت) ================== -->
+<script>
+const CONFIG = {
+  /* كلمة المرور الافتراضية لأول تشغيل. غيّرها من داخل الموقع بعد الدخول. */
+  DEFAULT_PASSWORD: 'admin123',
+ 
+  /* للربط بقاعدة بيانات Supabase مجانية: اجعل enabled = true واملأ الحقول */
+  SUPABASE: {
+    enabled: true,
+    url: 'https://piovquqhgsjjnsolpafe.supabase.co',
+    anonKey: 'sb_publishable_Eit1nCFuspOIqEHb-b8L9g_YnbT6GG0',
+    table: 'site_content',
+    rowId: 'main'
+  }
+};
+</script>
+ 
+<style>
+:root{
+  color-scheme: light dark;
+  --ink:#16222C; --ink-soft:#4A5A66; --ink-faint:#7C8B96;
+  --bg:#EDF1F3; --surface:#FFFFFF; --surface-2:#F5F7F8;
+  --line:#DCE3E7; --accent:#1F6F6B; --accent-soft:#E3EFEE; --gold:#B8862F;
+  --danger:#B3402E;
+  --radius:14px; --shadow:0 1px 2px rgba(22,34,44,.06), 0 8px 24px rgba(22,34,44,.06);
+  --font-head:"Amiri", serif;
+  --font-body:"IBM Plex Sans Arabic", system-ui, "Segoe UI", sans-serif;
+  --fs:17px; --hs:1; --w:900px;
+  box-sizing:border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#E6EDF2; --ink-soft:#A9B8C2; --ink-faint:#7E8F9B;
+    --bg:#0E161D; --surface:#16212B; --surface-2:#1C2833;
+    --line:#2A3945; --accent:#57C2B4; --accent-soft:#17312F; --gold:#D9AE5F;
+    --danger:#E0715C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#E6EDF2; --ink-soft:#A9B8C2; --ink-faint:#7E8F9B;
+  --bg:#0E161D; --surface:#16212B; --surface-2:#1C2833;
+  --line:#2A3945; --accent:#57C2B4; --accent-soft:#17312F; --gold:#D9AE5F;
+  --danger:#E0715C;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 86px);}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--font-body);
+  font-size:var(--fs); line-height:1.85; -webkit-text-size-adjust:100%;
+}
+img{max-width:100%; display:block}
+a{color:var(--accent)}
+button{font-family:inherit; cursor:pointer}
+.wrap{max-width:var(--w); margin:0 auto; padding:0 20px}
+ 
+/* ===== الترويسة ===== */
+.topbar{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:40;
+  background:color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter:blur(12px); border-bottom:1px solid var(--line);
+}
+.topbar-in{display:flex; align-items:center; gap:14px; min-height:60px}
+.brand{font-family:var(--font-head); font-size:22px; font-weight:700; margin:0; white-space:nowrap}
+.navchips{display:flex; gap:8px; overflow-x:auto; flex:1; padding:10px 0; scrollbar-width:none}
+.navchips::-webkit-scrollbar{display:none}
+.chip{
+  border:1px solid var(--line); background:var(--surface); color:var(--ink-soft);
+  border-radius:999px; padding:6px 14px; font-size:14px; white-space:nowrap; text-decoration:none;
+}
+.chip:hover{border-color:var(--accent); color:var(--accent)}
+ 
+/* ===== الواجهة الرئيسية ===== */
+.hero{padding:64px 0 40px; border-bottom:1px solid var(--line)}
+.hero h1{font-family:var(--font-head); font-size:calc(clamp(34px,7vw,58px) * var(--hs)); line-height:1.25; margin:0 0 14px; font-weight:700}
+.hero p{margin:0; font-size:clamp(17px,2.4vw,20px); color:var(--ink-soft); max-width:60ch; font-weight:300}
+.hero-cover{margin-top:32px; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow)}
+ 
+/* ===== الأقسام ===== */
+.section{padding:52px 0; border-bottom:1px solid var(--line)}
+.section:last-of-type{border-bottom:0}
+.sec-head{display:flex; align-items:flex-start; gap:12px; margin-bottom:26px}
+.sec-title{
+  font-family:var(--font-head); font-size:calc(clamp(26px,4.5vw,36px) * var(--hs)); font-weight:700; margin:0;
+  padding-right:16px; border-right:4px solid var(--accent); flex:1;
+}
+.sec-desc{color:var(--ink-soft); margin:8px 0 0; font-size:16px; font-weight:300}
+ 
+.blocks{display:flex; flex-direction:column; gap:22px}
+.block{position:relative}
+.b-h{font-family:var(--font-head); font-size:calc(24px * var(--hs)); margin:8px 0 0; font-weight:700}
+.b-p{margin:0; max-width:72ch}
+.b-p ul{padding-right:22px; margin:8px 0}
+.b-quote{
+  margin:0; padding:18px 22px; border-right:3px solid var(--gold);
+  background:var(--surface-2); border-radius:0 var(--radius) var(--radius) 0;
+  font-size:18px; color:var(--ink)
+}
+.b-note{
+  margin:0; padding:18px 20px; background:var(--accent-soft); border-radius:var(--radius);
+  border:1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+}
+figure{margin:0}
+figure img{border-radius:var(--radius); box-shadow:var(--shadow); width:100%}
+figcaption{font-size:14px; color:var(--ink-faint); margin-top:8px; text-align:center}
+.video-box{position:relative; padding-top:56.25%; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); background:#000}
+.video-box iframe,.video-box video{position:absolute; inset:0; width:100%; height:100%; border:0}
+.linklist{display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:0; list-style:none}
+.linkbtn{
+  display:inline-flex; flex-direction:column; gap:2px; text-decoration:none;
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding:12px 18px; color:var(--ink); box-shadow:var(--shadow); min-width:min(100%,220px);
+}
+.linkbtn:hover{border-color:var(--accent)}
+.linkbtn b{font-weight:600; color:var(--accent)}
+.linkbtn span{font-size:13px; color:var(--ink-faint)}
+ 
+/* ===== أدوات التحرير ===== */
+.adminbar{
+  display:none; position:sticky; top:calc(env(safe-area-inset-top,0px) + 60px); z-index:39;
+  background:var(--surface); border-bottom:1px solid var(--line); box-shadow:var(--shadow);
+}
+body.admin .adminbar{display:block}
+.adminbar-in{display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 0}
+.btn{
+  border:1px solid var(--line); background:var(--surface); color:var(--ink);
+  border-radius:10px; padding:8px 14px; font-size:14px; display:inline-flex; align-items:center; gap:6px;
+}
+.btn:hover{border-color:var(--accent); color:var(--accent)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+.btn.primary:hover{opacity:.9; color:#fff}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--danger); border-color:color-mix(in srgb, var(--danger) 40%, var(--line))}
+.btn.sm{padding:4px 9px; font-size:13px; border-radius:8px}
+.spacer{flex:1}
+.status{font-size:13px; color:var(--ink-faint)}
+ 
+.tools{display:none; gap:6px; align-items:center}
+body.admin .tools{display:inline-flex}
+.block-tools{
+  display:none; position:absolute; top:-12px; left:0; z-index:5; gap:4px;
+  background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:4px; box-shadow:var(--shadow);
+}
+body.admin .block:hover .block-tools,
+body.admin .block:focus-within .block-tools{display:flex}
+body.admin .block{outline:1px dashed transparent; outline-offset:8px; border-radius:6px}
+body.admin .block:hover{outline-color:var(--line)}
+.addblock{display:none; margin-top:20px}
+body.admin .addblock{display:block}
+.dashed{
+  width:100%; border:1px dashed var(--line); background:transparent; color:var(--ink-faint);
+  border-radius:var(--radius); padding:14px; font-size:15px;
+}
+.dashed:hover{border-color:var(--accent); color:var(--accent)}
+ 
+/* ===== زر القفل العائم ===== */
+.fab{
+  position:fixed; inset-inline-start:18px; bottom:calc(18px + env(safe-area-inset-bottom,0px)); z-index:50;
+  width:50px; height:50px; border-radius:50%; border:1px solid var(--line);
+  background:var(--surface); color:var(--ink-soft); box-shadow:var(--shadow);
+  display:grid; place-items:center; font-size:20px;
+}
+.fab:hover{color:var(--accent); border-color:var(--accent)}
+ 
+/* ===== النوافذ ===== */
+.overlay{
+  position:fixed; inset:0; z-index:60; background:rgba(8,14,20,.55);
+  display:none; align-items:center; justify-content:center; padding:18px;
+  backdrop-filter:blur(3px);
+}
+.overlay.open{display:flex}
+.modal{
+  background:var(--surface); border-radius:18px; width:min(620px,100%);
+  max-height:88vh; overflow:auto; box-shadow:0 24px 60px rgba(0,0,0,.35); border:1px solid var(--line);
+}
+.modal-h{display:flex; align-items:center; gap:10px; padding:18px 22px; border-bottom:1px solid var(--line)}
+.modal-h h3{margin:0; font-family:var(--font-head); font-size:22px; flex:1}
+.modal-b{padding:22px}
+.modal-f{display:flex; gap:10px; padding:16px 22px; border-top:1px solid var(--line); background:var(--surface-2); border-radius:0 0 18px 18px}
+.field{margin-bottom:16px}
+.field label{display:block; font-size:14px; color:var(--ink-soft); margin-bottom:6px; font-weight:500}
+.field input,.field select,.field textarea{
+  width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:10px;
+  background:var(--surface-2); color:var(--ink); font-family:inherit; font-size:15px;
+}
+.field textarea{min-height:150px; line-height:1.8; resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{outline:2px solid var(--accent); outline-offset:1px; border-color:transparent}
+.hint{font-size:13px; color:var(--ink-faint); margin-top:6px}
+.typegrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px}
+.typecard{
+  border:1px solid var(--line); background:var(--surface-2); border-radius:12px; padding:16px 12px;
+  text-align:center; font-size:15px; color:var(--ink);
+}
+.typecard:hover{border-color:var(--accent); color:var(--accent)}
+.typecard div{font-size:24px; margin-bottom:4px}
+.row{display:flex; gap:10px; align-items:flex-end}
+.row .field{flex:1; margin-bottom:0}
+.linkrow{display:flex; gap:8px; margin-bottom:8px}
+.linkrow input{flex:1; padding:9px 11px; border:1px solid var(--line); border-radius:9px; background:var(--surface-2); color:var(--ink); font-family:inherit}
+ 
+.toast{
+  position:fixed; bottom:calc(20px + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--ink); color:var(--bg); padding:10px 20px; border-radius:999px; font-size:14px;
+  opacity:0; transition:.25s; z-index:80; pointer-events:none;
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+footer{padding:40px 0; text-align:center; color:var(--ink-faint); font-size:14px}
+.tgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px}
+.swatch{display:flex; align-items:center; gap:9px; border:1px solid var(--line); border-radius:10px; padding:7px 10px; background:var(--surface-2)}
+.swatch input[type=color]{width:32px; height:32px; padding:0; border:0; background:none; cursor:pointer; flex:none; border-radius:8px}
+.swatch span{font-size:13px; color:var(--ink-soft)}
+.presets{display:flex; flex-wrap:wrap; gap:8px}
+.preset{display:flex; align-items:center; gap:7px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); border-radius:10px; padding:7px 11px; font-size:13px}
+.preset:hover{border-color:var(--accent)}
+.dot{width:12px; height:12px; border-radius:50%; display:inline-block; border:1px solid rgba(0,0,0,.12)}
+.modes{display:flex; gap:8px}
+.modes .btn{flex:1; justify-content:center}
+.modes .btn[aria-pressed="true"]{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+.rng{display:flex; align-items:center; gap:12px}
+.rng input[type=range]{flex:1}
+.rng output{font-size:13px; color:var(--ink-faint); min-width:54px; text-align:center}
+hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
+@media (prefers-reduced-motion: reduce){*{transition:none !important; scroll-behavior:auto !important}}
+@media print{.topbar,.adminbar,.fab,.block-tools,.addblock{display:none !important}}
+</style>
+</head>
+<body>
+ 
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <h2 class="brand" id="brandName">منصّة المحتوى</h2>
+    <nav class="navchips" id="nav"></nav>
+  </div>
+</header>
+ 
+<div class="adminbar">
+  <div class="wrap adminbar-in">
+    <button class="btn primary" data-act="add-section">＋ قسم جديد</button>
+    <button class="btn" data-act="settings">⚙ إعدادات الموقع</button>
+    <button class="btn" data-act="theme">🎨 المظهر والألوان</button>
+    <button class="btn" data-act="export">⬇ نسخة احتياطية</button>
+    <button class="btn" data-act="import">⬆ استيراد</button>
+    <span class="spacer"></span>
+    <span class="status" id="status"></span>
+    <button class="btn ghost" data-act="logout">خروج من التحرير</button>
+  </div>
+</div>
+ 
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1 id="heroTitle"></h1>
+      <p id="heroSub"></p>
+      <div id="heroCover"></div>
+    </div>
+  </section>
+  <div id="sections"></div>
+</main>
+ 
+<footer>
+  <div class="wrap"><span id="footNote"></span></div>
+</footer>
+ 
+<button class="fab" id="fab" title="وضع التحرير" aria-label="وضع التحرير">🔒</button>
+ 
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-h"><h3 id="mTitle"></h3><button class="btn sm ghost" data-act="close">✕</button></div>
+    <div class="modal-b" id="mBody"></div>
+    <div class="modal-f" id="mFoot"></div>
+  </div>
+</div>
+ 
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInput" accept="application/json" hidden>
+ 
+<script>
+/* =======================================================================
+   1) أدوات مساعدة
+   ======================================================================= */
+const $  = (s,r=document)=>r.querySelector(s);
+const uid = ()=> Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-4);
+const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+ 
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200);
+}
+function setStatus(txt){ $('#status').textContent = txt; }
+ 
+/* تجزئة كلمة المرور (SHA-256 عند التوفّر، وبديل بسيط عند العمل من ملف محلي) */
+async function hashPass(pass){
+  try{
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('v1:'+pass));
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){
+    let h=5381; const s='v1:'+pass;
+    for(let i=0;i<s.length;i++) h=((h<<5)+h+s.charCodeAt(i))>>>0;
+    return 'fb'+h.toString(16);
+  }
+}
+ 
+/* تنسيق نصّي مبسّط: **عريض** و*مائل* و`كود` و[نص](رابط) وقوائم تبدأ بـ - */
+function fmt(text){
+  const lines = String(text||'').split(/\n/);
+  let out='', inList=false;
+  const inline = t => esc(t)
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/(^|\W)\*(.+?)\*(?=\W|$)/g,'$1<em>$2</em>')
+    .replace(/`(.+?)`/g,'<code>$1</code>')
+    .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  for(const line of lines){
+    const t=line.trim();
+    if(/^[-•]\s+/.test(t)){ if(!inList){out+='<ul>'; inList=true;} out+='<li>'+inline(t.replace(/^[-•]\s+/,''))+'</li>'; continue; }
+    if(inList){ out+='</ul>'; inList=false; }
+    if(t==='') { out+='<br>'; continue; }
+    out += '<span>'+inline(t)+'</span><br>';
+  }
+  if(inList) out+='</ul>';
+  return out;
+}
+ 
+/* استخراج مشغّل الفيديو من الرابط */
+function videoEmbed(url){
+  const u = String(url||'').trim();
+  let m = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+  if(m) return `<iframe src="https://www.youtube-nocookie.com/embed/${esc(m[1])}" title="فيديو" allowfullscreen allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture"></iframe>`;
+  m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if(m) return `<iframe src="https://player.vimeo.com/video/${esc(m[1])}" title="فيديو" allowfullscreen></iframe>`;
+  if(/^https?:\/\//.test(u)) return `<video src="${esc(u)}" controls playsinline preload="metadata"></video>`;
+  return '<div style="display:grid;place-items:center;height:100%;color:#fff">رابط فيديو غير صالح</div>';
+}
+ 
+ 
+/* =======================================================================
+   1.5) محرّك المظهر: الخطوط والألوان والمقاسات
+   ======================================================================= */
+const FONTS = ['IBM Plex Sans Arabic','Tajawal','Cairo','Almarai','Readex Pro','Noto Kufi Arabic','Changa','El Messiri','Reem Kufi','Amiri','Aref Ruqaa','Markazi Text','Rubik'];
+const SERIF_FONTS = ['Amiri','Aref Ruqaa','Markazi Text'];
+ 
+const VARS = {
+  bg:['--bg','خلفية الصفحة'],
+  surface:['--surface','خلفية البطاقات'],
+  surface2:['--surface-2','خلفية ثانوية'],
+  ink:['--ink','لون النص'],
+  inkSoft:['--ink-soft','نص ثانوي'],
+  line:['--line','الحدود والفواصل'],
+  accent:['--accent','اللون الأساسي'],
+  gold:['--gold','لون الاقتباس'],
+  danger:['--danger','لون الحذف']
+};
+ 
+function defaultTheme(){
+  return { mode:'auto', headFont:'Amiri', bodyFont:'IBM Plex Sans Arabic',
+           fontSize:17, headScale:1, width:900, radius:14, colors:{} };
+}
+ 
+const PRESETS = [
+  { name:'الافتراضي',   mode:'auto',  colors:{} },
+  { name:'ليلي',        mode:'dark',  colors:{} },
+  { name:'رملي دافئ',   mode:'light', colors:{ bg:'#F6F1E7', surface:'#FFFDF8', surface2:'#F0E9DB', ink:'#2B2620', inkSoft:'#6B6154', line:'#E4DBCA', accent:'#A2643C', gold:'#B8862F' } },
+  { name:'أزرق ملكي',   mode:'light', colors:{ bg:'#EDF1F8', surface:'#FFFFFF', surface2:'#E6ECF7', ink:'#14233A', inkSoft:'#4C5D7A', line:'#D4DDEC', accent:'#2A4D8F', gold:'#C08A2E' } },
+  { name:'زمردي ليلي',  mode:'dark',  colors:{ bg:'#0B1512', surface:'#122019', surface2:'#17291F', ink:'#E8F3EC', inkSoft:'#9FBCAD', line:'#22382C', accent:'#3FBF84', gold:'#D9AE5F' } },
+  { name:'عنّابي',      mode:'light', colors:{ bg:'#FAF0F1', surface:'#FFFFFF', surface2:'#F5E4E7', ink:'#3A1E24', inkSoft:'#7A5A60', line:'#EBD3D7', accent:'#9B2C3F', gold:'#B8862F' } }
+];
+ 
+function loadFonts(list){
+  const fams = [...new Set(list.filter(Boolean))]
+    .map(f => 'family=' + f.replace(/ /g,'+') + ':wght@300;400;500;600;700');
+  const href = 'https://fonts.googleapis.com/css2?' + fams.join('&') + '&display=swap';
+  const link = document.getElementById('dynFonts');
+  if(link && link.href !== href) link.href = href;
+}
+ 
+function stack(font){
+  return '"' + font + '", ' + (SERIF_FONTS.includes(font) ? 'serif' : 'system-ui, "Segoe UI", sans-serif');
+}
+ 
+function applyTheme(t){
+  const r = document.documentElement;
+  if(!t) return;
+  if(t.mode === 'auto') r.removeAttribute('data-theme'); else r.setAttribute('data-theme', t.mode);
+  r.style.setProperty('--font-head', stack(t.headFont));
+  r.style.setProperty('--font-body', stack(t.bodyFont));
+  r.style.setProperty('--fs', t.fontSize + 'px');
+  r.style.setProperty('--hs', t.headScale);
+  r.style.setProperty('--w', t.width + 'px');
+  r.style.setProperty('--radius', t.radius + 'px');
+  for(const k in VARS){
+    const val = (t.colors||{})[k];
+    if(val) r.style.setProperty(VARS[k][0], val); else r.style.removeProperty(VARS[k][0]);
+  }
+  if(t.colors && t.colors.accent){
+    r.style.setProperty('--accent-soft', 'color-mix(in srgb, ' + t.colors.accent + ' 16%, transparent)');
+  } else r.style.removeProperty('--accent-soft');
+  loadFonts([t.headFont, t.bodyFont]);
+}
+ 
+/* ---- نافذة المظهر (معاينة فورية) ---- */
+let themeBackup = null;
+ 
+function cssNow(varName){
+  const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  const m = v.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  return m ? v : '#888888';
+}
+ 
+function themeModal(draft){
+  const t = Object.assign(defaultTheme(), clone(draft || site.theme || {}));
+  t.colors = t.colors || {};
+  if(themeBackup === null) themeBackup = clone(site.theme || defaultTheme());
+  applyTheme(t); // حتى تعكس منتقيات الألوان الحالة الصحيحة
+ 
+  const fontOpts = f => FONTS.map(x=>`<option value="${x}" ${x===f?'selected':''}>${x}</option>`).join('');
+  const swatches = Object.keys(VARS).map(k=>{
+    const set = !!t.colors[k];
+    return `<label class="swatch">
+      <input type="color" data-ck="${k}" data-touched="${set?1:0}" value="${set ? t.colors[k] : cssNow(VARS[k][0])}">
+      <span>${VARS[k][1]}</span></label>`;
+  }).join('');
+ 
+  openModal('المظهر والألوان', `
+    <input type="hidden" id="th-mode" value="${t.mode}">
+ 
+    <div class="field"><label>جاهزات سريعة</label>
+      <div class="presets">${PRESETS.map((p,i)=>`
+        <button type="button" class="preset" data-act="th-preset" data-i="${i}">
+          <span class="dot" style="background:${p.colors.accent||'var(--accent)'}"></span>${p.name}</button>`).join('')}
+      </div></div>
+ 
+    <div class="field"><label>نمط الألوان</label>
+      <div class="modes">
+        <button type="button" class="btn" data-act="th-mode" data-mode="light" aria-pressed="${t.mode==='light'}">فاتح</button>
+        <button type="button" class="btn" data-act="th-mode" data-mode="dark"  aria-pressed="${t.mode==='dark'}">داكن</button>
+        <button type="button" class="btn" data-act="th-mode" data-mode="auto"  aria-pressed="${t.mode==='auto'}">حسب الجهاز</button>
+      </div></div>
+ 
+    <div class="field"><label>ألوان الموقع</label>
+      <div class="tgrid">${swatches}</div>
+      <p class="hint">أي لون تلمسه يُثبَّت في الوضعين. لإرجاع كل الألوان للأصل:
+        <button type="button" class="btn sm" data-act="th-reset-colors">إرجاع الألوان الافتراضية</button></p>
+    </div>
+ 
+    <hr class="sep">
+ 
+    <div class="field"><label for="th-head">خط العناوين</label>
+      <select id="th-head" style="font-family:${stack(t.headFont)}">${fontOpts(t.headFont)}</select></div>
+    <div class="field"><label for="th-body">خط النصوص</label>
+      <select id="th-body" style="font-family:${stack(t.bodyFont)}">${fontOpts(t.bodyFont)}</select></div>
+ 
+    <div class="field"><label for="th-fs">حجم النص</label>
+      <div class="rng"><input type="range" id="th-fs" min="14" max="22" step="1" value="${t.fontSize}"><output id="o-fs">${t.fontSize}px</output></div></div>
+    <div class="field"><label for="th-hs">حجم العناوين</label>
+      <div class="rng"><input type="range" id="th-hs" min="0.7" max="1.4" step="0.05" value="${t.headScale}"><output id="o-hs">${Math.round(t.headScale*100)}%</output></div></div>
+    <div class="field"><label for="th-w">عرض المحتوى</label>
+      <div class="rng"><input type="range" id="th-w" min="700" max="1300" step="20" value="${t.width}"><output id="o-w">${t.width}px</output></div></div>
+    <div class="field"><label for="th-r">استدارة الزوايا</label>
+      <div class="rng"><input type="range" id="th-r" min="0" max="28" step="1" value="${t.radius}"><output id="o-r">${t.radius}px</output></div></div>
+  `, `<button class="btn primary" data-act="modal-save">حفظ المظهر</button>
+      <button class="btn ghost" data-act="close">إلغاء</button>`, ()=>{
+    site.theme = readThemeForm();
+    themeBackup = null;
+    applyTheme(site.theme);
+    commit();
+  });
+ 
+  const body = document.getElementById('mBody');
+  body.addEventListener('input', e=>{
+    if(e.target.dataset.ck) e.target.dataset.touched = '1';
+    const d = readThemeForm();
+    applyTheme(d);
+    const o = { 'th-fs':['o-fs', v=>v+'px'], 'th-hs':['o-hs', v=>Math.round(v*100)+'%'],
+                'th-w':['o-w', v=>v+'px'], 'th-r':['o-r', v=>v+'px'] }[e.target.id];
+    if(o) document.getElementById(o[0]).textContent = o[1](e.target.value);
+    if(e.target.id==='th-head') e.target.style.fontFamily = stack(e.target.value);
+    if(e.target.id==='th-body') e.target.style.fontFamily = stack(e.target.value);
+    refreshSwatches();
+  });
+}
+ 
+function readThemeForm(){
+  const t = { mode: document.getElementById('th-mode').value,
+              headFont: document.getElementById('th-head').value,
+              bodyFont: document.getElementById('th-body').value,
+              fontSize:+document.getElementById('th-fs').value,
+              headScale:+document.getElementById('th-hs').value,
+              width:+document.getElementById('th-w').value,
+              radius:+document.getElementById('th-r').value,
+              colors:{} };
+  document.querySelectorAll('[data-ck]').forEach(i=>{ if(i.dataset.touched==='1') t.colors[i.dataset.ck] = i.value; });
+  return t;
+}
+ 
+/* تحديث المنتقيات غير المعدّلة لتعرض ألوان النمط الحالي */
+function refreshSwatches(){
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('[data-ck]').forEach(i=>{
+      if(i.dataset.touched !== '1') i.value = cssNow(VARS[i.dataset.ck][0]);
+    });
+  });
+}
+ 
+/* =======================================================================
+   2) المحتوى الافتراضي
+   ======================================================================= */
+function defaultSite(){
+  return {
+    meta:{
+      title:'منصّة المحتوى',
+      heroTitle:'مساحة لعرض ما يستحق أن يُقرأ',
+      heroSub:'أقسام تنظّمها كما تريد، ونصوص وصور وفيديوهات وروابط تضيفها بنقرة واحدة. الزائر يقرأ فقط، وأنت وحدك من يملك مفتاح التعديل.',
+      cover:'',
+      footer:'© ' + new Date().getFullYear() + ' — جميع الحقوق محفوظة'
+    },
+    auth:{ passHash:null },
+    theme: defaultTheme(),
+    sections:[
+      { id:uid(), title:'نبذة تعريفية', desc:'ابدأ من هنا: عرّف بنفسك أو بمشروعك في فقرة قصيرة.',
+        blocks:[
+          { id:uid(), type:'text', style:'paragraph', text:'هذا نصّ تجريبي يمكنك استبداله بالكامل. اضغط على زر القفل أسفل الصفحة، أدخل كلمة المرور، ثم عدّل أي شيء تراه.\nيدعم المحرّر تنسيقات بسيطة مثل **العريض** و*المائل* والقوائم:\n- عنصر أول\n- عنصر ثانٍ' },
+          { id:uid(), type:'text', style:'note', text:'نصيحة: استخدم "ملاحظة" للأشياء المهمة، و"اقتباس" للعبارات اللافتة.' }
+        ] },
+      { id:uid(), title:'الوسائط', desc:'صور وفيديوهات ضمن السياق.',
+        blocks:[
+          { id:uid(), type:'video', url:'https://www.youtube.com/watch?v=aqz-KE-bpKQ', caption:'ضع هنا رابط أي فيديو من يوتيوب أو رابط ملف mp4 مباشر' }
+        ] },
+      { id:uid(), title:'روابط مفيدة', desc:'',
+        blocks:[
+          { id:uid(), type:'links', items:[
+            { label:'الموقع الرسمي', url:'https://example.com', desc:'صفحة التعريف الكاملة' },
+            { label:'قناة يوتيوب', url:'https://youtube.com', desc:'مقاطع مختارة' }
+          ] }
+        ] }
+    ]
+  };
+}
+ 
+let site = defaultSite();
+let isAdmin = false;
+ 
+/* =======================================================================
+   3) طبقة حفظ البيانات (ثلاث خلفيات: Claude / Supabase / التخزين المحلي)
+   ======================================================================= */
+const LS_KEY = 'site_content_v1';
+ 
+const Store = {
+  mode:'local', db:null, sb:null, ready:false,
+ 
+  async init(onRemote){
+    // نسخة محليّة فورية حتى لا تبقى الصفحة فارغة
+    try{ const c=localStorage.getItem(LS_KEY); if(c) site = JSON.parse(c); }catch(e){}
+ 
+    if(CONFIG.SUPABASE.enabled){
+      try{
+        await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js');
+        this.sb = window.supabase.createClient(CONFIG.SUPABASE.url, CONFIG.SUPABASE.anonKey);
+        const { data, error } = await this.sb.from(CONFIG.SUPABASE.table).select('data').eq('id', CONFIG.SUPABASE.rowId).maybeSingle();
+        if(error) throw error;
+        this.mode='supabase'; this.ready=true;
+        if(data && data.data){ site = typeof data.data==='string' ? JSON.parse(data.data) : data.data; onRemote(); }
+        setStatus('متصل بـ Supabase');
+ 
+        // بث لحظي: أي حفظ من أي زائر آخر يظهر فوراً عند كل من فاتح الصفحة
+        this.sb.channel('site_content_live')
+          .on('postgres_changes', { event:'*', schema:'public', table:CONFIG.SUPABASE.table, filter:`id=eq.${CONFIG.SUPABASE.rowId}` },
+            payload => {
+              if(this._justSaved){ this._justSaved=false; return; } // تجاهل الصدى من حفظنا نحن
+              if(document.querySelector('.overlay.open')) return;    // لا نقاطع تعديلاً جارياً
+              const incoming = payload.new && payload.new.data;
+              if(incoming){ site = typeof incoming==='string' ? JSON.parse(incoming) : incoming; onRemote(); toast('تحديث جديد من مصدر آخر'); }
+            })
+          .subscribe();
+        return;
+      }catch(e){ console.warn('Supabase غير متاح:', e); setStatus('تعذّر الاتصال بـ Supabase — حفظ محلي'); }
+    }
+ 
+    // خلفية claude.ai عند نشر الصفحة كـ Artifact
+    try{
+      if(window.claude && typeof window.claude.use==='function'){
+        const db = await window.claude.use('db');
+        if(db){
+          this.db = db.doc('site/content'); this.mode='claude'; this.ready=true;
+          const snap = await this.db.get();
+          if(snap.exists && snap.data() && snap.data().json){ site = JSON.parse(snap.data().json); onRemote(); }
+          this.db.onSnapshot(s=>{
+            if(!s.exists || !s.data() || !s.data().json) return;
+            if(document.querySelector('.overlay.open')) return; // لا نقاطع تعديلاً جارياً
+            const incoming = s.data().json;
+            if(incoming !== JSON.stringify(site)){ site = JSON.parse(incoming); onRemote(); }
+          }, ()=>{});
+          setStatus('الحفظ سحابي'); return;
+        }
+      }
+    }catch(e){ console.warn(e); }
+ 
+    this.mode='local'; this.ready=true; setStatus('حفظ محلي في هذا المتصفح');
+  },
+ 
+  async save(){
+    const json = JSON.stringify(site);
+    try{ localStorage.setItem(LS_KEY, json); }catch(e){}
+    if(this.mode==='supabase'){
+      this._justSaved = true;
+      const { error } = await this.sb.from(CONFIG.SUPABASE.table)
+        .upsert({ id: CONFIG.SUPABASE.rowId, data: site, updated_at: new Date().toISOString() });
+      if(error){ this._justSaved=false; throw error; }
+    } else if(this.mode==='claude' && this.db){
+      await this.db.set({ json, updatedAt: new Date().toISOString() });
+    }
+  }
+};
+ 
+function loadScript(src){
+  return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+}
+ 
+let saveTimer=null, saving=false;
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  setStatus('يحفظ…');
+  saveTimer = setTimeout(async ()=>{
+    if(saving){ scheduleSave(); return; }
+    saving=true;
+    try{ await Store.save(); setStatus('تم الحفظ ✓'); }
+    catch(e){ console.error(e); setStatus('تعذّر الحفظ'); toast('لم يُحفظ التعديل على الخادم'); }
+    finally{ saving=false; }
+  }, 700);
+}
+ 
+/* =======================================================================
+   4) العرض
+   ======================================================================= */
+function render(){
+  site.theme = Object.assign(defaultTheme(), site.theme || {});
+  applyTheme(site.theme);
+  document.title = site.meta.title || 'منصّة المحتوى';
+  $('#brandName').textContent = site.meta.title || '';
+  $('#heroTitle').textContent = site.meta.heroTitle || '';
+  $('#heroSub').textContent = site.meta.heroSub || '';
+  $('#footNote').textContent = site.meta.footer || '';
+  $('#heroCover').innerHTML = site.meta.cover
+    ? `<div class="hero-cover"><img src="${esc(site.meta.cover)}" alt=""></div>` : '';
+ 
+  $('#nav').innerHTML = site.sections
+    .map(s=>`<a class="chip" href="#sec-${esc(s.id)}">${esc(s.title)}</a>`).join('');
+ 
+  $('#sections').innerHTML = site.sections.map(renderSection).join('');
+}
+ 
+function renderSection(s, i){
+  const last = site.sections.length-1;
+  return `
+  <section class="section" id="sec-${esc(s.id)}">
+    <div class="wrap">
+      <div class="sec-head">
+        <div style="flex:1">
+          <h2 class="sec-title">${esc(s.title)}</h2>
+          ${s.desc ? `<p class="sec-desc">${esc(s.desc)}</p>` : ''}
+        </div>
+        <div class="tools">
+          <button class="btn sm" data-act="sec-up" data-id="${s.id}" ${i===0?'disabled':''} title="لأعلى">▲</button>
+          <button class="btn sm" data-act="sec-down" data-id="${s.id}" ${i===last?'disabled':''} title="لأسفل">▼</button>
+          <button class="btn sm" data-act="sec-edit" data-id="${s.id}">تعديل</button>
+          <button class="btn sm danger" data-act="sec-del" data-id="${s.id}">حذف</button>
+        </div>
+      </div>
+      <div class="blocks">
+        ${s.blocks.map((b,j)=>renderBlock(b,s.id,j,s.blocks.length-1)).join('') ||
+          '<p class="sec-desc">لا يوجد محتوى في هذا القسم بعد.</p>'}
+      </div>
+      <div class="addblock">
+        <button class="dashed" data-act="add-block" data-sec="${s.id}">＋ إضافة محتوى إلى «${esc(s.title)}»</button>
+      </div>
+    </div>
+  </section>`;
+}
+ 
+function renderBlock(b, secId, j, last){
+  const tools = `
+    <div class="block-tools">
+      <button class="btn sm" data-act="blk-up" data-sec="${secId}" data-id="${b.id}" ${j===0?'disabled':''}>▲</button>
+      <button class="btn sm" data-act="blk-down" data-sec="${secId}" data-id="${b.id}" ${j===last?'disabled':''}>▼</button>
+      <button class="btn sm" data-act="blk-edit" data-sec="${secId}" data-id="${b.id}">تعديل</button>
+      <button class="btn sm danger" data-act="blk-del" data-sec="${secId}" data-id="${b.id}">حذف</button>
+    </div>`;
+  let body='';
+  if(b.type==='text'){
+    if(b.style==='heading')      body = `<h3 class="b-h">${esc(b.text)}</h3>`;
+    else if(b.style==='quote')   body = `<blockquote class="b-quote">${fmt(b.text)}</blockquote>`;
+    else if(b.style==='note')    body = `<div class="b-note">${fmt(b.text)}</div>`;
+    else                         body = `<div class="b-p">${fmt(b.text)}</div>`;
+  }
+  else if(b.type==='image'){
+    body = `<figure><img src="${esc(b.url)}" alt="${esc(b.caption||'')}" loading="lazy">
+      ${b.caption?`<figcaption>${esc(b.caption)}</figcaption>`:''}</figure>`;
+  }
+  else if(b.type==='video'){
+    body = `<figure><div class="video-box">${videoEmbed(b.url)}</div>
+      ${b.caption?`<figcaption>${esc(b.caption)}</figcaption>`:''}</figure>`;
+  }
+  else if(b.type==='links'){
+    body = `<ul class="linklist">${(b.items||[]).map(it=>`
+      <li><a class="linkbtn" href="${esc(it.url)}" target="_blank" rel="noopener">
+        <b>${esc(it.label)}</b>${it.desc?`<span>${esc(it.desc)}</span>`:''}</a></li>`).join('')}</ul>`;
+  }
+  return `<div class="block" data-id="${b.id}">${tools}${body}</div>`;
+}
+ 
+/* =======================================================================
+   5) النوافذ المنبثقة
+   ======================================================================= */
+let onSaveModal = null;
+function openModal(title, bodyHTML, footHTML, handler){
+  $('#mTitle').textContent = title;
+  $('#mBody').innerHTML = bodyHTML;
+  $('#mFoot').innerHTML = footHTML;
+  onSaveModal = handler || null;
+  $('#overlay').classList.add('open');
+  const f = $('#mBody').querySelector('input,textarea,select'); if(f) setTimeout(()=>f.focus(),60);
+}
+function closeModal(){
+  $('#overlay').classList.remove('open'); onSaveModal=null;
+  if(themeBackup){ site.theme = themeBackup; themeBackup = null; applyTheme(site.theme); }
+}
+const footSave = (label='حفظ') =>
+  `<button class="btn primary" data-act="modal-save">${label}</button><button class="btn ghost" data-act="close">إلغاء</button>`;
+ 
+/* ---- نافذة كلمة المرور ---- */
+function askPassword(){
+  openModal('وضع التحرير', `
+    <div class="field">
+      <label for="pw">كلمة المرور</label>
+      <input type="password" id="pw" autocomplete="current-password" placeholder="••••••••">
+      <p class="hint">كلمة المرور الافتراضية عند أول تشغيل: <code>${esc(CONFIG.DEFAULT_PASSWORD)}</code> — غيّرها فوراً من «إعدادات الموقع».</p>
+    </div>`, footSave('دخول'), async ()=>{
+      const val = $('#pw').value;
+      const h = await hashPass(val);
+      if(!site.auth.passHash){ site.auth.passHash = await hashPass(CONFIG.DEFAULT_PASSWORD); }
+      if(h === site.auth.passHash){
+        isAdmin = true; document.body.classList.add('admin'); $('#fab').textContent='🔓';
+        closeModal(); toast('وضع التحرير مفعّل'); setStatus(Store.mode==='local'?'حفظ محلي':'جاهز');
+      } else { toast('كلمة المرور غير صحيحة'); }
+      return false;
+    });
+}
+ 
+/* ---- نافذة القسم ---- */
+function sectionModal(sec){
+  const isNew = !sec;
+  const s = sec || { id:uid(), title:'', desc:'', blocks:[] };
+  openModal(isNew?'قسم جديد':'تعديل القسم', `
+    <div class="field"><label for="st">اسم القسم</label><input id="st" value="${esc(s.title)}" placeholder="مثال: المقالات"></div>
+    <div class="field"><label for="sd">وصف مختصر (اختياري)</label><input id="sd" value="${esc(s.desc||'')}"></div>
+    ${isNew?'':`<div class="field"><label for="so">ترتيب القسم</label><select id="so">${
+      site.sections.map((x,i)=>`<option value="${i}" ${x.id===s.id?'selected':''}>${i+1}</option>`).join('')}</select></div>`}
+  `, footSave(), ()=>{
+    const title = $('#st').value.trim();
+    if(!title){ toast('اكتب اسم القسم'); return false; }
+    s.title=title; s.desc=$('#sd').value.trim();
+    if(isNew) site.sections.push(s);
+    else {
+      const to = parseInt($('#so').value,10);
+      const from = site.sections.findIndex(x=>x.id===s.id);
+      if(to!==from){ site.sections.splice(to,0, site.sections.splice(from,1)[0]); }
+    }
+    commit();
+  });
+}
+ 
+/* ---- اختيار نوع المحتوى ---- */
+function chooseType(secId){
+  openModal('نوع المحتوى', `
+    <div class="typegrid">
+      <button class="typecard" data-act="pick-type" data-type="text"  data-sec="${secId}"><div>📝</div>نص / ملخص</button>
+      <button class="typecard" data-act="pick-type" data-type="image" data-sec="${secId}"><div>🖼️</div>صورة</button>
+      <button class="typecard" data-act="pick-type" data-type="video" data-sec="${secId}"><div>▶️</div>فيديو</button>
+      <button class="typecard" data-act="pick-type" data-type="links" data-sec="${secId}"><div>🔗</div>روابط</button>
+    </div>`, `<button class="btn ghost" data-act="close">إلغاء</button>`, null);
+}
+ 
+/* ---- نافذة المحتوى ---- */
+function blockModal(secId, block, type){
+  const sec = site.sections.find(s=>s.id===secId); if(!sec) return;
+  const isNew = !block;
+  const b = block || { id:uid(), type, style:'paragraph', text:'', url:'', caption:'', items:[{label:'',url:'',desc:''}] };
+  let body='';
+  if(b.type==='text'){
+    body = `
+      <div class="field"><label for="bs">الشكل</label>
+        <select id="bs">
+          <option value="paragraph" ${b.style==='paragraph'?'selected':''}>فقرة عادية</option>
+          <option value="heading"   ${b.style==='heading'?'selected':''}>عنوان فرعي</option>
+          <option value="quote"     ${b.style==='quote'?'selected':''}>اقتباس</option>
+          <option value="note"      ${b.style==='note'?'selected':''}>ملاحظة مميّزة</option>
+        </select></div>
+      <div class="field"><label for="bt">النص</label><textarea id="bt">${esc(b.text)}</textarea>
+        <p class="hint">التنسيق: **عريض** ، *مائل* ، `+"`كود`"+` ، [نص](رابط) ، وسطر يبدأ بـ - يصبح قائمة.</p></div>`;
+  }
+  else if(b.type==='image'){
+    body = `
+      <div class="field"><label for="bu">رابط الصورة</label><input id="bu" value="${esc(b.url)}" placeholder="https://…/photo.jpg"></div>
+      <div class="field"><label for="bf">أو ارفع صورة من جهازك</label><input type="file" id="bf" accept="image/*">
+        <p class="hint">الصور المرفوعة تُخزَّن داخل بيانات الموقع، لذا ابقِها صغيرة (أقل من 500KB). الرابط المباشر أفضل وأسرع.</p></div>
+      <div class="field"><label for="bc">تعليق أسفل الصورة (اختياري)</label><input id="bc" value="${esc(b.caption||'')}"></div>`;
+  }
+  else if(b.type==='video'){
+    body = `
+      <div class="field"><label for="bu">رابط الفيديو</label><input id="bu" value="${esc(b.url)}" placeholder="https://www.youtube.com/watch?v=…">
+        <p class="hint">يدعم يوتيوب، فيميو، وأي رابط mp4 مباشر.</p></div>
+      <div class="field"><label for="bc">تعليق (اختياري)</label><input id="bc" value="${esc(b.caption||'')}"></div>`;
+  }
+  else if(b.type==='links'){
+    body = `<div class="field"><label>الروابط</label><div id="links">${
+      (b.items||[]).map(it=>linkRow(it)).join('')
+    }</div><button class="btn sm" data-act="add-link" type="button">＋ رابط آخر</button></div>`;
+  }
+  openModal(isNew?'إضافة محتوى':'تعديل المحتوى', body, footSave(), ()=>{
+    if(b.type==='text'){ b.style=$('#bs').value; b.text=$('#bt').value; if(!b.text.trim()){toast('اكتب النص');return false;} }
+    if(b.type==='image'||b.type==='video'){
+      b.url=$('#bu').value.trim(); b.caption=$('#bc').value.trim();
+      if(!b.url){ toast('أضف رابطاً أولاً'); return false; }
+    }
+    if(b.type==='links'){
+      b.items=[...document.querySelectorAll('#links .linkrow')].map(r=>({
+        label:r.children[0].value.trim(), url:r.children[1].value.trim(), desc:r.children[2].value.trim()
+      })).filter(x=>x.label && x.url);
+      if(!b.items.length){ toast('أضف رابطاً واحداً على الأقل'); return false; }
+    }
+    if(isNew) sec.blocks.push(b);
+    commit();
+  });
+ 
+  const file = $('#bf');
+  if(file) file.addEventListener('change', e=>{
+    const f=e.target.files[0]; if(!f) return;
+    if(f.size > 1.5*1024*1024){ toast('الصورة كبيرة جداً — استخدم رابطاً مباشراً'); return; }
+    const r=new FileReader(); r.onload=()=>{ $('#bu').value=r.result; toast('تم تحميل الصورة'); }; r.readAsDataURL(f);
+  });
+}
+function linkRow(it){
+  it = it||{label:'',url:'',desc:''};
+  return `<div class="linkrow">
+    <input value="${esc(it.label)}" placeholder="اسم الرابط">
+    <input value="${esc(it.url)}" placeholder="https://">
+    <input value="${esc(it.desc||'')}" placeholder="وصف قصير">
+    <button class="btn sm danger" data-act="del-link" type="button">✕</button></div>`;
+}
+ 
+/* ---- إعدادات الموقع ---- */
+function settingsModal(){
+  openModal('إعدادات الموقع', `
+    <div class="field"><label for="g1">اسم الموقع (أعلى الصفحة)</label><input id="g1" value="${esc(site.meta.title)}"></div>
+    <div class="field"><label for="g2">العنوان الرئيسي</label><input id="g2" value="${esc(site.meta.heroTitle)}"></div>
+    <div class="field"><label for="g3">النص التعريفي</label><textarea id="g3" style="min-height:90px">${esc(site.meta.heroSub)}</textarea></div>
+    <div class="field"><label for="g4">رابط صورة الغلاف (اختياري)</label><input id="g4" value="${esc(site.meta.cover||'')}"></div>
+    <div class="field"><label for="g5">نص التذييل</label><input id="g5" value="${esc(site.meta.footer||'')}"></div>
+    <hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
+    <div class="field"><label for="p1">كلمة مرور جديدة (اتركها فارغة لعدم التغيير)</label><input type="password" id="p1" autocomplete="new-password"></div>
+    <div class="field"><label for="p2">تأكيد كلمة المرور</label><input type="password" id="p2" autocomplete="new-password"></div>
+  `, footSave(), async ()=>{
+    site.meta.title=$('#g1').value.trim(); site.meta.heroTitle=$('#g2').value.trim();
+    site.meta.heroSub=$('#g3').value.trim(); site.meta.cover=$('#g4').value.trim();
+    site.meta.footer=$('#g5').value.trim();
+    const p1=$('#p1').value, p2=$('#p2').value;
+    if(p1){
+      if(p1.length<6){ toast('كلمة المرور قصيرة (6 أحرف فأكثر)'); return false; }
+      if(p1!==p2){ toast('كلمتا المرور غير متطابقتين'); return false; }
+      site.auth.passHash = await hashPass(p1); toast('تم تغيير كلمة المرور');
+    }
+    commit();
+  });
+}
+ 
+/* =======================================================================
+   6) الأحداث
+   ======================================================================= */
+function commit(){ render(); scheduleSave(); closeModal(); }
+function findSec(id){ return site.sections.find(s=>s.id===id); }
+function move(arr, id, dir){
+  const i = arr.findIndex(x=>x.id===id), j = i+dir;
+  if(i<0 || j<0 || j>=arr.length) return;
+  [arr[i],arr[j]]=[arr[j],arr[i]];
+}
+ 
+document.addEventListener('click', async e=>{
+  const t = e.target.closest('[data-act]'); if(!t) return;
+  const act = t.dataset.act, id = t.dataset.id, secId = t.dataset.sec;
+ 
+  if(act==='close'){ closeModal(); return; }
+  if(act==='modal-save'){ if(onSaveModal) await onSaveModal(); return; }
+  if(act==='pick-type'){ blockModal(secId, null, t.dataset.type); return; }
+  if(act==='add-link'){ $('#links').insertAdjacentHTML('beforeend', linkRow()); return; }
+  if(act==='del-link'){ t.parentElement.remove(); return; }
+ 
+  if(!isAdmin) return; // كل ما تحت هذا السطر للمحرّر فقط
+ 
+  switch(act){
+    case 'add-section': sectionModal(null); break;
+    case 'sec-edit':    sectionModal(findSec(id)); break;
+    case 'sec-del':
+      if(confirm('حذف هذا القسم بكل محتواه؟')){ site.sections = site.sections.filter(s=>s.id!==id); commit(); }
+      break;
+    case 'sec-up':   move(site.sections,id,-1); commit(); break;
+    case 'sec-down': move(site.sections,id, 1); commit(); break;
+    case 'add-block': chooseType(secId); break;
+    case 'blk-edit': blockModal(secId, findSec(secId).blocks.find(b=>b.id===id)); break;
+    case 'blk-del':
+      if(confirm('حذف هذا المحتوى؟')){ const s=findSec(secId); s.blocks=s.blocks.filter(b=>b.id!==id); commit(); }
+      break;
+    case 'blk-up':   move(findSec(secId).blocks,id,-1); commit(); break;
+    case 'blk-down': move(findSec(secId).blocks,id, 1); commit(); break;
+    case 'settings': settingsModal(); break;
+    case 'theme': themeModal(); break;
+    case 'th-mode': {
+      document.getElementById('th-mode').value = t.dataset.mode;
+      document.querySelectorAll('[data-act="th-mode"]').forEach(b=>b.setAttribute('aria-pressed', b===t));
+      applyTheme(readThemeForm()); refreshSwatches(); break;
+    }
+    case 'th-reset-colors':
+      document.querySelectorAll('[data-ck]').forEach(i=>i.dataset.touched='0');
+      applyTheme(readThemeForm()); refreshSwatches(); toast('رجعت الألوان الافتراضية'); break;
+    case 'th-preset': {
+      const p = PRESETS[+t.dataset.i];
+      const cur = readThemeForm();
+      themeModal(Object.assign(cur, { mode:p.mode, colors: clone(p.colors) }));
+      break;
+    }
+    case 'logout':
+      isAdmin=false; document.body.classList.remove('admin'); $('#fab').textContent='🔒'; toast('تم الخروج من وضع التحرير'); break;
+    case 'export': {
+      const blob = new Blob([JSON.stringify(site,null,2)],{type:'application/json'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+      a.download='site-backup-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+      URL.revokeObjectURL(a.href); break;
+    }
+    case 'import': $('#fileInput').click(); break;
+  }
+});
+ 
+$('#fileInput').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{
+      const d=JSON.parse(r.result);
+      if(!d.sections) throw 0;
+      const keep = site.auth;            // نحتفظ بكلمة المرور الحالية
+      site = d; site.auth = d.auth && d.auth.passHash ? d.auth : keep;
+      commit(); toast('تم الاستيراد');
+    }catch(err){ toast('الملف غير صالح'); } };
+  r.readAsText(f); e.target.value='';
+});
+ 
+$('#fab').addEventListener('click', ()=>{
+  if(isAdmin){ isAdmin=false; document.body.classList.remove('admin'); $('#fab').textContent='🔒'; toast('تم الخروج'); }
+  else askPassword();
+});
+$('#overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') closeModal(); });
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') closeModal();
+  if(e.key==='Enter' && $('#overlay').classList.contains('open') && e.target.tagName!=='TEXTAREA' && onSaveModal){ e.preventDefault(); onSaveModal(); }
+});
+ 
+/* =======================================================================
+   7) الإقلاع
+   ======================================================================= */
+(async function start(){
+  render();
+  await Store.init(render);
+  render();
+  if(!site.auth.passHash){ site.auth.passHash = await hashPass(CONFIG.DEFAULT_PASSWORD); }
+})();
+</script>
+</body>
+</html>
