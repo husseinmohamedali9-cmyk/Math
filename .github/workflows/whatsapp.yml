@@ -1,0 +1,32 @@
+name: Send WhatsApp Notification to Groups
+
+on:
+  push:
+    branches:
+      - main # أو master حسب اسم الفرع عندك
+
+jobs:
+  notify:
+    if: contains(github.event.head_commit.message, '[notify]')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Message to WhatsApp Groups
+        env:
+          INSTANCE: ${{ secrets.GREEN_API_INSTANCE }}
+          TOKEN: ${{ secrets.GREEN_API_TOKEN }}
+          GROUP_1: ${{ secrets.GREEN_API_GROUP_ID_1 }}
+          GROUP_2: ${{ secrets.GREEN_API_GROUP_ID_2 }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          # تنظيف النص من كلمة [notify]
+          CLEAN_MSG=$(echo "$COMMIT_MSG" | sed 's/\[notify\]//g')
+          
+          # إرسال للجروب الأول
+          curl -X POST "https://api.green-api.com/waInstance${INSTANCE}/sendMessage/${TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "{\"chatId\": \"${GROUP_1}\", \"message\": \"${CLEAN_MSG}\"}"
+
+          # إرسال للجروب الثاني
+          curl -X POST "https://api.green-api.com/waInstance${INSTANCE}/sendMessage/${TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "{\"chatId\": \"${GROUP_2}\", \"message\": \"${CLEAN_MSG}\"}"
