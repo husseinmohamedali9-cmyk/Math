@@ -20,7 +20,9 @@ const CONFIG = {
     url: 'https://piovquqhgsjjnsolpafe.supabase.co',
     anonKey: 'sb_publishable_Eit1nCFuspOIqEHb-b8L9g_YnbT6GG0',
     table: 'site_content',
-    rowId: 'main'
+    rowId: 'main',
+    /* جدول الأسئلة والأجوبة — أنشئه في Supabase بالـ SQL الموجود في تعليق أسفل الملف */
+    qaTable: 'qa_questions'
   }
 };
 </script>
@@ -114,6 +116,35 @@ button{font-family:inherit; cursor:pointer}
   margin:0; padding:18px 20px; background:var(--accent-soft); border-radius:var(--radius);
   border:1px solid color-mix(in srgb, var(--accent) 25%, transparent);
 }
+.b-formula{
+  margin:0; padding:24px 26px; background:var(--surface-2); border:1.5px dashed var(--accent);
+  border-radius:var(--radius); font-family:var(--font-head); font-size:21px; text-align:center; color:var(--ink);
+  overflow-x:auto;
+}
+.b-steps{margin:0; padding:0; list-style:none; counter-reset:stepnum; display:grid; gap:12px}
+.b-steps li{
+  counter-increment:stepnum; position:relative; padding:14px 18px 14px 50px; background:var(--surface-2);
+  border-radius:var(--radius); border:1px solid var(--line);
+}
+.b-steps li::before{
+  content:counter(stepnum); position:absolute; inset-inline-start:14px; top:50%; transform:translateY(-50%);
+  width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff; font-size:13px; font-weight:700;
+  display:grid; place-items:center; line-height:1;
+}
+.b-key{
+  margin:0; padding:18px 20px 18px 52px; border-radius:var(--radius);
+  background:color-mix(in srgb, var(--gold) 14%, var(--surface));
+  border:1px solid color-mix(in srgb, var(--gold) 45%, transparent); position:relative;
+}
+.b-key::before{ content:'💡'; position:absolute; inset-inline-start:16px; top:16px; font-size:19px; }
+.b-theorem{
+  margin:0; padding:20px 22px; border:1.5px solid var(--accent); border-radius:var(--radius); background:var(--surface);
+}
+.b-theorem-tag{
+  display:inline-block; width:fit-content; font-family:var(--font-head); font-weight:700; color:var(--accent); font-size:13px;
+  background:var(--accent-soft); padding:3px 13px; border-radius:999px; margin-bottom:12px;
+}
+.b-theorem > .b-theorem-tag{ display:block }
 figure{margin:0}
 figure img{border-radius:var(--radius); box-shadow:var(--shadow); width:100%}
 figcaption{font-size:14px; color:var(--ink-faint); margin-top:8px; text-align:center}
@@ -235,17 +266,339 @@ footer{padding:40px 0; text-align:center; color:var(--ink-faint); font-size:14px
 .rng output{font-size:13px; color:var(--ink-faint); min-width:54px; text-align:center}
 hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 @media (prefers-reduced-motion: reduce){*{transition:none !important; scroll-behavior:auto !important}}
-@media print{.topbar,.adminbar,.fab,.block-tools,.addblock{display:none !important}}
+@media print{.topbar,.adminbar,.fab,.block-tools,.addblock,.track-splash,.track-pill{display:none !important}}
+
+/* =======================================================================
+   خلفية رياضية خفيفة + رموز زخرفية
+   ======================================================================= */
+body{
+  background-image: radial-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1.4px);
+  background-size: 26px 26px;
+}
+.hero{position:relative; overflow:hidden}
+.hero::before,.hero::after{
+  content:''; position:absolute; font-family:var(--font-head); font-weight:700;
+  color:var(--accent); opacity:.06; pointer-events:none; line-height:1; z-index:0;
+}
+.hero::before{content:'∑'; font-size:min(30vw,240px); inset-inline-start:-.15em; top:-.25em;}
+.hero::after{content:'π'; font-size:min(26vw,210px); inset-inline-end:-.1em; bottom:-.3em; opacity:.05; color:var(--gold);}
+.hero .wrap{position:relative; z-index:1}
+
+/* ===== شريط تبديل الفرقة ===== */
+.track-pill{
+  border:1px solid var(--line); background:var(--surface); color:var(--accent);
+  border-radius:999px; padding:6px 14px; font-size:13px; display:inline-flex; align-items:center; gap:6px;
+  white-space:nowrap; flex:none; transition:.2s;
+}
+.track-pill:hover{border-color:var(--accent); box-shadow:var(--shadow)}
+
+/* =======================================================================
+   شاشة اختيار الفرقة (Splash)
+   ======================================================================= */
+.track-splash{
+  position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:20px;
+  background:
+    radial-gradient(circle at 50% 15%, color-mix(in srgb, var(--accent) 16%, var(--bg)) 0%, var(--bg) 65%);
+  transition:opacity .45s ease, visibility .45s ease; overflow:hidden;
+}
+.track-splash.hide{opacity:0; visibility:hidden; pointer-events:none}
+.ts-bg{position:absolute; inset:0; pointer-events:none; overflow:hidden}
+.ts-sym{
+  position:absolute; left:var(--x); top:var(--y); font-family:var(--font-head); font-weight:700;
+  font-size:clamp(26px,4.4vw,58px); color:var(--accent); opacity:.14;
+  animation:tsFloat 7s ease-in-out infinite; animation-delay:var(--d);
+}
+@keyframes tsFloat{
+  0%,100%{ transform:translateY(0) rotate(0deg); }
+  50%{ transform:translateY(-22px) rotate(10deg); }
+}
+.ts-card{
+  position:relative; z-index:1; background:var(--surface); border:1px solid var(--line);
+  border-radius:24px; box-shadow:0 26px 70px rgba(0,0,0,.2); padding:46px 38px;
+  max-width:540px; width:100%; text-align:center; animation:tsPop .5s cubic-bezier(.2,.9,.25,1);
+}
+@keyframes tsPop{ from{opacity:0; transform:translateY(26px) scale(.96);} to{opacity:1; transform:none;} }
+.ts-icon{
+  font-family:var(--font-head); font-size:42px; color:var(--accent); width:80px; height:80px;
+  display:grid; place-items:center; margin:0 auto 16px; border-radius:50%; background:var(--accent-soft);
+}
+.ts-title{font-family:var(--font-head); font-size:clamp(24px,4vw,30px); margin:0 0 8px; font-weight:700}
+.ts-sub{color:var(--ink-soft); margin:0 0 28px; font-size:15px; font-weight:300}
+.ts-choices{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+.ts-choice{
+  display:flex; flex-direction:column; align-items:center; gap:6px; padding:22px 14px;
+  border-radius:16px; border:1.5px solid var(--line); background:var(--surface-2); color:var(--ink);
+  transition:.25s; border-width:1.5px;
+}
+.ts-choice:hover{ border-color:var(--accent); transform:translateY(-4px); box-shadow:var(--shadow); background:var(--accent-soft); }
+.ts-choice-ic{font-size:26px}
+.ts-choice-title{font-weight:700; font-size:18px; font-family:var(--font-head)}
+.ts-choice-en{font-size:12px; color:var(--ink-faint); letter-spacing:.03em}
+.ts-choice-sub{font-size:13px; color:var(--ink-faint)}
+@media (max-width:480px){ .ts-choices{grid-template-columns:1fr} }
+
+/* =======================================================================
+   الأقسام القابلة للطي
+   ======================================================================= */
+.sec-head{display:flex; align-items:flex-start; gap:10px}
+.sec-head-btn{
+  all:unset; box-sizing:border-box; display:flex; align-items:center; gap:12px; flex:1;
+  cursor:pointer; min-width:0;
+}
+.sec-chevron{
+  flex:none; display:grid; place-items:center; width:30px; height:30px; border-radius:50%;
+  border:1px solid var(--line); background:var(--surface); color:var(--ink-soft);
+  font-size:13px; transition:transform .3s ease, color .2s, border-color .2s;
+}
+.section.open .sec-chevron{ transform:rotate(180deg); color:var(--accent); border-color:var(--accent) }
+.sec-head-btn:hover .sec-title{ color:var(--accent) }
+.sec-title{transition:color .2s}
+.sec-track-tag{
+  display:none; margin-inline-start:10px; font-size:12px; font-weight:500; color:var(--accent);
+  background:var(--accent-soft); border-radius:999px; padding:2px 10px; vertical-align:middle;
+}
+body.admin .sec-track-tag{display:inline-block}
+.sec-collapse{display:grid; grid-template-rows:0fr; transition:grid-template-rows .38s ease}
+.section.open .sec-collapse{grid-template-rows:1fr}
+.sec-collapse > div{overflow:hidden; min-height:0}
+.sec-collapse > div > .sec-inner{padding-top:26px}
+
+/* بطاقات ومحتوى: تحويم أنعم */
+.block{transition:transform .2s ease}
+.linkbtn{transition:.2s}
+.linkbtn:hover{transform:translateY(-2px); box-shadow:var(--shadow)}
+.chip{transition:.2s}
+figure img{transition:transform .4s ease}
+figure:hover img{transform:scale(1.015)}
+
+/* =======================================================================
+   قسم الأسئلة والأجوبة
+   ======================================================================= */
+.qa-form{
+  display:grid; gap:14px; max-width:680px; margin:0 0 36px; padding:24px;
+  border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow);
+}
+.qa-list{display:flex; flex-direction:column; gap:16px}
+.qa-card{
+  border:1px solid var(--line); border-radius:var(--radius); background:var(--surface);
+  padding:18px 20px; box-shadow:var(--shadow); transition:border-color .2s, transform .2s;
+}
+.qa-card:hover{border-color:var(--accent)}
+.qa-card-head{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px}
+.qa-name{font-weight:600}
+.qa-track-badge{font-size:12px; padding:2px 10px; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-weight:500}
+.qa-date{font-size:12px; color:var(--ink-faint); margin-inline-start:auto}
+.qa-q{margin:0 0 12px; white-space:pre-wrap}
+.qa-answer{
+  background:var(--accent-soft); border-radius:12px; padding:12px 16px;
+  border:1px solid color-mix(in srgb, var(--accent) 25%, transparent); white-space:pre-wrap;
+}
+.qa-answer b{color:var(--accent)}
+.qa-pending{font-size:13px; color:var(--ink-faint); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.qa-empty{color:var(--ink-faint); text-align:center; padding:34px 0}
+.qa-answered-badge{font-size:12px; color:var(--accent); font-weight:700}
+
+/* =======================================================================
+   شاشة الترحيب الافتتاحية (Intro)
+   ======================================================================= */
+.intro-splash{
+  position:fixed; inset:0; z-index:120; display:grid; place-items:center; overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--accent) 20%, var(--bg)) 0%, var(--bg) 70%);
+  transition:opacity .6s ease, visibility .6s ease;
+}
+.intro-splash.hide{opacity:0; visibility:hidden; pointer-events:none}
+.intro-bg{position:absolute; inset:0; pointer-events:none}
+.intro-sym{
+  position:absolute; left:var(--x); top:var(--y); font-family:var(--font-head); font-weight:700;
+  font-size:clamp(22px,3.6vw,46px); color:var(--accent); opacity:0; line-height:1;
+  animation:introSymIn .9s ease forwards, tsFloat 6s ease-in-out infinite 1s;
+  animation-delay:var(--d), calc(var(--d) + .9s);
+}
+@keyframes introSymIn{ from{opacity:0; transform:scale(.5) rotate(-15deg);} to{opacity:.16; transform:scale(1) rotate(0);} }
+.intro-stage{position:relative; z-index:1; text-align:center; padding:20px; max-width:420px}
+.intro-draw{width:min(70vw,220px); height:auto; margin:0 auto 8px; display:block; overflow:visible}
+.intro-draw-path{
+  fill:none; stroke:var(--accent); stroke-width:4; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:320; stroke-dashoffset:320; animation:introDraw 1.6s ease-out .2s forwards;
+}
+.intro-draw-dot{ fill:var(--gold); opacity:0; animation:introDotIn .4s ease 1.7s forwards; }
+@keyframes introDraw{ to{stroke-dashoffset:0} }
+@keyframes introDotIn{ to{opacity:1} }
+.intro-logo{
+  font-family:var(--font-head); font-size:40px; color:var(--accent); width:74px; height:74px;
+  display:grid; place-items:center; margin:6px auto 14px; border-radius:50%; background:var(--accent-soft);
+  opacity:0; animation:introPop .6s cubic-bezier(.2,.9,.25,1) .3s forwards;
+}
+@keyframes introPop{ from{opacity:0; transform:scale(.5) rotate(-20deg);} to{opacity:1; transform:none;} }
+.intro-title{
+  font-family:var(--font-head); font-size:clamp(24px,4.4vw,32px); margin:0 0 8px; font-weight:700;
+  opacity:0; animation:introFadeUp .6s ease .6s forwards;
+}
+.intro-sub{
+  color:var(--ink-soft); font-size:15px; margin:0 0 22px; font-weight:300;
+  opacity:0; animation:introFadeUp .6s ease .85s forwards;
+}
+@keyframes introFadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+.intro-bar{
+  width:160px; height:4px; border-radius:999px; background:var(--line); margin:0 auto; overflow:hidden;
+  opacity:0; animation:introFadeUp .5s ease 1.05s forwards;
+}
+.intro-bar span{
+  display:block; height:100%; width:40%; border-radius:999px; background:var(--accent);
+  animation:introBar 1.4s ease-in-out 1.1s infinite;
+}
+@keyframes introBar{ 0%{transform:translateX(-100%)} 100%{transform:translateX(350%)} }
+.intro-skip{
+  position:absolute; bottom:calc(24px + env(safe-area-inset-bottom,0px)); inset-inline-end:24px; z-index:2;
+  border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); border-radius:999px;
+  padding:8px 16px; font-size:13px; opacity:0; animation:introFadeUp .5s ease 1.2s forwards;
+}
+.intro-skip:hover{ color:var(--accent); border-color:var(--accent) }
+
+/* =======================================================================
+   قائمة الهامبرغر + الدرج الجانبي
+   ======================================================================= */
+.hamburger{
+  position:fixed; top:calc(env(safe-area-inset-top,0px) + 14px); right:16px; z-index:55;
+  width:46px; height:46px; border-radius:12px; border:1px solid var(--line); background:var(--surface);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; box-shadow:var(--shadow);
+  transition:.2s;
+}
+.hamburger:hover{border-color:var(--accent)}
+.hamburger span{width:20px; height:2px; background:var(--ink); border-radius:2px; transition:.3s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+.drawer-overlay{
+  position:fixed; inset:0; z-index:53; background:rgba(8,14,20,.5); backdrop-filter:blur(2px);
+  opacity:0; visibility:hidden; transition:opacity .3s, visibility .3s;
+}
+.drawer-overlay.open{opacity:1; visibility:visible}
+.drawer{
+  position:fixed; top:0; bottom:0; right:0; width:min(340px,86vw); z-index:54; background:var(--surface);
+  border-inline-start:1px solid var(--line); box-shadow:-10px 0 40px rgba(0,0,0,.22);
+  transform:translateX(100%); transition:transform .35s cubic-bezier(.2,.9,.25,1);
+  display:flex; flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--line)}
+.drawer-head h3{margin:0; font-family:var(--font-head); font-size:20px}
+.drawer-body{flex:1; overflow-y:auto; padding:10px 8px}
+.dw-row{display:flex; align-items:center; gap:4px}
+.dw-link{
+  all:unset; box-sizing:border-box; flex:1; display:block; text-align:right; color:var(--ink);
+  font:inherit; padding:12px 12px; border-radius:10px; cursor:pointer;
+}
+.dw-link:hover{background:var(--surface-2); color:var(--accent)}
+.dw-toggle{
+  all:unset; box-sizing:border-box; flex:none; width:30px; height:30px; border-radius:8px; color:var(--ink-faint);
+  display:grid; place-items:center; font-size:12px; cursor:pointer; transition:transform .25s, color .2s;
+}
+.dw-toggle:hover{color:var(--accent)}
+.dw-item.open > .dw-row .dw-toggle{transform:rotate(180deg); color:var(--accent)}
+.dw-sub{display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s ease}
+.dw-item.open .dw-sub{grid-template-rows:1fr}
+.dw-sub > div{overflow:hidden}
+.dw-sub a, .dw-sublink{
+  all:unset; box-sizing:border-box; display:block; padding:9px 14px; margin:2px 10px 2px 18px;
+  border-radius:8px; font-size:13.5px; color:var(--ink-soft); text-align:right; cursor:pointer;
+}
+.dw-sub a:hover, .dw-sublink:hover{background:var(--surface-2); color:var(--accent)}
+
+/* تمييز مؤقت عند القفز لعنصر من القائمة */
+.block.flash{ animation:blockFlash 1.6s ease }
+@keyframes blockFlash{
+  0%{box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 45%, transparent); border-radius:10px}
+  100%{box-shadow:0 0 0 0 transparent; border-radius:10px}
+}
 </style>
 </head>
 <body>
- 
+
+<!-- ===== شاشة الترحيب الافتتاحية (Intro) ===== -->
+<div class="intro-splash" id="introSplash" aria-hidden="true">
+  <div class="intro-bg" aria-hidden="true">
+    <span class="intro-sym" style="--x:6%; --y:12%; --d:0s">π</span>
+    <span class="intro-sym" style="--x:88%; --y:16%; --d:.5s">∑</span>
+    <span class="intro-sym" style="--x:12%; --y:82%; --d:1.1s">∞</span>
+    <span class="intro-sym" style="--x:80%; --y:78%; --d:1.6s">√</span>
+    <span class="intro-sym" style="--x:46%; --y:6%; --d:.8s">Δ</span>
+    <span class="intro-sym" style="--x:58%; --y:90%; --d:2.1s">÷</span>
+    <span class="intro-sym" style="--x:22%; --y:44%; --d:1.4s">∫</span>
+    <span class="intro-sym" style="--x:94%; --y:48%; --d:.3s">θ</span>
+    <span class="intro-sym" style="--x:34%; --y:66%; --d:1.9s">×</span>
+    <span class="intro-sym" style="--x:70%; --y:30%; --d:2.4s">%</span>
+  </div>
+  <div class="intro-stage">
+    <svg class="intro-draw" viewBox="0 0 220 100" aria-hidden="true">
+      <path class="intro-draw-path" d="M12 70 L45 70 L60 25 L78 88 L96 50 L130 50" />
+      <circle class="intro-draw-dot" cx="130" cy="50" r="4" />
+    </svg>
+    <div class="intro-logo">∑</div>
+    <h1 class="intro-title" id="introBrand">منصّة المحتوى</h1>
+    <p class="intro-sub">جاري تجهيز مساحتك الرياضية…</p>
+    <div class="intro-bar"><span></span></div>
+  </div>
+  <button class="intro-skip" id="introSkip" type="button">تخطي ⏭</button>
+</div>
+
+<!-- ===== شاشة اختيار الفرقة الدراسية ===== -->
+<div class="track-splash" id="trackSplash" aria-hidden="true">
+  <div class="ts-bg" aria-hidden="true">
+    <span class="ts-sym" style="--x:8%; --y:14%; --d:0s">π</span>
+    <span class="ts-sym" style="--x:84%; --y:18%; --d:1.1s">∑</span>
+    <span class="ts-sym" style="--x:14%; --y:78%; --d:2.3s">∞</span>
+    <span class="ts-sym" style="--x:78%; --y:74%; --d:.6s">√</span>
+    <span class="ts-sym" style="--x:48%; --y:8%; --d:1.7s">Δ</span>
+    <span class="ts-sym" style="--x:54%; --y:88%; --d:2.9s">±</span>
+    <span class="ts-sym" style="--x:28%; --y:46%; --d:2s">∫</span>
+    <span class="ts-sym" style="--x:92%; --y:50%; --d:.9s">θ</span>
+  </div>
+  <div class="ts-card">
+    <div class="ts-icon">∑</div>
+    <h1 class="ts-title">اختر فرقتك الدراسية</h1>
+    <p class="ts-sub">لعرض المحاضرات والسكاشن والمراجعات الخاصة بفرقتك فقط — يمكنك تغيير الفرقة في أي وقت من أعلى الصفحة.</p>
+    <div class="ts-choices">
+      <button class="ts-choice" data-act="choose-track" data-track="math1" type="button">
+        <span class="ts-choice-ic">📘</span>
+        <span class="ts-choice-title">Math 1</span>
+        <span class="ts-choice-en">أولى</span>
+        <span class="ts-choice-sub">الفرقة الأولى</span>
+      </button>
+      <button class="ts-choice" data-act="choose-track" data-track="math2" type="button">
+        <span class="ts-choice-ic">📗</span>
+        <span class="ts-choice-title">Math 2</span>
+        <span class="ts-choice-en">تانية</span>
+        <span class="ts-choice-sub">الفرقة الثانية</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <header class="topbar">
   <div class="wrap topbar-in">
     <h2 class="brand" id="brandName">منصّة المحتوى</h2>
     <nav class="navchips" id="nav"></nav>
+    <button class="track-pill" data-act="switch-track" title="تغيير الفرقة الدراسية">
+      <span id="trackPillText">اختر فرقتك</span> ⇄
+    </button>
   </div>
 </header>
+
+<button class="hamburger" id="hamburgerBtn" data-act="hamburger-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button>
+<div class="drawer-overlay" id="drawerOverlay" data-act="drawer-close"></div>
+<nav class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <h3>الأقسام</h3>
+    <button class="btn sm ghost" data-act="drawer-close" type="button">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerList"></div>
+</nav>
  
 <div class="adminbar">
   <div class="wrap adminbar-in">
@@ -269,6 +622,34 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
     </div>
   </section>
   <div id="sections"></div>
+
+  <section class="section qa-section" id="qa-section">
+    <div class="wrap">
+      <div class="sec-head">
+        <div style="flex:1">
+          <h2 class="sec-title">الأسئلة والأجوبة</h2>
+          <p class="sec-desc">اسأل عن أي نقطة محيّرة في المحاضرات أو السكاشن، وهيوصلك الرد هنا.</p>
+        </div>
+      </div>
+
+      <div class="qa-form">
+        <div class="field"><label for="qaName">الاسم (اختياري)</label>
+          <input id="qaName" placeholder="اكتب اسمك…"></div>
+        <div class="row">
+          <div class="field"><label for="qaTrackSel">الفرقة</label>
+            <select id="qaTrackSel">
+              <option value="math1">Math 1 — أولى</option>
+              <option value="math2">Math 2 — تانية</option>
+            </select></div>
+        </div>
+        <div class="field"><label for="qaText">سؤالك</label>
+          <textarea id="qaText" placeholder="اكتب سؤالك هنا…" style="min-height:100px"></textarea></div>
+        <button class="btn primary" data-act="qa-submit" type="button">إرسال السؤال</button>
+      </div>
+
+      <div class="qa-list" id="qaList"></div>
+    </div>
+  </section>
 </main>
  
 <footer>
@@ -302,6 +683,136 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200);
 }
 function setStatus(txt){ $('#status').textContent = txt; }
+
+/* =======================================================================
+   0) اختيار الفرقة الدراسية (Math 1 / Math 2)
+   ======================================================================= */
+const TRACK_KEY = 'site_track_v1';
+let currentTrack = null;      // 'math1' | 'math2'
+let openSections  = new Set(); // أقسام مفتوحة حالياً (طيّ/فتح)
+
+function loadTrack(){ try{ return localStorage.getItem(TRACK_KEY); }catch(e){ return null; } }
+function saveTrack(t){ try{ localStorage.setItem(TRACK_KEY, t); }catch(e){} }
+function trackLabel(t){ return t==='math2' ? 'Math 2 — تانية' : 'Math 1 — أولى'; }
+
+function openSplash(){
+  const el = $('#trackSplash'); if(!el) return;
+  el.classList.remove('hide'); el.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+}
+function closeSplash(){
+  const el = $('#trackSplash'); if(!el) return;
+  el.classList.add('hide'); el.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+}
+function setTrack(t, opts){
+  opts = opts || {};
+  currentTrack = t;
+  saveTrack(t);
+  const pill = $('#trackPillText'); if(pill) pill.textContent = trackLabel(t);
+  const sel = $('#qaTrackSel'); if(sel) sel.value = t;
+  render();
+  renderQA();
+  if(!opts.silent) toast('تم اختيار ' + trackLabel(t));
+}
+function visibleSections(){
+  return site.sections.filter(s => !s.track || s.track==='all' || s.track===currentTrack);
+}
+function trackTagLabel(t){
+  if(t==='math1') return 'Math 1 فقط';
+  if(t==='math2') return 'Math 2 فقط';
+  return 'الفرقتان';
+}
+
+/* =======================================================================
+   0.5) شاشة الترحيب الافتتاحية (Intro)
+   ======================================================================= */
+const INTRO_KEY = 'site_intro_shown_v1';
+function playIntro(){
+  return new Promise(resolve=>{
+    const el = $('#introSplash');
+    if(!el) { resolve(); return; }
+    if(sessionStorage.getItem(INTRO_KEY)){ el.remove(); resolve(); return; }
+    try{ sessionStorage.setItem(INTRO_KEY,'1'); }catch(e){}
+    document.body.style.overflow = 'hidden';
+    let done = false;
+    const finish = ()=>{
+      if(done) return; done = true;
+      el.classList.add('hide');
+      setTimeout(()=>{ el.remove(); document.body.style.overflow=''; resolve(); }, 650);
+    };
+    const skip = $('#introSkip'); if(skip) skip.addEventListener('click', finish, {once:true});
+    setTimeout(finish, 2800);
+  });
+}
+
+/* =======================================================================
+   0.6) قائمة الهامبرغر الديناميكية (تُبنى تلقائياً من الأقسام والمحتوى)
+   ======================================================================= */
+function openDrawer(){
+  $('#drawer').classList.add('open'); $('#drawer').setAttribute('aria-hidden','false');
+  $('#drawerOverlay').classList.add('open');
+  $('#hamburgerBtn').classList.add('open'); $('#hamburgerBtn').setAttribute('aria-expanded','true');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer(){
+  $('#drawer').classList.remove('open'); $('#drawer').setAttribute('aria-hidden','true');
+  $('#drawerOverlay').classList.remove('open');
+  $('#hamburgerBtn').classList.remove('open'); $('#hamburgerBtn').setAttribute('aria-expanded','false');
+  if(!$('#trackSplash') || $('#trackSplash').classList.contains('hide')) document.body.style.overflow = '';
+}
+/* يبني قائمة العناصر الفرعية لأي قسم: العناوين الفرعية وعناصر الروابط داخله */
+function drawerSubitems(sec){
+  const subs = [];
+  (sec.blocks||[]).forEach(b=>{
+    if(b.type==='text' && b.style==='heading' && (b.text||'').trim()){
+      subs.push({ label:b.text.trim(), secId:sec.id, blockId:b.id });
+    } else if(b.type==='links'){
+      (b.items||[]).forEach(it=>{ if(it.label) subs.push({ label:it.label, secId:sec.id, blockId:b.id, url:it.url }); });
+    }
+  });
+  return subs;
+}
+function renderDrawer(){
+  const list = $('#drawerList'); if(!list) return;
+  const secs = visibleSections();
+  if(!secs.length){ list.innerHTML = '<p class="qa-empty" style="padding:24px">لا توجد أقسام بعد.</p>'; return; }
+  list.innerHTML = secs.map(s=>{
+    const subs = drawerSubitems(s);
+    const hasSub = subs.length>0;
+    return `<div class="dw-item" data-drawer-sec="${s.id}">
+      <div class="dw-row">
+        <button class="dw-link" data-act="dw-goto-section" data-id="${s.id}" type="button">${esc(s.title)}</button>
+        ${hasSub ? `<button class="dw-toggle" data-act="dw-toggle" type="button" aria-label="توسيع/طيّ">▼</button>` : ''}
+      </div>
+      ${hasSub ? `<div class="dw-sub"><div>
+        ${subs.map(su => su.url
+            ? `<a href="${esc(su.url)}" target="_blank" rel="noopener">${esc(su.label)}</a>`
+            : `<button class="dw-sublink" data-act="dw-goto-block" data-sec="${su.secId}" data-block="${su.blockId}" type="button">${esc(su.label)}</button>`
+          ).join('')}
+      </div></div>` : ''}
+    </div>`;
+  }).join('');
+}
+function drawerGoto(secId, blockId){
+  openSections.add(secId);
+  const secEl = document.getElementById('sec-'+secId);
+  if(secEl) secEl.classList.add('open');
+  closeDrawer();
+  setTimeout(()=>{
+    if(!secEl) return;
+    if(blockId){
+      const blockEl = secEl.querySelector(`.block[data-id="${blockId}"]`);
+      if(blockEl){
+        blockEl.scrollIntoView({behavior:'smooth', block:'center'});
+        blockEl.classList.add('flash');
+        setTimeout(()=>blockEl.classList.remove('flash'), 1600);
+        return;
+      }
+    }
+    secEl.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 280);
+}
  
 /* تجزئة كلمة المرور (SHA-256 عند التوفّر، وبديل بسيط عند العمل من ملف محلي) */
 async function hashPass(pass){
@@ -334,6 +845,18 @@ function fmt(text){
   if(inList) out+='</ul>';
   return out;
 }
+
+/* خطوات الحل: سطر لكل خطوة → بطاقات مرقّمة */
+function stepsHtml(text){
+  const inline = t => esc(t)
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/(^|\W)\*(.+?)\*(?=\W|$)/g,'$1<em>$2</em>')
+    .replace(/`(.+?)`/g,'<code>$1</code>')
+    .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const lines = String(text||'').split(/\n/).map(l=>l.trim().replace(/^[-•]\s+/,'')).filter(Boolean);
+  if(!lines.length) return '';
+  return '<ol class="b-steps">' + lines.map(l=>'<li>'+inline(l)+'</li>').join('') + '</ol>';
+}
  
 /* استخراج مشغّل الفيديو من الرابط */
 function videoEmbed(url){
@@ -350,7 +873,7 @@ function videoEmbed(url){
 /* =======================================================================
    1.5) محرّك المظهر: الخطوط والألوان والمقاسات
    ======================================================================= */
-const FONTS = ['IBM Plex Sans Arabic','Tajawal','Cairo','Almarai','Readex Pro','Noto Kufi Arabic','Changa','El Messiri','Reem Kufi','Amiri','Aref Ruqaa','Markazi Text','Rubik'];
+const FONTS = ['IBM Plex Sans Arabic','Tajawal','Cairo','Almarai','Readex Pro','Noto Kufi Arabic','Changa','El Messiri','Reem Kufi','Amiri','Aref Ruqaa','Markazi Text','Rubik','Inter','Poppins'];
 const SERIF_FONTS = ['Amiri','Aref Ruqaa','Markazi Text'];
  
 const VARS = {
@@ -370,8 +893,13 @@ function defaultTheme(){
            fontSize:17, headScale:1, width:900, radius:14, colors:{} };
 }
  
+/* جاهزات عامة + جاهزات بموضوع رياضي (تُطبَّق ألوانها وخط عناوينها معاً) */
 const PRESETS = [
   { name:'الافتراضي',   mode:'auto',  colors:{} },
+  { name:'سبورة داكنة (Dark Chalkboard)',   mode:'dark',  headFont:'Aref Ruqaa',    colors:{ bg:'#182922', surface:'#1F3B2F', surface2:'#254936', ink:'#F3EFE2', inkSoft:'#BFD3C4', line:'#345444', accent:'#E7C46B', gold:'#E7C46B' } },
+  { name:'مخطط أزرق (Blueprint Math)',      mode:'dark',  headFont:'Markazi Text',  colors:{ bg:'#0B3D91', surface:'#0F4AA8', surface2:'#124FB0', ink:'#EAF2FF', inkSoft:'#B7D0F2', line:'#2F66B3', accent:'#7FD1FF', gold:'#FFFFFF' } },
+  { name:'النسبة الذهبية (Geometry Light)', mode:'light', headFont:'Amiri',         colors:{ bg:'#FBF7EE', surface:'#FFFFFF', surface2:'#F3ECDA', ink:'#2E2A1F', inkSoft:'#6B6350', line:'#E7DCC0', accent:'#B8860B', gold:'#C9973A' } },
+  { name:'ماتريكس سايبر (Cyber Green)',     mode:'dark',  headFont:'Rubik',         colors:{ bg:'#05100A', surface:'#0A1B10', surface2:'#0F2716', ink:'#B6FFB6', inkSoft:'#5FCB5F', line:'#164016', accent:'#39FF14', gold:'#39FF14' } },
   { name:'ليلي',        mode:'dark',  colors:{} },
   { name:'رملي دافئ',   mode:'light', colors:{ bg:'#F6F1E7', surface:'#FFFDF8', surface2:'#F0E9DB', ink:'#2B2620', inkSoft:'#6B6154', line:'#E4DBCA', accent:'#A2643C', gold:'#B8862F' } },
   { name:'أزرق ملكي',   mode:'light', colors:{ bg:'#EDF1F8', surface:'#FFFFFF', surface2:'#E6ECF7', ink:'#14233A', inkSoft:'#4C5D7A', line:'#D4DDEC', accent:'#2A4D8F', gold:'#C08A2E' } },
@@ -530,16 +1058,28 @@ function defaultSite(){
     auth:{ passHash:null },
     theme: defaultTheme(),
     sections:[
-      { id:uid(), title:'نبذة تعريفية', desc:'ابدأ من هنا: عرّف بنفسك أو بمشروعك في فقرة قصيرة.',
+      { id:uid(), title:'نبذة تعريفية', desc:'ابدأ من هنا: عرّف بنفسك أو بمشروعك في فقرة قصيرة.', track:'all',
         blocks:[
           { id:uid(), type:'text', style:'paragraph', text:'هذا نصّ تجريبي يمكنك استبداله بالكامل. اضغط على زر القفل أسفل الصفحة، أدخل كلمة المرور، ثم عدّل أي شيء تراه.\nيدعم المحرّر تنسيقات بسيطة مثل **العريض** و*المائل* والقوائم:\n- عنصر أول\n- عنصر ثانٍ' },
-          { id:uid(), type:'text', style:'note', text:'نصيحة: استخدم "ملاحظة" للأشياء المهمة، و"اقتباس" للعبارات اللافتة.' }
+          { id:uid(), type:'text', style:'note', text:'نصيحة: استخدم "ملاحظة" للأشياء المهمة، و"اقتباس" للعبارات اللافتة. استخدم حقل «يظهر لِـ» عند تعديل أي قسم لتخصيصه بفرقة Math 1 أو Math 2 فقط.' }
         ] },
-      { id:uid(), title:'الوسائط', desc:'صور وفيديوهات ضمن السياق.',
+      { id:uid(), title:'المحاضرات', desc:'محاضرات الفرقة الأولى (Math 1).', track:'math1',
+        blocks:[ { id:uid(), type:'text', style:'paragraph', text:'أضف روابط أو ملفات المحاضرات من هنا (زر ＋ إضافة محتوى).' } ] },
+      { id:uid(), title:'السكاشن', desc:'حصص السكاشن الأسبوعية للفرقة الأولى.', track:'math1',
+        blocks:[ { id:uid(), type:'text', style:'paragraph', text:'أضف مواعيد وملفات السكاشن هنا.' } ] },
+      { id:uid(), title:'المراجعات', desc:'مراجعات نهاية الفصل للفرقة الأولى.', track:'math1',
+        blocks:[ { id:uid(), type:'text', style:'paragraph', text:'أضف أوراق المراجعة أو الامتحانات السابقة هنا.' } ] },
+      { id:uid(), title:'المحاضرات', desc:'محاضرات الفرقة الثانية (Math 2).', track:'math2',
+        blocks:[ { id:uid(), type:'text', style:'paragraph', text:'أضف روابط أو ملفات المحاضرات من هنا (زر ＋ إضافة محتوى).' } ] },
+      { id:uid(), title:'السكاشن', desc:'حصص السكاشن الأسبوعية للفرقة الثانية.', track:'math2',
+        blocks:[ { id:uid(), type:'text', style:'paragraph', text:'أضف مواعيد وملفات السكاشن هنا.' } ] },
+      { id:uid(), title:'المراجعات', desc:'مراجعات نهاية الفصل للفرقة الثانية.', track:'math2',
+        blocks:[ { id:uid(), type:'text', style:'paragraph', text:'أضف أوراق المراجعة أو الامتحانات السابقة هنا.' } ] },
+      { id:uid(), title:'الوسائط', desc:'صور وفيديوهات ضمن السياق.', track:'all',
         blocks:[
           { id:uid(), type:'video', url:'https://www.youtube.com/watch?v=aqz-KE-bpKQ', caption:'ضع هنا رابط أي فيديو من يوتيوب أو رابط ملف mp4 مباشر' }
         ] },
-      { id:uid(), title:'روابط مفيدة', desc:'',
+      { id:uid(), title:'روابط مفيدة', desc:'', track:'all',
         blocks:[
           { id:uid(), type:'links', items:[
             { label:'الموقع الرسمي', url:'https://example.com', desc:'صفحة التعريف الكاملة' },
@@ -628,6 +1168,168 @@ const Store = {
 function loadScript(src){
   return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
 }
+
+/* =======================================================================
+   3.5) الأسئلة والأجوبة (Q&A) — Supabase
+   جدول مطلوب في Supabase (شغّله مرة واحدة من SQL editor):
+
+   create table if not exists public.qa_questions (
+     id uuid primary key default gen_random_uuid(),
+     name text,
+     question text not null,
+     track text not null check (track in ('math1','math2')),
+     answer text,
+     answered_at timestamptz,
+     created_at timestamptz not null default now()
+   );
+   alter table public.qa_questions enable row level security;
+   create policy "qa public read"   on public.qa_questions for select using (true);
+   create policy "qa public insert" on public.qa_questions for insert with check (true);
+   create policy "qa public update" on public.qa_questions for update using (true) with check (true);
+
+   ملاحظة أمان: كلمة مرور الأدمن تُتحقّق من طرف المتصفح فقط (كما في باقي الموقع)،
+   لذا سياسة UPDATE هنا مفتوحة تقنياً لأي زائر يعرف كيف يستخدم واجهة Supabase مباشرة.
+   لحماية أقوى، يمكن لاحقاً نقل التحقق إلى Supabase Edge Function.
+   ======================================================================= */
+const QA = {
+  rows: [],
+  ready: false,
+
+  async ensureClient(){
+    if(Store.sb) return Store.sb;
+    if(!CONFIG.SUPABASE.enabled) return null;
+    try{
+      if(!window.supabase) await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js');
+      Store.sb = Store.sb || window.supabase.createClient(CONFIG.SUPABASE.url, CONFIG.SUPABASE.anonKey);
+      return Store.sb;
+    }catch(e){ console.warn('تعذّر تهيئة Supabase للأسئلة:', e); return null; }
+  },
+
+  async init(){
+    if(!CONFIG.SUPABASE.enabled){ renderQA(); return; }
+    const sb = await this.ensureClient();
+    if(!sb){ renderQA(); return; }
+    try{
+      const { data, error } = await sb.from(CONFIG.SUPABASE.qaTable)
+        .select('*').order('created_at', { ascending:false });
+      if(error) throw error;
+      this.rows = data || [];
+      this.ready = true;
+      renderQA();
+      sb.channel('qa_live_'+CONFIG.SUPABASE.qaTable)
+        .on('postgres_changes', { event:'*', schema:'public', table:CONFIG.SUPABASE.qaTable }, payload=>{
+          if(payload.eventType==='INSERT'){
+            if(!this.rows.some(r=>r.id===payload.new.id)) this.rows.unshift(payload.new);
+          } else if(payload.eventType==='UPDATE'){
+            const i=this.rows.findIndex(r=>r.id===payload.new.id); if(i>-1) this.rows[i]=payload.new;
+          } else if(payload.eventType==='DELETE'){
+            this.rows = this.rows.filter(r=>r.id!==payload.old.id);
+          }
+          renderQA();
+        }).subscribe();
+    }catch(e){
+      console.warn('تعذّر تحميل الأسئلة (تأكد من إنشاء جدول qa_questions):', e);
+      renderQA();
+    }
+  },
+
+  async submit({name, question, track}){
+    const sb = await this.ensureClient();
+    if(!sb) throw new Error('no-supabase');
+    const row = { name: name || null, question, track, answer: null };
+    const { data, error } = await sb.from(CONFIG.SUPABASE.qaTable).insert(row).select().maybeSingle();
+    if(error) throw error;
+    if(data && !this.rows.some(r=>r.id===data.id)){ this.rows.unshift(data); renderQA(); }
+  },
+
+  async answer(id, text){
+    const sb = await this.ensureClient();
+    if(!sb) throw new Error('no-supabase');
+    const { data, error } = await sb.from(CONFIG.SUPABASE.qaTable)
+      .update({ answer:text, answered_at:new Date().toISOString() }).eq('id', id).select().maybeSingle();
+    if(error) throw error;
+    if(data){ const i=this.rows.findIndex(r=>r.id===id); if(i>-1) this.rows[i]=data; renderQA(); }
+  },
+
+  async submitFromForm(){
+    const nameEl = $('#qaName'), trackEl = $('#qaTrackSel'), textEl = $('#qaText');
+    if(!nameEl || !trackEl || !textEl) return;
+    const name = nameEl.value.trim(), track = trackEl.value, text = textEl.value.trim();
+    if(!text){ toast('اكتب سؤالك أولاً'); return; }
+    if(!CONFIG.SUPABASE.enabled){ toast('قسم الأسئلة يحتاج تفعيل Supabase (CONFIG.SUPABASE.enabled)'); return; }
+    try{
+      await this.submit({ name, question:text, track });
+      nameEl.value=''; textEl.value='';
+      toast('تم إرسال سؤالك، شكراً لك');
+    }catch(e){ console.error(e); toast('تعذّر إرسال السؤال — تأكد من إعداد جدول qa_questions'); }
+  }
+};
+
+function fmtQaDate(iso){
+  try{ return new Date(iso).toLocaleDateString('ar-EG', { day:'numeric', month:'short' }); }catch(e){ return ''; }
+}
+
+function renderQA(){
+  const list = $('#qaList'); if(!list) return;
+  const sel = $('#qaTrackSel'); if(sel && currentTrack) sel.value = currentTrack;
+
+  if(!CONFIG.SUPABASE.enabled){
+    list.innerHTML = '<p class="qa-empty">قسم الأسئلة يحتاج تفعيل Supabase من إعدادات الصفحة (CONFIG.SUPABASE).</p>';
+    return;
+  }
+  const items = currentTrack ? QA.rows.filter(r=>r.track===currentTrack) : QA.rows;
+  if(!items.length){ list.innerHTML = '<p class="qa-empty">لا توجد أسئلة بعد — كن أول من يسأل!</p>'; return; }
+
+  list.innerHTML = items.map(r => `
+    <div class="qa-card">
+      <div class="qa-card-head">
+        <span class="qa-name">${esc(r.name || 'زائر')}</span>
+        <span class="qa-track-badge">${r.track==='math2' ? 'Math 2' : 'Math 1'}</span>
+        ${r.answer ? '<span class="qa-answered-badge">✓ تم الرد</span>' : ''}
+        <span class="qa-date">${fmtQaDate(r.created_at)}</span>
+      </div>
+      <p class="qa-q">${esc(r.question)}</p>
+      ${r.answer
+        ? `<div class="qa-answer"><b>إجابة المدرّس:</b> ${esc(r.answer)}</div>
+           <div class="qa-pending" style="margin-top:8px">
+             <button class="btn sm ghost" data-act="qa-answer" data-id="${esc(String(r.id))}" type="button">✎ تعديل الإجابة</button>
+           </div>`
+        : `<div class="qa-pending">بانتظار الرد
+             <button class="btn sm" data-act="qa-answer" data-id="${esc(String(r.id))}" type="button">＋ إضافة إجابة</button>
+           </div>`}
+    </div>`).join('');
+}
+
+/* ---- تدفّق إضافة إجابة (كلمة مرور ثم نص الإجابة) ---- */
+function qaAnswerFlow(row){
+  openModal('كلمة مرور الأدمن', `
+    <div class="field">
+      <label for="qapw">كلمة المرور</label>
+      <input type="password" id="qapw" autocomplete="current-password" placeholder="••••••••">
+      <p class="hint">هي نفس كلمة مرور وضع التحرير الخاصة بالموقع.</p>
+    </div>`, footSave('تحقّق'), async ()=>{
+      const val = $('#qapw').value;
+      const h = await hashPass(val);
+      if(!site.auth.passHash){ site.auth.passHash = await hashPass(CONFIG.DEFAULT_PASSWORD); }
+      if(h !== site.auth.passHash){ toast('كلمة المرور غير صحيحة'); return false; }
+      qaAnswerEditor(row);
+    });
+}
+function qaAnswerEditor(row){
+  openModal('إضافة إجابة', `
+    <p class="hint" style="margin-top:0">السؤال: ${esc(row.question)}</p>
+    <div class="field"><label for="qaans">نص الإجابة</label>
+      <textarea id="qaans" placeholder="اكتب الإجابة هنا…">${esc(row.answer||'')}</textarea></div>
+  `, footSave('نشر الإجابة'), async ()=>{
+    const text = $('#qaans').value.trim();
+    if(!text){ toast('اكتب نص الإجابة'); return false; }
+    try{
+      await QA.answer(row.id, text);
+      toast('تم نشر الإجابة');
+      closeModal();
+    }catch(e){ console.error(e); toast('تعذّر حفظ الإجابة'); return false; }
+  });
+}
  
 let saveTimer=null, saving=false;
 function scheduleSave(){
@@ -650,28 +1352,38 @@ function render(){
   applyTheme(site.theme);
   document.title = site.meta.title || 'منصّة المحتوى';
   $('#brandName').textContent = site.meta.title || '';
+  const introBrand = $('#introBrand'); if(introBrand) introBrand.textContent = site.meta.title || 'منصّة المحتوى';
   $('#heroTitle').textContent = site.meta.heroTitle || '';
   $('#heroSub').textContent = site.meta.heroSub || '';
   $('#footNote').textContent = site.meta.footer || '';
   $('#heroCover').innerHTML = site.meta.cover
     ? `<div class="hero-cover"><img src="${esc(site.meta.cover)}" alt=""></div>` : '';
  
-  $('#nav').innerHTML = site.sections
+  const pill = $('#trackPillText');
+  if(pill) pill.textContent = currentTrack ? trackLabel(currentTrack) : 'اختر فرقتك';
+
+  const secs = visibleSections();
+  $('#nav').innerHTML = secs
     .map(s=>`<a class="chip" href="#sec-${esc(s.id)}">${esc(s.title)}</a>`).join('');
  
-  $('#sections').innerHTML = site.sections.map(renderSection).join('');
+  $('#sections').innerHTML = secs.map((s,i)=>renderSection(s,i,secs)).join('');
+  renderDrawer();
 }
  
-function renderSection(s, i){
-  const last = site.sections.length-1;
+function renderSection(s, i, secs){
+  const last = (secs||site.sections).length-1;
+  const isOpen = openSections.has(s.id);
   return `
-  <section class="section" id="sec-${esc(s.id)}">
+  <section class="section ${isOpen?'open':''}" id="sec-${esc(s.id)}">
     <div class="wrap">
       <div class="sec-head">
-        <div style="flex:1">
-          <h2 class="sec-title">${esc(s.title)}</h2>
-          ${s.desc ? `<p class="sec-desc">${esc(s.desc)}</p>` : ''}
-        </div>
+        <button class="sec-head-btn" data-act="sec-toggle" data-id="${s.id}" type="button" aria-expanded="${isOpen}">
+          <span class="sec-chevron">▾</span>
+          <span style="flex:1; min-width:0">
+            <h2 class="sec-title">${esc(s.title)}<span class="sec-track-tag">${trackTagLabel(s.track)}</span></h2>
+            ${s.desc ? `<p class="sec-desc">${esc(s.desc)}</p>` : ''}
+          </span>
+        </button>
         <div class="tools">
           <button class="btn sm" data-act="sec-up" data-id="${s.id}" ${i===0?'disabled':''} title="لأعلى">▲</button>
           <button class="btn sm" data-act="sec-down" data-id="${s.id}" ${i===last?'disabled':''} title="لأسفل">▼</button>
@@ -679,13 +1391,15 @@ function renderSection(s, i){
           <button class="btn sm danger" data-act="sec-del" data-id="${s.id}">حذف</button>
         </div>
       </div>
-      <div class="blocks">
-        ${s.blocks.map((b,j)=>renderBlock(b,s.id,j,s.blocks.length-1)).join('') ||
-          '<p class="sec-desc">لا يوجد محتوى في هذا القسم بعد.</p>'}
-      </div>
-      <div class="addblock">
-        <button class="dashed" data-act="add-block" data-sec="${s.id}">＋ إضافة محتوى إلى «${esc(s.title)}»</button>
-      </div>
+      <div class="sec-collapse"><div><div class="sec-inner">
+        <div class="blocks">
+          ${s.blocks.map((b,j)=>renderBlock(b,s.id,j,s.blocks.length-1)).join('') ||
+            '<p class="sec-desc">لا يوجد محتوى في هذا القسم بعد.</p>'}
+        </div>
+        <div class="addblock">
+          <button class="dashed" data-act="add-block" data-sec="${s.id}">＋ إضافة محتوى إلى «${esc(s.title)}»</button>
+        </div>
+      </div></div></div>
     </div>
   </section>`;
 }
@@ -703,6 +1417,10 @@ function renderBlock(b, secId, j, last){
     if(b.style==='heading')      body = `<h3 class="b-h">${esc(b.text)}</h3>`;
     else if(b.style==='quote')   body = `<blockquote class="b-quote">${fmt(b.text)}</blockquote>`;
     else if(b.style==='note')    body = `<div class="b-note">${fmt(b.text)}</div>`;
+    else if(b.style==='formula') body = `<div class="b-formula">${fmt(b.text)}</div>`;
+    else if(b.style==='steps')   body = stepsHtml(b.text);
+    else if(b.style==='key')     body = `<div class="b-key">${fmt(b.text)}</div>`;
+    else if(b.style==='theorem') body = `<div class="b-theorem"><span class="b-theorem-tag">نظرية / تعريف</span>${fmt(b.text)}</div>`;
     else                         body = `<div class="b-p">${fmt(b.text)}</div>`;
   }
   else if(b.type==='image'){
@@ -766,12 +1484,18 @@ function sectionModal(sec){
   openModal(isNew?'قسم جديد':'تعديل القسم', `
     <div class="field"><label for="st">اسم القسم</label><input id="st" value="${esc(s.title)}" placeholder="مثال: المقالات"></div>
     <div class="field"><label for="sd">وصف مختصر (اختياري)</label><input id="sd" value="${esc(s.desc||'')}"></div>
+    <div class="field"><label for="strk">يظهر لِـ</label>
+      <select id="strk">
+        <option value="all" ${(!s.track||s.track==='all')?'selected':''}>الفرقتان (Math 1 و Math 2)</option>
+        <option value="math1" ${s.track==='math1'?'selected':''}>Math 1 — أولى فقط</option>
+        <option value="math2" ${s.track==='math2'?'selected':''}>Math 2 — تانية فقط</option>
+      </select></div>
     ${isNew?'':`<div class="field"><label for="so">ترتيب القسم</label><select id="so">${
       site.sections.map((x,i)=>`<option value="${i}" ${x.id===s.id?'selected':''}>${i+1}</option>`).join('')}</select></div>`}
   `, footSave(), ()=>{
     const title = $('#st').value.trim();
     if(!title){ toast('اكتب اسم القسم'); return false; }
-    s.title=title; s.desc=$('#sd').value.trim();
+    s.title=title; s.desc=$('#sd').value.trim(); s.track=$('#strk').value;
     if(isNew) site.sections.push(s);
     else {
       const to = parseInt($('#so').value,10);
@@ -807,9 +1531,14 @@ function blockModal(secId, block, type){
           <option value="heading"   ${b.style==='heading'?'selected':''}>عنوان فرعي</option>
           <option value="quote"     ${b.style==='quote'?'selected':''}>اقتباس</option>
           <option value="note"      ${b.style==='note'?'selected':''}>ملاحظة مميّزة</option>
+          <option value="formula"   ${b.style==='formula'?'selected':''}>🧮 صندوق معادلة رياضية</option>
+          <option value="steps"     ${b.style==='steps'?'selected':''}>📶 خطوات الحل (سطر لكل خطوة)</option>
+          <option value="key"       ${b.style==='key'?'selected':''}>💡 مفهوم أساسي</option>
+          <option value="theorem"   ${b.style==='theorem'?'selected':''}>📐 نظرية / تعريف</option>
         </select></div>
       <div class="field"><label for="bt">النص</label><textarea id="bt">${esc(b.text)}</textarea>
-        <p class="hint">التنسيق: **عريض** ، *مائل* ، `+"`كود`"+` ، [نص](رابط) ، وسطر يبدأ بـ - يصبح قائمة.</p></div>`;
+        <p class="hint">التنسيق: **عريض** ، *مائل* ، `+"`كود`"+` ، [نص](رابط) ، وسطر يبدأ بـ - يصبح قائمة.
+        لـ«خطوات الحل» اكتب كل خطوة في سطر منفصل.</p></div>`;
   }
   else if(b.type==='image'){
     body = `
@@ -906,6 +1635,29 @@ document.addEventListener('click', async e=>{
   if(act==='pick-type'){ blockModal(secId, null, t.dataset.type); return; }
   if(act==='add-link'){ $('#links').insertAdjacentHTML('beforeend', linkRow()); return; }
   if(act==='del-link'){ t.parentElement.remove(); return; }
+
+  if(act==='choose-track'){ closeSplash(); setTrack(t.dataset.track); return; }
+  if(act==='switch-track'){ openSplash(); return; }
+  if(act==='sec-toggle'){
+    if(openSections.has(id)) openSections.delete(id); else openSections.add(id);
+    const el = document.getElementById('sec-'+id);
+    if(el){ el.classList.toggle('open'); t.setAttribute('aria-expanded', el.classList.contains('open')); }
+    return;
+  }
+  if(act==='qa-submit'){ QA.submitFromForm(); return; }
+  if(act==='qa-answer'){
+    const row = QA.rows.find(r=>String(r.id)===id);
+    if(row) qaAnswerFlow(row);
+    return;
+  }
+  if(act==='hamburger-toggle'){
+    if($('#drawer').classList.contains('open')) closeDrawer(); else openDrawer();
+    return;
+  }
+  if(act==='drawer-close'){ closeDrawer(); return; }
+  if(act==='dw-toggle'){ t.closest('.dw-item')?.classList.toggle('open'); return; }
+  if(act==='dw-goto-section'){ drawerGoto(id); return; }
+  if(act==='dw-goto-block'){ drawerGoto(t.dataset.sec, t.dataset.block); return; }
  
   if(!isAdmin) return; // كل ما تحت هذا السطر للمحرّر فقط
  
@@ -937,7 +1689,11 @@ document.addEventListener('click', async e=>{
     case 'th-preset': {
       const p = PRESETS[+t.dataset.i];
       const cur = readThemeForm();
-      themeModal(Object.assign(cur, { mode:p.mode, colors: clone(p.colors) }));
+      const merged = Object.assign({}, cur, { mode:p.mode, colors: clone(p.colors) });
+      if(p.headFont) merged.headFont = p.headFont;
+      if(p.bodyFont) merged.bodyFont = p.bodyFont;
+      if(p.radius!=null) merged.radius = p.radius;
+      themeModal(merged);
       break;
     }
     case 'logout':
@@ -971,7 +1727,10 @@ $('#fab').addEventListener('click', ()=>{
 });
 $('#overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') closeModal(); });
 document.addEventListener('keydown', e=>{
-  if(e.key==='Escape') closeModal();
+  if(e.key==='Escape'){
+    closeModal();
+    if($('#drawer')?.classList.contains('open')) closeDrawer();
+  }
   if(e.key==='Enter' && $('#overlay').classList.contains('open') && e.target.tagName!=='TEXTAREA' && onSaveModal){ e.preventDefault(); onSaveModal(); }
 });
  
@@ -980,9 +1739,18 @@ document.addEventListener('keydown', e=>{
    ======================================================================= */
 (async function start(){
   render();
+  const introPromise = playIntro();
   await Store.init(render);
   render();
   if(!site.auth.passHash){ site.auth.passHash = await hashPass(CONFIG.DEFAULT_PASSWORD); }
+
+  await introPromise;
+
+  currentTrack = loadTrack();
+  if(currentTrack){ setTrack(currentTrack, {silent:true}); closeSplash(); }
+  else { openSplash(); }
+
+  await QA.init();
 })();
 </script>
 </body>
