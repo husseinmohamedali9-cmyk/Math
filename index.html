@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Math</title>
+<title>منصّة المحتوى</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link id="dynFonts" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -266,7 +267,7 @@ footer{padding:40px 0; text-align:center; color:var(--ink-faint); font-size:14px
 .rng output{font-size:13px; color:var(--ink-faint); min-width:54px; text-align:center}
 hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 @media (prefers-reduced-motion: reduce){*{transition:none !important; scroll-behavior:auto !important}}
-@media print{.topbar,.adminbar,.fab,.block-tools,.addblock,.track-splash,.track-pill{display:none !important}}
+@media print{.topbar,.adminbar,.fab,.block-tools,.addblock,.track-splash,.tswitch,.hamburger,.topmenu,.menu-catcher,.math-bg,.intro-splash{display:none !important}}
 
 /* =======================================================================
    خلفية رياضية خفيفة + رموز زخرفية
@@ -284,13 +285,34 @@ body{
 .hero::after{content:'π'; font-size:min(26vw,210px); inset-inline-end:-.1em; bottom:-.3em; opacity:.05; color:var(--gold);}
 .hero .wrap{position:relative; z-index:1}
 
-/* ===== شريط تبديل الفرقة ===== */
-.track-pill{
-  border:1px solid var(--line); background:var(--surface); color:var(--accent);
-  border-radius:999px; padding:6px 14px; font-size:13px; display:inline-flex; align-items:center; gap:6px;
-  white-space:nowrap; flex:none; transition:.2s;
+/* ===== مبدّل الفرقة المدمج (Compact Pill Switcher) ===== */
+.tswitch{
+  display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px;
+  padding:3px; background:var(--surface); flex:none;
 }
-.track-pill:hover{border-color:var(--accent); box-shadow:var(--shadow)}
+.tswitch-btn{
+  all:unset; box-sizing:border-box; width:30px; height:26px; display:grid; place-items:center; border-radius:999px;
+  font-size:12.5px; font-weight:700; color:var(--ink-faint); cursor:pointer; transition:.2s; text-align:center;
+}
+.tswitch-btn:hover{color:var(--accent)}
+.tswitch-btn.active{background:var(--accent); color:#fff}
+
+/* =======================================================================
+   خلفية رياضية متحركة (ثابتة خلف كل المحتوى)
+   ======================================================================= */
+.math-bg{position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none}
+.mb-sym{
+  position:absolute; left:var(--x); top:var(--y); font-size:var(--s); font-family:var(--font-head);
+  font-weight:700; color:var(--accent); opacity:.08; line-height:1; will-change:transform;
+  animation:mbFloat var(--du) ease-in-out infinite; animation-delay:var(--d);
+}
+@keyframes mbFloat{
+  0%,100%{ transform:translate(0,0) rotate(0deg); }
+  25%{ transform:translate(8px,-16px) rotate(4deg); }
+  50%{ transform:translate(-6px,-26px) rotate(-3deg); }
+  75%{ transform:translate(-10px,-10px) rotate(3deg); }
+}
+@media (prefers-reduced-motion: reduce){ .mb-sym{animation:none} }
 
 /* =======================================================================
    شاشة اختيار الفرقة (Splash)
@@ -457,10 +479,10 @@ figure:hover img{transform:scale(1.015)}
 .intro-skip:hover{ color:var(--accent); border-color:var(--accent) }
 
 /* =======================================================================
-   قائمة الهامبرغر + الدرج الجانبي
+   قائمة الهامبرغر: تنسدل من الأعلى ولا تغطي العناوين
    ======================================================================= */
 .hamburger{
-  position:fixed; top:calc(env(safe-area-inset-top,0px) + 14px); right:16px; z-index:55;
+  position:fixed; top:calc(env(safe-area-inset-top,0px) + 14px); right:16px; z-index:57;
   width:46px; height:46px; border-radius:12px; border:1px solid var(--line); background:var(--surface);
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; box-shadow:var(--shadow);
   transition:.2s;
@@ -471,42 +493,47 @@ figure:hover img{transform:scale(1.015)}
 .hamburger.open span:nth-child(2){opacity:0}
 .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
-.drawer-overlay{
-  position:fixed; inset:0; z-index:53; background:rgba(8,14,20,.5); backdrop-filter:blur(2px);
-  opacity:0; visibility:hidden; transition:opacity .3s, visibility .3s;
+/* طبقة شفافة تلتقط الضغط خارج القائمة لغلقها دون تغطية أي محتوى بصرياً */
+.menu-catcher{
+  position:fixed; inset:0; z-index:51; background:transparent;
+  opacity:0; visibility:hidden; pointer-events:none;
 }
-.drawer-overlay.open{opacity:1; visibility:visible}
-.drawer{
-  position:fixed; top:0; bottom:0; right:0; width:min(340px,86vw); z-index:54; background:var(--surface);
-  border-inline-start:1px solid var(--line); box-shadow:-10px 0 40px rgba(0,0,0,.22);
-  transform:translateX(100%); transition:transform .35s cubic-bezier(.2,.9,.25,1);
-  display:flex; flex-direction:column;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+.menu-catcher.open{ visibility:visible; pointer-events:auto }
+
+.topmenu{
+  position:fixed; left:0; right:0; top:var(--topbar-h,64px); z-index:52;
+  background:var(--surface); border-bottom:1px solid var(--line); box-shadow:0 18px 44px rgba(0,0,0,.2);
+  display:grid; grid-template-rows:0fr; transition:grid-template-rows .38s cubic-bezier(.2,.9,.25,1);
 }
-.drawer.open{transform:translateX(0)}
-.drawer-head{display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--line)}
-.drawer-head h3{margin:0; font-family:var(--font-head); font-size:20px}
-.drawer-body{flex:1; overflow-y:auto; padding:10px 8px}
-.dw-row{display:flex; align-items:center; gap:4px}
-.dw-link{
+.topmenu.open{grid-template-rows:1fr}
+.topmenu > .tm-row{ overflow:hidden; min-height:0 }
+.tm-scroll{ max-height:min(70vh,560px); overflow-y:auto; padding:14px 16px calc(20px + env(safe-area-inset-bottom,0px)) }
+.tm-group{ margin-bottom:6px }
+.tm-group-label{
+  padding:12px 10px 8px; font-size:12.5px; font-weight:700; color:var(--ink-faint); letter-spacing:.02em;
+}
+.tm-row-flex{display:flex; align-items:center; gap:4px}
+.tm-link{
   all:unset; box-sizing:border-box; flex:1; display:block; text-align:right; color:var(--ink);
-  font:inherit; padding:12px 12px; border-radius:10px; cursor:pointer;
+  font:inherit; padding:12px 14px; border-radius:10px; cursor:pointer;
 }
-.dw-link:hover{background:var(--surface-2); color:var(--accent)}
-.dw-toggle{
+.tm-link:hover{background:var(--surface-2); color:var(--accent)}
+.tm-link.active{background:var(--accent-soft); color:var(--accent); font-weight:700}
+.tm-toggle{
   all:unset; box-sizing:border-box; flex:none; width:30px; height:30px; border-radius:8px; color:var(--ink-faint);
   display:grid; place-items:center; font-size:12px; cursor:pointer; transition:transform .25s, color .2s;
 }
-.dw-toggle:hover{color:var(--accent)}
-.dw-item.open > .dw-row .dw-toggle{transform:rotate(180deg); color:var(--accent)}
-.dw-sub{display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s ease}
-.dw-item.open .dw-sub{grid-template-rows:1fr}
-.dw-sub > div{overflow:hidden}
-.dw-sub a, .dw-sublink{
+.tm-toggle:hover{color:var(--accent)}
+.tm-item.open > .tm-row-flex .tm-toggle{transform:rotate(180deg); color:var(--accent)}
+.tm-sub{display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s ease}
+.tm-item.open .tm-sub{grid-template-rows:1fr}
+.tm-sub > div{overflow:hidden}
+.tm-sub a, .tm-sublink{
   all:unset; box-sizing:border-box; display:block; padding:9px 14px; margin:2px 10px 2px 18px;
   border-radius:8px; font-size:13.5px; color:var(--ink-soft); text-align:right; cursor:pointer;
 }
-.dw-sub a:hover, .dw-sublink:hover{background:var(--surface-2); color:var(--accent)}
+.tm-sub a:hover, .tm-sublink:hover{background:var(--surface-2); color:var(--accent)}
+.tm-sep{height:1px; background:var(--line); margin:8px 10px}
 
 /* تمييز مؤقت عند القفز لعنصر من القائمة */
 .block.flash{ animation:blockFlash 1.6s ease }
@@ -514,9 +541,37 @@ figure:hover img{transform:scale(1.015)}
   0%{box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 45%, transparent); border-radius:10px}
   100%{box-shadow:0 0 0 0 transparent; border-radius:10px}
 }
+
+/* ===== أزرار محاذاة النص (محرّر الفقرات) ===== */
+.align-group{display:flex; gap:6px; flex-wrap:wrap}
+.align-btn[aria-pressed="true"]{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inherit; padding:0 4px; border-radius:4px}
+
+/* ===== قسم مثبّت (لا يُطوى أبداً — مثل قسم التعريف) ===== */
+.section.pinned .sec-head-static{display:flex; align-items:flex-start; gap:12px; cursor:default}
+.pin-badge{
+  display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; color:var(--accent);
+  background:var(--accent-soft); border-radius:999px; padding:2px 10px; margin-inline-start:10px; vertical-align:middle;
+}
 </style>
 </head>
 <body>
+
+<!-- ===== خلفية رياضية متحركة هادئة (ثابتة خلف كل شيء) ===== -->
+<div class="math-bg" aria-hidden="true">
+  <span class="mb-sym" style="--x:5%;  --y:10%; --s:50px; --d:0s;   --du:17s">π</span>
+  <span class="mb-sym" style="--x:89%; --y:8%;  --s:56px; --d:2s;   --du:19s">∑</span>
+  <span class="mb-sym" style="--x:10%; --y:76%; --s:48px; --d:4s;   --du:16s">∫</span>
+  <span class="mb-sym" style="--x:82%; --y:72%; --s:52px; --d:1s;   --du:21s">√x</span>
+  <span class="mb-sym" style="--x:46%; --y:88%; --s:60px; --d:3s;   --du:15s">∞</span>
+  <span class="mb-sym" style="--x:30%; --y:38%; --s:40px; --d:5s;   --du:22s">Δ</span>
+  <span class="mb-sym" style="--x:68%; --y:44%; --s:42px; --d:2.5s; --du:18s">θ</span>
+  <span class="mb-sym" style="--x:18%; --y:20%; --s:34px; --d:6s;   --du:20s">π</span>
+  <span class="mb-sym" style="--x:93%; --y:58%; --s:38px; --d:1.5s; --du:23s">∑</span>
+  <span class="mb-sym" style="--x:55%; --y:6%;  --s:36px; --d:4.5s; --du:16s">√</span>
+  <span class="mb-sym" style="--x:38%; --y:60%; --s:32px; --d:3.5s; --du:19s">∫</span>
+  <span class="mb-sym" style="--x:74%; --y:16%; --s:30px; --d:0.8s; --du:24s">∞</span>
+</div>
 
 <!-- ===== شاشة الترحيب الافتتاحية (Intro) ===== -->
 <div class="intro-splash" id="introSplash" aria-hidden="true">
@@ -578,26 +633,23 @@ figure:hover img{transform:scale(1.015)}
   </div>
 </div>
 
-<header class="topbar">
+<header class="topbar" id="topbar">
   <div class="wrap topbar-in">
     <h2 class="brand" id="brandName">منصّة المحتوى</h2>
     <nav class="navchips" id="nav"></nav>
-    <button class="track-pill" data-act="switch-track" title="تغيير الفرقة الدراسية">
-      <span id="trackPillText">اختر فرقتك</span> ⇄
-    </button>
+    <div class="tswitch" role="group" aria-label="تبديل الفرقة">
+      <button class="tswitch-btn" id="tsw1" data-act="choose-track" data-track="math1" type="button" title="Math 1 — أولى">1</button>
+      <button class="tswitch-btn" id="tsw2" data-act="choose-track" data-track="math2" type="button" title="Math 2 — تانية">2</button>
+    </div>
   </div>
 </header>
 
-<button class="hamburger" id="hamburgerBtn" data-act="hamburger-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false">
+<button class="hamburger" id="hamburgerBtn" data-act="menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false">
   <span></span><span></span><span></span>
 </button>
-<div class="drawer-overlay" id="drawerOverlay" data-act="drawer-close"></div>
-<nav class="drawer" id="drawer" aria-hidden="true">
-  <div class="drawer-head">
-    <h3>الأقسام</h3>
-    <button class="btn sm ghost" data-act="drawer-close" type="button">✕</button>
-  </div>
-  <div class="drawer-body" id="drawerList"></div>
+<div class="menu-catcher" id="menuCatcher" data-act="menu-close"></div>
+<nav class="topmenu" id="topMenu" aria-hidden="true">
+  <div class="tm-row"><div class="tm-scroll" id="topMenuList"></div></div>
 </nav>
  
 <div class="adminbar">
@@ -683,18 +735,18 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200);
 }
 function setStatus(txt){ $('#status').textContent = txt; }
-
+ 
 /* =======================================================================
    0) اختيار الفرقة الدراسية (Math 1 / Math 2)
    ======================================================================= */
 const TRACK_KEY = 'site_track_v1';
 let currentTrack = null;      // 'math1' | 'math2'
 let openSections  = new Set(); // أقسام مفتوحة حالياً (طيّ/فتح)
-
+ 
 function loadTrack(){ try{ return localStorage.getItem(TRACK_KEY); }catch(e){ return null; } }
 function saveTrack(t){ try{ localStorage.setItem(TRACK_KEY, t); }catch(e){} }
 function trackLabel(t){ return t==='math2' ? 'Math 2 — تانية' : 'Math 1 — أولى'; }
-
+ 
 function openSplash(){
   const el = $('#trackSplash'); if(!el) return;
   el.classList.remove('hide'); el.setAttribute('aria-hidden','false');
@@ -709,7 +761,9 @@ function setTrack(t, opts){
   opts = opts || {};
   currentTrack = t;
   saveTrack(t);
-  const pill = $('#trackPillText'); if(pill) pill.textContent = trackLabel(t);
+  const b1 = $('#tsw1'), b2 = $('#tsw2');
+  if(b1) b1.classList.toggle('active', t==='math1');
+  if(b2) b2.classList.toggle('active', t==='math2');
   const sel = $('#qaTrackSel'); if(sel) sel.value = t;
   render();
   renderQA();
@@ -723,7 +777,7 @@ function trackTagLabel(t){
   if(t==='math2') return 'Math 2 فقط';
   return 'الفرقتان';
 }
-
+ 
 /* =======================================================================
    0.5) شاشة الترحيب الافتتاحية (Intro)
    ======================================================================= */
@@ -745,24 +799,28 @@ function playIntro(){
     setTimeout(finish, 2800);
   });
 }
-
+ 
 /* =======================================================================
-   0.6) قائمة الهامبرغر الديناميكية (تُبنى تلقائياً من الأقسام والمحتوى)
+   0.6) القائمة العلوية المنسدلة (تنزل من أعلى دون تغطية العناوين)
+   تُبنى تلقائياً من الأقسام والمحتوى — تشمل "مواد التخصص" (Math 1 / Math 2)
    ======================================================================= */
-function openDrawer(){
-  $('#drawer').classList.add('open'); $('#drawer').setAttribute('aria-hidden','false');
-  $('#drawerOverlay').classList.add('open');
-  $('#hamburgerBtn').classList.add('open'); $('#hamburgerBtn').setAttribute('aria-expanded','true');
-  document.body.style.overflow = 'hidden';
+function syncTopbarHeight(){
+  const tb = $('#topbar'); if(!tb) return;
+  document.documentElement.style.setProperty('--topbar-h', tb.offsetHeight + 'px');
 }
-function closeDrawer(){
-  $('#drawer').classList.remove('open'); $('#drawer').setAttribute('aria-hidden','true');
-  $('#drawerOverlay').classList.remove('open');
+function openMenu(){
+  syncTopbarHeight();
+  $('#topMenu').classList.add('open'); $('#topMenu').setAttribute('aria-hidden','false');
+  $('#menuCatcher').classList.add('open');
+  $('#hamburgerBtn').classList.add('open'); $('#hamburgerBtn').setAttribute('aria-expanded','true');
+}
+function closeMenu(){
+  $('#topMenu').classList.remove('open'); $('#topMenu').setAttribute('aria-hidden','true');
+  $('#menuCatcher').classList.remove('open');
   $('#hamburgerBtn').classList.remove('open'); $('#hamburgerBtn').setAttribute('aria-expanded','false');
-  if(!$('#trackSplash') || $('#trackSplash').classList.contains('hide')) document.body.style.overflow = '';
 }
 /* يبني قائمة العناصر الفرعية لأي قسم: العناوين الفرعية وعناصر الروابط داخله */
-function drawerSubitems(sec){
+function menuSubitems(sec){
   const subs = [];
   (sec.blocks||[]).forEach(b=>{
     if(b.type==='text' && b.style==='heading' && (b.text||'').trim()){
@@ -773,32 +831,44 @@ function drawerSubitems(sec){
   });
   return subs;
 }
-function renderDrawer(){
-  const list = $('#drawerList'); if(!list) return;
+function renderTopMenu(){
+  const list = $('#topMenuList'); if(!list) return;
   const secs = visibleSections();
-  if(!secs.length){ list.innerHTML = '<p class="qa-empty" style="padding:24px">لا توجد أقسام بعد.</p>'; return; }
-  list.innerHTML = secs.map(s=>{
-    const subs = drawerSubitems(s);
+ 
+  let html = `
+    <div class="tm-group">
+      <div class="tm-group-label">📚 مواد التخصص</div>
+      <button class="tm-link ${currentTrack==='math1'?'active':''}" data-act="menu-switch-track" data-track="math1" type="button">Math 1 — أولى</button>
+      <button class="tm-link ${currentTrack==='math2'?'active':''}" data-act="menu-switch-track" data-track="math2" type="button">Math 2 — تانية</button>
+    </div>
+    <div class="tm-sep"></div>
+    <div class="tm-group-label">الأقسام</div>`;
+ 
+  html += secs.length ? secs.map(s=>{
+    const subs = menuSubitems(s);
     const hasSub = subs.length>0;
-    return `<div class="dw-item" data-drawer-sec="${s.id}">
-      <div class="dw-row">
-        <button class="dw-link" data-act="dw-goto-section" data-id="${s.id}" type="button">${esc(s.title)}</button>
-        ${hasSub ? `<button class="dw-toggle" data-act="dw-toggle" type="button" aria-label="توسيع/طيّ">▼</button>` : ''}
+    return `<div class="tm-item" data-menu-sec="${s.id}">
+      <div class="tm-row-flex">
+        <button class="tm-link" data-act="menu-goto-section" data-id="${s.id}" type="button">${esc(s.title)}</button>
+        ${hasSub ? `<button class="tm-toggle" data-act="tm-toggle" type="button" aria-label="توسيع/طيّ">▼</button>` : ''}
       </div>
-      ${hasSub ? `<div class="dw-sub"><div>
+      ${hasSub ? `<div class="tm-sub"><div>
         ${subs.map(su => su.url
             ? `<a href="${esc(su.url)}" target="_blank" rel="noopener">${esc(su.label)}</a>`
-            : `<button class="dw-sublink" data-act="dw-goto-block" data-sec="${su.secId}" data-block="${su.blockId}" type="button">${esc(su.label)}</button>`
+            : `<button class="tm-sublink" data-act="menu-goto-block" data-sec="${su.secId}" data-block="${su.blockId}" type="button">${esc(su.label)}</button>`
           ).join('')}
       </div></div>` : ''}
     </div>`;
-  }).join('');
+  }).join('') : '<p class="qa-empty" style="padding:20px">لا توجد أقسام بعد.</p>';
+ 
+  list.innerHTML = html;
 }
-function drawerGoto(secId, blockId){
+function menuGoto(secId, blockId){
   openSections.add(secId);
   const secEl = document.getElementById('sec-'+secId);
   if(secEl) secEl.classList.add('open');
-  closeDrawer();
+  closeMenu();
+  try{ history.replaceState(null, '', '#sec-'+secId); }catch(e){}
   setTimeout(()=>{
     if(!secEl) return;
     if(blockId){
@@ -834,6 +904,7 @@ function fmt(text){
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/(^|\W)\*(.+?)\*(?=\W|$)/g,'$1<em>$2</em>')
     .replace(/`(.+?)`/g,'<code>$1</code>')
+    .replace(/==(.+?)==/g,'<mark class="hl">$1</mark>')
     .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
   for(const line of lines){
     const t=line.trim();
@@ -847,15 +918,16 @@ function fmt(text){
 }
 
 /* خطوات الحل: سطر لكل خطوة → بطاقات مرقّمة */
-function stepsHtml(text){
+function stepsHtml(text, align){
   const inline = t => esc(t)
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/(^|\W)\*(.+?)\*(?=\W|$)/g,'$1<em>$2</em>')
     .replace(/`(.+?)`/g,'<code>$1</code>')
+    .replace(/==(.+?)==/g,'<mark class="hl">$1</mark>')
     .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
   const lines = String(text||'').split(/\n/).map(l=>l.trim().replace(/^[-•]\s+/,'')).filter(Boolean);
   if(!lines.length) return '';
-  return '<ol class="b-steps">' + lines.map(l=>'<li>'+inline(l)+'</li>').join('') + '</ol>';
+  return `<ol class="b-steps" style="text-align:${align||'right'}">` + lines.map(l=>'<li>'+inline(l)+'</li>').join('') + '</ol>';
 }
  
 /* استخراج مشغّل الفيديو من الرابط */
@@ -889,7 +961,7 @@ const VARS = {
 };
  
 function defaultTheme(){
-  return { mode:'auto', headFont:'Amiri', bodyFont:'IBM Plex Sans Arabic',
+  return { mode:'auto', headFont:'Tajawal', bodyFont:'Tajawal',
            fontSize:17, headScale:1, width:900, radius:14, colors:{} };
 }
  
@@ -1058,10 +1130,10 @@ function defaultSite(){
     auth:{ passHash:null },
     theme: defaultTheme(),
     sections:[
-      { id:uid(), title:'نبذة تعريفية', desc:'ابدأ من هنا: عرّف بنفسك أو بمشروعك في فقرة قصيرة.', track:'all',
+      { id:uid(), title:'نبذة تعريفية', desc:'ابدأ من هنا: عرّف بنفسك أو بمشروعك في فقرة قصيرة.', track:'all', pinned:true,
         blocks:[
-          { id:uid(), type:'text', style:'paragraph', text:'هذا نصّ تجريبي يمكنك استبداله بالكامل. اضغط على زر القفل أسفل الصفحة، أدخل كلمة المرور، ثم عدّل أي شيء تراه.\nيدعم المحرّر تنسيقات بسيطة مثل **العريض** و*المائل* والقوائم:\n- عنصر أول\n- عنصر ثانٍ' },
-          { id:uid(), type:'text', style:'note', text:'نصيحة: استخدم "ملاحظة" للأشياء المهمة، و"اقتباس" للعبارات اللافتة. استخدم حقل «يظهر لِـ» عند تعديل أي قسم لتخصيصه بفرقة Math 1 أو Math 2 فقط.' }
+          { id:uid(), type:'text', style:'paragraph', text:'هذا نصّ تجريبي يمكنك استبداله بالكامل. اضغط على زر القفل أسفل الصفحة، أدخل كلمة المرور، ثم عدّل أي شيء تراه.\nيدعم المحرّر تنسيقات بسيطة مثل **العريض** و*المائل* و==نص مظلّل== والقوائم:\n- عنصر أول\n- عنصر ثانٍ' },
+          { id:uid(), type:'text', style:'note', text:'نصيحة: استخدم "ملاحظة" للأشياء المهمة، و"اقتباس" للعبارات اللافتة. استخدم حقل «يظهر لِـ» عند تعديل أي قسم لتخصيصه بفرقة Math 1 أو Math 2 فقط. هذا القسم مثبّت ولا يُطوى أبداً.' }
         ] },
       { id:uid(), title:'المحاضرات', desc:'محاضرات الفرقة الأولى (Math 1).', track:'math1',
         blocks:[ { id:uid(), type:'text', style:'paragraph', text:'أضف روابط أو ملفات المحاضرات من هنا (زر ＋ إضافة محتوى).' } ] },
@@ -1359,31 +1431,37 @@ function render(){
   $('#heroCover').innerHTML = site.meta.cover
     ? `<div class="hero-cover"><img src="${esc(site.meta.cover)}" alt=""></div>` : '';
  
-  const pill = $('#trackPillText');
-  if(pill) pill.textContent = currentTrack ? trackLabel(currentTrack) : 'اختر فرقتك';
+  const b1 = $('#tsw1'), b2 = $('#tsw2');
+  if(b1) b1.classList.toggle('active', currentTrack==='math1');
+  if(b2) b2.classList.toggle('active', currentTrack==='math2');
 
   const secs = visibleSections();
   $('#nav').innerHTML = secs
     .map(s=>`<a class="chip" href="#sec-${esc(s.id)}">${esc(s.title)}</a>`).join('');
  
   $('#sections').innerHTML = secs.map((s,i)=>renderSection(s,i,secs)).join('');
-  renderDrawer();
+  renderTopMenu();
 }
  
 function renderSection(s, i, secs){
   const last = (secs||site.sections).length-1;
-  const isOpen = openSections.has(s.id);
+  const isOpen = s.pinned || openSections.has(s.id);
+  const titleInner = `${esc(s.title)}<span class="sec-track-tag">${trackTagLabel(s.track)}</span>${s.pinned?'<span class="pin-badge">📌 مثبّت</span>':''}`;
+  const headInner = `
+          <span style="flex:1; min-width:0">
+            <h2 class="sec-title">${titleInner}</h2>
+            ${s.desc ? `<p class="sec-desc">${esc(s.desc)}</p>` : ''}
+          </span>`;
+  const headBtn = s.pinned
+    ? `<div class="sec-head-static">${headInner}</div>`
+    : `<button class="sec-head-btn" data-act="sec-toggle" data-id="${s.id}" type="button" aria-expanded="${isOpen}">
+          <span class="sec-chevron">▾</span>${headInner}
+        </button>`;
   return `
-  <section class="section ${isOpen?'open':''}" id="sec-${esc(s.id)}">
+  <section class="section ${isOpen?'open':''} ${s.pinned?'pinned':''}" id="sec-${esc(s.id)}">
     <div class="wrap">
       <div class="sec-head">
-        <button class="sec-head-btn" data-act="sec-toggle" data-id="${s.id}" type="button" aria-expanded="${isOpen}">
-          <span class="sec-chevron">▾</span>
-          <span style="flex:1; min-width:0">
-            <h2 class="sec-title">${esc(s.title)}<span class="sec-track-tag">${trackTagLabel(s.track)}</span></h2>
-            ${s.desc ? `<p class="sec-desc">${esc(s.desc)}</p>` : ''}
-          </span>
-        </button>
+        ${headBtn}
         <div class="tools">
           <button class="btn sm" data-act="sec-up" data-id="${s.id}" ${i===0?'disabled':''} title="لأعلى">▲</button>
           <button class="btn sm" data-act="sec-down" data-id="${s.id}" ${i===last?'disabled':''} title="لأسفل">▼</button>
@@ -1414,14 +1492,16 @@ function renderBlock(b, secId, j, last){
     </div>`;
   let body='';
   if(b.type==='text'){
-    if(b.style==='heading')      body = `<h3 class="b-h">${esc(b.text)}</h3>`;
-    else if(b.style==='quote')   body = `<blockquote class="b-quote">${fmt(b.text)}</blockquote>`;
-    else if(b.style==='note')    body = `<div class="b-note">${fmt(b.text)}</div>`;
-    else if(b.style==='formula') body = `<div class="b-formula">${fmt(b.text)}</div>`;
-    else if(b.style==='steps')   body = stepsHtml(b.text);
-    else if(b.style==='key')     body = `<div class="b-key">${fmt(b.text)}</div>`;
-    else if(b.style==='theorem') body = `<div class="b-theorem"><span class="b-theorem-tag">نظرية / تعريف</span>${fmt(b.text)}</div>`;
-    else                         body = `<div class="b-p">${fmt(b.text)}</div>`;
+    const align = b.align || 'right';
+    const alignAttr = ` style="text-align:${align}"`;
+    if(b.style==='heading')      body = `<h3 class="b-h"${alignAttr}>${esc(b.text)}</h3>`;
+    else if(b.style==='quote')   body = `<blockquote class="b-quote"${alignAttr}>${fmt(b.text)}</blockquote>`;
+    else if(b.style==='note')    body = `<div class="b-note"${alignAttr}>${fmt(b.text)}</div>`;
+    else if(b.style==='formula') body = `<div class="b-formula"${alignAttr}>${fmt(b.text)}</div>`;
+    else if(b.style==='steps')   body = stepsHtml(b.text, align);
+    else if(b.style==='key')     body = `<div class="b-key"${alignAttr}>${fmt(b.text)}</div>`;
+    else if(b.style==='theorem') body = `<div class="b-theorem"${alignAttr}><span class="b-theorem-tag">نظرية / تعريف</span>${fmt(b.text)}</div>`;
+    else                         body = `<div class="b-p"${alignAttr}>${fmt(b.text)}</div>`;
   }
   else if(b.type==='image'){
     body = `<figure><img src="${esc(b.url)}" alt="${esc(b.caption||'')}" loading="lazy">
@@ -1490,12 +1570,16 @@ function sectionModal(sec){
         <option value="math1" ${s.track==='math1'?'selected':''}>Math 1 — أولى فقط</option>
         <option value="math2" ${s.track==='math2'?'selected':''}>Math 2 — تانية فقط</option>
       </select></div>
+    <div class="field"><label style="display:flex; align-items:center; gap:8px; font-weight:400">
+      <input type="checkbox" id="spin" ${s.pinned?'checked':''} style="width:auto">
+      📌 تثبيت القسم مفتوحاً دائماً (مثل قسم التعريف) — لا يُطوى أبداً
+    </label></div>
     ${isNew?'':`<div class="field"><label for="so">ترتيب القسم</label><select id="so">${
       site.sections.map((x,i)=>`<option value="${i}" ${x.id===s.id?'selected':''}>${i+1}</option>`).join('')}</select></div>`}
   `, footSave(), ()=>{
     const title = $('#st').value.trim();
     if(!title){ toast('اكتب اسم القسم'); return false; }
-    s.title=title; s.desc=$('#sd').value.trim(); s.track=$('#strk').value;
+    s.title=title; s.desc=$('#sd').value.trim(); s.track=$('#strk').value; s.pinned=$('#spin').checked;
     if(isNew) site.sections.push(s);
     else {
       const to = parseInt($('#so').value,10);
@@ -1536,8 +1620,15 @@ function blockModal(secId, block, type){
           <option value="key"       ${b.style==='key'?'selected':''}>💡 مفهوم أساسي</option>
           <option value="theorem"   ${b.style==='theorem'?'selected':''}>📐 نظرية / تعريف</option>
         </select></div>
+      <div class="field"><label>محاذاة النص</label>
+        <div class="align-group">
+          <button type="button" class="btn sm align-btn" data-act="pick-align" data-align="right"  aria-pressed="${(b.align||'right')==='right'}">⇥ يمين</button>
+          <button type="button" class="btn sm align-btn" data-act="pick-align" data-align="center" aria-pressed="${b.align==='center'}">↔ في النص</button>
+          <button type="button" class="btn sm align-btn" data-act="pick-align" data-align="left"   aria-pressed="${b.align==='left'}">⇤ يسار</button>
+        </div>
+        <input type="hidden" id="balign" value="${b.align||'right'}"></div>
       <div class="field"><label for="bt">النص</label><textarea id="bt">${esc(b.text)}</textarea>
-        <p class="hint">التنسيق: **عريض** ، *مائل* ، `+"`كود`"+` ، [نص](رابط) ، وسطر يبدأ بـ - يصبح قائمة.
+        <p class="hint">التنسيق: **عريض** ، *مائل* ، `+"`كود`"+` ، [نص](رابط) ، ==تظليل== ، وسطر يبدأ بـ - يصبح قائمة.
         لـ«خطوات الحل» اكتب كل خطوة في سطر منفصل.</p></div>`;
   }
   else if(b.type==='image'){
@@ -1559,7 +1650,11 @@ function blockModal(secId, block, type){
     }</div><button class="btn sm" data-act="add-link" type="button">＋ رابط آخر</button></div>`;
   }
   openModal(isNew?'إضافة محتوى':'تعديل المحتوى', body, footSave(), ()=>{
-    if(b.type==='text'){ b.style=$('#bs').value; b.text=$('#bt').value; if(!b.text.trim()){toast('اكتب النص');return false;} }
+    if(b.type==='text'){
+      b.style=$('#bs').value; b.text=$('#bt').value;
+      b.align = $('#balign') ? $('#balign').value : 'right';
+      if(!b.text.trim()){toast('اكتب النص');return false;}
+    }
     if(b.type==='image'||b.type==='video'){
       b.url=$('#bu').value.trim(); b.caption=$('#bc').value.trim();
       if(!b.url){ toast('أضف رابطاً أولاً'); return false; }
@@ -1637,8 +1732,9 @@ document.addEventListener('click', async e=>{
   if(act==='del-link'){ t.parentElement.remove(); return; }
 
   if(act==='choose-track'){ closeSplash(); setTrack(t.dataset.track); return; }
-  if(act==='switch-track'){ openSplash(); return; }
   if(act==='sec-toggle'){
+    const sec = findSec(id);
+    if(sec && sec.pinned) return; // القسم المثبّت لا يُطوى أبداً
     if(openSections.has(id)) openSections.delete(id); else openSections.add(id);
     const el = document.getElementById('sec-'+id);
     if(el){ el.classList.toggle('open'); t.setAttribute('aria-expanded', el.classList.contains('open')); }
@@ -1650,14 +1746,20 @@ document.addEventListener('click', async e=>{
     if(row) qaAnswerFlow(row);
     return;
   }
-  if(act==='hamburger-toggle'){
-    if($('#drawer').classList.contains('open')) closeDrawer(); else openDrawer();
+  if(act==='menu-toggle'){
+    if($('#topMenu').classList.contains('open')) closeMenu(); else openMenu();
     return;
   }
-  if(act==='drawer-close'){ closeDrawer(); return; }
-  if(act==='dw-toggle'){ t.closest('.dw-item')?.classList.toggle('open'); return; }
-  if(act==='dw-goto-section'){ drawerGoto(id); return; }
-  if(act==='dw-goto-block'){ drawerGoto(t.dataset.sec, t.dataset.block); return; }
+  if(act==='menu-close'){ closeMenu(); return; }
+  if(act==='tm-toggle'){ t.closest('.tm-item')?.classList.toggle('open'); return; }
+  if(act==='menu-goto-section'){ menuGoto(id); return; }
+  if(act==='menu-goto-block'){ menuGoto(t.dataset.sec, t.dataset.block); return; }
+  if(act==='menu-switch-track'){ closeMenu(); setTrack(t.dataset.track); return; }
+  if(act==='pick-align'){
+    document.querySelectorAll('.align-btn').forEach(b=>b.setAttribute('aria-pressed', b===t ? 'true':'false'));
+    const hid = $('#balign'); if(hid) hid.value = t.dataset.align;
+    return;
+  }
  
   if(!isAdmin) return; // كل ما تحت هذا السطر للمحرّر فقط
  
@@ -1729,22 +1831,26 @@ $('#overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') closeMo
 document.addEventListener('keydown', e=>{
   if(e.key==='Escape'){
     closeModal();
-    if($('#drawer')?.classList.contains('open')) closeDrawer();
+    if($('#topMenu')?.classList.contains('open')) closeMenu();
   }
   if(e.key==='Enter' && $('#overlay').classList.contains('open') && e.target.tagName!=='TEXTAREA' && onSaveModal){ e.preventDefault(); onSaveModal(); }
 });
+window.addEventListener('resize', syncTopbarHeight);
  
 /* =======================================================================
    7) الإقلاع
    ======================================================================= */
 (async function start(){
   render();
+  syncTopbarHeight();
   const introPromise = playIntro();
   await Store.init(render);
   render();
+  syncTopbarHeight();
   if(!site.auth.passHash){ site.auth.passHash = await hashPass(CONFIG.DEFAULT_PASSWORD); }
 
   await introPromise;
+  syncTopbarHeight();
 
   currentTrack = loadTrack();
   if(currentTrack){ setTrack(currentTrack, {silent:true}); closeSplash(); }
