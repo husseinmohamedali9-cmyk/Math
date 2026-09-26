@@ -267,15 +267,11 @@ footer{padding:40px 0; text-align:center; color:var(--ink-faint); font-size:14px
 .rng output{font-size:13px; color:var(--ink-faint); min-width:54px; text-align:center}
 hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 @media (prefers-reduced-motion: reduce){*{transition:none !important; scroll-behavior:auto !important}}
-@media print{.topbar,.adminbar,.fab,.block-tools,.addblock,.track-splash,.tswitch,.hamburger,.topmenu,.menu-catcher,.math-bg,.intro-splash{display:none !important}}
+@media print{.topbar,.adminbar,.fab,.block-tools,.addblock,.track-splash,.tswitch,.hamburger,.topmenu,.menu-catcher,.math-bg,.intro-splash,.notif-drawer,.notif-catcher,.notif-btn{display:none !important}}
 
 /* =======================================================================
-   خلفية رياضية خفيفة + رموز زخرفية
+   خلفية رياضية خفيفة + رموز زخرفية (النمط الفعلي يُحدَّد عبر data-bgpattern أسفل الملف)
    ======================================================================= */
-body{
-  background-image: radial-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1.4px);
-  background-size: 26px 26px;
-}
 .hero{position:relative; overflow:hidden}
 .hero::before,.hero::after{
   content:''; position:absolute; font-family:var(--font-head); font-weight:700;
@@ -553,6 +549,151 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
   display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; color:var(--accent);
   background:var(--accent-soft); border-radius:999px; padding:2px 10px; margin-inline-start:10px; vertical-align:middle;
 }
+
+/* =======================================================================
+   شعار الموقع
+   ======================================================================= */
+.brand-wrap{display:flex; align-items:center; gap:10px; min-width:0}
+.brand-logo{width:34px; height:34px; border-radius:9px; object-fit:cover; flex:none; box-shadow:var(--shadow)}
+.brand{overflow:hidden; text-overflow:ellipsis}
+
+/* =======================================================================
+   جرس الإشعارات (أعلى يسار الترويسة)
+   ======================================================================= */
+.notif-btn{
+  position:fixed; top:calc(env(safe-area-inset-top,0px) + 14px); left:16px; z-index:57;
+  width:44px; height:44px; border-radius:12px; border:1px solid var(--line);
+  background:var(--surface); color:var(--ink-soft); display:grid; place-items:center; font-size:18px;
+  box-shadow:var(--shadow); transition:.2s;
+}
+.notif-btn:hover{border-color:var(--accent); color:var(--accent)}
+.notif-badge{
+  position:absolute; top:-4px; inset-inline-end:-4px; min-width:18px; height:18px; padding:0 4px; border-radius:999px;
+  background:var(--danger); color:#fff; font-size:11px; font-weight:700; display:grid; place-items:center;
+  border:2px solid var(--bg); line-height:1;
+}
+.notif-badge.zero{display:none}
+.notif-catcher{
+  position:fixed; inset:0; z-index:71; background:rgba(8,14,20,.4); opacity:0; visibility:hidden; pointer-events:none; transition:.25s;
+}
+.notif-catcher.open{opacity:1; visibility:visible; pointer-events:auto}
+.notif-drawer{
+  position:fixed; top:0; bottom:0; left:0; z-index:72; width:min(88vw,360px);
+  background:var(--surface); box-shadow:0 0 40px rgba(0,0,0,.3); border-right:1px solid var(--line);
+  transform:translateX(-100%); transition:transform .32s cubic-bezier(.2,.9,.25,1);
+  display:flex; flex-direction:column;
+}
+.notif-drawer.open{transform:translateX(0)}
+.notif-head{display:flex; align-items:center; gap:10px; padding:18px 20px; border-bottom:1px solid var(--line)}
+.notif-head h3{margin:0; font-family:var(--font-head); font-size:19px; flex:1}
+.notif-list{flex:1; overflow-y:auto; padding:10px 14px 20px}
+.notif-item{
+  padding:13px 14px; border-radius:12px; background:var(--surface-2); margin-bottom:8px; border:1px solid var(--line);
+  font-size:14px; line-height:1.7;
+}
+.notif-item-top{display:flex; align-items:center; gap:6px; margin-bottom:4px}
+.notif-item-track{font-size:11px; padding:1px 8px; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-weight:600}
+.notif-item-date{font-size:12px; color:var(--ink-faint); margin-inline-start:auto}
+.notif-empty{color:var(--ink-faint); text-align:center; padding:34px 10px; font-size:14px}
+.notif-admin-row{display:flex; gap:8px; align-items:center; margin-bottom:8px}
+.notif-admin-row .txt{flex:1; font-size:13.5px}
+
+/* =======================================================================
+   القائمة الجانبية (Side Drawer) — بدل الانسدال من الأعلى
+   ======================================================================= */
+.topmenu{
+  position:fixed; top:0; bottom:0; right:0; z-index:52; width:min(88vw,340px);
+  background:var(--surface); border-left:1px solid var(--line); box-shadow:0 0 44px rgba(0,0,0,.28);
+  display:block; grid-template-rows:unset;
+  transform:translateX(100%); transition:transform .34s cubic-bezier(.2,.9,.25,1);
+  padding-top:calc(env(safe-area-inset-top,0px) + 70px);
+}
+.topmenu.open{transform:translateX(0)}
+.topmenu > .tm-row{height:100%}
+.tm-scroll{ max-height:none; height:100%; overflow-y:auto; padding:10px 16px calc(24px + env(safe-area-inset-bottom,0px)) }
+.menu-catcher{ background:rgba(8,14,20,.4) }
+
+/* =======================================================================
+   محتوى PDF
+   ======================================================================= */
+.pdf-box{
+  border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--line);
+  background:var(--surface-2);
+}
+.pdf-box iframe{width:100%; height:520px; border:0; display:block; background:#fff}
+.pdf-fallback{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 16px; font-size:14px; color:var(--ink-soft)}
+.pdf-fallback a{font-weight:600}
+
+/* =======================================================================
+   ستايلات نصوص إضافية: قوانين، أوسمة، توهج
+   ======================================================================= */
+.b-law{
+  margin:0; padding:22px 24px; border-radius:var(--radius); position:relative; overflow:hidden;
+  background:linear-gradient(135deg, color-mix(in srgb, var(--gold) 16%, var(--surface)), var(--surface));
+  border:1.5px solid color-mix(in srgb, var(--gold) 55%, transparent);
+}
+.b-law::before{
+  content:'📐'; position:absolute; inset-inline-end:14px; top:12px; font-size:26px; opacity:.35;
+}
+.b-law-tag{
+  display:inline-block; font-family:var(--font-head); font-weight:700; color:var(--gold); font-size:13px;
+  background:color-mix(in srgb, var(--gold) 18%, var(--surface)); padding:3px 13px; border-radius:999px; margin-bottom:12px;
+}
+.b-glow{
+  margin:0; padding:20px 24px; text-align:center; font-family:var(--font-head); font-size:22px; font-weight:700;
+  color:var(--accent); text-shadow:0 0 14px color-mix(in srgb, var(--accent) 55%, transparent), 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.b-badges{display:flex; flex-wrap:wrap; gap:10px; margin:0; padding:0; list-style:none}
+.badge-tag{
+  display:inline-flex; align-items:center; gap:6px; padding:7px 15px; border-radius:999px; font-size:14px; font-weight:600;
+  border:1.5px solid var(--tag-c, var(--accent)); color:var(--tag-c, var(--accent));
+  background:color-mix(in srgb, var(--tag-c, var(--accent)) 12%, transparent);
+}
+
+/* =======================================================================
+   ثيمات خلفيات رياضية بصرية
+   ======================================================================= */
+body[data-bgpattern="grid"]{
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--ink) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--ink) 4%, transparent) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+}
+body[data-bgpattern="calc"]{
+  background-image: none;
+  position:relative;
+}
+body[data-bgpattern="calc"]::before{
+  content:'∫ ∑ π √x Δ θ ∞ ÷ × % ∫ ∑ π √x Δ θ ∞ ÷ × %';
+  position:fixed; inset:-10% -5%; z-index:-2; display:block; overflow:hidden;
+  font-family:var(--font-head); font-weight:700; font-size:34px; line-height:6.2; letter-spacing:2.4em;
+  color:var(--accent); opacity:.05; word-spacing:2.4em; pointer-events:none; white-space:pre-wrap;
+}
+body[data-bgpattern="blueprint"]{
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--accent) 16%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 16%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px);
+  background-size: 200px 200px, 200px 200px, 40px 40px, 40px 40px;
+}
+body[data-bgpattern="minimal"]{ background-image:none; }
+body[data-bgpattern="dots"], body:not([data-bgpattern]){
+  background-image: radial-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1.4px);
+  background-size: 26px 26px;
+}
+
+/* =======================================================================
+   إعدادات المادة المستقلة (Math 1 / Math 2)
+   ======================================================================= */
+.subject-banner{margin-top:20px; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow)}
+.subject-note{
+  margin-top:16px; padding:14px 18px; background:var(--accent-soft); border-radius:var(--radius);
+  border:1px solid color-mix(in srgb, var(--accent) 25%, transparent); font-size:14.5px;
+}
 </style>
 </head>
 <body>
@@ -635,7 +776,10 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
 
 <header class="topbar" id="topbar">
   <div class="wrap topbar-in">
-    <h2 class="brand" id="brandName">منصّة المحتوى</h2>
+    <div class="brand-wrap">
+      <img class="brand-logo" id="brandLogo" alt="" hidden>
+      <h2 class="brand" id="brandName">منصّة المحتوى</h2>
+    </div>
     <nav class="navchips" id="nav"></nav>
     <div class="tswitch" role="group" aria-label="تبديل الفرقة">
       <button class="tswitch-btn" id="tsw1" data-act="choose-track" data-track="math1" type="button" title="Math 1 — أولى">1</button>
@@ -644,6 +788,9 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
   </div>
 </header>
 
+<button class="notif-btn" id="notifBtn" data-act="notif-open" type="button" aria-label="الإشعارات" title="الإشعارات">
+  🔔<span class="notif-badge zero" id="notifBadge">0</span>
+</button>
 <button class="hamburger" id="hamburgerBtn" data-act="menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false">
   <span></span><span></span><span></span>
 </button>
@@ -651,12 +798,23 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
 <nav class="topmenu" id="topMenu" aria-hidden="true">
   <div class="tm-row"><div class="tm-scroll" id="topMenuList"></div></div>
 </nav>
+
+<div class="notif-catcher" id="notifCatcher" data-act="notif-close"></div>
+<aside class="notif-drawer" id="notifDrawer" aria-hidden="true">
+  <div class="notif-head">
+    <h3>🔔 الإشعارات</h3>
+    <button class="btn sm ghost" data-act="notif-close" type="button">✕</button>
+  </div>
+  <div class="notif-list" id="notifList"></div>
+</aside>
  
 <div class="adminbar">
   <div class="wrap adminbar-in">
     <button class="btn primary" data-act="add-section">＋ قسم جديد</button>
     <button class="btn" data-act="settings">⚙ إعدادات الموقع</button>
+    <button class="btn" data-act="subject-settings">🎓 إعدادات المادة</button>
     <button class="btn" data-act="theme">🎨 المظهر والألوان</button>
+    <button class="btn" data-act="notif-admin">🔔 إدارة الإشعارات</button>
     <button class="btn" data-act="export">⬇ نسخة احتياطية</button>
     <button class="btn" data-act="import">⬆ استيراد</button>
     <span class="spacer"></span>
@@ -671,6 +829,8 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
       <h1 id="heroTitle"></h1>
       <p id="heroSub"></p>
       <div id="heroCover"></div>
+      <div id="subjectBanner"></div>
+      <div id="subjectNote"></div>
     </div>
   </section>
   <div id="sections"></div>
@@ -884,6 +1044,91 @@ function menuGoto(secId, blockId){
   }, 280);
 }
  
+/* =======================================================================
+   0.8) نظام الإشعارات — جرس + شارة عدد غير المقروء + لوحة سجلّ
+   ======================================================================= */
+const NOTIF_SEEN_KEY = 'site_notif_seen_v1';
+function notifSeenAt(){ try{ return localStorage.getItem(NOTIF_SEEN_KEY) || ''; }catch(e){ return ''; } }
+function setNotifSeenNow(){ try{ localStorage.setItem(NOTIF_SEEN_KEY, new Date().toISOString()); }catch(e){} }
+function unreadNotifCount(){
+  const seen = notifSeenAt();
+  const list = site.notifications || [];
+  if(!seen) return list.length;
+  return list.filter(n => n.date > seen).length;
+}
+function renderNotifBadge(){
+  const badge = $('#notifBadge'); if(!badge) return;
+  const n = unreadNotifCount();
+  badge.textContent = n>99 ? '99+' : String(n);
+  badge.classList.toggle('zero', n<=0);
+}
+function fmtNotifDate(iso){
+  try{ return new Date(iso).toLocaleString('ar-EG', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }); }catch(e){ return ''; }
+}
+function notifTrackLabel(tr){ if(tr==='math1') return 'Math 1'; if(tr==='math2') return 'Math 2'; return 'عام'; }
+function renderNotifList(){
+  const list = $('#notifList'); if(!list) return;
+  const items = [...(site.notifications||[])].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+  if(!items.length){ list.innerHTML = '<p class="notif-empty">لا توجد إشعارات بعد.</p>'; return; }
+  list.innerHTML = items.map(n => `
+    <div class="notif-item">
+      <div class="notif-item-top">
+        <span class="notif-item-track">${esc(notifTrackLabel(n.track))}</span>
+        <span class="notif-item-date">${fmtNotifDate(n.date)}</span>
+      </div>
+      <div>${esc(n.text)}</div>
+    </div>`).join('');
+}
+function openNotifDrawer(){
+  renderNotifList();
+  $('#notifDrawer').classList.add('open'); $('#notifDrawer').setAttribute('aria-hidden','false');
+  $('#notifCatcher').classList.add('open');
+  setNotifSeenNow(); renderNotifBadge();
+}
+function closeNotifDrawer(){
+  $('#notifDrawer').classList.remove('open'); $('#notifDrawer').setAttribute('aria-hidden','true');
+  $('#notifCatcher').classList.remove('open');
+}
+/* ---- لوحة الأدمن: كتابة ونشر إشعارات جديدة ---- */
+function notifAdminModal(){
+  const items = [...(site.notifications||[])].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+  openModal('إدارة الإشعارات', `
+    <div class="field"><label for="natext">نص الإشعار الجديد</label>
+      <textarea id="natext" placeholder="مثال: تم إضافة شابتير جديد في Math 1" style="min-height:70px"></textarea></div>
+    <div class="field"><label for="natrack">يخصّ</label>
+      <select id="natrack">
+        <option value="all">إشعار عام (للفرقتين)</option>
+        <option value="math1">Math 1 فقط</option>
+        <option value="math2">Math 2 فقط</option>
+      </select></div>
+    <button type="button" class="btn primary sm" data-act="notif-add">＋ نشر الإشعار</button>
+    <hr class="sep">
+    <div class="field"><label>الإشعارات الحالية</label>
+      <div id="naList">${items.length ? items.map(n=>`
+        <div class="notif-admin-row">
+          <span class="txt">${esc(notifTrackLabel(n.track))} — ${esc(n.text)}</span>
+          <button class="btn sm danger" data-act="notif-del" data-id="${esc(n.id)}" type="button">✕</button>
+        </div>`).join('') : '<p class="hint">لا توجد إشعارات منشورة بعد.</p>'}
+      </div></div>
+  `, `<button class="btn ghost" data-act="close">إغلاق</button>`, null);
+}
+function notifAdd(){
+  const textEl = $('#natext'), trackEl = $('#natrack');
+  if(!textEl) return;
+  const text = textEl.value.trim();
+  if(!text){ toast('اكتب نص الإشعار أولاً'); return; }
+  site.notifications = site.notifications || [];
+  site.notifications.unshift({ id:uid(), text, track: trackEl ? trackEl.value : 'all', date:new Date().toISOString() });
+  scheduleSave(); renderNotifBadge();
+  toast('تم نشر الإشعار');
+  notifAdminModal();
+}
+function notifDel(id){
+  site.notifications = (site.notifications||[]).filter(n=>n.id!==id);
+  scheduleSave(); renderNotifBadge();
+  notifAdminModal();
+}
+ 
 /* تجزئة كلمة المرور (SHA-256 عند التوفّر، وبديل بسيط عند العمل من ملف محلي) */
 async function hashPass(pass){
   try{
@@ -962,8 +1207,15 @@ const VARS = {
  
 function defaultTheme(){
   return { mode:'auto', headFont:'Tajawal', bodyFont:'Tajawal',
-           fontSize:17, headScale:1, width:900, radius:14, colors:{} };
+           fontSize:17, headScale:1, width:900, radius:14, colors:{}, bgPattern:'dots' };
 }
+const BG_PATTERNS = [
+  { id:'dots',      name:'نقاط ناعمة (افتراضي)' },
+  { id:'grid',      name:'شبكة إحداثيات ومحاور' },
+  { id:'calc',      name:'رموز تفاضل وتكامل متناثرة' },
+  { id:'blueprint',name:'مخطط تقني (Blueprint)' },
+  { id:'minimal',  name:'نظيف بلا نقوش (Minimalist)' }
+];
  
 /* جاهزات عامة + جاهزات بموضوع رياضي (تُطبَّق ألوانها وخط عناوينها معاً) */
 const PRESETS = [
@@ -1008,6 +1260,7 @@ function applyTheme(t){
   if(t.colors && t.colors.accent){
     r.style.setProperty('--accent-soft', 'color-mix(in srgb, ' + t.colors.accent + ' 16%, transparent)');
   } else r.style.removeProperty('--accent-soft');
+  document.body.setAttribute('data-bgpattern', t.bgPattern || 'dots');
   loadFonts([t.headFont, t.bodyFont]);
 }
  
@@ -1071,6 +1324,11 @@ function themeModal(draft){
       <div class="rng"><input type="range" id="th-w" min="700" max="1300" step="20" value="${t.width}"><output id="o-w">${t.width}px</output></div></div>
     <div class="field"><label for="th-r">استدارة الزوايا</label>
       <div class="rng"><input type="range" id="th-r" min="0" max="28" step="1" value="${t.radius}"><output id="o-r">${t.radius}px</output></div></div>
+
+    <hr class="sep">
+    <div class="field"><label for="th-bg">🧮 خلفية بصرية رياضية</label>
+      <select id="th-bg">${BG_PATTERNS.map(p=>`<option value="${p.id}" ${t.bgPattern===p.id?'selected':''}>${p.name}</option>`).join('')}</select>
+      <p class="hint">تُطبَّق كنقشة خفيفة خلف كل المحتوى، وتظهر فوراً في المعاينة أدناه.</p></div>
   `, `<button class="btn primary" data-act="modal-save">حفظ المظهر</button>
       <button class="btn ghost" data-act="close">إلغاء</button>`, ()=>{
     site.theme = readThemeForm();
@@ -1101,6 +1359,7 @@ function readThemeForm(){
               headScale:+document.getElementById('th-hs').value,
               width:+document.getElementById('th-w').value,
               radius:+document.getElementById('th-r').value,
+              bgPattern: (document.getElementById('th-bg')||{}).value || 'dots',
               colors:{} };
   document.querySelectorAll('[data-ck]').forEach(i=>{ if(i.dataset.touched==='1') t.colors[i.dataset.ck] = i.value; });
   return t;
@@ -1125,10 +1384,16 @@ function defaultSite(){
       heroTitle:'مساحة لعرض ما يستحق أن يُقرأ',
       heroSub:'أقسام تنظّمها كما تريد، ونصوص وصور وفيديوهات وروابط تضيفها بنقرة واحدة. الزائر يقرأ فقط، وأنت وحدك من يملك مفتاح التعديل.',
       cover:'',
+      logo:'',
       footer:'© ' + new Date().getFullYear() + ' — جميع الحقوق محفوظة'
     },
     auth:{ passHash:null },
     theme: defaultTheme(),
+    notifications:[],
+    trackSettings:{
+      math1:{ label:'', banner:'', note:'', accent:'' },
+      math2:{ label:'', banner:'', note:'', accent:'' }
+    },
     sections:[
       { id:uid(), title:'نبذة تعريفية', desc:'ابدأ من هنا: عرّف بنفسك أو بمشروعك في فقرة قصيرة.', track:'all', pinned:true,
         blocks:[
@@ -1421,15 +1686,26 @@ function scheduleSave(){
    ======================================================================= */
 function render(){
   site.theme = Object.assign(defaultTheme(), site.theme || {});
+  site.notifications = site.notifications || [];
+  site.trackSettings = site.trackSettings || {};
+  site.trackSettings.math1 = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings.math1 || {});
+  site.trackSettings.math2 = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings.math2 || {});
   applyTheme(site.theme);
   document.title = site.meta.title || 'منصّة المحتوى';
   $('#brandName').textContent = site.meta.title || '';
+  const logoEl = $('#brandLogo');
+  if(logoEl){
+    if(site.meta.logo){ logoEl.src = site.meta.logo; logoEl.hidden = false; }
+    else { logoEl.removeAttribute('src'); logoEl.hidden = true; }
+  }
   const introBrand = $('#introBrand'); if(introBrand) introBrand.textContent = site.meta.title || 'منصّة المحتوى';
   $('#heroTitle').textContent = site.meta.heroTitle || '';
   $('#heroSub').textContent = site.meta.heroSub || '';
   $('#footNote').textContent = site.meta.footer || '';
   $('#heroCover').innerHTML = site.meta.cover
     ? `<div class="hero-cover"><img src="${esc(site.meta.cover)}" alt=""></div>` : '';
+
+  applySubjectOverrides();
  
   const b1 = $('#tsw1'), b2 = $('#tsw2');
   if(b1) b1.classList.toggle('active', currentTrack==='math1');
@@ -1441,6 +1717,51 @@ function render(){
  
   $('#sections').innerHTML = secs.map((s,i)=>renderSection(s,i,secs)).join('');
   renderTopMenu();
+  renderNotifBadge();
+}
+
+/* =======================================================================
+   0.7) إعدادات المادة المستقلة (Math 1 / Math 2) — لا تؤثر إحداهما بالأخرى
+   ======================================================================= */
+function applySubjectOverrides(){
+  const bannerEl = $('#subjectBanner'), noteEl = $('#subjectNote');
+  const ts = currentTrack ? (site.trackSettings || {})[currentTrack] : null;
+  const r = document.documentElement;
+
+  if(ts && ts.accent){
+    r.style.setProperty('--accent', ts.accent);
+    r.style.setProperty('--accent-soft', 'color-mix(in srgb, ' + ts.accent + ' 16%, transparent)');
+  } else {
+    // رجوع للمظهر العام (لا يعدّل إعدادات المادة الأخرى أبداً)
+    const globalAccent = (site.theme.colors||{}).accent;
+    if(globalAccent){ r.style.setProperty('--accent', globalAccent); r.style.setProperty('--accent-soft','color-mix(in srgb, '+globalAccent+' 16%, transparent)'); }
+    else { r.style.removeProperty('--accent'); r.style.removeProperty('--accent-soft'); }
+  }
+
+  if(bannerEl) bannerEl.innerHTML = (ts && ts.banner) ? `<div class="subject-banner"><img src="${esc(ts.banner)}" alt=""></div>` : '';
+  if(noteEl) noteEl.innerHTML = (ts && ts.note) ? `<div class="subject-note">${fmt(ts.note)}</div>` : '';
+
+  if(ts && ts.label){ const b=$('#brandName'); if(b) b.textContent = ts.label; }
+}
+function subjectSettingsModal(){
+  if(!currentTrack){ toast('اختر فرقة (Math 1 أو Math 2) أولاً'); return; }
+  const trackName = currentTrack==='math2' ? 'Math 2 — تانية' : 'Math 1 — أولى';
+  const ts = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings[currentTrack]||{});
+  openModal('إعدادات مادة: ' + trackName, `
+    <p class="hint" style="margin-top:0">هذه الإعدادات خاصة بـ${trackName} فقط ولا تؤثر إطلاقاً على الفرقة الأخرى.</p>
+    <div class="field"><label for="ts1">اسم يظهر بدل اسم الموقع (اختياري)</label><input id="ts1" value="${esc(ts.label)}" placeholder="مثال: بوابة Math 1"></div>
+    <div class="field"><label for="ts2">رابط بانر خاص بهذه المادة (اختياري)</label><input id="ts2" value="${esc(ts.banner)}" placeholder="https://…"></div>
+    <div class="field"><label for="ts3">ملاحظة/تنويه تظهر أعلى الصفحة (اختياري)</label><textarea id="ts3" style="min-height:80px">${esc(ts.note)}</textarea></div>
+    <div class="field"><label for="ts4">لون مميّز خاص بهذه المادة (اختياري)</label>
+      <input type="color" id="ts4" value="${ts.accent || cssNow('--accent')}" style="width:60px;height:38px;padding:0;border:0;cursor:pointer">
+      <button type="button" class="btn sm" data-act="ts-clear-accent" style="margin-inline-start:8px">استخدام اللون العام</button></div>
+  `, footSave(), ()=>{
+    site.trackSettings[currentTrack] = {
+      label: $('#ts1').value.trim(), banner: $('#ts2').value.trim(),
+      note: $('#ts3').value.trim(), accent: $('#ts4').dataset.cleared==='1' ? '' : $('#ts4').value
+    };
+    commit();
+  });
 }
  
 function renderSection(s, i, secs){
@@ -1501,6 +1822,8 @@ function renderBlock(b, secId, j, last){
     else if(b.style==='steps')   body = stepsHtml(b.text, align);
     else if(b.style==='key')     body = `<div class="b-key"${alignAttr}>${fmt(b.text)}</div>`;
     else if(b.style==='theorem') body = `<div class="b-theorem"${alignAttr}><span class="b-theorem-tag">نظرية / تعريف</span>${fmt(b.text)}</div>`;
+    else if(b.style==='law')     body = `<div class="b-law"${alignAttr}><span class="b-law-tag">قانون / نظرية</span>${fmt(b.text)}</div>`;
+    else if(b.style==='glow')    body = `<div class="b-glow"${alignAttr}>${fmt(b.text)}</div>`;
     else                         body = `<div class="b-p"${alignAttr}>${fmt(b.text)}</div>`;
   }
   else if(b.type==='image'){
@@ -1515,6 +1838,17 @@ function renderBlock(b, secId, j, last){
     body = `<ul class="linklist">${(b.items||[]).map(it=>`
       <li><a class="linkbtn" href="${esc(it.url)}" target="_blank" rel="noopener">
         <b>${esc(it.label)}</b>${it.desc?`<span>${esc(it.desc)}</span>`:''}</a></li>`).join('')}</ul>`;
+  }
+  else if(b.type==='pdf'){
+    body = `<div class="pdf-box">
+      <iframe src="${esc(b.url)}" title="${esc(b.caption||'PDF')}" loading="lazy"></iframe>
+      <div class="pdf-fallback"><span>${esc(b.caption||'ملف PDF')}</span>
+        <a href="${esc(b.url)}" target="_blank" rel="noopener">فتح في نافذة جديدة ↗</a></div>
+    </div>`;
+  }
+  else if(b.type==='badges'){
+    body = `<ul class="b-badges">${(b.items||[]).map(it=>
+      `<li class="badge-tag" style="--tag-c:${esc(it.color||'#1F6F6B')}">${esc(it.label)}</li>`).join('')}</ul>`;
   }
   return `<div class="block" data-id="${b.id}">${tools}${body}</div>`;
 }
@@ -1598,14 +1932,17 @@ function chooseType(secId){
       <button class="typecard" data-act="pick-type" data-type="image" data-sec="${secId}"><div>🖼️</div>صورة</button>
       <button class="typecard" data-act="pick-type" data-type="video" data-sec="${secId}"><div>▶️</div>فيديو</button>
       <button class="typecard" data-act="pick-type" data-type="links" data-sec="${secId}"><div>🔗</div>روابط</button>
+      <button class="typecard" data-act="pick-type" data-type="pdf" data-sec="${secId}"><div>📄</div>ملف PDF</button>
+      <button class="typecard" data-act="pick-type" data-type="badges" data-sec="${secId}"><div>🏷️</div>بطاقات وأوسمة</button>
     </div>`, `<button class="btn ghost" data-act="close">إلغاء</button>`, null);
 }
  
 /* ---- نافذة المحتوى ---- */
+const BADGE_COLORS = ['#1F6F6B','#B8862F','#2A4D8F','#9B2C3F','#3FBF84','#B3402E','#6B4EA6'];
 function blockModal(secId, block, type){
   const sec = site.sections.find(s=>s.id===secId); if(!sec) return;
   const isNew = !block;
-  const b = block || { id:uid(), type, style:'paragraph', text:'', url:'', caption:'', items:[{label:'',url:'',desc:''}] };
+  const b = block || { id:uid(), type, style:'paragraph', text:'', url:'', caption:'', items: type==='badges' ? [{label:'',color:BADGE_COLORS[0]}] : [{label:'',url:'',desc:''}] };
   let body='';
   if(b.type==='text'){
     body = `
@@ -1619,6 +1956,8 @@ function blockModal(secId, block, type){
           <option value="steps"     ${b.style==='steps'?'selected':''}>📶 خطوات الحل (سطر لكل خطوة)</option>
           <option value="key"       ${b.style==='key'?'selected':''}>💡 مفهوم أساسي</option>
           <option value="theorem"   ${b.style==='theorem'?'selected':''}>📐 نظرية / تعريف</option>
+          <option value="law"       ${b.style==='law'?'selected':''}>📏 صندوق قانون/نظرية مزخرف</option>
+          <option value="glow"      ${b.style==='glow'?'selected':''}>✨ نص متوهّج (Glow)</option>
         </select></div>
       <div class="field"><label>محاذاة النص</label>
         <div class="align-group">
@@ -1649,6 +1988,18 @@ function blockModal(secId, block, type){
       (b.items||[]).map(it=>linkRow(it)).join('')
     }</div><button class="btn sm" data-act="add-link" type="button">＋ رابط آخر</button></div>`;
   }
+  else if(b.type==='pdf'){
+    body = `
+      <div class="field"><label for="bu">رابط ملف PDF</label><input id="bu" value="${esc(b.url)}" placeholder="https://…/file.pdf"></div>
+      <div class="field"><label for="bf">أو ارفع ملف PDF من جهازك</label><input type="file" id="bf" accept="application/pdf">
+        <p class="hint">الملفات المرفوعة تُخزَّن داخل بيانات الموقع — يُفضَّل أن تكون صغيرة (أقل من 2MB). الرابط المباشر أفضل للملفات الكبيرة.</p></div>
+      <div class="field"><label for="bc">عنوان/وصف الملف (اختياري)</label><input id="bc" value="${esc(b.caption||'')}" placeholder="مثال: ملزمة الفصل الأول"></div>`;
+  }
+  else if(b.type==='badges'){
+    body = `<div class="field"><label>البطاقات/الأوسمة</label><div id="badges">${
+      (b.items||[]).map(it=>badgeRow(it)).join('')
+    }</div><button class="btn sm" data-act="add-badge" type="button">＋ بطاقة أخرى</button></div>`;
+  }
   openModal(isNew?'إضافة محتوى':'تعديل المحتوى', body, footSave(), ()=>{
     if(b.type==='text'){
       b.style=$('#bs').value; b.text=$('#bt').value;
@@ -1659,11 +2010,21 @@ function blockModal(secId, block, type){
       b.url=$('#bu').value.trim(); b.caption=$('#bc').value.trim();
       if(!b.url){ toast('أضف رابطاً أولاً'); return false; }
     }
+    if(b.type==='pdf'){
+      b.url=$('#bu').value.trim(); b.caption=$('#bc').value.trim();
+      if(!b.url){ toast('أضف رابط ملف أو ارفع ملفاً'); return false; }
+    }
     if(b.type==='links'){
       b.items=[...document.querySelectorAll('#links .linkrow')].map(r=>({
         label:r.children[0].value.trim(), url:r.children[1].value.trim(), desc:r.children[2].value.trim()
       })).filter(x=>x.label && x.url);
       if(!b.items.length){ toast('أضف رابطاً واحداً على الأقل'); return false; }
+    }
+    if(b.type==='badges'){
+      b.items=[...document.querySelectorAll('#badges .badgerow')].map(r=>({
+        label:r.querySelector('.bg-label').value.trim(), color:r.querySelector('.bg-color').value
+      })).filter(x=>x.label);
+      if(!b.items.length){ toast('أضف بطاقة واحدة على الأقل'); return false; }
     }
     if(isNew) sec.blocks.push(b);
     commit();
@@ -1672,8 +2033,9 @@ function blockModal(secId, block, type){
   const file = $('#bf');
   if(file) file.addEventListener('change', e=>{
     const f=e.target.files[0]; if(!f) return;
-    if(f.size > 1.5*1024*1024){ toast('الصورة كبيرة جداً — استخدم رابطاً مباشراً'); return; }
-    const r=new FileReader(); r.onload=()=>{ $('#bu').value=r.result; toast('تم تحميل الصورة'); }; r.readAsDataURL(f);
+    const maxSize = b.type==='pdf' ? 2*1024*1024 : 1.5*1024*1024;
+    if(f.size > maxSize){ toast('الملف كبير جداً — استخدم رابطاً مباشراً'); return; }
+    const r=new FileReader(); r.onload=()=>{ $('#bu').value=r.result; toast('تم تحميل الملف'); }; r.readAsDataURL(f);
   });
 }
 function linkRow(it){
@@ -1684,6 +2046,13 @@ function linkRow(it){
     <input value="${esc(it.desc||'')}" placeholder="وصف قصير">
     <button class="btn sm danger" data-act="del-link" type="button">✕</button></div>`;
 }
+function badgeRow(it){
+  it = it||{label:'',color:BADGE_COLORS[0]};
+  return `<div class="linkrow badgerow">
+    <input class="bg-label" value="${esc(it.label)}" placeholder="نص البطاقة">
+    <input class="bg-color" type="color" value="${it.color||BADGE_COLORS[0]}" style="flex:none;width:44px;padding:0;border:0;cursor:pointer">
+    <button class="btn sm danger" data-act="del-link" type="button">✕</button></div>`;
+}
  
 /* ---- إعدادات الموقع ---- */
 function settingsModal(){
@@ -1692,6 +2061,12 @@ function settingsModal(){
     <div class="field"><label for="g2">العنوان الرئيسي</label><input id="g2" value="${esc(site.meta.heroTitle)}"></div>
     <div class="field"><label for="g3">النص التعريفي</label><textarea id="g3" style="min-height:90px">${esc(site.meta.heroSub)}</textarea></div>
     <div class="field"><label for="g4">رابط صورة الغلاف (اختياري)</label><input id="g4" value="${esc(site.meta.cover||'')}"></div>
+    <div class="field"><label for="g6">شعار الموقع (Logo)</label>
+      <input id="g6" value="${esc(site.meta.logo||'')}" placeholder="https://…/logo.png">
+      <input type="file" id="g6f" accept="image/*" style="margin-top:8px">
+      <p class="hint">ضع رابطاً مباشراً أو ارفع صورة صغيرة (أقل من 300KB) — تظهر بجانب اسم الموقع في الترويسة.</p>
+      ${site.meta.logo ? `<img src="${esc(site.meta.logo)}" alt="" style="width:44px;height:44px;border-radius:10px;object-fit:cover;margin-top:8px">` : ''}
+    </div>
     <div class="field"><label for="g5">نص التذييل</label><input id="g5" value="${esc(site.meta.footer||'')}"></div>
     <hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
     <div class="field"><label for="p1">كلمة مرور جديدة (اتركها فارغة لعدم التغيير)</label><input type="password" id="p1" autocomplete="new-password"></div>
@@ -1699,6 +2074,7 @@ function settingsModal(){
   `, footSave(), async ()=>{
     site.meta.title=$('#g1').value.trim(); site.meta.heroTitle=$('#g2').value.trim();
     site.meta.heroSub=$('#g3').value.trim(); site.meta.cover=$('#g4').value.trim();
+    site.meta.logo=$('#g6').value.trim();
     site.meta.footer=$('#g5').value.trim();
     const p1=$('#p1').value, p2=$('#p2').value;
     if(p1){
@@ -1707,6 +2083,12 @@ function settingsModal(){
       site.auth.passHash = await hashPass(p1); toast('تم تغيير كلمة المرور');
     }
     commit();
+  });
+  const logoFile = $('#g6f');
+  if(logoFile) logoFile.addEventListener('change', e=>{
+    const f=e.target.files[0]; if(!f) return;
+    if(f.size > 400*1024){ toast('الصورة كبيرة جداً — استخدم رابطاً مباشراً'); return; }
+    const r=new FileReader(); r.onload=()=>{ $('#g6').value=r.result; toast('تم تحميل الشعار'); }; r.readAsDataURL(f);
   });
 }
  
@@ -1730,6 +2112,7 @@ document.addEventListener('click', async e=>{
   if(act==='pick-type'){ blockModal(secId, null, t.dataset.type); return; }
   if(act==='add-link'){ $('#links').insertAdjacentHTML('beforeend', linkRow()); return; }
   if(act==='del-link'){ t.parentElement.remove(); return; }
+  if(act==='add-badge'){ $('#badges').insertAdjacentHTML('beforeend', badgeRow()); return; }
 
   if(act==='choose-track'){ closeSplash(); setTrack(t.dataset.track); return; }
   if(act==='sec-toggle'){
@@ -1751,6 +2134,11 @@ document.addEventListener('click', async e=>{
     return;
   }
   if(act==='menu-close'){ closeMenu(); return; }
+  if(act==='notif-open'){ openNotifDrawer(); return; }
+  if(act==='notif-close'){ closeNotifDrawer(); return; }
+  if(act==='notif-add'){ notifAdd(); return; }
+  if(act==='notif-del'){ notifDel(id); return; }
+  if(act==='ts-clear-accent'){ const el=$('#ts4'); if(el){ el.dataset.cleared='1'; toast('سيُستخدم اللون العام عند الحفظ'); } return; }
   if(act==='tm-toggle'){ t.closest('.tm-item')?.classList.toggle('open'); return; }
   if(act==='menu-goto-section'){ menuGoto(id); return; }
   if(act==='menu-goto-block'){ menuGoto(t.dataset.sec, t.dataset.block); return; }
@@ -1779,6 +2167,8 @@ document.addEventListener('click', async e=>{
     case 'blk-up':   move(findSec(secId).blocks,id,-1); commit(); break;
     case 'blk-down': move(findSec(secId).blocks,id, 1); commit(); break;
     case 'settings': settingsModal(); break;
+    case 'subject-settings': subjectSettingsModal(); break;
+    case 'notif-admin': notifAdminModal(); break;
     case 'theme': themeModal(); break;
     case 'th-mode': {
       document.getElementById('th-mode').value = t.dataset.mode;
@@ -1832,6 +2222,7 @@ document.addEventListener('keydown', e=>{
   if(e.key==='Escape'){
     closeModal();
     if($('#topMenu')?.classList.contains('open')) closeMenu();
+    if($('#notifDrawer')?.classList.contains('open')) closeNotifDrawer();
   }
   if(e.key==='Enter' && $('#overlay').classList.contains('open') && e.target.tagName!=='TEXTAREA' && onSaveModal){ e.preventDefault(); onSaveModal(); }
 });
@@ -1860,4 +2251,3 @@ window.addEventListener('resize', syncTopbarHeight);
 })();
 </script>
 </body>
-</html>
