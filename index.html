@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -271,7 +270,7 @@ footer{padding:40px 0; text-align:center; color:var(--ink-faint); font-size:14px
 hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 @media (prefers-reduced-motion: reduce){*{transition:none !important; scroll-behavior:auto !important}}
 @media print{.topbar,.adminbar,.fab,.block-tools,.addblock,.track-splash,.tswitch,.hamburger,.topmenu,.menu-catcher,.math-bg,.intro-splash,.notif-drawer,.notif-catcher,.notif-btn{display:none !important}}
- 
+
 /* =======================================================================
    خلفية رياضية خفيفة + رموز زخرفية (النمط الفعلي يُحدَّد عبر data-bgpattern أسفل الملف)
    ======================================================================= */
@@ -283,7 +282,7 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 .hero::before{content:'∑'; font-size:min(30vw,240px); inset-inline-start:-.15em; top:-.25em;}
 .hero::after{content:'π'; font-size:min(26vw,210px); inset-inline-end:-.1em; bottom:-.3em; opacity:.05; color:var(--gold);}
 .hero .wrap{position:relative; z-index:1}
- 
+
 /* ===== مبدّل الفرقة المدمج (Compact Pill Switcher) ===== */
 .tswitch{
   display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px;
@@ -295,7 +294,7 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 }
 .tswitch-btn:hover{color:var(--accent)}
 .tswitch-btn.active{background:var(--accent); color:#fff}
- 
+
 /* =======================================================================
    خلفية رياضية متحركة (ثابتة خلف كل المحتوى)
    ======================================================================= */
@@ -312,7 +311,7 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
   75%{ transform:translate(-10px,-10px) rotate(3deg); }
 }
 @media (prefers-reduced-motion: reduce){ .mb-sym{animation:none} }
- 
+
 /* =======================================================================
    شاشة اختيار الفرقة (Splash)
    ======================================================================= */
@@ -357,7 +356,7 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 .ts-choice-en{font-size:12px; color:var(--ink-faint); letter-spacing:.03em}
 .ts-choice-sub{font-size:13px; color:var(--ink-faint)}
 @media (max-width:480px){ .ts-choices{grid-template-columns:1fr} }
- 
+
 /* =======================================================================
    الأقسام القابلة للطي
    ======================================================================= */
@@ -383,7 +382,7 @@ body.admin .sec-track-tag{display:inline-block}
 .section.open .sec-collapse{grid-template-rows:1fr}
 .sec-collapse > div{overflow:hidden; min-height:0}
 .sec-collapse > div > .sec-inner{padding-top:26px}
- 
+
 /* بطاقات ومحتوى: تحويم أنعم */
 .block{transition:transform .2s ease}
 .linkbtn{transition:.2s}
@@ -391,7 +390,7 @@ body.admin .sec-track-tag{display:inline-block}
 .chip{transition:.2s}
 figure img{transition:transform .4s ease}
 figure:hover img{transform:scale(1.015)}
- 
+
 /* =======================================================================
    قسم الأسئلة والأجوبة
    ======================================================================= */
@@ -418,7 +417,7 @@ figure:hover img{transform:scale(1.015)}
 .qa-pending{font-size:13px; color:var(--ink-faint); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
 .qa-empty{color:var(--ink-faint); text-align:center; padding:34px 0}
 .qa-answered-badge{font-size:12px; color:var(--accent); font-weight:700}
- 
+
 /* =======================================================================
    شاشة الترحيب الافتتاحية (Intro)
    ======================================================================= */
@@ -476,7 +475,7 @@ figure:hover img{transform:scale(1.015)}
   padding:8px 16px; font-size:13px; opacity:0; animation:introFadeUp .5s ease 1.2s forwards;
 }
 .intro-skip:hover{ color:var(--accent); border-color:var(--accent) }
- 
+
 /* =======================================================================
    قائمة الهامبرغر: تنسدل من الأعلى ولا تغطي العناوين
    ======================================================================= */
@@ -491,14 +490,14 @@ figure:hover img{transform:scale(1.015)}
 .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .hamburger.open span:nth-child(2){opacity:0}
 .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
- 
+
 /* طبقة شفافة تلتقط الضغط خارج القائمة لغلقها دون تغطية أي محتوى بصرياً */
 .menu-catcher{
   position:fixed; inset:0; z-index:51; background:transparent;
   opacity:0; visibility:hidden; pointer-events:none;
 }
 .menu-catcher.open{ visibility:visible; pointer-events:auto }
- 
+
 .topmenu{
   position:fixed; left:0; right:0; top:var(--topbar-h,64px); z-index:52;
   background:var(--surface); border-bottom:1px solid var(--line); box-shadow:0 18px 44px rgba(0,0,0,.2);
@@ -533,33 +532,33 @@ figure:hover img{transform:scale(1.015)}
 }
 .tm-sub a:hover, .tm-sublink:hover{background:var(--surface-2); color:var(--accent)}
 .tm-sep{height:1px; background:var(--line); margin:8px 10px}
- 
+
 /* تمييز مؤقت عند القفز لعنصر من القائمة */
 .block.flash{ animation:blockFlash 1.6s ease }
 @keyframes blockFlash{
   0%{box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 45%, transparent); border-radius:10px}
   100%{box-shadow:0 0 0 0 transparent; border-radius:10px}
 }
- 
+
 /* ===== أزرار محاذاة النص (محرّر الفقرات) ===== */
 .align-group{display:flex; gap:6px; flex-wrap:wrap}
 .align-btn[aria-pressed="true"]{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
 mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inherit; padding:0 4px; border-radius:4px}
- 
+
 /* ===== قسم مثبّت (لا يُطوى أبداً — مثل قسم التعريف) ===== */
 .section.pinned .sec-head-static{display:flex; align-items:flex-start; gap:12px; cursor:default}
 .pin-badge{
   display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; color:var(--accent);
   background:var(--accent-soft); border-radius:999px; padding:2px 10px; margin-inline-start:10px; vertical-align:middle;
 }
- 
+
 /* =======================================================================
    شعار الموقع
    ======================================================================= */
 .brand-wrap{display:flex; align-items:center; gap:10px; min-width:0}
 .brand-logo{width:34px; height:34px; border-radius:9px; object-fit:cover; flex:none; box-shadow:var(--shadow)}
 .brand{overflow:hidden; text-overflow:ellipsis}
- 
+
 /* =======================================================================
    جرس الإشعارات (أعلى يسار الترويسة)
    ======================================================================= */
@@ -600,7 +599,7 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
 .notif-empty{color:var(--ink-faint); text-align:center; padding:34px 10px; font-size:14px}
 .notif-admin-row{display:flex; gap:8px; align-items:center; margin-bottom:8px}
 .notif-admin-row .txt{flex:1; font-size:13.5px}
- 
+
 /* =======================================================================
    القائمة الجانبية (Side Drawer) — بدل الانسدال من الأعلى
    ======================================================================= */
@@ -615,7 +614,7 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
 .topmenu > .tm-row{height:100%}
 .tm-scroll{ max-height:none; height:100%; overflow-y:auto; padding:10px 16px calc(24px + env(safe-area-inset-bottom,0px)) }
 .menu-catcher{ background:rgba(8,14,20,.4) }
- 
+
 /* =======================================================================
    محتوى PDF
    ======================================================================= */
@@ -626,7 +625,7 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
 .pdf-box iframe{width:100%; height:520px; border:0; display:block; background:#fff}
 .pdf-fallback{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 16px; font-size:14px; color:var(--ink-soft)}
 .pdf-fallback a{font-weight:600}
- 
+
 /* =======================================================================
    ستايلات نصوص إضافية: قوانين، أوسمة، توهج
    ======================================================================= */
@@ -652,7 +651,7 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
   border:1.5px solid var(--tag-c, var(--accent)); color:var(--tag-c, var(--accent));
   background:color-mix(in srgb, var(--tag-c, var(--accent)) 12%, transparent);
 }
- 
+
 /* =======================================================================
    ثيمات خلفيات رياضية بصرية
    ======================================================================= */
@@ -688,7 +687,7 @@ body[data-bgpattern="dots"], body:not([data-bgpattern]){
   background-image: radial-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1.4px);
   background-size: 26px 26px;
 }
- 
+
 /* =======================================================================
    إعدادات المادة المستقلة (Math 1 / Math 2)
    ======================================================================= */
@@ -700,7 +699,7 @@ body[data-bgpattern="dots"], body:not([data-bgpattern]){
 :root{--ink:#161B33;--ink-soft:#4B5475;--ink-faint:#7C85A6;--bg:#F5F6FB;--surface:#FFFFFF;--surface-2:#EFF1F9;--line:#E1E4F0;--accent:#5B5BF5;--accent-2:color-mix(in srgb,var(--accent) 55%,#E879F9);--accent-soft:#ECECFE;--gold:#F5B544;--danger:#E5484D;--radius:16px;--shadow:0 1px 2px rgba(22,27,51,.05),0 10px 28px -10px rgba(22,27,51,.14);--shadow-lg:0 30px 60px -20px rgba(50,50,140,.28);--on-accent:#fff;--hero-bg:linear-gradient(135deg,var(--accent),var(--accent-2));--hero-ink:#fff;--hero-soft:rgba(255,255,255,.88)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#ECEEFB;--ink-soft:#A7AED0;--ink-faint:#7A83AB;--bg:#0A0D1C;--surface:#12172B;--surface-2:#1A2038;--line:#262D4A;--accent:#8B8DFF;--accent-soft:#1E2350;--gold:#F5B544;--danger:#FF6B72;--shadow:0 1px 2px rgba(0,0,0,.4),0 12px 30px -12px rgba(0,0,0,.65);--shadow-lg:0 30px 60px -20px rgba(0,0,0,.7);--on-accent:#0A0D1C;--hero-bg:linear-gradient(135deg,color-mix(in srgb,var(--accent) 38%,#0A0D1C),color-mix(in srgb,var(--accent-2) 32%,#0A0D1C))}}
 :root[data-theme="dark"]{--ink:#ECEEFB;--ink-soft:#A7AED0;--ink-faint:#7A83AB;--bg:#0A0D1C;--surface:#12172B;--surface-2:#1A2038;--line:#262D4A;--accent:#8B8DFF;--accent-soft:#1E2350;--gold:#F5B544;--danger:#FF6B72;--shadow:0 1px 2px rgba(0,0,0,.4),0 12px 30px -12px rgba(0,0,0,.65);--shadow-lg:0 30px 60px -20px rgba(0,0,0,.7);--on-accent:#0A0D1C;--hero-bg:linear-gradient(135deg,color-mix(in srgb,var(--accent) 38%,#0A0D1C),color-mix(in srgb,var(--accent-2) 32%,#0A0D1C))}
- 
+
 /* ===== تصميم Premium: زجاجي ناعم + تدرجات + شجرة أقسام ===== */
 html{scroll-behavior:smooth}
 body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(800px 380px at 88% -4%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 70%),radial-gradient(700px 360px at 4% 30%,color-mix(in srgb,var(--accent-2) 10%,transparent),transparent 70%)}
@@ -717,7 +716,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .notif-btn,.hamburger,.fab{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink-soft);box-shadow:var(--shadow);transition:.2s}
 .notif-btn:hover,.hamburger:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-1px)}
 .fab{background:var(--hero-bg);color:#fff;border:0;box-shadow:0 12px 28px -8px var(--accent)}
- 
+
 .hero{padding:28px 16px 6px;border:0;overflow:visible;background:none}
 .hero::before,.hero::after{display:none}
 .hero .wrap{max-width:var(--w);padding:52px clamp(22px,5vw,52px);background:var(--hero-bg);color:var(--hero-ink);border-radius:28px;box-shadow:var(--shadow-lg);overflow:hidden;position:relative}
@@ -728,7 +727,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .hero p{color:var(--hero-soft)}
 .hero-cover,.subject-banner{border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
 .subject-note{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:14px;color:inherit}
- 
+
 /* --- الأقسام + الفواصل --- */
 .section{padding:0;border:0;--lvl:var(--accent)}
 .section[data-depth="1"]{--lvl:#0EA5A4}.section[data-depth="2"]{--lvl:#F59E0B}.section[data-depth="3"]{--lvl:#EC4899}.section[data-depth="4"]{--lvl:#8B5CF6}
@@ -748,7 +747,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .sec-count{display:inline-block;background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--line)}
 .section.open>.wrap>.sec-collapse>div>.sec-inner{margin-top:12px;padding:26px clamp(16px,3vw,30px) 14px;background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
 .nested .sec-track-tag{display:none !important}
- 
+
 /* --- الشجرة المتداخلة --- */
 .subsections{display:flex;flex-direction:column;gap:14px;margin-top:26px;padding-inline-start:20px;border-inline-start:2px solid color-mix(in srgb,var(--lvl) 35%,var(--line));border-radius:2px}
 .section.nested{position:relative}
@@ -759,7 +758,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .section.nested .sec-title{font-size:calc(clamp(16px,2.6vw,19px) * var(--hs))}
 .section.nested.open>.wrap>.sec-collapse>div>.sec-inner{box-shadow:none;background:var(--bg);border-radius:18px;padding:20px clamp(14px,2.5vw,24px) 12px}
 .section.nested.open .sec-chevron{background:var(--lvl)}
- 
+
 /* --- المحتوى --- */
 .b-h{display:flex;align-items:center;gap:10px;font-size:calc(22px * var(--hs));width:fit-content}
 .b-h::before{content:'';width:5px;height:1.1em;border-radius:4px;background:var(--hero-bg);flex:none}
@@ -777,7 +776,7 @@ mark.hl{background:color-mix(in srgb,var(--gold) 55%,transparent);border-radius:
 figure img,.video-box,.pdf-box{border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
 .linkbtn{border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow);transition:.2s}
 .linkbtn:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 14px 28px -12px color-mix(in srgb,var(--accent) 45%,transparent)}
- 
+
 /* --- أدوات التحرير والنوافذ --- */
 .adminbar{border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
 .btn{border:1px solid var(--line);border-radius:12px;font-weight:500;transition:.2s}
@@ -814,7 +813,7 @@ body.admin .addblock{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
 footer{border-top:1px solid var(--line);margin-top:48px;color:var(--ink-soft)}
 @media (max-width:640px){.topbar-in{padding-inline:64px}.hero .wrap{padding:38px 22px;border-radius:22px}.subsections{padding-inline-start:12px}.section.nested::before{inset-inline-start:-12px;width:10px}}
 @media (prefers-reduced-motion:reduce){*{transition:none !important;scroll-behavior:auto !important}}
- 
+
 /* إصلاح: القسم الفرعي المقفول يفضل مقفول حتى لو القسم الأب مفتوح */
 .section:not(.open)>.wrap>.sec-collapse{grid-template-rows:0fr}
 .section.open>.wrap>.sec-collapse{grid-template-rows:1fr}
@@ -822,7 +821,7 @@ footer{border-top:1px solid var(--line);margin-top:48px;color:var(--ink-soft)}
 .section.open>.wrap>.sec-head .sec-chevron{transform:rotate(180deg)}
 .section:not(.open)>.wrap>.sec-collapse>div{visibility:hidden}
 .section.open>.wrap>.sec-collapse>div{visibility:visible}
- 
+
 /* ===== إزالة الشريط العلوي + مجلدات القائمة ===== */
 .navchips{display:none !important}
 .topbar-in .tswitch{margin-inline-start:auto}
@@ -846,7 +845,7 @@ html:has(body.admin){scroll-padding-top:160px}
 .fl-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
 .fl-row input,.fl-row select{flex:1;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);color:inherit;font:inherit}
 .fl-sec{flex:1;font-weight:500;min-width:0}
- 
+
 /* ===== خلفيات جاهزة ===== */
 body[data-bgpattern="aurora"],.bgthumb[data-p="aurora"]{background-image:radial-gradient(ellipse at 12% 8%,color-mix(in srgb,var(--accent) 30%,transparent),transparent 55%),radial-gradient(ellipse at 92% 18%,color-mix(in srgb,#EC4899 24%,transparent),transparent 55%),radial-gradient(ellipse at 50% 104%,color-mix(in srgb,#06B6D4 26%,transparent),transparent 58%)}
 body[data-bgpattern="aurora"]{background-attachment:fixed;background-size:auto}
@@ -879,7 +878,7 @@ body[data-bgpattern="stars"],.bgthumb[data-p="stars"]{background-image:radial-gr
 .tm-folder .tm-folder{margin:6px 0;background:var(--surface)}
 .fl-row{flex-wrap:wrap}
 .fl-row input{min-width:120px}
- 
+
 /* ===== تصاميم كتابة إضافية ===== */
 .b-fx{margin:0;padding:16px 20px;border-radius:16px;position:relative}
 .b-fx p{margin:.4em 0}.b-fx>:first-child{margin-top:0}.b-fx>:last-child{margin-bottom:0}
@@ -908,7 +907,7 @@ body[data-bgpattern="stars"],.bgthumb[data-p="stars"]{background-image:radial-gr
 .b-fx-dropcap::first-letter{float:inline-start;font:700 3.4em/.9 var(--font-head);color:var(--accent);margin-inline-end:10px;margin-top:4px}
 .b-fx-typewriter{font-family:ui-monospace,Menlo,Consolas,"Courier New",monospace;background:var(--surface-2);border:1px solid var(--line);font-size:.95em;line-height:1.9}
 .b-fx-handwritten{font-family:"Aref Ruqaa","Amiri",serif;font-size:1.4em;line-height:2;color:var(--accent);padding:6px 4px}
- 
+
 /* ===== شكل اسم القسم ===== */
 .sec-title{font-size:calc(clamp(19px,3.2vw,25px) * var(--hs) * var(--ts,1))}
 .section.nested .sec-title{font-size:calc(clamp(16px,2.6vw,19px) * var(--hs) * var(--ts,1))}
@@ -923,7 +922,7 @@ body[data-bgpattern="stars"],.bgthumb[data-p="stars"]{background-image:radial-gr
 .st-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .st-prev{margin-top:12px;padding:14px 16px;border:1px dashed var(--line);border-radius:14px;background:var(--surface-2)}
 @media (max-width:520px){.st-grid{grid-template-columns:1fr}}
- 
+
 /* ===== الأسئلة والأجوبة ===== */
 .qa-admin-only,.qa-admin-note,.qa-filter{display:none !important}
 body.admin .qa-admin-only{display:inline-flex !important}
@@ -934,11 +933,20 @@ body.admin .qa-filter{display:flex !important;gap:8px;flex-wrap:wrap;margin-bott
 .qa-warn{padding:18px 20px;border:1px solid color-mix(in srgb,var(--danger) 45%,var(--line));background:color-mix(in srgb,var(--danger) 8%,var(--surface));border-radius:18px}
 .qa-warn p{margin:6px 0}
 .qa-answer{background:var(--accent-soft)}
+
+/* ===== زرار الوضع الليلي / النهاري ===== */
+.mode-btn{flex:none;width:44px;height:44px;margin-inline-start:10px;border-radius:14px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow);font-size:19px;line-height:1;display:grid;place-items:center;cursor:pointer;transition:.25s}
+.mode-btn:hover{border-color:var(--accent);transform:translateY(-1px) rotate(12deg)}
+.mode-btn .m-sun{display:none}
+:root[data-theme="dark"] .mode-btn .m-sun{display:inline}
+:root[data-theme="dark"] .mode-btn .m-moon{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme]) .mode-btn .m-sun{display:inline}:root:not([data-theme]) .mode-btn .m-moon{display:none}}
+html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:background-color .35s ease,color .35s ease,border-color .35s ease,box-shadow .35s ease !important}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
- 
+
 <!-- ===== خلفية رياضية متحركة هادئة (ثابتة خلف كل شيء) ===== -->
 <div class="math-bg" aria-hidden="true">
   <span class="mb-sym" style="--x:5%;  --y:10%; --s:50px; --d:0s;   --du:17s">π</span>
@@ -954,7 +962,7 @@ body.admin .qa-filter{display:flex !important;gap:8px;flex-wrap:wrap;margin-bott
   <span class="mb-sym" style="--x:38%; --y:60%; --s:32px; --d:3.5s; --du:19s">∫</span>
   <span class="mb-sym" style="--x:74%; --y:16%; --s:30px; --d:0.8s; --du:24s">∞</span>
 </div>
- 
+
 <!-- ===== شاشة الترحيب الافتتاحية (Intro) ===== -->
 <div class="intro-splash" id="introSplash" aria-hidden="true">
   <div class="intro-bg" aria-hidden="true">
@@ -981,7 +989,7 @@ body.admin .qa-filter{display:flex !important;gap:8px;flex-wrap:wrap;margin-bott
   </div>
   <button class="intro-skip" id="introSkip" type="button">تخطي ⏭</button>
 </div>
- 
+
 <!-- ===== شاشة اختيار الفرقة الدراسية ===== -->
 <div class="track-splash" id="trackSplash" aria-hidden="true">
   <div class="ts-bg" aria-hidden="true">
@@ -1014,7 +1022,7 @@ body.admin .qa-filter{display:flex !important;gap:8px;flex-wrap:wrap;margin-bott
     </div>
   </div>
 </div>
- 
+
 <header class="topbar" id="topbar">
   <div class="wrap topbar-in">
     <div class="brand-wrap">
@@ -1026,9 +1034,10 @@ body.admin .qa-filter{display:flex !important;gap:8px;flex-wrap:wrap;margin-bott
       <button class="tswitch-btn" id="tsw1" data-act="choose-track" data-track="math1" type="button" title="Math 1 — أولى">1</button>
       <button class="tswitch-btn" id="tsw2" data-act="choose-track" data-track="math2" type="button" title="Math 2 — تانية">2</button>
     </div>
+    <button class="mode-btn" id="modeBtn" data-act="toggle-mode" type="button" aria-label="تبديل الوضع الليلي / النهاري" title="الوضع الليلي / النهاري"><span class="m-sun">☀️</span><span class="m-moon">🌙</span></button>
   </div>
 </header>
- 
+
 <button class="notif-btn" id="notifBtn" data-act="notif-open" type="button" aria-label="الإشعارات" title="الإشعارات">
   🔔<span class="notif-badge zero" id="notifBadge">0</span>
 </button>
@@ -1039,7 +1048,7 @@ body.admin .qa-filter{display:flex !important;gap:8px;flex-wrap:wrap;margin-bott
 <nav class="topmenu" id="topMenu" aria-hidden="true">
   <div class="tm-row"><div class="tm-scroll" id="topMenuList"></div></div>
 </nav>
- 
+
 <div class="notif-catcher" id="notifCatcher" data-act="notif-close"></div>
 <aside class="notif-drawer" id="notifDrawer" aria-hidden="true">
   <div class="notif-head">
@@ -1076,7 +1085,7 @@ body.admin .qa-filter{display:flex !important;gap:8px;flex-wrap:wrap;margin-bott
     </div>
   </section>
   <div id="sections"></div>
- 
+
   <section class="section qa-section" id="qa-section">
     <div class="wrap">
       <div class="sec-head">
@@ -1085,7 +1094,7 @@ body.admin .qa-filter{display:flex !important;gap:8px;flex-wrap:wrap;margin-bott
           <p class="sec-desc">اسأل عن أي نقطة محيّرة في المحاضرات أو السكاشن، وهيوصلك الرد هنا.</p>
         </div>
       </div>
- 
+
       <div class="qa-form">
         <div class="field"><label for="qaName">الاسم (اختياري)</label>
           <input id="qaName" placeholder="اكتب اسمك…"></div>
@@ -1100,7 +1109,7 @@ body.admin .qa-filter{display:flex !important;gap:8px;flex-wrap:wrap;margin-bott
           <textarea id="qaText" placeholder="اكتب سؤالك هنا…" style="min-height:100px"></textarea></div>
         <button class="btn primary" data-act="qa-submit" type="button">إرسال السؤال</button>
       </div>
- 
+
       <div class="qa-filter" id="qaFilter"></div>
       <div class="qa-list" id="qaList"></div>
     </div>
@@ -1428,7 +1437,7 @@ function fmt(text){
   if(inList) out+='</ul>';
   return out;
 }
- 
+
 /* خطوات الحل: سطر لكل خطوة → بطاقات مرقّمة */
 function stepsHtml(text, align){
   const inline = t => esc(t)
@@ -1544,10 +1553,18 @@ function stack(font){
   return '"' + font + '", ' + (SERIF_FONTS.includes(font) ? 'serif' : 'system-ui, "Segoe UI", sans-serif');
 }
  
+function userMode(){
+  if(themeBackup !== null) return '';           /* أثناء تعديل المظهر من الأدمن نتجاهل تفضيل الزائر */
+  try{ const v = localStorage.getItem('site_mode_pref'); return (v==='light' || v==='dark') ? v : ''; }catch(e){ return ''; }
+}
+function setUserMode(v){
+  try{ if(v) localStorage.setItem('site_mode_pref', v); else localStorage.removeItem('site_mode_pref'); }catch(e){}
+}
 function applyTheme(t){
   const r = document.documentElement;
   if(!t) return;
-  if(t.mode === 'auto') r.removeAttribute('data-theme'); else r.setAttribute('data-theme', t.mode);
+  const mode = userMode() || t.mode;
+  if(mode === 'auto') r.removeAttribute('data-theme'); else r.setAttribute('data-theme', mode);
   r.style.setProperty('--font-head', stack(t.headFont));
   r.style.setProperty('--font-body', stack(t.bodyFont));
   r.style.setProperty('--fs', t.fontSize + 'px');
@@ -1599,7 +1616,7 @@ function themeModal(draft){
  
     <div class="field"><label>🖼️ خلفيات جاهزة (اضغط للتجربة)</label>
       <div class="bg-grid">${BG_PATTERNS.map(p=>`<button type="button" class="bgthumb" data-act="th-bg" data-bg="${p.id}" data-p="${p.id}" aria-pressed="${t.bgPattern===p.id}"><span>${p.short||p.name}</span></button>`).join('')}</div></div>
- 
+
     <div class="field"><label>نمط الألوان</label>
       <div class="modes">
         <button type="button" class="btn" data-act="th-mode" data-mode="light" aria-pressed="${t.mode==='light'}">فاتح</button>
@@ -1628,7 +1645,7 @@ function themeModal(draft){
       <div class="rng"><input type="range" id="th-w" min="700" max="1300" step="20" value="${t.width}"><output id="o-w">${t.width}px</output></div></div>
     <div class="field"><label for="th-r">استدارة الزوايا</label>
       <div class="rng"><input type="range" id="th-r" min="0" max="28" step="1" value="${t.radius}"><output id="o-r">${t.radius}px</output></div></div>
- 
+
     <hr class="sep">
     <div class="field"><label for="th-bg">🧮 خلفية بصرية رياضية</label>
       <select id="th-bg">${BG_PATTERNS.map(p=>`<option value="${p.id}" ${t.bgPattern===p.id?'selected':''}>${p.name}</option>`).join('')}</select>
@@ -1809,11 +1826,11 @@ const Store = {
 function loadScript(src){
   return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
 }
- 
+
 /* =======================================================================
    3.5) الأسئلة والأجوبة (Q&A) — Supabase
    جدول مطلوب في Supabase (شغّله مرة واحدة من SQL editor):
- 
+
    create table if not exists public.qa_questions (
      id uuid primary key default gen_random_uuid(),
      name text,
@@ -1827,7 +1844,7 @@ function loadScript(src){
    create policy "qa public read"   on public.qa_questions for select using (true);
    create policy "qa public insert" on public.qa_questions for insert with check (true);
    create policy "qa public update" on public.qa_questions for update using (true) with check (true);
- 
+
    ملاحظة أمان: كلمة مرور الأدمن تُتحقّق من طرف المتصفح فقط (كما في باقي الموقع)،
    لذا سياسة UPDATE هنا مفتوحة تقنياً لأي زائر يعرف كيف يستخدم واجهة Supabase مباشرة.
    لحماية أقوى، يمكن لاحقاً نقل التحقق إلى Supabase Edge Function.
@@ -1838,7 +1855,7 @@ const QA = {
   error: '',
   filter: 'cur',
   sending: false,
- 
+
   async ensureClient(){
     if(Store.sb) return Store.sb;
     if(!CONFIG.SUPABASE.enabled) return null;
@@ -1848,7 +1865,7 @@ const QA = {
       return Store.sb;
     }catch(e){ console.warn('تعذّر تهيئة Supabase للأسئلة:', e); return null; }
   },
- 
+
   async init(){
     if(!CONFIG.SUPABASE.enabled){ renderQA(); return; }
     const sb = await this.ensureClient();
@@ -1877,7 +1894,7 @@ const QA = {
       renderQA();
     }
   },
- 
+
   async submit({name, question, track}){
     const sb = await this.ensureClient();
     if(!sb) throw new Error('no-supabase');
@@ -1886,7 +1903,7 @@ const QA = {
     if(error) throw error;
     if(data && !this.rows.some(r=>r.id===data.id)){ this.rows.unshift(data); renderQA(); }
   },
- 
+
   async answer(id, text){
     const sb = await this.ensureClient();
     if(!sb) throw new Error('no-supabase');
@@ -1898,7 +1915,7 @@ const QA = {
     const i=this.rows.findIndex(r=>r.id===id); if(i>-1) this.rows[i]=data; else this.rows.unshift(data);
     renderQA();
   },
- 
+
   async submitFromForm(){
     const nameEl = $('#qaName'), trackEl = $('#qaTrackSel'), textEl = $('#qaText');
     if(!nameEl || !trackEl || !textEl) return;
@@ -1916,11 +1933,11 @@ const QA = {
     finally{ this.sending = false; }
   }
 };
- 
+
 function fmtQaDate(iso){
   try{ return new Date(iso).toLocaleDateString('ar-EG', { day:'numeric', month:'short' }); }catch(e){ return ''; }
 }
- 
+
 const QA_SQL = `create table if not exists public.qa_questions (
   id uuid primary key default gen_random_uuid(),
   name text,
@@ -1937,12 +1954,12 @@ drop policy if exists "qa public update" on public.qa_questions;
 create policy "qa public read"   on public.qa_questions for select using (true);
 create policy "qa public insert" on public.qa_questions for insert with check (true);
 create policy "qa public update" on public.qa_questions for update using (true) with check (true);`;
- 
+
 function renderQA(){
   const list = $('#qaList'); if(!list) return;
   const fbar = $('#qaFilter');
   const sel = $('#qaTrackSel'); if(sel && currentTrack) sel.value = currentTrack;
- 
+
   if(!CONFIG.SUPABASE.enabled){
     list.innerHTML = '<p class="qa-empty">قسم الأسئلة يحتاج تفعيل Supabase من إعدادات الصفحة (CONFIG.SUPABASE).</p>';
     if(fbar) fbar.innerHTML = '';
@@ -1969,7 +1986,7 @@ function renderQA(){
       .map(([k,l,n])=>`<button class="chip ${QA.filter===k?'on':''}" data-act="qa-filter" data-f="${k}" type="button">${l} (${n})</button>`).join('');
   }
   if(!items.length){ list.innerHTML = '<p class="qa-empty">لا توجد أسئلة بعد — كن أول من يسأل!</p>'; return; }
- 
+
   list.innerHTML = items.map(r => `
     <div class="qa-card">
       <div class="qa-card-head">
@@ -1989,7 +2006,7 @@ function renderQA(){
            </div>`}
     </div>`).join('');
 }
- 
+
 /* ---- تدفّق إضافة إجابة (كلمة مرور ثم نص الإجابة) ---- */
 function qaAnswerFlow(row){
   if(isAdmin){ qaAnswerEditor(row); return; }
@@ -2058,16 +2075,18 @@ function render(){
   const introBrand = $('#introBrand'); if(introBrand) introBrand.textContent = site.meta.title || 'منصّة المحتوى';
   $('#heroTitle').textContent = site.meta.heroTitle || '';
   $('#heroSub').textContent = site.meta.heroSub || '';
+  $('#heroTitle').style.color = site.meta.heroColor || '';
+  $('#heroSub').style.color = site.meta.heroSubColor || '';
   $('#footNote').textContent = site.meta.footer || '';
   $('#heroCover').innerHTML = site.meta.cover
     ? `<div class="hero-cover"><img src="${esc(site.meta.cover)}" alt=""></div>` : '';
- 
+
   applySubjectOverrides();
  
   const b1 = $('#tsw1'), b2 = $('#tsw2');
   if(b1) b1.classList.toggle('active', currentTrack==='math1');
   if(b2) b2.classList.toggle('active', currentTrack==='math2');
- 
+
   const secs = visibleSections();
   $('#nav').innerHTML = secs
     .map(s=>`<a class="chip" href="#sec-${esc(s.id)}">${esc(s.title)}</a>`).join('');
@@ -2076,7 +2095,7 @@ function render(){
   renderTopMenu();
   renderNotifBadge();
 }
- 
+
 /* =======================================================================
    0.7) إعدادات المادة المستقلة (Math 1 / Math 2) — لا تؤثر إحداهما بالأخرى
    ======================================================================= */
@@ -2084,7 +2103,7 @@ function applySubjectOverrides(){
   const bannerEl = $('#subjectBanner'), noteEl = $('#subjectNote');
   const ts = currentTrack ? (site.trackSettings || {})[currentTrack] : null;
   const r = document.documentElement;
- 
+
   if(ts && ts.accent){
     r.style.setProperty('--accent', ts.accent);
     r.style.setProperty('--accent-soft', 'color-mix(in srgb, ' + ts.accent + ' 16%, transparent)');
@@ -2094,10 +2113,10 @@ function applySubjectOverrides(){
     if(globalAccent){ r.style.setProperty('--accent', globalAccent); r.style.setProperty('--accent-soft','color-mix(in srgb, '+globalAccent+' 16%, transparent)'); }
     else { r.style.removeProperty('--accent'); r.style.removeProperty('--accent-soft'); }
   }
- 
+
   if(bannerEl) bannerEl.innerHTML = (ts && ts.banner) ? `<div class="subject-banner"><img src="${esc(ts.banner)}" alt=""></div>` : '';
   if(noteEl) noteEl.innerHTML = (ts && ts.note) ? `<div class="subject-note">${fmt(ts.note)}</div>` : '';
- 
+
   if(ts && ts.label){ const b=$('#brandName'); if(b) b.textContent = ts.label; }
 }
 function subjectSettingsModal(){
@@ -2527,11 +2546,27 @@ function badgeRow(it){
 }
  
 /* ---- إعدادات الموقع ---- */
+document.addEventListener('input', e=>{
+  const id = e.target && e.target.id;
+  if(id==='g2c' || id==='g3c'){ const cb = document.getElementById(id+'on'); if(cb) cb.checked = true; }
+});
 function settingsModal(){
   openModal('إعدادات الموقع', `
     <div class="field"><label for="g1">اسم الموقع (أعلى الصفحة)</label><input id="g1" value="${esc(site.meta.title)}"></div>
-    <div class="field"><label for="g2">العنوان الرئيسي</label><input id="g2" value="${esc(site.meta.heroTitle)}"></div>
-    <div class="field"><label for="g3">النص التعريفي</label><textarea id="g3" style="min-height:90px">${esc(site.meta.heroSub)}</textarea></div>
+    <div class="field"><label for="g2">العنوان الرئيسي</label><input id="g2" value="${esc(site.meta.heroTitle)}">
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin-top:8px">
+        <input type="checkbox" id="g2con" ${site.meta.heroColor?'checked':''} style="width:auto"> لون مخصص
+        <input type="color" id="g2c" value="${site.meta.heroColor||'#FFFFFF'}" style="width:46px;height:32px;padding:0;border:0;cursor:pointer">
+        <span class="hint" style="margin:0">(بدون تفعيل = اللون الافتراضي)</span>
+      </label>
+    </div>
+    <div class="field"><label for="g3">النص التعريفي</label><textarea id="g3" style="min-height:90px">${esc(site.meta.heroSub)}</textarea>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin-top:8px">
+        <input type="checkbox" id="g3con" ${site.meta.heroSubColor?'checked':''} style="width:auto"> لون مخصص
+        <input type="color" id="g3c" value="${site.meta.heroSubColor||'#FFFFFF'}" style="width:46px;height:32px;padding:0;border:0;cursor:pointer">
+        <span class="hint" style="margin:0">(بدون تفعيل = اللون الافتراضي)</span>
+      </label>
+    </div>
     <div class="field"><label for="g4">رابط صورة الغلاف (اختياري)</label><input id="g4" value="${esc(site.meta.cover||'')}"></div>
     <div class="field"><label for="g6">شعار الموقع (Logo)</label>
       <input id="g6" value="${esc(site.meta.logo||'')}" placeholder="https://…/logo.png">
@@ -2547,6 +2582,8 @@ function settingsModal(){
     site.meta.title=$('#g1').value.trim(); site.meta.heroTitle=$('#g2').value.trim();
     site.meta.heroSub=$('#g3').value.trim(); site.meta.cover=$('#g4').value.trim();
     site.meta.logo=$('#g6').value.trim();
+    site.meta.heroColor = $('#g2con').checked ? $('#g2c').value : '';
+    site.meta.heroSubColor = $('#g3con').checked ? $('#g3c').value : '';
     site.meta.footer=$('#g5').value.trim();
     const p1=$('#p1').value, p2=$('#p2').value;
     if(p1){
@@ -2609,7 +2646,7 @@ document.addEventListener('click', async e=>{
   if(act==='add-link'){ $('#links').insertAdjacentHTML('beforeend', linkRow()); return; }
   if(act==='del-link'){ t.parentElement.remove(); return; }
   if(act==='add-badge'){ $('#badges').insertAdjacentHTML('beforeend', badgeRow()); return; }
- 
+
   if(act==='choose-track'){ closeSplash(); setTrack(t.dataset.track); return; }
   if(act==='sec-toggle'){
     const sec = findSec(id);
@@ -2617,6 +2654,14 @@ document.addEventListener('click', async e=>{
     if(openSections.has(id)) openSections.delete(id); else openSections.add(id);
     const el = document.getElementById('sec-'+id);
     if(el){ el.classList.toggle('open'); t.setAttribute('aria-expanded', el.classList.contains('open')); }
+    return;
+  }
+  if(act==='toggle-mode'){
+    const root = document.documentElement, dt = root.getAttribute('data-theme');
+    const dark = dt === 'dark' || (!dt && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+    setUserMode(dark ? 'light' : 'dark');
+    root.classList.add('theme-anim'); applyTheme(site.theme);
+    setTimeout(()=>root.classList.remove('theme-anim'), 450);
     return;
   }
   if(act==='qa-submit'){ QA.submitFromForm(); return; }
@@ -2684,6 +2729,7 @@ document.addEventListener('click', async e=>{
     case 'notif-admin': notifAdminModal(); break;
     case 'theme': themeModal(); break;
     case 'th-mode': {
+      setUserMode('');
       document.getElementById('th-mode').value = t.dataset.mode;
       document.querySelectorAll('[data-act="th-mode"]').forEach(b=>b.setAttribute('aria-pressed', b===t));
       applyTheme(readThemeForm()); refreshSwatches(); break;
@@ -2697,6 +2743,7 @@ document.addEventListener('click', async e=>{
       applyTheme(readThemeForm()); break;
     }
     case 'th-preset': {
+      setUserMode('');
       const p = PRESETS[+t.dataset.i];
       const cur = readThemeForm();
       const merged = Object.assign({}, cur, { mode:p.mode, colors: clone(p.colors) });
@@ -2758,14 +2805,14 @@ window.addEventListener('resize', syncTopbarHeight);
   render();
   syncTopbarHeight();
   if(!site.auth.passHash){ site.auth.passHash = await hashPass(CONFIG.DEFAULT_PASSWORD); }
- 
+
   await introPromise;
   syncTopbarHeight();
- 
+
   currentTrack = loadTrack();
   if(currentTrack){ setTrack(currentTrack, {silent:true}); closeSplash(); }
   else { openSplash(); }
- 
+
   await QA.init();
 })();
 </script>
