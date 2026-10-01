@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -270,7 +271,7 @@ footer{padding:40px 0; text-align:center; color:var(--ink-faint); font-size:14px
 hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 @media (prefers-reduced-motion: reduce){*{transition:none !important; scroll-behavior:auto !important}}
 @media print{.topbar,.adminbar,.fab,.block-tools,.addblock,.track-splash,.tswitch,.hamburger,.topmenu,.menu-catcher,.math-bg,.intro-splash,.notif-drawer,.notif-catcher,.notif-btn{display:none !important}}
-
+ 
 /* =======================================================================
    خلفية رياضية خفيفة + رموز زخرفية (النمط الفعلي يُحدَّد عبر data-bgpattern أسفل الملف)
    ======================================================================= */
@@ -282,7 +283,7 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 .hero::before{content:'∑'; font-size:min(30vw,240px); inset-inline-start:-.15em; top:-.25em;}
 .hero::after{content:'π'; font-size:min(26vw,210px); inset-inline-end:-.1em; bottom:-.3em; opacity:.05; color:var(--gold);}
 .hero .wrap{position:relative; z-index:1}
-
+ 
 /* ===== مبدّل الفرقة المدمج (Compact Pill Switcher) ===== */
 .tswitch{
   display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px;
@@ -294,7 +295,7 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 }
 .tswitch-btn:hover{color:var(--accent)}
 .tswitch-btn.active{background:var(--accent); color:#fff}
-
+ 
 /* =======================================================================
    خلفية رياضية متحركة (ثابتة خلف كل المحتوى)
    ======================================================================= */
@@ -311,7 +312,7 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
   75%{ transform:translate(-10px,-10px) rotate(3deg); }
 }
 @media (prefers-reduced-motion: reduce){ .mb-sym{animation:none} }
-
+ 
 /* =======================================================================
    شاشة اختيار الفرقة (Splash)
    ======================================================================= */
@@ -356,7 +357,7 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 .ts-choice-en{font-size:12px; color:var(--ink-faint); letter-spacing:.03em}
 .ts-choice-sub{font-size:13px; color:var(--ink-faint)}
 @media (max-width:480px){ .ts-choices{grid-template-columns:1fr} }
-
+ 
 /* =======================================================================
    الأقسام القابلة للطي
    ======================================================================= */
@@ -382,7 +383,7 @@ body.admin .sec-track-tag{display:inline-block}
 .section.open .sec-collapse{grid-template-rows:1fr}
 .sec-collapse > div{overflow:hidden; min-height:0}
 .sec-collapse > div > .sec-inner{padding-top:26px}
-
+ 
 /* بطاقات ومحتوى: تحويم أنعم */
 .block{transition:transform .2s ease}
 .linkbtn{transition:.2s}
@@ -390,7 +391,7 @@ body.admin .sec-track-tag{display:inline-block}
 .chip{transition:.2s}
 figure img{transition:transform .4s ease}
 figure:hover img{transform:scale(1.015)}
-
+ 
 /* =======================================================================
    قسم الأسئلة والأجوبة
    ======================================================================= */
@@ -417,7 +418,7 @@ figure:hover img{transform:scale(1.015)}
 .qa-pending{font-size:13px; color:var(--ink-faint); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
 .qa-empty{color:var(--ink-faint); text-align:center; padding:34px 0}
 .qa-answered-badge{font-size:12px; color:var(--accent); font-weight:700}
-
+ 
 /* =======================================================================
    شاشة الترحيب الافتتاحية (Intro)
    ======================================================================= */
@@ -475,7 +476,7 @@ figure:hover img{transform:scale(1.015)}
   padding:8px 16px; font-size:13px; opacity:0; animation:introFadeUp .5s ease 1.2s forwards;
 }
 .intro-skip:hover{ color:var(--accent); border-color:var(--accent) }
-
+ 
 /* =======================================================================
    قائمة الهامبرغر: تنسدل من الأعلى ولا تغطي العناوين
    ======================================================================= */
@@ -490,14 +491,14 @@ figure:hover img{transform:scale(1.015)}
 .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .hamburger.open span:nth-child(2){opacity:0}
 .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-
+ 
 /* طبقة شفافة تلتقط الضغط خارج القائمة لغلقها دون تغطية أي محتوى بصرياً */
 .menu-catcher{
   position:fixed; inset:0; z-index:51; background:transparent;
   opacity:0; visibility:hidden; pointer-events:none;
 }
 .menu-catcher.open{ visibility:visible; pointer-events:auto }
-
+ 
 .topmenu{
   position:fixed; left:0; right:0; top:var(--topbar-h,64px); z-index:52;
   background:var(--surface); border-bottom:1px solid var(--line); box-shadow:0 18px 44px rgba(0,0,0,.2);
@@ -532,33 +533,33 @@ figure:hover img{transform:scale(1.015)}
 }
 .tm-sub a:hover, .tm-sublink:hover{background:var(--surface-2); color:var(--accent)}
 .tm-sep{height:1px; background:var(--line); margin:8px 10px}
-
+ 
 /* تمييز مؤقت عند القفز لعنصر من القائمة */
 .block.flash{ animation:blockFlash 1.6s ease }
 @keyframes blockFlash{
   0%{box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 45%, transparent); border-radius:10px}
   100%{box-shadow:0 0 0 0 transparent; border-radius:10px}
 }
-
+ 
 /* ===== أزرار محاذاة النص (محرّر الفقرات) ===== */
 .align-group{display:flex; gap:6px; flex-wrap:wrap}
 .align-btn[aria-pressed="true"]{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
 mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inherit; padding:0 4px; border-radius:4px}
-
+ 
 /* ===== قسم مثبّت (لا يُطوى أبداً — مثل قسم التعريف) ===== */
 .section.pinned .sec-head-static{display:flex; align-items:flex-start; gap:12px; cursor:default}
 .pin-badge{
   display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; color:var(--accent);
   background:var(--accent-soft); border-radius:999px; padding:2px 10px; margin-inline-start:10px; vertical-align:middle;
 }
-
+ 
 /* =======================================================================
    شعار الموقع
    ======================================================================= */
 .brand-wrap{display:flex; align-items:center; gap:10px; min-width:0}
 .brand-logo{width:34px; height:34px; border-radius:9px; object-fit:cover; flex:none; box-shadow:var(--shadow)}
 .brand{overflow:hidden; text-overflow:ellipsis}
-
+ 
 /* =======================================================================
    جرس الإشعارات (أعلى يسار الترويسة)
    ======================================================================= */
@@ -599,7 +600,7 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
 .notif-empty{color:var(--ink-faint); text-align:center; padding:34px 10px; font-size:14px}
 .notif-admin-row{display:flex; gap:8px; align-items:center; margin-bottom:8px}
 .notif-admin-row .txt{flex:1; font-size:13.5px}
-
+ 
 /* =======================================================================
    القائمة الجانبية (Side Drawer) — بدل الانسدال من الأعلى
    ======================================================================= */
@@ -614,7 +615,7 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
 .topmenu > .tm-row{height:100%}
 .tm-scroll{ max-height:none; height:100%; overflow-y:auto; padding:10px 16px calc(24px + env(safe-area-inset-bottom,0px)) }
 .menu-catcher{ background:rgba(8,14,20,.4) }
-
+ 
 /* =======================================================================
    محتوى PDF
    ======================================================================= */
@@ -625,7 +626,7 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
 .pdf-box iframe{width:100%; height:520px; border:0; display:block; background:#fff}
 .pdf-fallback{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 16px; font-size:14px; color:var(--ink-soft)}
 .pdf-fallback a{font-weight:600}
-
+ 
 /* =======================================================================
    ستايلات نصوص إضافية: قوانين، أوسمة، توهج
    ======================================================================= */
@@ -651,7 +652,7 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
   border:1.5px solid var(--tag-c, var(--accent)); color:var(--tag-c, var(--accent));
   background:color-mix(in srgb, var(--tag-c, var(--accent)) 12%, transparent);
 }
-
+ 
 /* =======================================================================
    ثيمات خلفيات رياضية بصرية
    ======================================================================= */
@@ -687,7 +688,7 @@ body[data-bgpattern="dots"], body:not([data-bgpattern]){
   background-image: radial-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1.4px);
   background-size: 26px 26px;
 }
-
+ 
 /* =======================================================================
    إعدادات المادة المستقلة (Math 1 / Math 2)
    ======================================================================= */
@@ -696,101 +697,248 @@ body[data-bgpattern="dots"], body:not([data-bgpattern]){
   margin-top:16px; padding:14px 18px; background:var(--accent-soft); border-radius:var(--radius);
   border:1px solid color-mix(in srgb, var(--accent) 25%, transparent); font-size:14.5px;
 }
-:root{--ink:#0E1738;--ink-soft:#46517A;--ink-faint:#6E79A3;--bg:#F1F3FA;--surface:#FFFFFF;--surface-2:#E9EDFA;--line:#CBD3EE;--accent:#2B44E0;--accent-soft:#E0E5FC;--gold:#FFD23F;--danger:#D62F4B;--radius:8px;--edge:var(--ink);--shadow:3px 3px 0 var(--edge);--on-accent:#fff;--hero-bg:var(--accent);--hero-ink:#fff;--hero-soft:rgba(255,255,255,.88)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#EDF0FF;--ink-soft:#A9B3E6;--ink-faint:#7F8BC4;--bg:#0A0F2A;--surface:#131A42;--surface-2:#1A2354;--line:#2A3573;--accent:#8EA0FF;--accent-soft:#1C2670;--gold:#FFD23F;--danger:#FF6B84;--edge:var(--accent);--shadow:3px 3px 0 var(--edge);--on-accent:#0A0F2A;--hero-bg:var(--surface);--hero-ink:var(--ink);--hero-soft:var(--ink-soft)}}
-:root[data-theme="dark"]{--ink:#EDF0FF;--ink-soft:#A9B3E6;--ink-faint:#7F8BC4;--bg:#0A0F2A;--surface:#131A42;--surface-2:#1A2354;--line:#2A3573;--accent:#8EA0FF;--accent-soft:#1C2670;--gold:#FFD23F;--danger:#FF6B84;--edge:var(--accent);--shadow:3px 3px 0 var(--edge);--on-accent:#0A0F2A;--hero-bg:var(--surface);--hero-ink:var(--ink);--hero-soft:var(--ink-soft)}
-
-/* ===== تصميم جديد: كراسة رياضيات + قلم هايلايتر ===== */
-body{line-height:1.9}
-body[data-bgpattern="dots"],body:not([data-bgpattern]){background-image:linear-gradient(color-mix(in srgb,var(--ink) 5%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--ink) 5%,transparent) 1px,transparent 1px);background-size:28px 28px}
-.topbar{background:var(--bg);backdrop-filter:none;border-bottom:2px solid var(--edge)}
-.topbar-in{padding-inline:72px}
-.brand{font-size:19px}
-.brand-logo{border:2px solid var(--edge);border-radius:var(--radius);box-shadow:none}
-.chip{border:1.5px solid var(--edge);border-radius:var(--radius);background:var(--surface);color:var(--ink);font-weight:500}
-.chip:hover{background:var(--gold);color:#0E1738;border-color:var(--edge)}
-.tswitch{border:2px solid var(--edge);border-radius:var(--radius);padding:2px}
-.tswitch-btn{border-radius:calc(var(--radius) - 3px);color:var(--ink)}
-.tswitch-btn.active{background:var(--ink);color:var(--bg)}
-.hamburger,.notif-btn,.fab{border:2px solid var(--edge);border-radius:var(--radius);color:var(--ink)}
-
-.hero{padding:26px 16px 10px;border:0;overflow:visible}
+:root{--ink:#161B33;--ink-soft:#4B5475;--ink-faint:#7C85A6;--bg:#F5F6FB;--surface:#FFFFFF;--surface-2:#EFF1F9;--line:#E1E4F0;--accent:#5B5BF5;--accent-2:color-mix(in srgb,var(--accent) 55%,#E879F9);--accent-soft:#ECECFE;--gold:#F5B544;--danger:#E5484D;--radius:16px;--shadow:0 1px 2px rgba(22,27,51,.05),0 10px 28px -10px rgba(22,27,51,.14);--shadow-lg:0 30px 60px -20px rgba(50,50,140,.28);--on-accent:#fff;--hero-bg:linear-gradient(135deg,var(--accent),var(--accent-2));--hero-ink:#fff;--hero-soft:rgba(255,255,255,.88)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#ECEEFB;--ink-soft:#A7AED0;--ink-faint:#7A83AB;--bg:#0A0D1C;--surface:#12172B;--surface-2:#1A2038;--line:#262D4A;--accent:#8B8DFF;--accent-soft:#1E2350;--gold:#F5B544;--danger:#FF6B72;--shadow:0 1px 2px rgba(0,0,0,.4),0 12px 30px -12px rgba(0,0,0,.65);--shadow-lg:0 30px 60px -20px rgba(0,0,0,.7);--on-accent:#0A0D1C;--hero-bg:linear-gradient(135deg,color-mix(in srgb,var(--accent) 38%,#0A0D1C),color-mix(in srgb,var(--accent-2) 32%,#0A0D1C))}}
+:root[data-theme="dark"]{--ink:#ECEEFB;--ink-soft:#A7AED0;--ink-faint:#7A83AB;--bg:#0A0D1C;--surface:#12172B;--surface-2:#1A2038;--line:#262D4A;--accent:#8B8DFF;--accent-soft:#1E2350;--gold:#F5B544;--danger:#FF6B72;--shadow:0 1px 2px rgba(0,0,0,.4),0 12px 30px -12px rgba(0,0,0,.65);--shadow-lg:0 30px 60px -20px rgba(0,0,0,.7);--on-accent:#0A0D1C;--hero-bg:linear-gradient(135deg,color-mix(in srgb,var(--accent) 38%,#0A0D1C),color-mix(in srgb,var(--accent-2) 32%,#0A0D1C))}
+ 
+/* ===== تصميم Premium: زجاجي ناعم + تدرجات + شجرة أقسام ===== */
+html{scroll-behavior:smooth}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(800px 380px at 88% -4%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 70%),radial-gradient(700px 360px at 4% 30%,color-mix(in srgb,var(--accent-2) 10%,transparent),transparent 70%)}
+.topbar{background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid var(--line)}
+.topbar-in{min-height:80px;padding-inline:76px}
+.brand{font-size:20px;letter-spacing:-.2px}
+.brand-logo{border-radius:12px;box-shadow:var(--shadow)}
+.chip{border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);font-weight:500;transition:.2s}
+.chip:hover{background:var(--accent-soft);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+.tswitch{background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px}
+.tswitch-btn{border-radius:999px}
+.tswitch-btn.active{background:var(--hero-bg);color:#fff;box-shadow:0 4px 12px -4px var(--accent)}
+.notif-btn,.hamburger{top:calc(env(safe-area-inset-top,0px) + 18px)}
+.notif-btn,.hamburger,.fab{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink-soft);box-shadow:var(--shadow);transition:.2s}
+.notif-btn:hover,.hamburger:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-1px)}
+.fab{background:var(--hero-bg);color:#fff;border:0;box-shadow:0 12px 28px -8px var(--accent)}
+ 
+.hero{padding:28px 16px 6px;border:0;overflow:visible;background:none}
 .hero::before,.hero::after{display:none}
-.hero .wrap{max-width:var(--w);padding:42px clamp(20px,5vw,44px);background-color:var(--hero-bg);color:var(--hero-ink);border:2px solid var(--edge);border-radius:var(--radius);box-shadow:8px 8px 0 var(--edge);overflow:hidden;background-image:linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px);background-size:32px 32px}
-.hero .wrap::after{content:'∑';position:absolute;inset-inline-start:-.08em;bottom:-.3em;font:700 clamp(170px,30vw,280px)/1 var(--font-head);opacity:.13;pointer-events:none;z-index:0}
+.hero .wrap{max-width:var(--w);padding:52px clamp(22px,5vw,52px);background:var(--hero-bg);color:var(--hero-ink);border-radius:28px;box-shadow:var(--shadow-lg);overflow:hidden;position:relative}
+.hero .wrap::before{content:'';position:absolute;width:440px;height:440px;border-radius:50%;inset-inline-end:-140px;top:-200px;background:radial-gradient(circle,rgba(255,255,255,.3),transparent 65%);pointer-events:none}
+.hero .wrap::after{content:'';position:absolute;width:260px;height:260px;border-radius:50%;inset-inline-start:-80px;bottom:-130px;border:38px solid rgba(255,255,255,.1);pointer-events:none}
 .hero .wrap>*{position:relative;z-index:1}
-.hero h1{font-size:calc(clamp(30px,6vw,50px) * var(--hs));line-height:1.4;color:var(--hero-ink)}
-.hero p{color:var(--hero-soft);font-weight:400}
-.hero-cover,.subject-banner{border:2px solid var(--edge);border-radius:var(--radius);box-shadow:none}
-.subject-note{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:inherit}
-
-.section{padding:14px 0;border:0}
-.sec-head-btn,.section.pinned .sec-head-static{padding:14px 18px;background:var(--surface);border:2px solid var(--edge);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s,background .2s}
-.sec-head-btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--edge)}
-.sec-head-btn:active{transform:translate(2px,2px);box-shadow:none}
-.sec-title{border:0;padding:0;font-size:calc(clamp(19px,3.4vw,25px) * var(--hs));line-height:1.5}
-.sec-head-btn:hover .sec-title{color:inherit}
-.section.open .sec-head-btn,.section.pinned .sec-head-static{background:var(--gold);color:#0E1738}
-.section.open .sec-title,.section.pinned .sec-title,.section.pinned .sec-desc{color:#0E1738}
-.sec-chevron{border:2px solid var(--edge);border-radius:var(--radius);background:var(--surface);color:var(--ink)}
-.section.open .sec-chevron{color:#0E1738;border-color:#0E1738;background:transparent}
-.qa-section .sec-title{display:inline-block;background:linear-gradient(transparent 58%,color-mix(in srgb,var(--gold) 55%,transparent) 58%)}
-.pin-badge,.sec-track-tag{border-radius:var(--radius);background:#0E1738;color:#fff}
-.sec-collapse>div>.sec-inner{padding:22px 18px 6px;margin-inline-start:14px;border-inline-start:2px solid color-mix(in srgb,var(--danger) 75%,transparent)}
-
-.b-h{display:block;width:fit-content;font-size:calc(22px * var(--hs));background:linear-gradient(transparent 58%,color-mix(in srgb,var(--gold) 45%,transparent) 58%);padding:0 4px;margin-inline:-4px}
-.b-quote{border:0;border-inline-start:5px solid var(--edge);background:transparent;border-radius:0;font-family:var(--font-head);font-size:19px;padding:6px 20px}
-.b-note{background:var(--accent-soft);border:2px solid var(--accent);box-shadow:4px 4px 0 var(--accent)}
-.b-formula{font-family:"STIX Two Math","Cambria Math","Times New Roman",serif;font-size:23px;background:var(--surface);border:2px solid var(--edge);box-shadow:var(--shadow)}
-.b-steps li{background:var(--surface);border:1.5px solid var(--edge)}
-.b-steps li::before{border-radius:calc(var(--radius) / 2);background:var(--ink);color:var(--bg)}
-.b-key{background:color-mix(in srgb,var(--gold) 22%,var(--surface));border:2px solid var(--edge);box-shadow:var(--shadow)}
-.b-theorem{border:2px solid var(--edge);box-shadow:var(--shadow);overflow:hidden;padding-top:0}
-.b-theorem > .b-theorem-tag{margin:0 -22px 14px;padding:6px 22px;border-radius:0;background:var(--ink);color:var(--bg);font-size:13px}
-.b-law{background:var(--surface);border:2px solid var(--edge);box-shadow:6px 6px 0 var(--gold)}
-.b-law-tag{background:var(--gold);color:#0E1738;border-radius:var(--radius)}
-.badge-tag{border-radius:var(--radius)}
-mark.hl{background:color-mix(in srgb,var(--gold) 70%,transparent);border-radius:2px}
-figure img,.video-box,.pdf-box{border:2px solid var(--edge);border-radius:var(--radius)}
-.linkbtn{border:2px solid var(--edge);border-radius:var(--radius)}
-.linkbtn:hover{background:var(--gold);border-color:var(--edge);transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--edge)}
-.linkbtn:hover,.linkbtn:hover b,.linkbtn:hover span{color:#0E1738}
-.dashed{border:2px dashed var(--edge)}
-
-.adminbar{border-bottom:2px solid var(--edge)}
-.btn{border:1.5px solid var(--edge);border-radius:var(--radius);font-weight:500}
-.btn:hover{background:var(--gold);color:#0E1738;border-color:var(--edge)}
-.btn.primary{background:var(--accent);color:var(--on-accent);box-shadow:2px 2px 0 var(--edge)}
-.btn.primary:hover{background:var(--accent);color:var(--on-accent);opacity:1;transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--edge)}
-.btn.ghost{background:transparent;box-shadow:none}
-.field input,.field select,.field textarea,.linkrow input{border:1.5px solid var(--edge);border-radius:var(--radius);background:var(--surface)}
-.field input:focus,.field textarea:focus,.field select:focus{outline:3px solid var(--gold);border-color:var(--edge)}
-.overlay{backdrop-filter:none;background:rgba(10,15,42,.62)}
-.modal{border:2px solid var(--edge);border-radius:var(--radius);box-shadow:8px 8px 0 var(--edge)}
-.modal-f{border-radius:0}
-.toast{border:2px solid var(--edge);border-radius:var(--radius)}
-.topmenu{border-left:2px solid var(--edge);box-shadow:none}
-.notif-drawer{border-right:2px solid var(--edge);box-shadow:none}
-.tm-link.active{background:var(--gold);color:#0E1738}
-.tm-link,.tm-sub a,.notif-item,.typecard,.preset,.swatch{border-radius:var(--radius)}
-
-.track-splash,.intro-splash{background-color:var(--bg);background-image:linear-gradient(color-mix(in srgb,var(--ink) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--ink) 6%,transparent) 1px,transparent 1px);background-size:28px 28px}
-.ts-card{border:2px solid var(--edge);border-radius:var(--radius);box-shadow:8px 8px 0 var(--edge)}
-.ts-icon,.intro-logo{border-radius:var(--radius);background:var(--gold);color:#0E1738;border:2px solid var(--edge)}
-.ts-choice{border:2px solid var(--edge);border-radius:var(--radius);background:var(--surface)}
-.ts-choice:hover{background:var(--gold);color:#0E1738;transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--edge)}
-.ts-choice:hover .ts-choice-en,.ts-choice:hover .ts-choice-sub{color:#0E1738}
-.intro-skip{border:2px solid var(--edge);border-radius:var(--radius)}
-
-.qa-form,.qa-card{border:2px solid var(--edge);border-radius:var(--radius);box-shadow:var(--shadow)}
-.qa-card:hover{border-color:var(--edge)}
-.qa-answer{border:1.5px solid var(--edge);border-radius:var(--radius)}
-.qa-track-badge,.notif-item-track{border-radius:var(--radius)}
-footer{border-top:2px solid var(--edge);margin-top:30px;color:var(--ink-soft)}
+.hero h1{font-size:calc(clamp(30px,6vw,52px) * var(--hs));line-height:1.35;color:var(--hero-ink);letter-spacing:-.5px}
+.hero p{color:var(--hero-soft)}
+.hero-cover,.subject-banner{border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+.subject-note{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:14px;color:inherit}
+ 
+/* --- الأقسام + الفواصل --- */
+.section{padding:0;border:0;--lvl:var(--accent)}
+.section[data-depth="1"]{--lvl:#0EA5A4}.section[data-depth="2"]{--lvl:#F59E0B}.section[data-depth="3"]{--lvl:#EC4899}.section[data-depth="4"]{--lvl:#8B5CF6}
+#sections{padding-block:26px 10px}
+#sections>.section+.section{margin-top:56px}
+.section:not(.nested)>.wrap{position:relative}
+#sections>.section+.section>.wrap::before{content:'';position:absolute;top:-30px;inset-inline:20px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--line) 12%,color-mix(in srgb,var(--accent) 45%,var(--line)) 50%,var(--line) 88%,transparent)}
+#sections>.section+.section>.wrap::after{content:'';position:absolute;top:-36px;left:50%;width:14px;height:14px;transform:translateX(-50%) rotate(45deg);border-radius:4px;background:var(--hero-bg);box-shadow:0 0 0 7px var(--bg)}
+.sec-head{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap}
+.sec-head-btn,.section.pinned .sec-head-static{flex:1;min-width:220px;padding:18px 22px;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);transition:.25s}
+.sec-head-btn:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+.sec-title{border:0;padding:0;font-size:calc(clamp(19px,3.2vw,25px) * var(--hs));line-height:1.5;letter-spacing:-.2px}
+.section.open>.wrap>.sec-head .sec-head-btn,.section.pinned>.wrap>.sec-head .sec-head-static{background:linear-gradient(135deg,var(--accent-soft),var(--surface));border-color:color-mix(in srgb,var(--lvl) 35%,var(--line))}
+.sec-chevron{width:34px;height:34px;border-radius:12px;background:var(--surface-2);color:var(--ink-soft);transition:.3s}
+.section.open>.wrap>.sec-head .sec-chevron{background:var(--hero-bg);color:#fff}
+.pin-badge,.sec-track-tag,.sec-count{border-radius:999px;font-size:11.5px;font-weight:600;padding:2px 10px;margin-inline-start:8px;vertical-align:middle}
+.sec-count{display:inline-block;background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--line)}
+.section.open>.wrap>.sec-collapse>div>.sec-inner{margin-top:12px;padding:26px clamp(16px,3vw,30px) 14px;background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+.nested .sec-track-tag{display:none !important}
+ 
+/* --- الشجرة المتداخلة --- */
+.subsections{display:flex;flex-direction:column;gap:14px;margin-top:26px;padding-inline-start:20px;border-inline-start:2px solid color-mix(in srgb,var(--lvl) 35%,var(--line));border-radius:2px}
+.section.nested{position:relative}
+.section.nested::before{content:'';position:absolute;inset-inline-start:-20px;top:30px;width:18px;height:2px;background:color-mix(in srgb,var(--lvl) 35%,var(--line))}
+.section.nested>.wrap{max-width:none;padding:0}
+.section.nested>.wrap>.sec-head .sec-head-btn,.section.nested.pinned>.wrap>.sec-head .sec-head-static{padding:13px 18px;border-radius:16px;background:var(--surface-2);border:1px solid var(--line);border-inline-start:4px solid var(--lvl);box-shadow:none}
+.section.nested.open>.wrap>.sec-head .sec-head-btn{background:color-mix(in srgb,var(--lvl) 9%,var(--surface))}
+.section.nested .sec-title{font-size:calc(clamp(16px,2.6vw,19px) * var(--hs))}
+.section.nested.open>.wrap>.sec-collapse>div>.sec-inner{box-shadow:none;background:var(--bg);border-radius:18px;padding:20px clamp(14px,2.5vw,24px) 12px}
+.section.nested.open .sec-chevron{background:var(--lvl)}
+ 
+/* --- المحتوى --- */
+.b-h{display:flex;align-items:center;gap:10px;font-size:calc(22px * var(--hs));width:fit-content}
+.b-h::before{content:'';width:5px;height:1.1em;border-radius:4px;background:var(--hero-bg);flex:none}
+.b-quote{border:0;border-inline-start:4px solid var(--accent);background:var(--surface-2);border-radius:14px;padding:14px 20px;color:var(--ink-soft);font-size:18px}
+.b-note{background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);border-radius:16px}
+.b-formula{font-family:"STIX Two Math","Cambria Math","Times New Roman",serif;font-size:23px;background:var(--surface-2);border:1px solid var(--line);border-radius:16px}
+.b-steps li{background:var(--surface-2);border:1px solid var(--line);border-radius:14px}
+.b-steps li::before{border-radius:10px;background:var(--hero-bg);color:#fff}
+.b-key{background:color-mix(in srgb,var(--gold) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 50%,var(--line));border-radius:16px}
+.b-theorem{border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;padding-top:0}
+.b-theorem>.b-theorem-tag{display:block;margin:0 -22px 14px;padding:7px 22px;background:var(--hero-bg);color:#fff;font-size:13px;border-radius:0}
+.b-law{background:var(--surface);border:1px solid color-mix(in srgb,var(--gold) 55%,var(--line));border-radius:18px;box-shadow:0 10px 26px -14px var(--gold)}
+.b-law-tag,.badge-tag{background:var(--gold);color:#161B33;border-radius:999px}
+mark.hl{background:color-mix(in srgb,var(--gold) 55%,transparent);border-radius:4px;padding:0 3px}
+figure img,.video-box,.pdf-box{border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.linkbtn{border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow);transition:.2s}
+.linkbtn:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 14px 28px -12px color-mix(in srgb,var(--accent) 45%,transparent)}
+ 
+/* --- أدوات التحرير والنوافذ --- */
+.adminbar{border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.btn{border:1px solid var(--line);border-radius:12px;font-weight:500;transition:.2s}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.primary{background:var(--hero-bg);color:#fff;border:0;box-shadow:0 8px 20px -8px var(--accent)}
+.btn.primary:hover{color:#fff;background:var(--hero-bg);filter:brightness(1.08);transform:translateY(-1px)}
+.btn.danger:hover{background:color-mix(in srgb,var(--danger) 12%,transparent);color:var(--danger);border-color:var(--danger)}
+body.admin .addblock{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.addblock .dashed{flex:1;min-width:210px;padding:15px 18px;border:1.5px dashed color-mix(in srgb,var(--accent) 50%,var(--line));border-radius:16px;background:transparent;color:var(--accent);font-weight:600;transition:.2s}
+.addblock .dashed:hover{background:var(--accent-soft);border-style:solid}
+.addblock .dashed.nest{border-color:color-mix(in srgb,var(--lvl) 60%,var(--line));color:var(--lvl)}
+.addblock .dashed.nest:hover{background:color-mix(in srgb,var(--lvl) 10%,transparent)}
+.field input,.field select,.field textarea,.linkrow input{border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.field input:focus,.field textarea:focus,.field select:focus{outline:3px solid color-mix(in srgb,var(--accent) 28%,transparent);border-color:var(--accent)}
+.hint.nest-hint{margin:6px 0 0;font-size:12.5px;color:var(--ink-faint)}
+.overlay{backdrop-filter:blur(8px);background:rgba(10,13,28,.55)}
+.modal{border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow-lg)}
+.toast{border-radius:14px;box-shadow:var(--shadow-lg)}
+.topmenu{border-inline-start:1px solid var(--line);box-shadow:var(--shadow-lg)}
+.notif-drawer{border-inline-end:1px solid var(--line);box-shadow:var(--shadow-lg)}
+.tm-link,.tm-sub a,.tm-sublink,.notif-item,.typecard,.preset,.swatch{border-radius:12px}
+.tm-link:hover{background:var(--accent-soft);color:var(--accent)}
+.tm-link.active{background:var(--hero-bg);color:#fff}
+.typecard{border:1px solid var(--line);transition:.2s}.typecard:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.track-splash,.intro-splash{background:var(--bg)}
+.track-splash::before,.intro-splash::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(600px 360px at 80% 0,color-mix(in srgb,var(--accent) 22%,transparent),transparent 70%),radial-gradient(500px 320px at 10% 100%,color-mix(in srgb,var(--accent-2) 18%,transparent),transparent 70%)}
+.ts-card{border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow-lg)}
+.ts-icon,.intro-logo{border-radius:20px;background:var(--hero-bg);color:#fff;border:0}
+.ts-choice{border:1px solid var(--line);border-radius:18px;background:var(--surface);transition:.25s}
+.ts-choice:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.intro-skip{border-radius:999px}
+.qa-form,.qa-card{border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+.qa-answer{border-radius:14px}
+footer{border-top:1px solid var(--line);margin-top:48px;color:var(--ink-soft)}
+@media (max-width:640px){.topbar-in{padding-inline:64px}.hero .wrap{padding:38px 22px;border-radius:22px}.subsections{padding-inline-start:12px}.section.nested::before{inset-inline-start:-12px;width:10px}}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;scroll-behavior:auto !important}}
+ 
+/* إصلاح: القسم الفرعي المقفول يفضل مقفول حتى لو القسم الأب مفتوح */
+.section:not(.open)>.wrap>.sec-collapse{grid-template-rows:0fr}
+.section.open>.wrap>.sec-collapse{grid-template-rows:1fr}
+.section:not(.open)>.wrap>.sec-head .sec-chevron{transform:none;color:var(--ink-soft);border-color:transparent}
+.section.open>.wrap>.sec-head .sec-chevron{transform:rotate(180deg)}
+.section:not(.open)>.wrap>.sec-collapse>div{visibility:hidden}
+.section.open>.wrap>.sec-collapse>div{visibility:visible}
+ 
+/* ===== إزالة الشريط العلوي + مجلدات القائمة ===== */
+.navchips{display:none !important}
+.topbar-in .tswitch{margin-inline-start:auto}
+html{scroll-padding-top:100px}
+html:has(body.admin){scroll-padding-top:160px}
+.adminbar{top:calc(env(safe-area-inset-top,0px) + 80px)}
+.adminbar-in{padding:10px 0}
+.tm-scroll{max-height:min(70vh,560px)}
+.tm-folder{margin:8px 0;border:1px solid var(--line);border-radius:16px;background:var(--surface-2);overflow:hidden}
+.tm-folder-head{display:flex;align-items:center;gap:10px;width:100%;padding:13px 16px;font:inherit;font-weight:600;color:var(--ink);text-align:start;background:transparent;border:0;cursor:pointer;transition:.2s}
+.tm-folder-head:hover{background:var(--accent-soft)}
+.tm-folder-name{flex:1}
+.tm-folder-count{font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:1px 10px;color:var(--ink-soft)}
+.tm-folder-chev{transition:.3s;color:var(--ink-faint)}
+.tm-folder.open .tm-folder-chev{transform:rotate(180deg);color:var(--accent)}
+.tm-folder-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
+.tm-folder.open .tm-folder-body{grid-template-rows:1fr}
+.tm-folder-body>div{overflow:hidden;min-height:0;padding:0 8px}
+.tm-folder.open .tm-folder-body>div{padding:4px 8px 10px}
+.fl-h{margin:16px 0 8px;font-size:14px;color:var(--ink-soft)}
+.fl-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.fl-row input,.fl-row select{flex:1;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);color:inherit;font:inherit}
+.fl-sec{flex:1;font-weight:500;min-width:0}
+ 
+/* ===== خلفيات جاهزة ===== */
+body[data-bgpattern="aurora"],.bgthumb[data-p="aurora"]{background-image:radial-gradient(ellipse at 12% 8%,color-mix(in srgb,var(--accent) 30%,transparent),transparent 55%),radial-gradient(ellipse at 92% 18%,color-mix(in srgb,#EC4899 24%,transparent),transparent 55%),radial-gradient(ellipse at 50% 104%,color-mix(in srgb,#06B6D4 26%,transparent),transparent 58%)}
+body[data-bgpattern="aurora"]{background-attachment:fixed;background-size:auto}
+body[data-bgpattern="sunset"],.bgthumb[data-p="sunset"]{background-image:linear-gradient(165deg,color-mix(in srgb,#FB923C 26%,transparent),color-mix(in srgb,#F43F5E 18%,transparent) 48%,color-mix(in srgb,#8B5CF6 24%,transparent))}
+body[data-bgpattern="sunset"]{background-attachment:fixed;background-size:auto}
+body[data-bgpattern="ocean"],.bgthumb[data-p="ocean"]{background-image:linear-gradient(170deg,color-mix(in srgb,#22D3EE 26%,transparent),color-mix(in srgb,#3B82F6 18%,transparent) 55%,color-mix(in srgb,#1E3A8A 24%,transparent))}
+body[data-bgpattern="ocean"]{background-attachment:fixed;background-size:auto}
+body[data-bgpattern="forest"],.bgthumb[data-p="forest"]{background-image:linear-gradient(170deg,color-mix(in srgb,#86EFAC 28%,transparent),color-mix(in srgb,#10B981 16%,transparent) 55%,color-mix(in srgb,#065F46 22%,transparent))}
+body[data-bgpattern="forest"]{background-attachment:fixed;background-size:auto}
+body[data-bgpattern="rose"],.bgthumb[data-p="rose"]{background-image:linear-gradient(160deg,color-mix(in srgb,#F9A8D4 30%,transparent),color-mix(in srgb,#FDA4AF 18%,transparent) 50%,color-mix(in srgb,#C4B5FD 26%,transparent))}
+body[data-bgpattern="rose"]{background-attachment:fixed;background-size:auto}
+body[data-bgpattern="violet"],.bgthumb[data-p="violet"]{background-image:linear-gradient(160deg,color-mix(in srgb,#C4B5FD 30%,transparent),color-mix(in srgb,#818CF8 18%,transparent) 55%,color-mix(in srgb,#F0ABFC 24%,transparent))}
+body[data-bgpattern="violet"]{background-attachment:fixed;background-size:auto}
+body[data-bgpattern="paper"],.bgthumb[data-p="paper"]{background-image:repeating-linear-gradient(to bottom,transparent 0 31px,color-mix(in srgb,var(--accent) 16%,transparent) 31px 32px),linear-gradient(90deg,transparent calc(100% - 70px),color-mix(in srgb,#EF4444 40%,transparent) calc(100% - 70px) calc(100% - 68px),transparent calc(100% - 68px));background-size:auto}
+body[data-bgpattern="graph"],.bgthumb[data-p="graph"]{background-image:linear-gradient(color-mix(in srgb,var(--accent) 14%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--accent) 14%,transparent) 1px,transparent 1px);background-size:22px 22px}
+body[data-bgpattern="diagonal"],.bgthumb[data-p="diagonal"]{background-image:repeating-linear-gradient(45deg,color-mix(in srgb,var(--accent) 9%,transparent) 0 2px,transparent 2px 16px);background-size:auto}
+body[data-bgpattern="stars"],.bgthumb[data-p="stars"]{background-image:radial-gradient(1.5px 1.5px at 20px 30px,color-mix(in srgb,var(--ink) 60%,transparent),transparent),radial-gradient(1px 1px at 90px 70px,color-mix(in srgb,var(--ink) 50%,transparent),transparent),radial-gradient(2px 2px at 140px 20px,color-mix(in srgb,var(--ink) 45%,transparent),transparent),radial-gradient(1px 1px at 60px 120px,color-mix(in srgb,var(--ink) 55%,transparent),transparent);background-size:180px 160px}
+.bgthumb[data-p="dots"]{background-image:radial-gradient(color-mix(in srgb,var(--ink) 25%,transparent) 1px,transparent 1.4px);background-size:10px 10px}
+.bgthumb[data-p="grid"]{background-image:linear-gradient(color-mix(in srgb,var(--ink) 16%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--ink) 16%,transparent) 1px,transparent 1px);background-size:16px 16px}
+.bgthumb[data-p="blueprint"]{background-image:linear-gradient(color-mix(in srgb,var(--accent) 30%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--accent) 30%,transparent) 1px,transparent 1px);background-size:14px 14px}
+.bgthumb[data-p="calc"]::before{content:'∫ ∑ π √';position:absolute;inset:6px 0 auto;text-align:center;opacity:.35;color:var(--accent);font-weight:700}
+.bg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.bgthumb{position:relative;height:66px;border-radius:12px;border:2px solid var(--line);background-color:var(--bg);display:flex;align-items:flex-end;justify-content:center;padding:5px;cursor:pointer;overflow:hidden;transition:.2s}
+.bgthumb span{position:relative;background:var(--surface);color:var(--ink);padding:1px 9px;border-radius:999px;border:1px solid var(--line);font-size:11.5px}
+.bgthumb:hover{transform:translateY(-2px)}
+.bgthumb[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+.presets{max-height:260px;overflow:auto;padding:2px}
+.pal{display:inline-flex;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.pal i{width:12px;height:18px;display:block}
+.tm-folder .tm-folder{margin:6px 0;background:var(--surface)}
+.fl-row{flex-wrap:wrap}
+.fl-row input{min-width:120px}
+ 
+/* ===== تصاميم كتابة إضافية ===== */
+.b-fx{margin:0;padding:16px 20px;border-radius:16px;position:relative}
+.b-fx p{margin:.4em 0}.b-fx>:first-child{margin-top:0}.b-fx>:last-child{margin-bottom:0}
+.b-fx[class*="callout-"]{background:color-mix(in srgb,var(--c) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 32%,transparent);border-inline-start:5px solid var(--c)}
+.b-fx[class*="callout-"]::before{display:block;margin-bottom:6px;font-weight:700;font-size:13.5px;color:var(--c)}
+.b-fx.b-fx-callout-info{--c:#3B82F6}.b-fx.b-fx-callout-info::before{content:'💬 معلومة'}
+.b-fx.b-fx-callout-tip{--c:#10B981}.b-fx.b-fx-callout-tip::before{content:'✅ نصيحة'}
+.b-fx.b-fx-callout-warn{--c:#F59E0B}.b-fx.b-fx-callout-warn::before{content:'⚠️ تنبيه'}
+.b-fx.b-fx-callout-danger{--c:#EF4444}.b-fx.b-fx-callout-danger::before{content:'⛔ انتبه — خطأ شائع'}
+.b-fx.b-fx-callout-example{--c:#8B5CF6}.b-fx.b-fx-callout-example::before{content:'📘 مثال محلول'}
+.b-fx.b-fx-callout-proof{--c:#64748B}.b-fx.b-fx-callout-proof::before{content:'البرهان'}
+.b-fx.b-fx-callout-proof::after{content:'∎';display:block;margin-top:6px;color:var(--c);font-size:18px}
+.b-fx-gradient{padding:6px 0;font-family:var(--font-head);font-size:calc(28px * var(--hs));font-weight:700;line-height:1.5;background:var(--hero-bg);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.b-fx-banner{display:flex;align-items:center;gap:16px;padding:6px 0;font-family:var(--font-head);font-weight:700;font-size:calc(22px * var(--hs))}
+.b-fx-banner::before,.b-fx-banner::after{content:'';flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--accent))}
+.b-fx-banner::after{transform:scaleX(-1)}.b-fx-banner>*{margin:0}
+.b-fx-highlight{background:color-mix(in srgb,var(--gold) 28%,transparent);font-weight:500}
+.b-fx-card{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-lg);padding:22px 26px}
+.b-fx-bubble{background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:22px;margin-bottom:16px}
+.b-fx-bubble::after{content:'';position:absolute;bottom:-9px;inset-inline-start:28px;width:18px;height:18px;transform:rotate(45deg);background:var(--accent-soft);border-inline-start:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-bottom:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:0 0 0 4px}
+.b-fx-sticky{background:#FFF3A3;color:#3B3200;border-radius:4px 4px 18px 4px;transform:rotate(-1deg);box-shadow:0 14px 22px -12px rgba(0,0,0,.4);font-family:"Aref Ruqaa","Amiri",serif;font-size:1.2em;line-height:1.9}
+.b-fx-ribbon{background:var(--surface-2);padding-inline-start:30px}
+.b-fx-ribbon::before{content:'';position:absolute;inset-block:12px;inset-inline-start:12px;width:6px;border-radius:6px;background:linear-gradient(180deg,var(--accent),var(--accent-2))}
+.b-fx-outline{border:2px dashed color-mix(in srgb,var(--accent) 55%,transparent);background:transparent}
+.b-fx-dropcap{padding:0}
+.b-fx-dropcap::first-letter{float:inline-start;font:700 3.4em/.9 var(--font-head);color:var(--accent);margin-inline-end:10px;margin-top:4px}
+.b-fx-typewriter{font-family:ui-monospace,Menlo,Consolas,"Courier New",monospace;background:var(--surface-2);border:1px solid var(--line);font-size:.95em;line-height:1.9}
+.b-fx-handwritten{font-family:"Aref Ruqaa","Amiri",serif;font-size:1.4em;line-height:2;color:var(--accent);padding:6px 4px}
+ 
+/* ===== شكل اسم القسم ===== */
+.sec-title{font-size:calc(clamp(19px,3.2vw,25px) * var(--hs) * var(--ts,1))}
+.section.nested .sec-title{font-size:calc(clamp(16px,2.6vw,19px) * var(--hs) * var(--ts,1))}
+.sec-title[data-st="gradient"] .st-text{background:var(--hero-bg);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.sec-title[data-st="underline"] .st-text{text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:3px;text-underline-offset:9px}
+.sec-title[data-st="marker"] .st-text{background:linear-gradient(transparent 58%,color-mix(in srgb,var(--gold) 55%,transparent) 58%);padding:0 6px}
+.sec-title[data-st="pill"] .st-text{display:inline-block;background:var(--accent-soft);padding:2px 18px;border-radius:999px}
+.sec-title[data-st="outline"] .st-text{display:inline-block;border:2px solid var(--accent);padding:2px 16px;border-radius:12px}
+.sec-title[data-st="glow"]{color:var(--accent)}
+.sec-title[data-st="glow"] .st-text{text-shadow:0 0 14px currentColor}
+.sec-title[data-st="shadow"] .st-text{text-shadow:3px 3px 0 color-mix(in srgb,var(--accent) 35%,transparent)}
+.st-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.st-prev{margin-top:12px;padding:14px 16px;border:1px dashed var(--line);border-radius:14px;background:var(--surface-2)}
+@media (max-width:520px){.st-grid{grid-template-columns:1fr}}
+ 
+/* ===== الأسئلة والأجوبة ===== */
+.qa-admin-only,.qa-admin-note,.qa-filter{display:none !important}
+body.admin .qa-admin-only{display:inline-flex !important}
+body.admin .qa-admin-note{display:block !important}
+body.admin .qa-filter{display:flex !important;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.qa-filter .chip{font:inherit;font-size:13.5px;cursor:pointer}
+.qa-filter .chip.on{background:var(--hero-bg);color:#fff;border-color:transparent}
+.qa-warn{padding:18px 20px;border:1px solid color-mix(in srgb,var(--danger) 45%,var(--line));background:color-mix(in srgb,var(--danger) 8%,var(--surface));border-radius:18px}
+.qa-warn p{margin:6px 0}
+.qa-answer{background:var(--accent-soft)}
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
+ 
 <!-- ===== خلفية رياضية متحركة هادئة (ثابتة خلف كل شيء) ===== -->
 <div class="math-bg" aria-hidden="true">
   <span class="mb-sym" style="--x:5%;  --y:10%; --s:50px; --d:0s;   --du:17s">π</span>
@@ -806,7 +954,7 @@ footer{border-top:2px solid var(--edge);margin-top:30px;color:var(--ink-soft)}
   <span class="mb-sym" style="--x:38%; --y:60%; --s:32px; --d:3.5s; --du:19s">∫</span>
   <span class="mb-sym" style="--x:74%; --y:16%; --s:30px; --d:0.8s; --du:24s">∞</span>
 </div>
-
+ 
 <!-- ===== شاشة الترحيب الافتتاحية (Intro) ===== -->
 <div class="intro-splash" id="introSplash" aria-hidden="true">
   <div class="intro-bg" aria-hidden="true">
@@ -833,7 +981,7 @@ footer{border-top:2px solid var(--edge);margin-top:30px;color:var(--ink-soft)}
   </div>
   <button class="intro-skip" id="introSkip" type="button">تخطي ⏭</button>
 </div>
-
+ 
 <!-- ===== شاشة اختيار الفرقة الدراسية ===== -->
 <div class="track-splash" id="trackSplash" aria-hidden="true">
   <div class="ts-bg" aria-hidden="true">
@@ -866,7 +1014,7 @@ footer{border-top:2px solid var(--edge);margin-top:30px;color:var(--ink-soft)}
     </div>
   </div>
 </div>
-
+ 
 <header class="topbar" id="topbar">
   <div class="wrap topbar-in">
     <div class="brand-wrap">
@@ -880,7 +1028,7 @@ footer{border-top:2px solid var(--edge);margin-top:30px;color:var(--ink-soft)}
     </div>
   </div>
 </header>
-
+ 
 <button class="notif-btn" id="notifBtn" data-act="notif-open" type="button" aria-label="الإشعارات" title="الإشعارات">
   🔔<span class="notif-badge zero" id="notifBadge">0</span>
 </button>
@@ -891,7 +1039,7 @@ footer{border-top:2px solid var(--edge);margin-top:30px;color:var(--ink-soft)}
 <nav class="topmenu" id="topMenu" aria-hidden="true">
   <div class="tm-row"><div class="tm-scroll" id="topMenuList"></div></div>
 </nav>
-
+ 
 <div class="notif-catcher" id="notifCatcher" data-act="notif-close"></div>
 <aside class="notif-drawer" id="notifDrawer" aria-hidden="true">
   <div class="notif-head">
@@ -905,6 +1053,7 @@ footer{border-top:2px solid var(--edge);margin-top:30px;color:var(--ink-soft)}
   <div class="wrap adminbar-in">
     <button class="btn primary" data-act="add-section">＋ قسم جديد</button>
     <button class="btn" data-act="settings">⚙ إعدادات الموقع</button>
+    <button class="btn" data-act="folders">📁 مجلدات القائمة</button>
     <button class="btn" data-act="subject-settings">🎓 إعدادات المادة</button>
     <button class="btn" data-act="theme">🎨 المظهر والألوان</button>
     <button class="btn" data-act="notif-admin">🔔 إدارة الإشعارات</button>
@@ -927,7 +1076,7 @@ footer{border-top:2px solid var(--edge);margin-top:30px;color:var(--ink-soft)}
     </div>
   </section>
   <div id="sections"></div>
-
+ 
   <section class="section qa-section" id="qa-section">
     <div class="wrap">
       <div class="sec-head">
@@ -936,7 +1085,7 @@ footer{border-top:2px solid var(--edge);margin-top:30px;color:var(--ink-soft)}
           <p class="sec-desc">اسأل عن أي نقطة محيّرة في المحاضرات أو السكاشن، وهيوصلك الرد هنا.</p>
         </div>
       </div>
-
+ 
       <div class="qa-form">
         <div class="field"><label for="qaName">الاسم (اختياري)</label>
           <input id="qaName" placeholder="اكتب اسمك…"></div>
@@ -951,7 +1100,8 @@ footer{border-top:2px solid var(--edge);margin-top:30px;color:var(--ink-soft)}
           <textarea id="qaText" placeholder="اكتب سؤالك هنا…" style="min-height:100px"></textarea></div>
         <button class="btn primary" data-act="qa-submit" type="button">إرسال السؤال</button>
       </div>
-
+ 
+      <div class="qa-filter" id="qaFilter"></div>
       <div class="qa-list" id="qaList"></div>
     </div>
   </section>
@@ -1073,6 +1223,7 @@ function closeMenu(){
   $('#hamburgerBtn').classList.remove('open'); $('#hamburgerBtn').setAttribute('aria-expanded','false');
 }
 /* يبني قائمة العناصر الفرعية لأي قسم: العناوين الفرعية وعناصر الروابط داخله */
+const openFolders = new Set();
 function menuSubitems(sec){
   const subs = [];
   (sec.blocks||[]).forEach(b=>{
@@ -1082,6 +1233,7 @@ function menuSubitems(sec){
       (b.items||[]).forEach(it=>{ if(it.label) subs.push({ label:it.label, secId:sec.id, blockId:b.id, url:it.url }); });
     }
   });
+  (function walk(list, d){ (list||[]).forEach(c=>{ subs.push({ label:'—'.repeat(d)+' '+c.title, secId:c.id }); walk(c.children, d+1); }); })(sec.children, 1);
   return subs;
 }
 function renderTopMenu(){
@@ -1097,7 +1249,7 @@ function renderTopMenu(){
     <div class="tm-sep"></div>
     <div class="tm-group-label">الأقسام</div>`;
  
-  html += secs.length ? secs.map(s=>{
+  const itemHtml = (s)=>{
     const subs = menuSubitems(s);
     const hasSub = subs.length>0;
     return `<div class="tm-item" data-menu-sec="${s.id}">
@@ -1108,16 +1260,38 @@ function renderTopMenu(){
       ${hasSub ? `<div class="tm-sub"><div>
         ${subs.map(su => su.url
             ? `<a href="${esc(su.url)}" target="_blank" rel="noopener">${esc(su.label)}</a>`
-            : `<button class="tm-sublink" data-act="menu-goto-block" data-sec="${su.secId}" data-block="${su.blockId}" type="button">${esc(su.label)}</button>`
+            : `<button class="tm-sublink" data-act="menu-goto-block" data-sec="${su.secId}" data-block="${su.blockId||''}" type="button">${esc(su.label)}</button>`
           ).join('')}
       </div></div>` : ''}
     </div>`;
-  }).join('') : '<p class="qa-empty" style="padding:20px">لا توجد أقسام بعد.</p>';
+  };
+  const folders = site.folders || [];
+  const fids = new Set(folders.map(f=>f.id));
+  const inFolder = new Set(), seen = new Set();
+  const folderCount = (f, g)=>{ g = g || new Set(); if(g.has(f.id)) return 0; g.add(f.id);
+    return secs.filter(x=>x.folder===f.id).length + folders.filter(c=>c.parent===f.id).reduce((n,c)=>n+folderCount(c,g),0); };
+  const folderHtml = (f)=>{
+    if(seen.has(f.id)) return ''; seen.add(f.id);
+    const items = secs.filter(x=>x.folder===f.id);
+    const kids = folders.filter(c=>c.parent===f.id).map(folderHtml).join('');
+    if(!items.length && !kids) return '';
+    items.forEach(x=>inFolder.add(x.id));
+    const op = openFolders.has(f.id);
+    return `<div class="tm-folder ${op?'open':''}">
+      <button class="tm-folder-head" data-act="tm-folder-toggle" data-id="${f.id}" type="button" aria-expanded="${op}">
+        <span>📁</span><span class="tm-folder-name">${esc(f.name)}</span><span class="tm-folder-count">${folderCount(f)}</span><span class="tm-folder-chev">▾</span>
+      </button>
+      <div class="tm-folder-body"><div>${kids}${items.map(itemHtml).join('')}</div></div>
+    </div>`;
+  };
+  const foldHtml = folders.filter(f=>!f.parent || !fids.has(f.parent)).map(folderHtml).join('');
+  const loose = secs.filter(x=>!inFolder.has(x.id));
+  html += secs.length ? (foldHtml + loose.map(itemHtml).join('')) : '<p class="qa-empty" style="padding:20px">لا توجد أقسام بعد.</p>';
  
   list.innerHTML = html;
 }
 function menuGoto(secId, blockId){
-  openSections.add(secId);
+  openSections.add(secId); openAncestors(secId);
   const secEl = document.getElementById('sec-'+secId);
   if(secEl) secEl.classList.add('open');
   closeMenu();
@@ -1254,7 +1428,7 @@ function fmt(text){
   if(inList) out+='</ul>';
   return out;
 }
-
+ 
 /* خطوات الحل: سطر لكل خطوة → بطاقات مرقّمة */
 function stepsHtml(text, align){
   const inline = t => esc(t)
@@ -1299,15 +1473,33 @@ const VARS = {
 };
  
 function defaultTheme(){
-  return { mode:'auto', headFont:'Noto Kufi Arabic', bodyFont:'IBM Plex Sans Arabic',
-           fontSize:17, headScale:1, width:900, radius:8, colors:{}, bgPattern:'dots' };
+  return { mode:'auto', headFont:'Readex Pro', bodyFont:'IBM Plex Sans Arabic',
+           fontSize:17, headScale:1, width:900, radius:16, colors:{}, bgPattern:'dots' };
 }
 const BG_PATTERNS = [
-  { id:'dots',      name:'نقاط ناعمة (افتراضي)' },
-  { id:'grid',      name:'شبكة إحداثيات ومحاور' },
-  { id:'calc',      name:'رموز تفاضل وتكامل متناثرة' },
-  { id:'blueprint',name:'مخطط تقني (Blueprint)' },
-  { id:'minimal',  name:'نظيف بلا نقوش (Minimalist)' }
+  { id:'dots',     name:'نقاط ناعمة (افتراضي)', short:'نقاط' },
+  { id:'grid',     name:'شبكة إحداثيات ومحاور', short:'شبكة' },
+  { id:'calc',     name:'رموز تفاضل وتكامل متناثرة', short:'رموز ∫' },
+  { id:'blueprint',name:'مخطط تقني (Blueprint)', short:'Blueprint' },
+  { id:'minimal',  name:'نظيف بلا نقوش (Minimalist)', short:'نظيف' },
+  { id:'aurora',   name:'شفق قطبي (Aurora)', short:'شفق' },
+  { id:'sunset',   name:'غروب دافئ', short:'غروب' },
+  { id:'ocean',    name:'محيط أزرق', short:'محيط' },
+  { id:'forest',   name:'غابة خضراء', short:'غابة' },
+  { id:'rose',     name:'وردي حالم', short:'وردي' },
+  { id:'violet',   name:'بنفسجي ناعم', short:'بنفسجي' },
+  { id:'paper',    name:'كراسة بسطور', short:'كراسة' },
+  { id:'graph',    name:'ورق رسم بياني', short:'رسم بياني' },
+  { id:'diagonal', name:'خطوط مائلة', short:'مائل' },
+  { id:'stars',    name:'نجوم ليلية', short:'نجوم' }
+];
+const FX_STYLES = [
+  ['callout-info','💬 معلومة (أزرق)'],['callout-tip','✅ نصيحة (أخضر)'],['callout-warn','⚠️ تنبيه (برتقالي)'],
+  ['callout-danger','⛔ خطأ شائع (أحمر)'],['callout-example','📘 مثال محلول'],['callout-proof','∎ برهان'],
+  ['gradient','🌈 عنوان بتدرج لوني'],['banner','🎀 عنوان بخطوط جانبية'],['highlight','🖍️ هايلايتر'],
+  ['card','🪪 بطاقة عائمة'],['bubble','💭 فقاعة كلام'],['sticky','📌 ورقة ملاحظة لاصقة'],
+  ['ribbon','🔖 شريط جانبي ملوّن'],['outline','🔲 إطار منقّط'],['dropcap','🅰️ فقرة بحرف أول كبير'],
+  ['typewriter','⌨️ آلة كاتبة'],['handwritten','✍️ بخط اليد']
 ];
  
 /* جاهزات عامة + جاهزات بموضوع رياضي (تُطبَّق ألوانها وخط عناوينها معاً) */
@@ -1321,11 +1513,27 @@ const PRESETS = [
   { name:'رملي دافئ',   mode:'light', colors:{ bg:'#F6F1E7', surface:'#FFFDF8', surface2:'#F0E9DB', ink:'#2B2620', inkSoft:'#6B6154', line:'#E4DBCA', accent:'#A2643C', gold:'#B8862F' } },
   { name:'أزرق ملكي',   mode:'light', colors:{ bg:'#EDF1F8', surface:'#FFFFFF', surface2:'#E6ECF7', ink:'#14233A', inkSoft:'#4C5D7A', line:'#D4DDEC', accent:'#2A4D8F', gold:'#C08A2E' } },
   { name:'زمردي ليلي',  mode:'dark',  colors:{ bg:'#0B1512', surface:'#122019', surface2:'#17291F', ink:'#E8F3EC', inkSoft:'#9FBCAD', line:'#22382C', accent:'#3FBF84', gold:'#D9AE5F' } },
-  { name:'عنّابي',      mode:'light', colors:{ bg:'#FAF0F1', surface:'#FFFFFF', surface2:'#F5E4E7', ink:'#3A1E24', inkSoft:'#7A5A60', line:'#EBD3D7', accent:'#9B2C3F', gold:'#B8862F' } }
+  { name:'عنّابي',      mode:'light', colors:{ bg:'#FAF0F1', surface:'#FFFFFF', surface2:'#F5E4E7', ink:'#3A1E24', inkSoft:'#7A5A60', line:'#EBD3D7', accent:'#9B2C3F', gold:'#B8862F' } },
+  { name:'بنفسجي حالم', mode:'light', bg:'aurora', colors:{ bg:'#F6F3FF', surface:'#FFFFFF', surface2:'#EEE8FF', ink:'#241A44', inkSoft:'#62578A', line:'#E0D8F7', accent:'#7C3AED', gold:'#F59E0B' } },
+  { name:'محيط أزرق', mode:'light', bg:'ocean', colors:{ bg:'#EEF7FB', surface:'#FFFFFF', surface2:'#E1F0F7', ink:'#0B2A3A', inkSoft:'#4A6B7C', line:'#CDE3EC', accent:'#0891B2', gold:'#F59E0B' } },
+  { name:'غروب الشمس', mode:'light', bg:'sunset', colors:{ bg:'#FFF6EE', surface:'#FFFFFF', surface2:'#FFEBDA', ink:'#3A1F10', inkSoft:'#7A5A47', line:'#F6D9C2', accent:'#EA580C', gold:'#DB2777' } },
+  { name:'غابة هادئة', mode:'light', bg:'forest', colors:{ bg:'#F1F7F2', surface:'#FFFFFF', surface2:'#E3EFE6', ink:'#14301F', inkSoft:'#4F6F5B', line:'#CFE2D5', accent:'#15803D', gold:'#CA8A04' } },
+  { name:'وردي ناعم', mode:'light', bg:'rose', colors:{ bg:'#FFF1F5', surface:'#FFFFFF', surface2:'#FFE3EB', ink:'#3D1426', inkSoft:'#86536A', line:'#F8CFDB', accent:'#DB2777', gold:'#F59E0B' } },
+  { name:'نيون ليلي', mode:'dark', bg:'stars', colors:{ bg:'#0A0A1A', surface:'#12122B', surface2:'#1A1A3D', ink:'#F0F0FF', inkSoft:'#A3A3D9', line:'#2A2A5C', accent:'#22D3EE', gold:'#F472B6' } },
+  { name:'ذهبي فاخر', mode:'dark', bg:'minimal', colors:{ bg:'#0D0D0D', surface:'#161616', surface2:'#1F1F1F', ink:'#F5F0E6', inkSoft:'#B8AE98', line:'#2E2B24', accent:'#D4AF37', gold:'#D4AF37' } },
+  { name:'قهوة ودفء', mode:'light', bg:'paper', colors:{ bg:'#F5EEE6', surface:'#FFFBF6', surface2:'#EBDFD1', ink:'#2D1B10', inkSoft:'#735A48', line:'#DDCBB8', accent:'#8B5E3C', gold:'#C58B2B' } },
+  { name:'نعناع منعش', mode:'light', bg:'graph', colors:{ bg:'#EFFBF7', surface:'#FFFFFF', surface2:'#DDF5EC', ink:'#0F3329', inkSoft:'#48766A', line:'#C3EADB', accent:'#0D9488', gold:'#F59E0B' } },
+  { name:'سماء صافية', mode:'light', bg:'dots', colors:{ bg:'#F0F6FF', surface:'#FFFFFF', surface2:'#E2EDFF', ink:'#0F1F3D', inkSoft:'#4B5F88', line:'#D0DFF8', accent:'#2563EB', gold:'#F59E0B' } },
+  { name:'كحلي عميق', mode:'dark', bg:'grid', colors:{ bg:'#0B1020', surface:'#121A33', surface2:'#19234A', ink:'#E8EEFF', inkSoft:'#9DAAD6', line:'#26335F', accent:'#60A5FA', gold:'#FBBF24' } },
+  { name:'أرجواني ليلي', mode:'dark', bg:'aurora', colors:{ bg:'#130B22', surface:'#1C1233', surface2:'#261A47', ink:'#F1E9FF', inkSoft:'#B6A3DC', line:'#36265E', accent:'#A78BFA', gold:'#F0ABFC' } },
+  { name:'رمادي أنيق', mode:'light', bg:'minimal', colors:{ bg:'#F4F4F5', surface:'#FFFFFF', surface2:'#EBEBED', ink:'#18181B', inkSoft:'#52525B', line:'#E0E0E3', accent:'#27272A', gold:'#71717A' } },
+  { name:'كراسة مدرسية', mode:'light', headFont:'Reem Kufi', bg:'paper', colors:{ bg:'#FFFEF7', surface:'#FFFFFF', surface2:'#FBF6DC', ink:'#1F2A44', inkSoft:'#55607D', line:'#E8E1B8', accent:'#DC2626', gold:'#2563EB' } },
+  { name:'توتي', mode:'light', bg:'violet', colors:{ bg:'#FDF2FA', surface:'#FFFFFF', surface2:'#FAE3F4', ink:'#3B0F35', inkSoft:'#86507F', line:'#F3CDEA', accent:'#C026D3', gold:'#F59E0B' } },
+  { name:'برتقال فحمي', mode:'dark', bg:'diagonal', colors:{ bg:'#111315', surface:'#1A1D20', surface2:'#23272B', ink:'#F3F4F6', inkSoft:'#A1A8B0', line:'#30353B', accent:'#F97316', gold:'#FBBF24' } }
 ];
  
 function loadFonts(list){
-  const fams = [...new Set(list.filter(Boolean))]
+  const fams = [...new Set((list||[]).concat(window.__secFonts||[]).filter(Boolean))]
     .map(f => 'family=' + f.replace(/ /g,'+') + ':wght@300;400;500;600;700');
   const href = 'https://fonts.googleapis.com/css2?' + fams.join('&') + '&display=swap';
   const link = document.getElementById('dynFonts');
@@ -1386,8 +1594,11 @@ function themeModal(draft){
     <div class="field"><label>جاهزات سريعة</label>
       <div class="presets">${PRESETS.map((p,i)=>`
         <button type="button" class="preset" data-act="th-preset" data-i="${i}">
-          <span class="dot" style="background:${p.colors.accent||'var(--accent)'}"></span>${p.name}</button>`).join('')}
+          <span class="pal"><i style="background:${p.colors.bg||'var(--bg)'}"></i><i style="background:${p.colors.surface||'var(--surface)'}"></i><i style="background:${p.colors.accent||'var(--accent)'}"></i></span>${p.name}</button>`).join('')}
       </div></div>
+ 
+    <div class="field"><label>🖼️ خلفيات جاهزة (اضغط للتجربة)</label>
+      <div class="bg-grid">${BG_PATTERNS.map(p=>`<button type="button" class="bgthumb" data-act="th-bg" data-bg="${p.id}" data-p="${p.id}" aria-pressed="${t.bgPattern===p.id}"><span>${p.short||p.name}</span></button>`).join('')}</div></div>
  
     <div class="field"><label>نمط الألوان</label>
       <div class="modes">
@@ -1417,7 +1628,7 @@ function themeModal(draft){
       <div class="rng"><input type="range" id="th-w" min="700" max="1300" step="20" value="${t.width}"><output id="o-w">${t.width}px</output></div></div>
     <div class="field"><label for="th-r">استدارة الزوايا</label>
       <div class="rng"><input type="range" id="th-r" min="0" max="28" step="1" value="${t.radius}"><output id="o-r">${t.radius}px</output></div></div>
-
+ 
     <hr class="sep">
     <div class="field"><label for="th-bg">🧮 خلفية بصرية رياضية</label>
       <select id="th-bg">${BG_PATTERNS.map(p=>`<option value="${p.id}" ${t.bgPattern===p.id?'selected':''}>${p.name}</option>`).join('')}</select>
@@ -1452,7 +1663,7 @@ function readThemeForm(){
               headScale:+document.getElementById('th-hs').value,
               width:+document.getElementById('th-w').value,
               radius:+document.getElementById('th-r').value,
-              bgPattern: (document.getElementById('th-bg')||{}).value || 'dots', dv2:1,
+              bgPattern: (document.getElementById('th-bg')||{}).value || 'dots', dv2:2,
               colors:{} };
   document.querySelectorAll('[data-ck]').forEach(i=>{ if(i.dataset.touched==='1') t.colors[i.dataset.ck] = i.value; });
   return t;
@@ -1598,11 +1809,11 @@ const Store = {
 function loadScript(src){
   return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
 }
-
+ 
 /* =======================================================================
    3.5) الأسئلة والأجوبة (Q&A) — Supabase
    جدول مطلوب في Supabase (شغّله مرة واحدة من SQL editor):
-
+ 
    create table if not exists public.qa_questions (
      id uuid primary key default gen_random_uuid(),
      name text,
@@ -1616,7 +1827,7 @@ function loadScript(src){
    create policy "qa public read"   on public.qa_questions for select using (true);
    create policy "qa public insert" on public.qa_questions for insert with check (true);
    create policy "qa public update" on public.qa_questions for update using (true) with check (true);
-
+ 
    ملاحظة أمان: كلمة مرور الأدمن تُتحقّق من طرف المتصفح فقط (كما في باقي الموقع)،
    لذا سياسة UPDATE هنا مفتوحة تقنياً لأي زائر يعرف كيف يستخدم واجهة Supabase مباشرة.
    لحماية أقوى، يمكن لاحقاً نقل التحقق إلى Supabase Edge Function.
@@ -1624,7 +1835,10 @@ function loadScript(src){
 const QA = {
   rows: [],
   ready: false,
-
+  error: '',
+  filter: 'cur',
+  sending: false,
+ 
   async ensureClient(){
     if(Store.sb) return Store.sb;
     if(!CONFIG.SUPABASE.enabled) return null;
@@ -1634,7 +1848,7 @@ const QA = {
       return Store.sb;
     }catch(e){ console.warn('تعذّر تهيئة Supabase للأسئلة:', e); return null; }
   },
-
+ 
   async init(){
     if(!CONFIG.SUPABASE.enabled){ renderQA(); return; }
     const sb = await this.ensureClient();
@@ -1644,7 +1858,7 @@ const QA = {
         .select('*').order('created_at', { ascending:false });
       if(error) throw error;
       this.rows = data || [];
-      this.ready = true;
+      this.ready = true; this.error = '';
       renderQA();
       sb.channel('qa_live_'+CONFIG.SUPABASE.qaTable)
         .on('postgres_changes', { event:'*', schema:'public', table:CONFIG.SUPABASE.qaTable }, payload=>{
@@ -1659,10 +1873,11 @@ const QA = {
         }).subscribe();
     }catch(e){
       console.warn('تعذّر تحميل الأسئلة (تأكد من إنشاء جدول qa_questions):', e);
+      this.ready = false; this.error = (e && (e.message || e.code)) ? String(e.message || e.code) : 'unknown error';
       renderQA();
     }
   },
-
+ 
   async submit({name, question, track}){
     const sb = await this.ensureClient();
     if(!sb) throw new Error('no-supabase');
@@ -1671,45 +1886,90 @@ const QA = {
     if(error) throw error;
     if(data && !this.rows.some(r=>r.id===data.id)){ this.rows.unshift(data); renderQA(); }
   },
-
+ 
   async answer(id, text){
     const sb = await this.ensureClient();
     if(!sb) throw new Error('no-supabase');
     const { data, error } = await sb.from(CONFIG.SUPABASE.qaTable)
       .update({ answer:text, answered_at:new Date().toISOString() }).eq('id', id).select().maybeSingle();
     if(error) throw error;
-    if(data){ const i=this.rows.findIndex(r=>r.id===id); if(i>-1) this.rows[i]=data; renderQA(); }
+    /* تأكيد الحفظ فعلياً: لو الصلاحية ناقصة Supabase بيرجّع صفر صفوف من غير خطأ */
+    if(!data || data.answer !== text) throw new Error('الإجابة لم تُحفظ — فعّل سياسة UPDATE على جدول qa_questions في Supabase');
+    const i=this.rows.findIndex(r=>r.id===id); if(i>-1) this.rows[i]=data; else this.rows.unshift(data);
+    renderQA();
   },
-
+ 
   async submitFromForm(){
     const nameEl = $('#qaName'), trackEl = $('#qaTrackSel'), textEl = $('#qaText');
     if(!nameEl || !trackEl || !textEl) return;
     const name = nameEl.value.trim(), track = trackEl.value, text = textEl.value.trim();
     if(!text){ toast('اكتب سؤالك أولاً'); return; }
     if(!CONFIG.SUPABASE.enabled){ toast('قسم الأسئلة يحتاج تفعيل Supabase (CONFIG.SUPABASE.enabled)'); return; }
+    if(text.length > 2000){ toast('السؤال طويل جداً (الحد الأقصى 2000 حرف)'); return; }
+    if(this.sending) return;
+    this.sending = true;
     try{
       await this.submit({ name, question:text, track });
       nameEl.value=''; textEl.value='';
-      toast('تم إرسال سؤالك، شكراً لك');
+      toast('تم إرسال سؤالك وحفظه ✓');
     }catch(e){ console.error(e); toast('تعذّر إرسال السؤال — تأكد من إعداد جدول qa_questions'); }
+    finally{ this.sending = false; }
   }
 };
-
+ 
 function fmtQaDate(iso){
   try{ return new Date(iso).toLocaleDateString('ar-EG', { day:'numeric', month:'short' }); }catch(e){ return ''; }
 }
-
+ 
+const QA_SQL = `create table if not exists public.qa_questions (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  question text not null,
+  track text not null check (track in ('math1','math2')),
+  answer text,
+  answered_at timestamptz,
+  created_at timestamptz not null default now()
+);
+alter table public.qa_questions enable row level security;
+drop policy if exists "qa public read" on public.qa_questions;
+drop policy if exists "qa public insert" on public.qa_questions;
+drop policy if exists "qa public update" on public.qa_questions;
+create policy "qa public read"   on public.qa_questions for select using (true);
+create policy "qa public insert" on public.qa_questions for insert with check (true);
+create policy "qa public update" on public.qa_questions for update using (true) with check (true);`;
+ 
 function renderQA(){
   const list = $('#qaList'); if(!list) return;
+  const fbar = $('#qaFilter');
   const sel = $('#qaTrackSel'); if(sel && currentTrack) sel.value = currentTrack;
-
+ 
   if(!CONFIG.SUPABASE.enabled){
     list.innerHTML = '<p class="qa-empty">قسم الأسئلة يحتاج تفعيل Supabase من إعدادات الصفحة (CONFIG.SUPABASE).</p>';
+    if(fbar) fbar.innerHTML = '';
     return;
   }
-  const items = currentTrack ? QA.rows.filter(r=>r.track===currentTrack) : QA.rows;
+  if(QA.error){
+    if(fbar) fbar.innerHTML = '';
+    list.innerHTML = `<div class="qa-warn"><b>⚠️ الأسئلة والأجوبة مش بتتحفظ دلوقتي</b>
+      <p>الجدول <code>qa_questions</code> مش موجود في Supabase أو الصلاحيات (RLS) ناقصة.</p>
+      <p class="hint" dir="ltr">${esc(QA.error)}</p>
+      <p class="hint qa-admin-note">الحل: افتح Supabase ← SQL Editor ← الصق الكود ← Run ← حدّث الصفحة.</p>
+      <button class="btn sm qa-admin-only" data-act="qa-copy-sql" type="button">📋 نسخ كود الإعداد (SQL)</button></div>`;
+    return;
+  }
+  const cur = currentTrack ? QA.rows.filter(r=>r.track===currentTrack) : QA.rows;
+  let items = cur;
+  if(isAdmin){
+    if(QA.filter==='all') items = QA.rows;
+    else if(QA.filter==='pending') items = QA.rows.filter(r=>!r.answer);
+  }
+  if(fbar){
+    const pend = QA.rows.filter(r=>!r.answer).length;
+    fbar.innerHTML = [['cur','الفرقة الحالية',cur.length],['all','كل الأسئلة',QA.rows.length],['pending','بانتظار الرد',pend]]
+      .map(([k,l,n])=>`<button class="chip ${QA.filter===k?'on':''}" data-act="qa-filter" data-f="${k}" type="button">${l} (${n})</button>`).join('');
+  }
   if(!items.length){ list.innerHTML = '<p class="qa-empty">لا توجد أسئلة بعد — كن أول من يسأل!</p>'; return; }
-
+ 
   list.innerHTML = items.map(r => `
     <div class="qa-card">
       <div class="qa-card-head">
@@ -1720,18 +1980,19 @@ function renderQA(){
       </div>
       <p class="qa-q">${esc(r.question)}</p>
       ${r.answer
-        ? `<div class="qa-answer"><b>إجابة المدرّس:</b> ${esc(r.answer)}</div>
+        ? `<div class="qa-answer"><b>إجابة المدرّس:</b> ${fmt(r.answer)}</div>
            <div class="qa-pending" style="margin-top:8px">
-             <button class="btn sm ghost" data-act="qa-answer" data-id="${esc(String(r.id))}" type="button">✎ تعديل الإجابة</button>
+             <button class="btn sm ghost qa-admin-only" data-act="qa-answer" data-id="${esc(String(r.id))}" type="button">✎ تعديل الإجابة</button>
            </div>`
         : `<div class="qa-pending">بانتظار الرد
-             <button class="btn sm" data-act="qa-answer" data-id="${esc(String(r.id))}" type="button">＋ إضافة إجابة</button>
+             <button class="btn sm qa-admin-only" data-act="qa-answer" data-id="${esc(String(r.id))}" type="button">＋ إضافة إجابة</button>
            </div>`}
     </div>`).join('');
 }
-
+ 
 /* ---- تدفّق إضافة إجابة (كلمة مرور ثم نص الإجابة) ---- */
 function qaAnswerFlow(row){
+  if(isAdmin){ qaAnswerEditor(row); return; }
   openModal('كلمة مرور الأدمن', `
     <div class="field">
       <label for="qapw">كلمة المرور</label>
@@ -1746,8 +2007,8 @@ function qaAnswerFlow(row){
     });
 }
 function qaAnswerEditor(row){
-  openModal('إضافة إجابة', `
-    <p class="hint" style="margin-top:0">السؤال: ${esc(row.question)}</p>
+  openModal(row.answer ? 'تعديل الإجابة' : 'إضافة إجابة', `
+    <p class="hint" style="margin-top:0">السؤال${row.name?' من '+esc(row.name):''}: ${esc(row.question)}</p>
     <div class="field"><label for="qaans">نص الإجابة</label>
       <textarea id="qaans" placeholder="اكتب الإجابة هنا…">${esc(row.answer||'')}</textarea></div>
   `, footSave('نشر الإجابة'), async ()=>{
@@ -1755,9 +2016,9 @@ function qaAnswerEditor(row){
     if(!text){ toast('اكتب نص الإجابة'); return false; }
     try{
       await QA.answer(row.id, text);
-      toast('تم نشر الإجابة');
+      toast('تم حفظ الإجابة ونشرها ✓');
       closeModal();
-    }catch(e){ console.error(e); toast('تعذّر حفظ الإجابة'); return false; }
+    }catch(e){ console.error(e); toast('تعذّر حفظ الإجابة: ' + (e && e.message ? e.message : '')); return false; }
   });
 }
  
@@ -1779,8 +2040,10 @@ function scheduleSave(){
    ======================================================================= */
 function render(){
   site.theme = Object.assign(defaultTheme(), site.theme || {});
-  if(!site.theme.dv2){ Object.assign(site.theme,{headFont:'Noto Kufi Arabic',bodyFont:'IBM Plex Sans Arabic',radius:8,colors:{},bgPattern:'dots',dv2:1}); }
+  if(site.theme.dv2!==2){ Object.assign(site.theme,{headFont:'Readex Pro',bodyFont:'IBM Plex Sans Arabic',radius:16,colors:{},bgPattern:'dots',dv2:2}); }
   site.notifications = site.notifications || [];
+  site.folders = Array.isArray(site.folders) ? site.folders : [];
+  window.__secFonts = collectSecFonts(site.sections, []);
   site.trackSettings = site.trackSettings || {};
   site.trackSettings.math1 = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings.math1 || {});
   site.trackSettings.math2 = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings.math2 || {});
@@ -1798,13 +2061,13 @@ function render(){
   $('#footNote').textContent = site.meta.footer || '';
   $('#heroCover').innerHTML = site.meta.cover
     ? `<div class="hero-cover"><img src="${esc(site.meta.cover)}" alt=""></div>` : '';
-
+ 
   applySubjectOverrides();
  
   const b1 = $('#tsw1'), b2 = $('#tsw2');
   if(b1) b1.classList.toggle('active', currentTrack==='math1');
   if(b2) b2.classList.toggle('active', currentTrack==='math2');
-
+ 
   const secs = visibleSections();
   $('#nav').innerHTML = secs
     .map(s=>`<a class="chip" href="#sec-${esc(s.id)}">${esc(s.title)}</a>`).join('');
@@ -1813,7 +2076,7 @@ function render(){
   renderTopMenu();
   renderNotifBadge();
 }
-
+ 
 /* =======================================================================
    0.7) إعدادات المادة المستقلة (Math 1 / Math 2) — لا تؤثر إحداهما بالأخرى
    ======================================================================= */
@@ -1821,7 +2084,7 @@ function applySubjectOverrides(){
   const bannerEl = $('#subjectBanner'), noteEl = $('#subjectNote');
   const ts = currentTrack ? (site.trackSettings || {})[currentTrack] : null;
   const r = document.documentElement;
-
+ 
   if(ts && ts.accent){
     r.style.setProperty('--accent', ts.accent);
     r.style.setProperty('--accent-soft', 'color-mix(in srgb, ' + ts.accent + ' 16%, transparent)');
@@ -1831,10 +2094,10 @@ function applySubjectOverrides(){
     if(globalAccent){ r.style.setProperty('--accent', globalAccent); r.style.setProperty('--accent-soft','color-mix(in srgb, '+globalAccent+' 16%, transparent)'); }
     else { r.style.removeProperty('--accent'); r.style.removeProperty('--accent-soft'); }
   }
-
+ 
   if(bannerEl) bannerEl.innerHTML = (ts && ts.banner) ? `<div class="subject-banner"><img src="${esc(ts.banner)}" alt=""></div>` : '';
   if(noteEl) noteEl.innerHTML = (ts && ts.note) ? `<div class="subject-note">${fmt(ts.note)}</div>` : '';
-
+ 
   if(ts && ts.label){ const b=$('#brandName'); if(b) b.textContent = ts.label; }
 }
 function subjectSettingsModal(){
@@ -1858,13 +2121,16 @@ function subjectSettingsModal(){
   });
 }
  
-function renderSection(s, i, secs){
+function renderSection(s, i, secs, depth){
+  depth = depth || 0;
+  const kids = s.children || [];
+  const canNest = s.allowChildren !== false;
   const last = (secs||site.sections).length-1;
   const isOpen = s.pinned || openSections.has(s.id);
-  const titleInner = `${esc(s.title)}<span class="sec-track-tag">${trackTagLabel(s.track)}</span>${s.pinned?'<span class="pin-badge">📌 مثبّت</span>':''}`;
+  const titleInner = `<span class="st-text">${esc(s.title)}</span><span class="sec-track-tag">${trackTagLabel(s.track)}</span>${kids.length?`<span class="sec-count">${kids.length} ${kids.length>2?'أقسام فرعية':'قسم فرعي'}</span>`:''}${s.pinned?'<span class="pin-badge">📌 مثبّت</span>':''}`;
   const headInner = `
-          <span style="flex:1; min-width:0">
-            <h2 class="sec-title">${titleInner}</h2>
+          <span style="flex:1; min-width:0${s.titleAlign?'; text-align:'+esc(s.titleAlign):''}">
+            <h2 class="sec-title" data-st="${esc(s.titleStyle||'')}" style="${s.titleFont?'font-family:'+esc(secFontCss(s.titleFont))+';':''}${s.titleColor?'color:'+esc(s.titleColor)+';':''}${s.titleSize?'--ts:'+esc(s.titleSize)+';':''}">${titleInner}</h2>
             ${s.desc ? `<p class="sec-desc">${esc(s.desc)}</p>` : ''}
           </span>`;
   const headBtn = s.pinned
@@ -1873,11 +2139,12 @@ function renderSection(s, i, secs){
           <span class="sec-chevron">▾</span>${headInner}
         </button>`;
   return `
-  <section class="section ${isOpen?'open':''} ${s.pinned?'pinned':''}" id="sec-${esc(s.id)}">
+  <section class="section ${isOpen?'open':''} ${s.pinned?'pinned':''} ${depth?'nested':''}" data-depth="${depth}" id="sec-${esc(s.id)}">
     <div class="wrap">
       <div class="sec-head">
         ${headBtn}
         <div class="tools">
+          ${canNest?`<button class="btn sm" data-act="add-subsection" data-id="${s.id}" title="إضافة قسم فرعي">＋ فرعي</button>`:''}
           <button class="btn sm" data-act="sec-up" data-id="${s.id}" ${i===0?'disabled':''} title="لأعلى">▲</button>
           <button class="btn sm" data-act="sec-down" data-id="${s.id}" ${i===last?'disabled':''} title="لأسفل">▼</button>
           <button class="btn sm" data-act="sec-edit" data-id="${s.id}">تعديل</button>
@@ -1889,8 +2156,10 @@ function renderSection(s, i, secs){
           ${s.blocks.map((b,j)=>renderBlock(b,s.id,j,s.blocks.length-1)).join('') ||
             '<p class="sec-desc">لا يوجد محتوى في هذا القسم بعد.</p>'}
         </div>
+        ${kids.length?`<div class="subsections">${kids.map((c,k)=>renderSection(c,k,kids,depth+1)).join('')}</div>`:''}
         <div class="addblock">
           <button class="dashed" data-act="add-block" data-sec="${s.id}">＋ إضافة محتوى إلى «${esc(s.title)}»</button>
+          ${canNest?`<button class="dashed nest" data-act="add-subsection" data-sec="${s.id}">🌳 إضافة قسم فرعي داخل «${esc(s.title)}»</button>`:''}
         </div>
       </div></div></div>
     </div>
@@ -1918,6 +2187,7 @@ function renderBlock(b, secId, j, last){
     else if(b.style==='theorem') body = `<div class="b-theorem"${alignAttr}><span class="b-theorem-tag">نظرية / تعريف</span>${fmt(b.text)}</div>`;
     else if(b.style==='law')     body = `<div class="b-law"${alignAttr}><span class="b-law-tag">قانون / نظرية</span>${fmt(b.text)}</div>`;
     else if(b.style==='glow')    body = `<div class="b-glow"${alignAttr}>${fmt(b.text)}</div>`;
+    else if(FX_STYLES.some(x=>x[0]===b.style)) body = `<div class="b-fx b-fx-${b.style}"${alignAttr}>${fmt(b.text)}</div>`;
     else                         body = `<div class="b-p"${alignAttr}>${fmt(b.text)}</div>`;
   }
   else if(b.type==='image'){
@@ -1978,7 +2248,7 @@ function askPassword(){
       const h = await hashPass(val);
       if(!site.auth.passHash){ site.auth.passHash = await hashPass(CONFIG.DEFAULT_PASSWORD); }
       if(h === site.auth.passHash){
-        isAdmin = true; document.body.classList.add('admin'); $('#fab').textContent='🔓';
+        isAdmin = true; document.body.classList.add('admin'); $('#fab').textContent='🔓'; renderQA();
         closeModal(); toast('وضع التحرير مفعّل'); setStatus(Store.mode==='local'?'حفظ محلي':'جاهز');
       } else { toast('كلمة المرور غير صحيحة'); }
       return false;
@@ -1986,13 +2256,37 @@ function askPassword(){
 }
  
 /* ---- نافذة القسم ---- */
-function sectionModal(sec){
+function sectionModal(sec, parentId){
   const isNew = !sec;
-  const s = sec || { id:uid(), title:'', desc:'', blocks:[] };
-  openModal(isNew?'قسم جديد':'تعديل القسم', `
-    <div class="field"><label for="st">اسم القسم</label><input id="st" value="${esc(s.title)}" placeholder="مثال: المقالات"></div>
+  const s = sec || { id:uid(), title:'', desc:'', blocks:[], children:[], allowChildren:true };
+  const found = isNew ? null : findSecDeep(s.id);
+  const parent = isNew ? (parentId ? findSec(parentId) : null) : (found ? found.parent : null);
+  const nested = !!parent;
+  const siblings = isNew ? (parent ? (parent.children = parent.children || []) : site.sections) : (found ? found.list : site.sections);
+  openModal(isNew ? (nested ? 'قسم فرعي جديد داخل «'+parent.title+'»' : 'قسم جديد') : 'تعديل القسم', `
+    <div class="field"><label for="st">اسم القسم</label><input id="st" value="${esc(s.title)}" placeholder="مثال: الباب الأول"></div>
     <div class="field"><label for="sd">وصف مختصر (اختياري)</label><input id="sd" value="${esc(s.desc||'')}"></div>
-    <div class="field"><label for="strk">يظهر لِـ</label>
+    <div class="field" id="stBox"><label>🔤 شكل اسم القسم</label>
+      <div class="st-grid">
+        <div><label for="sta" class="hint">مكان الكتابة</label><select id="sta">
+          <option value="" ${!s.titleAlign?'selected':''}>الافتراضي</option>
+          <option value="right" ${s.titleAlign==='right'?'selected':''}>يمين</option>
+          <option value="center" ${s.titleAlign==='center'?'selected':''}>في النص</option>
+          <option value="left" ${s.titleAlign==='left'?'selected':''}>يسار</option></select></div>
+        <div><label for="stf" class="hint">الفونت</label><select id="stf">
+          <option value="">الافتراضي (فونت العناوين)</option>${FONTS.map(f=>`<option value="${f}" ${s.titleFont===f?'selected':''}>${f}</option>`).join('')}</select></div>
+        <div><label for="sts" class="hint">الحجم</label><select id="sts">
+          ${[['0.8','صغير'],['1','عادي'],['1.3','كبير'],['1.6','ضخم']].map(([v,l])=>`<option value="${v}" ${(s.titleSize||'1')===v?'selected':''}>${l}</option>`).join('')}</select></div>
+        <div><label for="stsh" class="hint">الشكل</label><select id="stsh">
+          ${[['','عادي'],['gradient','🌈 تدرج لوني'],['underline','➖ خط تحته'],['marker','🖍️ هايلايتر'],['pill','💊 كبسولة'],['outline','🔲 داخل إطار'],['glow','✨ توهّج'],['shadow','🌗 ظل']].map(([v,l])=>`<option value="${v}" ${(s.titleStyle||'')===v?'selected':''}>${l}</option>`).join('')}</select></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin-top:10px">
+        <input type="checkbox" id="stcolOn" ${s.titleColor?'checked':''} style="width:auto"> لون مخصص للاسم
+        <input type="color" id="stcol" value="${s.titleColor||'#5B5BF5'}" style="width:46px;height:32px;padding:0;border:0;cursor:pointer">
+      </label>
+      <div class="st-prev" id="stprev"></div>
+    </div>
+    ${nested?'':`<div class="field"><label for="strk">يظهر لِـ</label>
       <select id="strk">
         <option value="all" ${(!s.track||s.track==='all')?'selected':''}>الفرقتان (Math 1 و Math 2)</option>
         <option value="math1" ${s.track==='math1'?'selected':''}>Math 1 — أولى فقط</option>
@@ -2001,19 +2295,102 @@ function sectionModal(sec){
     <div class="field"><label style="display:flex; align-items:center; gap:8px; font-weight:400">
       <input type="checkbox" id="spin" ${s.pinned?'checked':''} style="width:auto">
       📌 تثبيت القسم مفتوحاً دائماً (مثل قسم التعريف) — لا يُطوى أبداً
-    </label></div>
+    </label></div>`}
+    <div class="field"><label style="display:flex; align-items:center; gap:8px; font-weight:400">
+      <input type="checkbox" id="sallow" ${s.allowChildren!==false?'checked':''} style="width:auto">
+      🌳 السماح بفتح أقسام فرعية داخل هذا القسم
+    </label><p class="hint nest-hint">عند الإلغاء يختفي زر «إضافة قسم فرعي» من هذا القسم (الأقسام الفرعية الحالية تبقى كما هي).</p></div>
     ${isNew?'':`<div class="field"><label for="so">ترتيب القسم</label><select id="so">${
-      site.sections.map((x,i)=>`<option value="${i}" ${x.id===s.id?'selected':''}>${i+1}</option>`).join('')}</select></div>`}
+      siblings.map((x,i)=>`<option value="${i}" ${x.id===s.id?'selected':''}>${i+1}</option>`).join('')}</select></div>`}
   `, footSave(), ()=>{
     const title = $('#st').value.trim();
     if(!title){ toast('اكتب اسم القسم'); return false; }
-    s.title=title; s.desc=$('#sd').value.trim(); s.track=$('#strk').value; s.pinned=$('#spin').checked;
-    if(isNew) site.sections.push(s);
+    s.title=title; s.desc=$('#sd').value.trim();
+    s.titleAlign=$('#sta').value; s.titleFont=$('#stf').value; s.titleSize=$('#sts').value; s.titleStyle=$('#stsh').value;
+    s.titleColor = $('#stcolOn').checked ? $('#stcol').value : '';
+    if(!nested){ s.track=$('#strk').value; s.pinned=$('#spin').checked; }
+    s.allowChildren = $('#sallow').checked;
+    if(!s.children) s.children = [];
+    if(isNew){ siblings.push(s); if(parent){ openSections.add(parent.id); openAncestors(parent.id); } }
     else {
       const to = parseInt($('#so').value,10);
-      const from = site.sections.findIndex(x=>x.id===s.id);
-      if(to!==from){ site.sections.splice(to,0, site.sections.splice(from,1)[0]); }
+      const from = siblings.findIndex(x=>x.id===s.id);
+      if(to!==from){ siblings.splice(to,0, siblings.splice(from,1)[0]); }
     }
+    commit();
+  });
+  stPreview();
+}
+function stPreview(){
+  const box = document.getElementById('stprev'); if(!box) return;
+  const f=$('#stf').value, al=$('#sta').value, sz=$('#sts').value, sh=$('#stsh').value, on=$('#stcolOn').checked, col=$('#stcol').value;
+  if(f) loadFonts([site.theme.headFont, site.theme.bodyFont, f]);
+  box.style.textAlign = al || 'right';
+  box.innerHTML = `<h2 class="sec-title" data-st="${sh}" style="margin:0;${f?'font-family:'+secFontCss(f)+';':''}${on?'color:'+col+';':''}--ts:${sz}"><span class="st-text">${esc($('#st').value.trim()||'اسم القسم')}</span></h2>`;
+}
+['input','change'].forEach(ev=>document.addEventListener(ev, e=>{
+  if(e.target && ((e.target.closest && e.target.closest('#stBox')) || e.target.id==='st')) stPreview();
+}));
+ 
+/* ---- مجلدات القائمة الجانبية (تدعم مجلد داخل مجلد) ---- */
+let flState = null;
+function flSync(){
+  if(!flState) return;
+  document.querySelectorAll('[data-fl-name]').forEach(i=>{ const f=flState.folders.find(x=>x.id===i.dataset.flName); if(f) f.name=i.value; });
+  document.querySelectorAll('[data-fl-parent]').forEach(i=>{ const f=flState.folders.find(x=>x.id===i.dataset.flParent); if(f) f.parent=i.value; });
+  document.querySelectorAll('[data-fl-sec]').forEach(i=>{ flState.assign[i.dataset.flSec]=i.value; });
+}
+function flDesc(id){
+  const out=new Set([id]); let ch=true;
+  while(ch){ ch=false; flState.folders.forEach(f=>{ if(f.parent && out.has(f.parent) && !out.has(f.id)){ out.add(f.id); ch=true; } }); }
+  return out;
+}
+function flOrder(){
+  const ids=new Set(flState.folders.map(f=>f.id)), res=[], seen=new Set();
+  flState.folders.forEach(f=>{ if(f.parent && !ids.has(f.parent)) f.parent=''; });
+  const walk=(pid,d)=>flState.folders.forEach(f=>{ if((f.parent||'')===pid && !seen.has(f.id)){ seen.add(f.id); res.push({f,d}); walk(f.id,d+1); } });
+  walk('',0);
+  flState.folders.forEach(f=>{ if(!seen.has(f.id)){ f.parent=''; seen.add(f.id); res.push({f,d:0}); walk(f.id,1); } });
+  return res;
+}
+function flPath(f){
+  const n=[]; let c=f, g=0;
+  while(c && g++<20){ n.unshift(c.name||'بدون اسم'); c=flState.folders.find(x=>x.id===c.parent); }
+  return n.join(' / ');
+}
+function foldersModal(){
+  flState = { folders:(site.folders||[]).map(f=>({id:f.id,name:f.name,parent:f.parent||''})), assign:{} };
+  site.sections.forEach(x=>{ flState.assign[x.id]=x.folder||''; });
+  flRender();
+}
+function flRender(){
+  const st = flState, ord = flOrder();
+  const fRows = ord.map(({f,d})=>{
+    const bad = flDesc(f.id);
+    return `<div class="fl-row" style="margin-inline-start:${d*18}px"><span>${d?'↳ ':''}📁</span>
+      <input data-fl-name="${f.id}" value="${esc(f.name)}" placeholder="اسم المجلد">
+      <select data-fl-parent="${f.id}" title="مكان المجلد"><option value="">— مجلد رئيسي —</option>${
+        st.folders.filter(x=>!bad.has(x.id)).map(x=>`<option value="${x.id}" ${f.parent===x.id?'selected':''}>داخل: ${esc(flPath(x))}</option>`).join('')}</select>
+      <button class="btn sm" data-act="fl-add-child" data-id="${f.id}" type="button" title="إضافة مجلد فرعي">＋ فرعي</button>
+      <button class="btn sm danger" data-act="fl-del" data-id="${f.id}" type="button">حذف</button></div>`;
+  }).join('') || '<p class="hint">لا توجد مجلدات بعد — اضغط «＋ مجلد جديد».</p>';
+  const sRows = site.sections.map(x=>`<div class="fl-row"><span class="fl-sec">${esc(x.title)}</span><select data-fl-sec="${x.id}"><option value="">— بدون مجلد —</option>${
+    st.folders.map(f=>`<option value="${f.id}" ${st.assign[x.id]===f.id?'selected':''}>${esc(flPath(f))}</option>`).join('')}</select></div>`).join('')
+    || '<p class="hint">لا توجد أقسام بعد.</p>';
+  openModal('📁 مجلدات القائمة', `
+    <p class="hint" style="margin-top:0">اعمل مجلدات وحط جواها أقسام، وكمان تقدر تعمل مجلد جوا مجلد (زرار «＋ فرعي» أو اختار «داخل: …»). بتظهر في القائمة الجانبية ☰.</p>
+    <h4 class="fl-h">المجلدات</h4>${fRows}
+    <button class="btn sm" data-act="fl-add" type="button">＋ مجلد جديد</button>
+    <h4 class="fl-h">وزّع الأقسام على المجلدات</h4>${sRows}
+  `, footSave(), ()=>{
+    flSync();
+    const named = flState.folders.filter(f=>(f.name||'').trim()).map(f=>({id:f.id, name:f.name.trim(), parent:f.parent||''}));
+    const valid = new Set(named.map(f=>f.id));
+    named.forEach(f=>{ if(!valid.has(f.parent)) f.parent=''; });
+    named.forEach(f=>{ let c=f, g=0; while(c && c.parent && g++<30) c=named.find(x=>x.id===c.parent); if(g>=30) f.parent=''; });
+    site.folders = named;
+    site.sections.forEach(x=>{ const v=flState.assign[x.id]; x.folder = valid.has(v) ? v : ''; });
+    flState = null;
     commit();
   });
 }
@@ -2034,7 +2411,7 @@ function chooseType(secId){
 /* ---- نافذة المحتوى ---- */
 const BADGE_COLORS = ['#1F6F6B','#B8862F','#2A4D8F','#9B2C3F','#3FBF84','#B3402E','#6B4EA6'];
 function blockModal(secId, block, type){
-  const sec = site.sections.find(s=>s.id===secId); if(!sec) return;
+  const sec = findSec(secId); if(!sec) return;
   const isNew = !block;
   const b = block || { id:uid(), type, style:'paragraph', text:'', url:'', caption:'', items: type==='badges' ? [{label:'',color:BADGE_COLORS[0]}] : [{label:'',url:'',desc:''}] };
   let body='';
@@ -2052,6 +2429,7 @@ function blockModal(secId, block, type){
           <option value="theorem"   ${b.style==='theorem'?'selected':''}>📐 نظرية / تعريف</option>
           <option value="law"       ${b.style==='law'?'selected':''}>📏 صندوق قانون/نظرية مزخرف</option>
           <option value="glow"      ${b.style==='glow'?'selected':''}>✨ نص متوهّج (Glow)</option>
+          <optgroup label="🎨 تصاميم كتابة إضافية">${FX_STYLES.map(x=>`<option value="${x[0]}" ${b.style===x[0]?'selected':''}>${x[1]}</option>`).join('')}</optgroup>
         </select></div>
       <div class="field"><label>محاذاة النص</label>
         <div class="align-group">
@@ -2190,7 +2568,31 @@ function settingsModal(){
    6) الأحداث
    ======================================================================= */
 function commit(){ render(); scheduleSave(); closeModal(); }
-function findSec(id){ return site.sections.find(s=>s.id===id); }
+function collectSecFonts(list, out){
+  (list||[]).forEach(x=>{ if(x.titleFont) out.push(x.titleFont); collectSecFonts(x.children, out); });
+  return out;
+}
+function secFontCss(f){ return stack(f).replace(/"/g, "'"); }
+function findSecDeep(id, list, parent){
+  list = list || site.sections;
+  for(const s of list){
+    if(s.id===id) return { sec:s, list, parent:parent||null };
+    const r = findSecDeep(id, s.children||[], s); if(r) return r;
+  }
+  return null;
+}
+function findSec(id){ const r = findSecDeep(id); return r ? r.sec : undefined; }
+function openAncestors(id){
+  const chain = [];
+  (function walk(list, path){
+    for(const s of list){
+      if(s.id===id){ chain.push(...path); return true; }
+      if(walk(s.children||[], path.concat(s.id))) return true;
+    }
+    return false;
+  })(site.sections, []);
+  chain.forEach(a=>{ openSections.add(a); const el=document.getElementById('sec-'+a); if(el) el.classList.add('open'); });
+}
 function move(arr, id, dir){
   const i = arr.findIndex(x=>x.id===id), j = i+dir;
   if(i<0 || j<0 || j>=arr.length) return;
@@ -2207,7 +2609,7 @@ document.addEventListener('click', async e=>{
   if(act==='add-link'){ $('#links').insertAdjacentHTML('beforeend', linkRow()); return; }
   if(act==='del-link'){ t.parentElement.remove(); return; }
   if(act==='add-badge'){ $('#badges').insertAdjacentHTML('beforeend', badgeRow()); return; }
-
+ 
   if(act==='choose-track'){ closeSplash(); setTrack(t.dataset.track); return; }
   if(act==='sec-toggle'){
     const sec = findSec(id);
@@ -2218,6 +2620,8 @@ document.addEventListener('click', async e=>{
     return;
   }
   if(act==='qa-submit'){ QA.submitFromForm(); return; }
+  if(act==='qa-filter'){ QA.filter = t.dataset.f; renderQA(); return; }
+  if(act==='qa-copy-sql'){ try{ await navigator.clipboard.writeText(QA_SQL); toast('تم نسخ الكود — الصقه في Supabase ← SQL Editor'); }catch(e){ prompt('انسخ الكود:', QA_SQL); } return; }
   if(act==='qa-answer'){
     const row = QA.rows.find(r=>String(r.id)===id);
     if(row) qaAnswerFlow(row);
@@ -2233,6 +2637,7 @@ document.addEventListener('click', async e=>{
   if(act==='notif-add'){ notifAdd(); return; }
   if(act==='notif-del'){ notifDel(id); return; }
   if(act==='ts-clear-accent'){ const el=$('#ts4'); if(el){ el.dataset.cleared='1'; toast('سيُستخدم اللون العام عند الحفظ'); } return; }
+  if(act==='tm-folder-toggle'){ if(openFolders.has(id)) openFolders.delete(id); else openFolders.add(id); const fe=t.closest('.tm-folder'); if(fe){ fe.classList.toggle('open'); t.setAttribute('aria-expanded', fe.classList.contains('open')); } return; }
   if(act==='tm-toggle'){ t.closest('.tm-item')?.classList.toggle('open'); return; }
   if(act==='menu-goto-section'){ menuGoto(id); return; }
   if(act==='menu-goto-block'){ menuGoto(t.dataset.sec, t.dataset.block); return; }
@@ -2247,12 +2652,26 @@ document.addEventListener('click', async e=>{
  
   switch(act){
     case 'add-section': sectionModal(null); break;
+    case 'folders': foldersModal(); break;
+    case 'fl-add': flSync(); flState.folders.push({id:uid(), name:'مجلد '+(flState.folders.length+1), parent:''}); flRender(); break;
+    case 'fl-add-child': flSync(); flState.folders.push({id:uid(), name:'مجلد '+(flState.folders.length+1), parent:id}); flRender(); break;
+    case 'fl-del': {
+      flSync();
+      const f = flState.folders.find(x=>x.id===id), par = f ? (f.parent||'') : '';
+      flState.folders.forEach(c=>{ if(c.parent===id) c.parent=par; });
+      Object.keys(flState.assign).forEach(k=>{ if(flState.assign[k]===id) flState.assign[k]=par; });
+      flState.folders = flState.folders.filter(x=>x.id!==id);
+      flRender(); break;
+    }
     case 'sec-edit':    sectionModal(findSec(id)); break;
-    case 'sec-del':
-      if(confirm('حذف هذا القسم بكل محتواه؟')){ site.sections = site.sections.filter(s=>s.id!==id); commit(); }
+    case 'add-subsection': sectionModal(null, id || secId); break;
+    case 'sec-del': {
+      const r = findSecDeep(id);
+      if(r && confirm('حذف هذا القسم بكل محتواه وأقسامه الفرعية؟')){ r.list.splice(r.list.indexOf(r.sec),1); commit(); }
       break;
-    case 'sec-up':   move(site.sections,id,-1); commit(); break;
-    case 'sec-down': move(site.sections,id, 1); commit(); break;
+    }
+    case 'sec-up':   { const r=findSecDeep(id); if(r){ move(r.list,id,-1); commit(); } break; }
+    case 'sec-down': { const r=findSecDeep(id); if(r){ move(r.list,id, 1); commit(); } break; }
     case 'add-block': chooseType(secId); break;
     case 'blk-edit': blockModal(secId, findSec(secId).blocks.find(b=>b.id===id)); break;
     case 'blk-del':
@@ -2272,6 +2691,11 @@ document.addEventListener('click', async e=>{
     case 'th-reset-colors':
       document.querySelectorAll('[data-ck]').forEach(i=>i.dataset.touched='0');
       applyTheme(readThemeForm()); refreshSwatches(); toast('رجعت الألوان الافتراضية'); break;
+    case 'th-bg': {
+      const sel = document.getElementById('th-bg'); if(sel) sel.value = t.dataset.bg;
+      document.querySelectorAll('.bgthumb').forEach(b=>b.setAttribute('aria-pressed', b===t ? 'true':'false'));
+      applyTheme(readThemeForm()); break;
+    }
     case 'th-preset': {
       const p = PRESETS[+t.dataset.i];
       const cur = readThemeForm();
@@ -2279,11 +2703,12 @@ document.addEventListener('click', async e=>{
       if(p.headFont) merged.headFont = p.headFont;
       if(p.bodyFont) merged.bodyFont = p.bodyFont;
       if(p.radius!=null) merged.radius = p.radius;
+      if(p.bg) merged.bgPattern = p.bg;
       themeModal(merged);
       break;
     }
     case 'logout':
-      isAdmin=false; document.body.classList.remove('admin'); $('#fab').textContent='🔒'; toast('تم الخروج من وضع التحرير'); break;
+      isAdmin=false; document.body.classList.remove('admin'); $('#fab').textContent='🔒'; renderQA(); toast('تم الخروج من وضع التحرير'); break;
     case 'export': {
       const blob = new Blob([JSON.stringify(site,null,2)],{type:'application/json'});
       const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
@@ -2308,7 +2733,7 @@ $('#fileInput').addEventListener('change', e=>{
 });
  
 $('#fab').addEventListener('click', ()=>{
-  if(isAdmin){ isAdmin=false; document.body.classList.remove('admin'); $('#fab').textContent='🔒'; toast('تم الخروج'); }
+  if(isAdmin){ isAdmin=false; document.body.classList.remove('admin'); $('#fab').textContent='🔒'; renderQA(); toast('تم الخروج'); }
   else askPassword();
 });
 $('#overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') closeModal(); });
@@ -2333,14 +2758,14 @@ window.addEventListener('resize', syncTopbarHeight);
   render();
   syncTopbarHeight();
   if(!site.auth.passHash){ site.auth.passHash = await hashPass(CONFIG.DEFAULT_PASSWORD); }
-
+ 
   await introPromise;
   syncTopbarHeight();
-
+ 
   currentTrack = loadTrack();
   if(currentTrack){ setTrack(currentTrack, {silent:true}); closeSplash(); }
   else { openSplash(); }
-
+ 
   await QA.init();
 })();
 </script>
