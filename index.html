@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
 <link rel="icon" type="image/png" href="./logo.png">
 <link rel="apple-touch-icon" href="./logo.png">
 <link rel="manifest" href="./manifest.json">
 <meta charset="utf-8">
+<script>try{var __m=localStorage.getItem('site_mode_pref')||localStorage.getItem('site_mode_last');if(__m==='dark'||__m==='light')document.documentElement.setAttribute('data-theme',__m);}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Math 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -883,14 +884,46 @@ body[data-bgpattern="stars"],.bgthumb[data-p="stars"]{background-image:radial-gr
 .b-fx{margin:0;padding:16px 20px;border-radius:16px;position:relative}
 .b-fx p{margin:.4em 0}.b-fx>:first-child{margin-top:0}.b-fx>:last-child{margin-bottom:0}
 .b-fx[class*="callout-"]{background:color-mix(in srgb,var(--c) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 32%,transparent);border-inline-start:5px solid var(--c)}
-.b-fx[class*="callout-"]::before{display:block;margin-bottom:6px;font-weight:700;font-size:13.5px;color:var(--c)}
-.b-fx.b-fx-callout-info{--c:#3B82F6}.b-fx.b-fx-callout-info::before{content:'💬 معلومة'}
-.b-fx.b-fx-callout-tip{--c:#10B981}.b-fx.b-fx-callout-tip::before{content:'✅ نصيحة'}
-.b-fx.b-fx-callout-warn{--c:#F59E0B}.b-fx.b-fx-callout-warn::before{content:'⚠️ تنبيه'}
-.b-fx.b-fx-callout-danger{--c:#EF4444}.b-fx.b-fx-callout-danger::before{content:'⛔ انتبه — خطأ شائع'}
-.b-fx.b-fx-callout-example{--c:#8B5CF6}.b-fx.b-fx-callout-example::before{content:'📘 مثال محلول'}
-.b-fx.b-fx-callout-proof{--c:#64748B}.b-fx.b-fx-callout-proof::before{content:'البرهان'}
+.b-fx[class*="callout-"]::before{display:block;margin-bottom:6px;font-weight:700;font-size:22px;line-height:1;color:var(--c)}
+.b-fx.b-fx-callout-info{--c:#3B82F6}.b-fx.b-fx-callout-info::before{content:'💬'}
+.b-fx.b-fx-callout-tip{--c:#10B981}.b-fx.b-fx-callout-tip::before{content:'✅'}
+.b-fx.b-fx-callout-warn{--c:#F59E0B}.b-fx.b-fx-callout-warn::before{content:'⚠️'}
+.b-fx.b-fx-callout-danger{--c:#EF4444}.b-fx.b-fx-callout-danger::before{content:'⛔'}
+.b-fx.b-fx-callout-example{--c:#8B5CF6}.b-fx.b-fx-callout-example::before{content:'📘'}
+.b-fx.b-fx-callout-proof{--c:#64748B}.b-fx.b-fx-callout-proof::before{content:'🧾'}
 .b-fx.b-fx-callout-proof::after{content:'∎';display:block;margin-top:6px;color:var(--c);font-size:18px}
+.b-fx.b-fx-callout-important{--c:#F97316}.b-fx.b-fx-callout-important::before{content:'🔥'}
+.b-fx.b-fx-callout-goal{--c:#0EA5A4}.b-fx.b-fx-callout-goal::before{content:'🎯'}
+.b-fx.b-fx-callout-question{--c:#6366F1}.b-fx.b-fx-callout-question::before{content:'❓'}
+.b-fx.b-fx-callout-note{--c:#CA8A04}.b-fx.b-fx-callout-note::before{content:'📝'}
+.b-fx.b-fx-callout-summary{--c:#06B6D4}.b-fx.b-fx-callout-summary::before{content:'💎'}
+.b-fx.b-fx-callout-remember{--c:#EC4899}.b-fx.b-fx-callout-remember::before{content:'🧠'}
+.b-fx.b-fx-callout-challenge{--c:#7C3AED}.b-fx.b-fx-callout-challenge::before{content:'🚀'}
+.b-fx.b-fx-callout-correct{--c:#16A34A}.b-fx.b-fx-callout-correct::before{content:'✔️'}
+.b-fx.b-fx-callout-wrong{--c:#DC2626}.b-fx.b-fx-callout-wrong::before{content:'❌'}
+.b-fx.b-fx-callout-star{--c:#EAB308}.b-fx.b-fx-callout-star::before{content:'⭐'}
+
+/* ===== أشكال كتابة جديدة ===== */
+.b-fx-neon{background:color-mix(in srgb,var(--accent) 6%,var(--surface));border:2px solid var(--accent);box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 40%,transparent),0 0 22px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 0 18px color-mix(in srgb,var(--accent) 14%,transparent)}
+.b-fx-glass{background:color-mix(in srgb,var(--surface) 55%,transparent);backdrop-filter:blur(14px) saturate(1.5);-webkit-backdrop-filter:blur(14px) saturate(1.5);border:1px solid color-mix(in srgb,var(--ink) 14%,transparent);box-shadow:var(--shadow-lg)}
+.b-fx-stripe{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:6px 6px 16px 16px}
+.b-fx-double{border:4px double var(--accent);background:var(--surface);border-radius:6px}
+.b-fx-brutal{background:var(--surface);border:2.5px solid var(--ink);box-shadow:6px 6px 0 var(--accent);border-radius:8px}
+.b-fx-spotlight{text-align:center;font-family:var(--font-head);font-size:calc(22px * var(--hs));font-weight:700;padding:26px 24px;background:radial-gradient(circle at 50% 0,color-mix(in srgb,var(--accent) 24%,transparent),transparent 72%),var(--surface-2);border:1px solid var(--line)}
+.b-fx-chalk{background:#1F3B2F;color:#F3EFE2;font-family:"Aref Ruqaa","Amiri",serif;font-size:1.25em;line-height:2;border:8px solid #8B6B43;border-radius:8px;box-shadow:inset 0 0 30px rgba(0,0,0,.45)}
+.b-fx-blueprint{background-color:#0B3D91;color:#EAF2FF;background-image:linear-gradient(rgba(255,255,255,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.14) 1px,transparent 1px);background-size:22px 22px;border:1px solid #7FD1FF;border-radius:10px}
+.b-fx-graph{background-color:var(--surface);background-image:linear-gradient(color-mix(in srgb,var(--accent) 22%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--accent) 22%,transparent) 1px,transparent 1px);background-size:24px 24px;border:1px solid var(--line);border-radius:10px}
+.b-fx-notebook{background-color:var(--surface);background-image:repeating-linear-gradient(to bottom,transparent 0 33px,color-mix(in srgb,var(--accent) 28%,transparent) 33px 34px);line-height:34px;border:1px solid var(--line);border-inline-start:3px solid color-mix(in srgb,#EF4444 65%,transparent);padding-top:6px;padding-bottom:6px}
+.b-fx-tape{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);margin-top:14px;border-radius:4px}
+.b-fx-tape::before{content:'';position:absolute;top:-13px;left:50%;width:96px;height:26px;transform:translateX(-50%) rotate(-3deg);background:color-mix(in srgb,var(--gold) 55%,transparent);border:1px dashed color-mix(in srgb,var(--gold) 80%,transparent)}
+.b-fx-solid{background:var(--hero-bg);color:var(--hero-ink,#fff);font-weight:600;box-shadow:0 14px 28px -14px var(--accent)}
+.b-fx-wave{padding:6px 0;text-decoration:underline wavy var(--accent);text-decoration-thickness:2px;text-underline-offset:8px;font-weight:500}
+.b-fx-bigquote{background:var(--surface-2);padding:26px 30px 20px;font-style:italic;border-radius:18px}
+.b-fx-bigquote::before{content:'“';position:absolute;top:-6px;inset-inline-start:12px;font:700 78px/1 Georgia,serif;color:var(--accent);opacity:.35}
+.b-fx-code{direction:ltr;text-align:left;background:#0D1117;color:#C9D1D9;font-family:ui-monospace,Menlo,Consolas,"Courier New",monospace;font-size:.92em;line-height:1.8;border-radius:12px;white-space:pre-wrap}
+.b-fx-corner{background:var(--surface);border:1px solid var(--line);border-radius:6px 6px 6px 28px;box-shadow:var(--shadow)}
+.b-fx-corner::after{content:'';position:absolute;bottom:0;inset-inline-start:0;width:28px;height:28px;background:linear-gradient(45deg,var(--accent) 50%,transparent 50%);border-radius:0 0 0 28px;opacity:.85}
+
 .b-fx-gradient{padding:6px 0;font-family:var(--font-head);font-size:calc(28px * var(--hs));font-weight:700;line-height:1.5;background:var(--hero-bg);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 .b-fx-banner{display:flex;align-items:center;gap:16px;padding:6px 0;font-family:var(--font-head);font-weight:700;font-size:calc(22px * var(--hs))}
 .b-fx-banner::before,.b-fx-banner::after{content:'';flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--accent))}
@@ -941,6 +974,10 @@ body.admin .qa-filter{display:flex !important;gap:8px;flex-wrap:wrap;margin-bott
 :root[data-theme="dark"] .mode-btn .m-sun{display:inline}
 :root[data-theme="dark"] .mode-btn .m-moon{display:none}
 @media (prefers-color-scheme:dark){:root:not([data-theme]) .mode-btn .m-sun{display:inline}:root:not([data-theme]) .mode-btn .m-moon{display:none}}
+html.th-clear #heroTitle,html.th-clear #heroSub{color:var(--hero-ink) !important}
+html.th-clear #heroSub{color:var(--hero-soft) !important}
+html.th-clear .sec-title{color:var(--ink) !important}
+html.th-clear .sec-title[data-st="glow"]{color:var(--accent) !important}
 html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:background-color .35s ease,color .35s ease,border-color .35s ease,box-shadow .35s ease !important}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
@@ -1034,7 +1071,7 @@ html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:
       <button class="tswitch-btn" id="tsw1" data-act="choose-track" data-track="math1" type="button" title="Math 1 — أولى">1</button>
       <button class="tswitch-btn" id="tsw2" data-act="choose-track" data-track="math2" type="button" title="Math 2 — تانية">2</button>
     </div>
-    <button class="mode-btn" id="modeBtn" data-act="toggle-mode" type="button" aria-label="تبديل الوضع الليلي / النهاري" title="الوضع الليلي / النهاري"><span class="m-sun">☀️</span><span class="m-moon">🌙</span></button>
+      <button class="mode-btn" id="modeBtn" data-act="toggle-mode" type="button" aria-label="تبديل الوضع الليلي / النهاري" title="الوضع الليلي / النهاري"><span class="m-sun">☀️</span><span class="m-moon">🌙</span></button>
   </div>
 </header>
 
@@ -1482,8 +1519,8 @@ const VARS = {
 };
  
 function defaultTheme(){
-  return { mode:'auto', headFont:'Readex Pro', bodyFont:'IBM Plex Sans Arabic',
-           fontSize:17, headScale:1, width:900, radius:16, colors:{}, bgPattern:'dots' };
+  return { mode:'light', headFont:'Readex Pro', bodyFont:'IBM Plex Sans Arabic',
+           fontSize:17, headScale:1, width:900, radius:16, colors:{}, colorsDark:{}, bgPattern:'dots' };
 }
 const BG_PATTERNS = [
   { id:'dots',     name:'نقاط ناعمة (افتراضي)', short:'نقاط' },
@@ -1503,8 +1540,22 @@ const BG_PATTERNS = [
   { id:'stars',    name:'نجوم ليلية', short:'نجوم' }
 ];
 const FX_STYLES = [
-  ['callout-info','💬 معلومة (أزرق)'],['callout-tip','✅ نصيحة (أخضر)'],['callout-warn','⚠️ تنبيه (برتقالي)'],
-  ['callout-danger','⛔ خطأ شائع (أحمر)'],['callout-example','📘 مثال محلول'],['callout-proof','∎ برهان'],
+  ['callout-info','💬 أزرق'],['callout-tip','✅ أخضر'],['callout-warn','⚠️ برتقالي'],
+  ['callout-danger','⛔ أحمر'],['callout-example','📘 بنفسجي'],['callout-proof','🧾 رمادي + ∎'],
+  ['callout-important','🔥 مهم (برتقالي)'],
+  ['callout-goal','🎯 هدف (تركواز)'],
+  ['callout-question','❓ سؤال (نيلي)'],
+  ['callout-note','📝 ملاحظة (ذهبي)'],
+  ['callout-summary','💎 تلخيص (سماوي)'],
+  ['callout-remember','🧠 تذكّر (وردي)'],
+  ['callout-challenge','🚀 تحدّي (بنفسجي)'],
+  ['callout-correct','✔️ صح (أخضر)'],
+  ['callout-wrong','❌ غلط (أحمر)'],
+  ['callout-star','⭐ مميّز (أصفر)'],
+  ['neon','💡 نيون متوهّج'],['glass','🪟 زجاجي'],['stripe','🏷️ بطاقة بشريط علوي'],['double','🖼️ إطار مزدوج'],
+  ['brutal','🧱 ظل صلب (Brutal)'],['spotlight','🔦 تسليط ضوء'],['chalk','🟩 سبورة طباشير'],['blueprint','📐 مخطط أزرق'],
+  ['graph','📈 ورق رسم بياني'],['notebook','📓 كراسة بسطور'],['tape','📎 ورقة بشريط لاصق'],['solid','🟪 خلفية ملوّنة كاملة'],
+  ['wave','〰️ خط متموّج'],['bigquote','❝ اقتباس كبير'],['code','💻 كود'],['corner','◣ زاوية مطوية'],
   ['gradient','🌈 عنوان بتدرج لوني'],['banner','🎀 عنوان بخطوط جانبية'],['highlight','🖍️ هايلايتر'],
   ['card','🪪 بطاقة عائمة'],['bubble','💭 فقاعة كلام'],['sticky','📌 ورقة ملاحظة لاصقة'],
   ['ribbon','🔖 شريط جانبي ملوّن'],['outline','🔲 إطار منقّط'],['dropcap','🅰️ فقرة بحرف أول كبير'],
@@ -1512,13 +1563,50 @@ const FX_STYLES = [
 ];
  
 /* جاهزات عامة + جاهزات بموضوع رياضي (تُطبَّق ألوانها وخط عناوينها معاً) */
+/* ألوان الوضع الآخر بتتولّد تلقائياً من لوحة الجاهزة (وتقدر تعدّلها بإيدك) */
+function _h2hsl(hex){
+  hex = String(hex).replace('#',''); if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  const r=parseInt(hex.slice(0,2),16)/255, g=parseInt(hex.slice(2,4),16)/255, b=parseInt(hex.slice(4,6),16)/255;
+  const mx=Math.max(r,g,b), mn=Math.min(r,g,b), l=(mx+mn)/2, d=mx-mn;
+  let h=0, s=d===0 ? 0 : d/(1-Math.abs(2*l-1));
+  if(d){ if(mx===r) h=((g-b)/d)%6; else if(mx===g) h=(b-r)/d+2; else h=(r-g)/d+4; h*=60; if(h<0) h+=360; }
+  return [h, s*100, l*100];
+}
+function _hsl2h(h,s,l){
+  s/=100; l/=100; const k=n=>(n+h/30)%12, a=s*Math.min(l,1-l);
+  const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
+  return '#'+[f(0),f(8),f(4)].map(x=>Math.round(x*255).toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+function paletteFrom(h, s, accent, gold, to, keep){
+  const [ha,sa,la]=_h2hsl(accent), [hg,sg,lg]=_h2hsl(gold||accent);
+  const tint = (v,lo,hi)=> s<4 ? s : Math.max(lo,Math.min(v,hi));
+  if(to==='dark'){
+    const ss = tint(s*0.75,14,48);
+    return { bg:_hsl2h(h,ss,8), surface:_hsl2h(h,ss,12), surface2:_hsl2h(h,ss,16), line:_hsl2h(h,ss*0.9,24),
+             ink:_hsl2h(h,s<4?0:28,93), inkSoft:_hsl2h(h,s<4?0:16,72),
+             accent:keep?accent:_hsl2h(ha,Math.min(sa,90),Math.max(la,64)), gold:keep?(gold||accent):_hsl2h(hg,sg,Math.max(lg,58)) };
+  }
+  const ss = tint(s,18,70);
+  return { bg:_hsl2h(h,ss,96), surface:'#FFFFFF', surface2:_hsl2h(h,ss,92), line:_hsl2h(h,ss*0.8,86),
+           ink:_hsl2h(h,s<4?0:38,12), inkSoft:_hsl2h(h,s<4?0:20,36),
+           accent:keep?accent:_hsl2h(ha,Math.min(sa,85),Math.min(la,46)), gold:keep?(gold||accent):_hsl2h(hg,sg,Math.min(lg,46)) };
+}
+function derivePalette(colors, to){
+  if(!colors || !colors.bg || !colors.accent) return {};
+  const [h,s] = _h2hsl(colors.bg);
+  return paletteFrom(h, s, colors.accent, colors.gold, to);
+}
+function presetPalettes(p){
+  const native = p.mode === 'dark' ? 'dark' : 'light', c = clone(p.colors || {});
+  const other = derivePalette(c, native === 'dark' ? 'light' : 'dark');
+  return native === 'dark' ? { dark:c, light:other } : { light:c, dark:other };
+}
 const PRESETS = [
-  { name:'الافتراضي',   mode:'auto',  colors:{} },
+  { name:'الافتراضي',   mode:'light', colors:{} },
   { name:'سبورة داكنة (Dark Chalkboard)',   mode:'dark',  headFont:'Aref Ruqaa',    colors:{ bg:'#182922', surface:'#1F3B2F', surface2:'#254936', ink:'#F3EFE2', inkSoft:'#BFD3C4', line:'#345444', accent:'#E7C46B', gold:'#E7C46B' } },
   { name:'مخطط أزرق (Blueprint Math)',      mode:'dark',  headFont:'Markazi Text',  colors:{ bg:'#0B3D91', surface:'#0F4AA8', surface2:'#124FB0', ink:'#EAF2FF', inkSoft:'#B7D0F2', line:'#2F66B3', accent:'#7FD1FF', gold:'#FFFFFF' } },
   { name:'النسبة الذهبية (Geometry Light)', mode:'light', headFont:'Amiri',         colors:{ bg:'#FBF7EE', surface:'#FFFFFF', surface2:'#F3ECDA', ink:'#2E2A1F', inkSoft:'#6B6350', line:'#E7DCC0', accent:'#B8860B', gold:'#C9973A' } },
   { name:'ماتريكس سايبر (Cyber Green)',     mode:'dark',  headFont:'Rubik',         colors:{ bg:'#05100A', surface:'#0A1B10', surface2:'#0F2716', ink:'#B6FFB6', inkSoft:'#5FCB5F', line:'#164016', accent:'#39FF14', gold:'#39FF14' } },
-  { name:'ليلي',        mode:'dark',  colors:{} },
   { name:'رملي دافئ',   mode:'light', colors:{ bg:'#F6F1E7', surface:'#FFFDF8', surface2:'#F0E9DB', ink:'#2B2620', inkSoft:'#6B6154', line:'#E4DBCA', accent:'#A2643C', gold:'#B8862F' } },
   { name:'أزرق ملكي',   mode:'light', colors:{ bg:'#EDF1F8', surface:'#FFFFFF', surface2:'#E6ECF7', ink:'#14233A', inkSoft:'#4C5D7A', line:'#D4DDEC', accent:'#2A4D8F', gold:'#C08A2E' } },
   { name:'زمردي ليلي',  mode:'dark',  colors:{ bg:'#0B1512', surface:'#122019', surface2:'#17291F', ink:'#E8F3EC', inkSoft:'#9FBCAD', line:'#22382C', accent:'#3FBF84', gold:'#D9AE5F' } },
@@ -1540,6 +1628,33 @@ const PRESETS = [
   { name:'توتي', mode:'light', bg:'violet', colors:{ bg:'#FDF2FA', surface:'#FFFFFF', surface2:'#FAE3F4', ink:'#3B0F35', inkSoft:'#86507F', line:'#F3CDEA', accent:'#C026D3', gold:'#F59E0B' } },
   { name:'برتقال فحمي', mode:'dark', bg:'diagonal', colors:{ bg:'#111315', surface:'#1A1D20', surface2:'#23272B', ink:'#F3F4F6', inkSoft:'#A1A8B0', line:'#30353B', accent:'#F97316', gold:'#FBBF24' } }
 ];
+/* جاهزات إضافية: (الاسم، درجة اللون، التشبّع، الأساسي، الذهبي، الوضع الأصلي، الخلفية) */
+[
+  ['لافندر هادئ',265,45,'#7C5CFF','#F59E0B','light','violet'],
+  ['خوخي دافئ',18,70,'#F2683C','#F5A524','light','sunset'],
+  ['ليموني منعش',70,60,'#7CB518','#F5B700','light','dots'],
+  ['فيروزي',185,55,'#0891B2','#F59E0B','light','ocean'],
+  ['كرزي',345,60,'#D6336C','#F59E0B','light','rose'],
+  ['ترابي',28,35,'#9C6644','#C58B2B','light','paper'],
+  ['جرافيت',220,10,'#4F6D8F','#9CA3AF','dark','minimal'],
+  ['ياقوتي ليلي',230,60,'#4C6FFF','#FBBF24','dark','grid'],
+  ['زيتوني',90,30,'#6B8E23','#C9A227','light','forest'],
+  ['كاكاو',22,35,'#B5651D','#D4A373','dark','paper'],
+  ['نيلي',240,50,'#4338CA','#F59E0B','light','graph'],
+  ['مرجاني',8,70,'#FF6B6B','#FFB020','light','rose'],
+  ['أخضر ملكي',150,45,'#0F8F5F','#C9A227','dark','forest'],
+  ['رمادي دافئ',35,8,'#8B7355','#B8860B','light','minimal'],
+  ['أحمر ملكي',355,55,'#B91C1C','#D4AF37','dark','dots'],
+  ['سماوي',200,70,'#0EA5E9','#F59E0B','light','dots'],
+  ['ليلك',285,50,'#A855F7','#F472B6','light','aurora'],
+  ['بترولي',195,45,'#0F766E','#F59E0B','dark','calc'],
+  ['نعناع بالشوكولاتة',165,30,'#2DD4BF','#F4A261','dark','blueprint'],
+  ['أبيض وأسود',0,0,'#111111','#555555','light','minimal'],
+  ['ورد ليلي',320,45,'#F472B6','#FDE68A','dark','aurora'],
+  ['شمس وبحر',45,60,'#F59E0B','#0EA5E9','light','sunset']
+].forEach(([name,h,s,accent,gold,mode,bg])=>{
+  PRESETS.push({ name, mode, bg, colors: paletteFrom(h, s, accent, gold, mode, true) });
+});
  
 function loadFonts(list){
   const fams = [...new Set((list||[]).concat(window.__secFonts||[]).filter(Boolean))]
@@ -1553,37 +1668,57 @@ function stack(font){
   return '"' + font + '", ' + (SERIF_FONTS.includes(font) ? 'serif' : 'system-ui, "Segoe UI", sans-serif');
 }
  
+let themeEditMode = 'light';   /* الوضع اللي بيتعدّل ويتعاين داخل نافذة المظهر */
 function userMode(){
-  if(themeBackup !== null) return '';           /* أثناء تعديل المظهر من الأدمن نتجاهل تفضيل الزائر */
+  if(themeBackup !== null) return '';
   try{ const v = localStorage.getItem('site_mode_pref'); return (v==='light' || v==='dark') ? v : ''; }catch(e){ return ''; }
 }
 function setUserMode(v){
   try{ if(v) localStorage.setItem('site_mode_pref', v); else localStorage.removeItem('site_mode_pref'); }catch(e){}
 }
+function effectiveMode(t){
+  if(themeBackup !== null) return themeEditMode;
+  const u = userMode(); if(u) return u;
+  if(t && (t.mode === 'dark' || t.mode === 'light')) return t.mode;
+  return (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+}
+function activeColors(t){
+  if(!t) return {};
+  return (effectiveMode(t) === 'dark' ? t.colorsDark : t.colors) || {};
+}
 function applyTheme(t){
   const r = document.documentElement;
   if(!t) return;
-  const mode = userMode() || t.mode;
-  if(mode === 'auto') r.removeAttribute('data-theme'); else r.setAttribute('data-theme', mode);
+  const mode = effectiveMode(t);
+  r.setAttribute('data-theme', mode);
+  if(themeBackup === null){ try{ localStorage.setItem('site_mode_last', mode); }catch(e){} }
   r.style.setProperty('--font-head', stack(t.headFont));
   r.style.setProperty('--font-body', stack(t.bodyFont));
   r.style.setProperty('--fs', t.fontSize + 'px');
   r.style.setProperty('--hs', t.headScale);
   r.style.setProperty('--w', t.width + 'px');
   r.style.setProperty('--radius', t.radius + 'px');
+  const cols = (mode === 'dark' ? t.colorsDark : t.colors) || {};
   for(const k in VARS){
-    const val = (t.colors||{})[k];
+    const val = cols[k];
     if(val) r.style.setProperty(VARS[k][0], val); else r.style.removeProperty(VARS[k][0]);
   }
-  if(t.colors && t.colors.accent){
-    r.style.setProperty('--accent-soft', 'color-mix(in srgb, ' + t.colors.accent + ' 16%, transparent)');
+  if(cols.accent){
+    r.style.setProperty('--accent-soft', 'color-mix(in srgb, ' + cols.accent + ' 16%, transparent)');
   } else r.style.removeProperty('--accent-soft');
   document.body.setAttribute('data-bgpattern', t.bgPattern || 'dots');
   loadFonts([t.headFont, t.bodyFont]);
 }
- 
+
 /* ---- نافذة المظهر (معاينة فورية) ---- */
 let themeBackup = null;
+let themeOverridesDirty = false; /* اتطبّقت جاهزة أو اتغيّر لون في النافذة الحالية */
+function clearColorOverrides(){
+  /* ألوان مخصصة بتغلب على الثيم: لون المادة، ألوان الهيرو، ألوان أسماء الأقسام */
+  Object.keys(site.trackSettings || {}).forEach(k=>{ if(site.trackSettings[k]) site.trackSettings[k].accent = ''; });
+  if(site.meta){ site.meta.heroColor = ''; site.meta.heroSubColor = ''; }
+  (function walk(list){ (list||[]).forEach(s=>{ if(s.titleColor) s.titleColor = ''; walk(s.children); }); })(site.sections);
+}
  
 function cssNow(varName){
   const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
@@ -1593,20 +1728,26 @@ function cssNow(varName){
  
 function themeModal(draft){
   const t = Object.assign(defaultTheme(), clone(draft || site.theme || {}));
-  t.colors = t.colors || {};
-  if(themeBackup === null) themeBackup = clone(site.theme || defaultTheme());
+  t.colors = t.colors || {}; t.colorsDark = t.colorsDark || {};
+  if(themeBackup === null){
+    themeBackup = clone(site.theme || defaultTheme());
+    themeEditMode = effectiveMode(site.theme);
+  }
+  if(draft && draft._editMode) themeEditMode = draft._editMode;
+  themeDraft = { light: clone(t.colors), dark: clone(t.colorsDark) };
   applyTheme(t); // حتى تعكس منتقيات الألوان الحالة الصحيحة
  
   const fontOpts = f => FONTS.map(x=>`<option value="${x}" ${x===f?'selected':''}>${x}</option>`).join('');
-  const swatches = Object.keys(VARS).map(k=>{
-    const set = !!t.colors[k];
-    return `<label class="swatch">
-      <input type="color" data-ck="${k}" data-touched="${set?1:0}" value="${set ? t.colors[k] : cssNow(VARS[k][0])}">
-      <span>${VARS[k][1]}</span></label>`;
-  }).join('');
+  const swatches = swatchesHTML();
  
   openModal('المظهر والألوان', `
-    <input type="hidden" id="th-mode" value="${t.mode}">
+    <div class="field"><label for="th-mode">الوضع الافتراضي للزوار</label>
+      <select id="th-mode">
+        <option value="light" ${t.mode==='light'?'selected':''}>☀️ فاتح</option>
+        <option value="dark"  ${t.mode==='dark'?'selected':''}>🌙 داكن</option>
+        <option value="auto"  ${t.mode==='auto'?'selected':''}>🖥️ حسب جهاز الزائر</option>
+      </select>
+      <p class="hint">الزائر يقدر يبدّل بنفسه من زرار ☀️/🌙 فوق، ولكل وضع ألوانه الخاصة بالمظهر ده.</p></div>
  
     <div class="field"><label>جاهزات سريعة</label>
       <div class="presets">${PRESETS.map((p,i)=>`
@@ -1617,16 +1758,14 @@ function themeModal(draft){
     <div class="field"><label>🖼️ خلفيات جاهزة (اضغط للتجربة)</label>
       <div class="bg-grid">${BG_PATTERNS.map(p=>`<button type="button" class="bgthumb" data-act="th-bg" data-bg="${p.id}" data-p="${p.id}" aria-pressed="${t.bgPattern===p.id}"><span>${p.short||p.name}</span></button>`).join('')}</div></div>
 
-    <div class="field"><label>نمط الألوان</label>
-      <div class="modes">
-        <button type="button" class="btn" data-act="th-mode" data-mode="light" aria-pressed="${t.mode==='light'}">فاتح</button>
-        <button type="button" class="btn" data-act="th-mode" data-mode="dark"  aria-pressed="${t.mode==='dark'}">داكن</button>
-        <button type="button" class="btn" data-act="th-mode" data-mode="auto"  aria-pressed="${t.mode==='auto'}">حسب الجهاز</button>
-      </div></div>
  
     <div class="field"><label>ألوان الموقع</label>
-      <div class="tgrid">${swatches}</div>
-      <p class="hint">أي لون تلمسه يُثبَّت في الوضعين. لإرجاع كل الألوان للأصل:
+      <div class="modes" id="th-edit-tabs" style="margin-bottom:10px">
+        <button type="button" class="btn" data-act="th-edit-mode" data-m="light" aria-pressed="${themeEditMode==='light'}">☀️ تعديل ألوان الوضع الفاتح</button>
+        <button type="button" class="btn" data-act="th-edit-mode" data-m="dark"  aria-pressed="${themeEditMode==='dark'}">🌙 تعديل ألوان الوضع الداكن</button>
+      </div>
+      <div class="tgrid" id="th-swatches">${swatches}</div>
+      <p class="hint">اللي بتغيّره هنا بيتحفظ للوضع المختار بس (الفاتح له ألوانه والداكن له ألوانه). لإرجاع ألوان الوضع ده للأصل:
         <button type="button" class="btn sm" data-act="th-reset-colors">إرجاع الألوان الافتراضية</button></p>
     </div>
  
@@ -1654,13 +1793,16 @@ function themeModal(draft){
       <button class="btn ghost" data-act="close">إلغاء</button>`, ()=>{
     site.theme = readThemeForm();
     themeBackup = null;
+    if(themeOverridesDirty){ clearColorOverrides(); themeOverridesDirty = false; }
+    document.documentElement.classList.remove('th-clear');
+    setUserMode(''); // وإلا يتجاهل تفضيل الزر ☀️/🌙 القديم ما حفظته
     applyTheme(site.theme);
     commit();
   });
  
   const body = document.getElementById('mBody');
   body.addEventListener('input', e=>{
-    if(e.target.dataset.ck) e.target.dataset.touched = '1';
+    if(e.target.dataset.ck){ e.target.dataset.touched = '1'; themeOverridesDirty = true; document.documentElement.classList.add('th-clear'); }
     const d = readThemeForm();
     applyTheme(d);
     const o = { 'th-fs':['o-fs', v=>v+'px'], 'th-hs':['o-hs', v=>Math.round(v*100)+'%'],
@@ -1672,7 +1814,21 @@ function themeModal(draft){
   });
 }
  
-function readThemeForm(){
+let themeDraft = null;   /* { light:{}, dark:{} } — ألوان الوضعين أثناء التعديل */
+function swatchesHTML(){
+  const cols = (themeDraft && themeDraft[themeEditMode]) || {};
+  return Object.keys(VARS).map(k=>{
+    const set = !!cols[k];
+    return `<label class="swatch">
+      <input type="color" data-ck="${k}" data-touched="${set?1:0}" value="${set ? cols[k] : cssNow(VARS[k][0])}">
+      <span>${VARS[k][1]}</span></label>`;
+  }).join('');
+}
+function readThemeForm(readSwatches = true){
+  if(themeDraft && readSwatches){
+    const cur = themeDraft[themeEditMode] = {};
+    document.querySelectorAll('[data-ck]').forEach(i=>{ if(i.dataset.touched==='1') cur[i.dataset.ck] = i.value; });
+  }
   const t = { mode: document.getElementById('th-mode').value,
               headFont: document.getElementById('th-head').value,
               bodyFont: document.getElementById('th-body').value,
@@ -1680,12 +1836,11 @@ function readThemeForm(){
               headScale:+document.getElementById('th-hs').value,
               width:+document.getElementById('th-w').value,
               radius:+document.getElementById('th-r').value,
-              bgPattern: (document.getElementById('th-bg')||{}).value || 'dots', dv2:2,
-              colors:{} };
-  document.querySelectorAll('[data-ck]').forEach(i=>{ if(i.dataset.touched==='1') t.colors[i.dataset.ck] = i.value; });
+              bgPattern: (document.getElementById('th-bg')||{}).value || 'dots', dv2:2, cv:3,
+              colors: clone((themeDraft||{}).light || {}), colorsDark: clone((themeDraft||{}).dark || {}) };
   return t;
 }
- 
+
 /* تحديث المنتقيات غير المعدّلة لتعرض ألوان النمط الحالي */
 function refreshSwatches(){
   requestAnimationFrame(()=>{
@@ -1755,13 +1910,15 @@ let isAdmin = false;
    3) طبقة حفظ البيانات (ثلاث خلفيات: Claude / Supabase / التخزين المحلي)
    ======================================================================= */
 const LS_KEY = 'site_content_v1';
+const LS_DIRTY = 'site_content_unsynced';
  
 const Store = {
   mode:'local', db:null, sb:null, ready:false,
  
   async init(onRemote){
     // نسخة محليّة فورية حتى لا تبقى الصفحة فارغة
-    try{ const c=localStorage.getItem(LS_KEY); if(c) site = JSON.parse(c); }catch(e){}
+    let localSite = null;
+    try{ const c=localStorage.getItem(LS_KEY); if(c){ site = JSON.parse(c); localSite = site; onRemote(); } }catch(e){}
  
     if(CONFIG.SUPABASE.enabled){
       try{
@@ -1770,7 +1927,13 @@ const Store = {
         const { data, error } = await this.sb.from(CONFIG.SUPABASE.table).select('data').eq('id', CONFIG.SUPABASE.rowId).maybeSingle();
         if(error) throw error;
         this.mode='supabase'; this.ready=true;
-        if(data && data.data){ site = typeof data.data==='string' ? JSON.parse(data.data) : data.data; onRemote(); }
+        let unsynced = false; try{ unsynced = localStorage.getItem(LS_DIRTY)==='1'; }catch(e){}
+        if(data && data.data){
+          const remote = typeof data.data==='string' ? JSON.parse(data.data) : data.data;
+          if(localSite && (localSite._savedAt||0) > (remote._savedAt||0)){
+            site = localSite; onRemote(); scheduleSave(); // تعديلات محلية لم تصل للخادم: نرفعها بدل ما نضيّعها
+          } else { site = remote; onRemote(); }
+        } else if(unsynced){ scheduleSave(); }
         setStatus('متصل بـ Supabase');
  
         // بث لحظي: أي حفظ من أي زائر آخر يظهر فوراً عند كل من فاتح الصفحة
@@ -1780,7 +1943,11 @@ const Store = {
               if(this._justSaved){ this._justSaved=false; return; } // تجاهل الصدى من حفظنا نحن
               if(document.querySelector('.overlay.open')) return;    // لا نقاطع تعديلاً جارياً
               const incoming = payload.new && payload.new.data;
-              if(incoming){ site = typeof incoming==='string' ? JSON.parse(incoming) : incoming; onRemote(); toast('تحديث جديد من مصدر آخر'); }
+              if(incoming){
+                const inc = typeof incoming==='string' ? JSON.parse(incoming) : incoming;
+                if((inc._savedAt||0) < (site._savedAt||0)) return; // لا نستبدل نسخة أحدث بأقدم
+                site = inc; onRemote(); toast('تحديث جديد من مصدر آخر');
+              }
             })
           .subscribe();
         return;
@@ -1810,16 +1977,26 @@ const Store = {
   },
  
   async save(){
+    site._savedAt = Date.now();
     const json = JSON.stringify(site);
-    try{ localStorage.setItem(LS_KEY, json); }catch(e){}
+    try{ localStorage.setItem(LS_KEY, json); localStorage.setItem(LS_DIRTY, '1'); }catch(e){}
     if(this.mode==='supabase'){
       this._justSaved = true;
       const { error } = await this.sb.from(CONFIG.SUPABASE.table)
         .upsert({ id: CONFIG.SUPABASE.rowId, data: site, updated_at: new Date().toISOString() });
       if(error){ this._justSaved=false; throw error; }
+      // تحقق: هل السيرفر حفظ فعلاً؟ (بعض إعدادات الصلاحيات ترجّع نجاح وهي ما حفظتش)
+      try{
+        const chk = await this.sb.from(CONFIG.SUPABASE.table).select('saved:data->>_savedAt').eq('id', CONFIG.SUPABASE.rowId).maybeSingle();
+        if(!chk.error && String(chk.data && chk.data.saved) !== String(site._savedAt)){
+          this._justSaved=false;
+          throw new Error('Supabase رجّع نجاح لكنه لم يحفظ التعديل فعلياً — راجع صلاحيات (RLS) جدول ' + CONFIG.SUPABASE.table);
+        }
+      }catch(e){ if(e && /RLS/.test(e.message||'')) throw e; }
     } else if(this.mode==='claude' && this.db){
       await this.db.set({ json, updatedAt: new Date().toISOString() });
     }
+    try{ localStorage.removeItem(LS_DIRTY); }catch(e){}
   }
 };
  
@@ -2039,15 +2216,35 @@ function qaAnswerEditor(row){
   });
 }
  
-let saveTimer=null, saving=false;
+let saveTimer=null, saving=false, saveRetries=0;
+const FIX_SQL = "alter table public.site_content enable row level security;\n" +
+"drop policy if exists \"site read\" on public.site_content;\ndrop policy if exists \"site insert\" on public.site_content;\ndrop policy if exists \"site update\" on public.site_content;\n" +
+"create policy \"site read\"   on public.site_content for select using (true);\n" +
+"create policy \"site insert\" on public.site_content for insert with check (true);\n" +
+"create policy \"site update\" on public.site_content for update using (true) with check (true);";
+function syncBanner(msg){
+  let b = document.getElementById('syncBanner');
+  if(!msg){ if(b) b.remove(); return; }
+  if(!b){
+    b = document.createElement('div'); b.id = 'syncBanner';
+    b.style.cssText = 'position:fixed;z-index:99999;inset-inline:12px;bottom:12px;background:#B3261E;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.7;box-shadow:0 8px 24px rgba(0,0,0,.35)';
+    document.body.appendChild(b);
+  }
+  b.innerHTML = '<b>⚠ التعديلات محفوظة على جهازك فقط ولم تصل للسيرفر.</b><br>' + esc(msg) +
+    '<br><button type="button" id="syncCopy" style="margin-top:6px;margin-inline-end:8px;padding:5px 12px;border-radius:8px;border:0;cursor:pointer">نسخ كود الإصلاح (SQL)</button>' +
+    '<button type="button" id="syncClose" style="margin-top:6px;padding:5px 12px;border-radius:8px;border:0;cursor:pointer">إغلاق</button>';
+  document.getElementById('syncCopy').onclick = async ()=>{ try{ await navigator.clipboard.writeText(FIX_SQL); toast('تم النسخ — الصقه في Supabase ← SQL Editor ثم Run'); }catch(e){ prompt('انسخ الكود:', FIX_SQL); } };
+  document.getElementById('syncClose').onclick = ()=>syncBanner('');
+}
 function scheduleSave(){
   clearTimeout(saveTimer);
   setStatus('يحفظ…');
   saveTimer = setTimeout(async ()=>{
     if(saving){ scheduleSave(); return; }
     saving=true;
-    try{ await Store.save(); setStatus('تم الحفظ ✓'); }
-    catch(e){ console.error(e); setStatus('تعذّر الحفظ'); toast('لم يُحفظ التعديل على الخادم'); }
+    try{ await Store.save(); saveRetries=0; setStatus('تم الحفظ ✓'); syncBanner(''); }
+    catch(e){ console.error(e); setStatus('تعذّر الحفظ'); syncBanner((e && e.message) || String(e));
+      if(saveRetries++ < 3) saveTimer = setTimeout(scheduleSave, 8000); }
     finally{ saving=false; }
   }, 700);
 }
@@ -2057,7 +2254,13 @@ function scheduleSave(){
    ======================================================================= */
 function render(){
   site.theme = Object.assign(defaultTheme(), site.theme || {});
-  if(site.theme.dv2!==2){ Object.assign(site.theme,{headFont:'Readex Pro',bodyFont:'IBM Plex Sans Arabic',radius:16,colors:{},bgPattern:'dots',dv2:2}); }
+  if(site.theme.dv2!==2){ Object.assign(site.theme,{headFont:'Readex Pro',bodyFont:'IBM Plex Sans Arabic',radius:16,colors:{},colorsDark:{},bgPattern:'dots',dv2:2}); }
+  if(site.theme.cv !== 3){   /* ترحيل المظهر القديم: لكل وضع ألوانه */
+    const th = site.theme, c = th.colors || {};
+    if(th.mode === 'auto') th.mode = 'light';
+    if(Object.keys(c).length && th.mode === 'dark'){ th.colorsDark = c; th.colors = {}; }
+    th.colorsDark = th.colorsDark || {}; th.cv = 3;
+  }
   site.notifications = site.notifications || [];
   site.folders = Array.isArray(site.folders) ? site.folders : [];
   window.__secFonts = collectSecFonts(site.sections, []);
@@ -2109,7 +2312,7 @@ function applySubjectOverrides(){
     r.style.setProperty('--accent-soft', 'color-mix(in srgb, ' + ts.accent + ' 16%, transparent)');
   } else {
     // رجوع للمظهر العام (لا يعدّل إعدادات المادة الأخرى أبداً)
-    const globalAccent = (site.theme.colors||{}).accent;
+    const globalAccent = activeColors(site.theme).accent;
     if(globalAccent){ r.style.setProperty('--accent', globalAccent); r.style.setProperty('--accent-soft','color-mix(in srgb, '+globalAccent+' 16%, transparent)'); }
     else { r.style.removeProperty('--accent'); r.style.removeProperty('--accent-soft'); }
   }
@@ -2172,8 +2375,7 @@ function renderSection(s, i, secs, depth){
       </div>
       <div class="sec-collapse"><div><div class="sec-inner">
         <div class="blocks">
-          ${s.blocks.map((b,j)=>renderBlock(b,s.id,j,s.blocks.length-1)).join('') ||
-            '<p class="sec-desc">لا يوجد محتوى في هذا القسم بعد.</p>'}
+          ${s.blocks.map((b,j)=>renderBlock(b,s.id,j,s.blocks.length-1)).join('')}
         </div>
         ${kids.length?`<div class="subsections">${kids.map((c,k)=>renderSection(c,k,kids,depth+1)).join('')}</div>`:''}
         <div class="addblock">
@@ -2250,7 +2452,8 @@ function openModal(title, bodyHTML, footHTML, handler){
 }
 function closeModal(){
   $('#overlay').classList.remove('open'); onSaveModal=null;
-  if(themeBackup){ site.theme = themeBackup; themeBackup = null; applyTheme(site.theme); }
+  document.documentElement.classList.remove('th-clear'); themeOverridesDirty = false;
+  if(themeBackup){ site.theme = themeBackup; themeBackup = null; applyTheme(site.theme); render(); }
 }
 const footSave = (label='حفظ') =>
   `<button class="btn primary" data-act="modal-save">${label}</button><button class="btn ghost" data-act="close">إلغاء</button>`;
@@ -2658,8 +2861,7 @@ document.addEventListener('click', async e=>{
   }
   if(act==='toggle-mode'){
     const root = document.documentElement, dt = root.getAttribute('data-theme');
-    const dark = dt === 'dark' || (!dt && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
-    setUserMode(dark ? 'light' : 'dark');
+    setUserMode(effectiveMode(site.theme) === 'dark' ? 'light' : 'dark');
     root.classList.add('theme-anim'); applyTheme(site.theme);
     setTimeout(()=>root.classList.remove('theme-anim'), 450);
     return;
@@ -2727,16 +2929,18 @@ document.addEventListener('click', async e=>{
     case 'settings': settingsModal(); break;
     case 'subject-settings': subjectSettingsModal(); break;
     case 'notif-admin': notifAdminModal(); break;
-    case 'theme': themeModal(); break;
-    case 'th-mode': {
-      setUserMode('');
-      document.getElementById('th-mode').value = t.dataset.mode;
-      document.querySelectorAll('[data-act="th-mode"]').forEach(b=>b.setAttribute('aria-pressed', b===t));
-      applyTheme(readThemeForm()); refreshSwatches(); break;
+    case 'theme': themeOverridesDirty = false; themeModal(); break;
+    case 'th-edit-mode': {
+      readThemeForm();                         /* احفظ ألوان الوضع الحالي في المسودة */
+      themeEditMode = t.dataset.m;
+      document.querySelectorAll('[data-act="th-edit-mode"]').forEach(b=>b.setAttribute('aria-pressed', String(b===t)));
+      applyTheme(readThemeForm(false));        /* عاين الوضع الجديد من المسودة (من غير ما نقرأ منتقيات الوضع القديم) */
+      document.getElementById('th-swatches').innerHTML = swatchesHTML();
+      break;
     }
     case 'th-reset-colors':
       document.querySelectorAll('[data-ck]').forEach(i=>i.dataset.touched='0');
-      applyTheme(readThemeForm()); refreshSwatches(); toast('رجعت الألوان الافتراضية'); break;
+      applyTheme(readThemeForm()); refreshSwatches(); toast('رجعت ألوان الوضع ده للافتراضي'); break;
     case 'th-bg': {
       const sel = document.getElementById('th-bg'); if(sel) sel.value = t.dataset.bg;
       document.querySelectorAll('.bgthumb').forEach(b=>b.setAttribute('aria-pressed', b===t ? 'true':'false'));
@@ -2746,11 +2950,15 @@ document.addEventListener('click', async e=>{
       setUserMode('');
       const p = PRESETS[+t.dataset.i];
       const cur = readThemeForm();
-      const merged = Object.assign({}, cur, { mode:p.mode, colors: clone(p.colors) });
-      if(p.headFont) merged.headFont = p.headFont;
-      if(p.bodyFont) merged.bodyFont = p.bodyFont;
-      if(p.radius!=null) merged.radius = p.radius;
-      if(p.bg) merged.bgPattern = p.bg;
+      const dflt = defaultTheme();
+      const pal = presetPalettes(p), native = p.mode === 'dark' ? 'dark' : 'light';
+      const merged = Object.assign({}, cur, { mode:native, colors: pal.light, colorsDark: pal.dark, _editMode: native });
+      merged.headFont  = p.headFont  || dflt.headFont;
+      merged.bodyFont  = p.bodyFont  || dflt.bodyFont;
+      merged.radius    = p.radius!=null ? p.radius : dflt.radius;
+      merged.bgPattern = p.bg || dflt.bgPattern;
+      themeOverridesDirty = true;
+      document.documentElement.classList.add('th-clear');
       themeModal(merged);
       break;
     }
@@ -2798,6 +3006,7 @@ window.addEventListener('resize', syncTopbarHeight);
    7) الإقلاع
    ======================================================================= */
 (async function start(){
+  try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{ if(themeBackup === null && site && site.theme) applyTheme(site.theme); }); }catch(e){}
   render();
   syncTopbarHeight();
   const introPromise = playIntro();
