@@ -598,6 +598,14 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
 .notif-item-track{font-size:11px; padding:1px 8px; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-weight:600}
 .notif-item-date{font-size:12px; color:var(--ink-faint); margin-inline-start:auto}
 .notif-empty{color:var(--ink-faint); text-align:center; padding:34px 10px; font-size:14px}
+.notif-item-exp{font-size:11.5px; color:var(--ink-faint); margin-top:4px}
+.notif-item.is-new{border-color:var(--danger)}
+.notif-item.tap{cursor:pointer; transition:opacity .25s, transform .25s}
+.notif-item.tap.gone{opacity:0; transform:translateX(-30px)}
+.notif-clear{font-size:12.5px; padding:6px 10px}
+.notif-item.pinned{border-color:var(--accent); background:var(--accent-soft)}
+.notif-pin-tag{font-size:11px; font-weight:700; color:var(--accent)}
+.notif-new-dot{width:8px; height:8px; border-radius:50%; background:var(--danger); display:inline-block}
 .notif-admin-row{display:flex; gap:8px; align-items:center; margin-bottom:8px}
 .notif-admin-row .txt{flex:1; font-size:13.5px}
 
@@ -1103,6 +1111,7 @@ html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:
 <aside class="notif-drawer" id="notifDrawer" aria-hidden="true">
   <div class="notif-head">
     <h3>🔔 الإشعارات</h3>
+    <button class="btn sm ghost notif-clear" id="notifClearBtn" data-act="notif-clear" type="button" hidden>🗑 مسح الكل</button>
     <button class="btn sm ghost" data-act="notif-close" type="button">✕</button>
   </div>
   <div class="notif-list" id="notifList"></div>
@@ -1376,15 +1385,50 @@ function menuGoto(secId, blockId){
 const NOTIF_SEEN_KEY = 'site_notif_seen_v1';
 function notifSeenAt(){ try{ return localStorage.getItem(NOTIF_SEEN_KEY) || ''; }catch(e){ return ''; } }
 function setNotifSeenNow(){ try{ localStorage.setItem(NOTIF_SEEN_KEY, new Date().toISOString()); }catch(e){} }
+/* مدة بقاء الإشعار: يوم / أسبوع / شهر (أو دائم). الإشعار المنتهي يختفي لوحده عند الجميع */
+const NOTIF_DURATIONS = { day:86400000, week:7*86400000, month:30*86400000 };
+function notifExpired(n){ return !!(n && n.expires && Date.parse(n.expires) <= Date.now()); }
+function activeNotifs(){
+  const list = site.notifications || [];
+  /* المحرّر ينظّف المنتهي من قاعدة البيانات فعلياً؛ الزوّار يُخفى عنهم فقط */
+  if(isAdmin && list.some(notifExpired)){
+    site.notifications = list.filter(n => !notifExpired(n)); scheduleSave();
+    return site.notifications;
+  }
+  return list.filter(n => !notifExpired(n));
+}
+function fmtNotifRemain(n){
+  if(!n.expires) return 'دائم';
+  const ms = Date.parse(n.expires) - Date.now();
+  if(ms <= 0) return 'انتهى';
+  const d = Math.floor(ms/86400000), h = Math.floor(ms/3600000), m = Math.max(1, Math.floor(ms/60000));
+  if(d >= 1) return 'يختفي بعد ' + d + ' يوم';
+  if(h >= 1) return 'يختفي بعد ' + h + ' ساعة';
+  return 'يختفي بعد ' + m + ' دقيقة';
+}
+/* ما أخفاه الزائر على جهازه (بالضغط أو بزر مسح الكل) — لا يمس بيانات الموقع */
+const NOTIF_DISMISS_KEY = 'site_notif_dismissed_v1';
+function dismissedIds(){ try{ return JSON.parse(localStorage.getItem(NOTIF_DISMISS_KEY) || '[]'); }catch(e){ return []; } }
+function saveDismissed(arr){ try{ localStorage.setItem(NOTIF_DISMISS_KEY, JSON.stringify(arr.slice(-300))); }catch(e){} }
+function dismissNotifs(ids){ const s = new Set(dismissedIds()); ids.forEach(i=>s.add(i)); saveDismissed([...s]); }
+function visibleNotifs(){ const d = new Set(dismissedIds()); return activeNotifs().filter(n => !d.has(n.id)); }
 function unreadNotifCount(){
   const seen = notifSeenAt();
-  const list = site.notifications || [];
+  const list = visibleNotifs();
   if(!seen) return list.length;
   return list.filter(n => n.date > seen).length;
 }
+/* العلامة الحمراء على أيقونة الموقع (شورتكات / تطبيق محمّل على الموبايل) */
+function setAppIconBadge(n){
+  try{
+    if(n > 0 && navigator.setAppBadge) navigator.setAppBadge(n).catch(()=>{});
+    else if(n <= 0 && navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{});
+  }catch(e){}
+}
 function renderNotifBadge(){
-  const badge = $('#notifBadge'); if(!badge) return;
   const n = unreadNotifCount();
+  setAppIconBadge(n);
+  const badge = $('#notifBadge'); if(!badge) return;
   badge.textContent = n>99 ? '99+' : String(n);
   badge.classList.toggle('zero', n<=0);
 }
@@ -1394,15 +1438,19 @@ function fmtNotifDate(iso){
 function notifTrackLabel(tr){ if(tr==='math1') return 'Math 1'; if(tr==='math2') return 'Math 2'; return 'عام'; }
 function renderNotifList(){
   const list = $('#notifList'); if(!list) return;
-  const items = [...(site.notifications||[])].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
-  if(!items.length){ list.innerHTML = '<p class="notif-empty">لا توجد إشعارات بعد.</p>'; return; }
+  const items = [...visibleNotifs()].sort((a,b)=> (b.pinned?1:0)-(a.pinned?1:0) || (b.date||'').localeCompare(a.date||''));
+  const clr = $('#notifClearBtn'); if(clr) clr.hidden = !items.some(n=>!n.pinned);
+  if(!items.length){ list.innerHTML = '<p class="notif-empty">لا توجد إشعارات.</p>'; return; }
+  const seen = notifSeenAt();
   list.innerHTML = items.map(n => `
-    <div class="notif-item">
+    <div class="notif-item${(!seen || n.date > seen) ? ' is-new' : ''}${n.pinned ? ' pinned' : ''}${(n.once && !n.pinned) ? ' tap' : ''}"${(n.once && !n.pinned) ? ` data-act="notif-tap" data-id="${esc(n.id)}" title="اضغط لإخفاء الإشعار"` : ''}>
       <div class="notif-item-top">
         <span class="notif-item-track">${esc(notifTrackLabel(n.track))}</span>
+        ${n.pinned ? '<span class="notif-pin-tag">📌 مثبّت</span>' : ''}
         <span class="notif-item-date">${fmtNotifDate(n.date)}</span>
       </div>
       <div>${esc(n.text)}</div>
+      ${(n.once && !n.pinned) ? '<div class="notif-item-exp">👆 اضغط لإخفاء الإشعار</div>' : (n.expires ? `<div class="notif-item-exp">⏳ ${fmtNotifRemain(n)}</div>` : '')}
     </div>`).join('');
 }
 function openNotifDrawer(){
@@ -1417,7 +1465,7 @@ function closeNotifDrawer(){
 }
 /* ---- لوحة الأدمن: كتابة ونشر إشعارات جديدة ---- */
 function notifAdminModal(){
-  const items = [...(site.notifications||[])].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+  const items = [...activeNotifs()].sort((a,b)=> (b.pinned?1:0)-(a.pinned?1:0) || (b.date||'').localeCompare(a.date||''));
   openModal('إدارة الإشعارات', `
     <div class="field"><label for="natext">نص الإشعار الجديد</label>
       <textarea id="natext" placeholder="مثال: تم إضافة شابتير جديد في Math 1" style="min-height:70px"></textarea></div>
@@ -1427,12 +1475,23 @@ function notifAdminModal(){
         <option value="math1">Math 1 فقط</option>
         <option value="math2">Math 2 فقط</option>
       </select></div>
+    <div class="field"><label for="naexp">نوع الإشعار / مدة الظهور</label>
+      <select id="naexp">
+        <option value="tap" selected>عادي — يختفي لما الزائر يضغط عليه</option>
+        <option value="day">يوم واحد (مايتشالش بالضغط)</option>
+        <option value="week">أسبوع (مايتشالش بالضغط)</option>
+        <option value="month">شهر (مايتشالش بالضغط)</option>
+        <option value="none">دائم (لحد ما تمسحه أنت)</option>
+      </select></div>
+    <div class="field"><label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+      <input type="checkbox" id="napin"> 📌 تثبيت الإشعار (يفضل فوق ومينمسحش بزر "مسح الكل" ولا بالضغط)</label></div>
     <button type="button" class="btn primary sm" data-act="notif-add">＋ نشر الإشعار</button>
     <hr class="sep">
     <div class="field"><label>الإشعارات الحالية</label>
       <div id="naList">${items.length ? items.map(n=>`
         <div class="notif-admin-row">
-          <span class="txt">${esc(notifTrackLabel(n.track))} — ${esc(n.text)}</span>
+          <span class="txt">${n.pinned ? '📌 ' : ''}${esc(notifTrackLabel(n.track))} — ${esc(n.text)} <small style="color:var(--ink-faint)">(${n.once ? 'عادي' : fmtNotifRemain(n)})</small></span>
+          <button class="btn sm ghost" data-act="notif-pin" data-id="${esc(n.id)}" type="button" title="${n.pinned ? 'إلغاء التثبيت' : 'تثبيت'}">${n.pinned ? 'إلغاء 📌' : '📌'}</button>
           <button class="btn sm danger" data-act="notif-del" data-id="${esc(n.id)}" type="button">✕</button>
         </div>`).join('') : '<p class="hint">لا توجد إشعارات منشورة بعد.</p>'}
       </div></div>
@@ -1444,9 +1503,24 @@ function notifAdd(){
   const text = textEl.value.trim();
   if(!text){ toast('اكتب نص الإشعار أولاً'); return; }
   site.notifications = site.notifications || [];
-  site.notifications.unshift({ id:uid(), text, track: trackEl ? trackEl.value : 'all', date:new Date().toISOString() });
+  const expEl = $('#naexp'), kind = expEl ? expEl.value : 'tap', dur = NOTIF_DURATIONS[kind];
+  site.notifications.unshift({ id:uid(), text, track: trackEl ? trackEl.value : 'all', date:new Date().toISOString(),
+    once: kind === 'tap', pinned: !!($('#napin') && $('#napin').checked), expires: dur ? new Date(Date.now()+dur).toISOString() : null });
   scheduleSave(); renderNotifBadge();
   toast('تم نشر الإشعار');
+  notifAdminModal();
+}
+/* تحديث تلقائي: كل دقيقة + عند الرجوع للتبويب/التطبيق — فتختفي الإشعارات المنتهية وتتحدّث العلامة الحمراء */
+function notifTick(){
+  renderNotifBadge();
+  if($('#notifDrawer')?.classList.contains('open')) renderNotifList();
+}
+setInterval(notifTick, 60000);
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) notifTick(); });
+function notifPin(id){
+  const n = (site.notifications||[]).find(x=>x.id===id); if(!n) return;
+  n.pinned = !n.pinned;
+  scheduleSave(); renderNotifBadge();
   notifAdminModal();
 }
 function notifDel(id){
@@ -2893,9 +2967,17 @@ document.addEventListener('click', async e=>{
   }
   if(act==='menu-close'){ closeMenu(); return; }
   if(act==='notif-open'){ openNotifDrawer(); return; }
+  if(act==='notif-tap'){
+    if(!id) return;
+    if(t.classList) t.classList.add('gone');
+    setTimeout(()=>{ dismissNotifs([id]); renderNotifList(); renderNotifBadge(); }, 230);
+    return;
+  }
+  if(act==='notif-clear'){ dismissNotifs(visibleNotifs().filter(n=>!n.pinned).map(n=>n.id)); renderNotifList(); renderNotifBadge(); return; }
   if(act==='notif-close'){ closeNotifDrawer(); return; }
   if(act==='notif-add'){ notifAdd(); return; }
   if(act==='notif-del'){ notifDel(id); return; }
+  if(act==='notif-pin'){ notifPin(id); return; }
   if(act==='ts-clear-accent'){ const el=$('#ts4'); if(el){ el.dataset.cleared='1'; toast('سيُستخدم اللون العام عند الحفظ'); } return; }
   if(act==='tm-folder-toggle'){ if(openFolders.has(id)) openFolders.delete(id); else openFolders.add(id); const fe=t.closest('.tm-folder'); if(fe){ fe.classList.toggle('open'); t.setAttribute('aria-expanded', fe.classList.contains('open')); } return; }
   if(act==='tm-toggle'){ t.closest('.tm-item')?.classList.toggle('open'); return; }
