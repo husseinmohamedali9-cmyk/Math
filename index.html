@@ -27,6 +27,12 @@ const CONFIG = {
     rowId: 'main',
     /* جدول الأسئلة والأجوبة — أنشئه في Supabase بالـ SQL الموجود في تعليق أسفل الملف */
     qaTable: 'qa_questions'
+  },
+  /* مشروع Supabase الخاص بالأسئلة والأجوبة (منفصل عن مشروع محتوى الموقع) */
+  QA: {
+    url: 'https://jlpwwxmdyvgfizvjidug.supabase.co',
+    anonKey: 'sb_publishable_YgeD7rPEYjExOi0hdNY4hA_ZyMI5_WL',
+    table: 'qa_questions'
   }
 };
 </script>
@@ -357,6 +363,7 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 .ts-choice-en{font-size:12px; color:var(--ink-faint); letter-spacing:.03em}
 .ts-choice-sub{font-size:13px; color:var(--ink-faint)}
 @media (max-width:480px){ .ts-choices{grid-template-columns:1fr} }
+.ts-choices{grid-template-columns:1fr !important; max-width:260px; margin:0 auto}
 
 /* =======================================================================
    الأقسام القابلة للطي
@@ -604,7 +611,31 @@ mark.hl{background:color-mix(in srgb, var(--gold) 40%, transparent); color:inher
 .notif-item.tap.gone{opacity:0; transform:translateX(-30px)}
 .notif-clear{font-size:12.5px; padding:6px 10px}
 .notif-item.pinned{border-color:var(--accent); background:var(--accent-soft)}
+.notif-goto{margin-top:8px; display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; padding:6px 12px; border-radius:999px;
+  border:1px solid var(--accent); background:var(--surface); color:var(--accent); cursor:pointer}
+.notif-goto:hover{background:var(--accent); color:#fff}
+.notif-item a{color:var(--accent); font-weight:600; text-decoration:underline; word-break:break-word}
+.notif-line-link{display:flex; width:100%; align-items:center; justify-content:space-between; gap:8px; text-align:start; margin:5px 0; padding:9px 12px;
+  border:1px solid var(--accent); border-radius:10px; background:var(--surface); color:var(--ink); font:inherit; font-weight:600; cursor:pointer; line-height:1.6}
+.notif-line-link:hover{background:var(--accent-soft); color:var(--accent)}
+.notif-line-text{margin:5px 0}
+.notif-line-row{display:flex; flex-direction:column; gap:4px; padding:8px 0; border-bottom:1px dashed var(--line)}
+.notif-line-row .lt{font-size:13.5px; font-weight:600}
+.notif-link-row{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px}
+.notif-link-row input{flex:1; min-width:120px}
 .notif-pin-tag{font-size:11px; font-weight:700; color:var(--accent)}
+.qa-folder{margin-bottom:14px}
+.qa-folder-head{width:100%; display:flex; align-items:center; gap:10px; padding:13px 16px; border-radius:14px; border:1px solid var(--line);
+  background:var(--surface); color:var(--ink); font:inherit; font-weight:700; cursor:pointer; text-align:start; box-shadow:var(--shadow)}
+.qa-folder-head:hover{border-color:var(--accent); color:var(--accent)}
+.qa-folder-name{flex:1}
+.qa-folder-count{min-width:26px; text-align:center; padding:1px 8px; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-size:13px}
+.qa-folder-chev{transition:transform .25s}
+.qa-folder.open .qa-folder-chev{transform:rotate(180deg)}
+.qa-folder-body{display:none; padding-top:12px}
+.qa-folder.open .qa-folder-body{display:block}
+.qa-manage-row{display:flex; gap:8px; align-items:flex-start; padding:9px 0; border-bottom:1px solid var(--line); font-size:13.5px}
+.qa-manage-row .txt{flex:1; line-height:1.6}
 .notif-new-dot{width:8px; height:8px; border-radius:50%; background:var(--danger); display:inline-block}
 .notif-admin-row{display:flex; gap:8px; align-items:center; margin-bottom:8px}
 .notif-admin-row .txt{flex:1; font-size:13.5px}
@@ -1000,6 +1031,57 @@ html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:
 /* توازن المسافات الرأسية داخل الأقسام (فوق = تحت) */
 .section.open>.wrap>.sec-collapse>div>.sec-inner{padding-top:22px; padding-bottom:22px}
 .section.nested.open>.wrap>.sec-collapse>div>.sec-inner{padding-top:16px; padding-bottom:16px}
+
+/* ===== واجهة الافتتاح الجديدة + أزرار الإشعارات/الدارك مود ===== */
+.intro-splash{transition:opacity .7s ease, visibility .7s ease, transform .8s cubic-bezier(.6,0,.3,1), filter .7s ease}
+.intro-splash.hide{transform:scale(1.15); filter:blur(10px)}
+.aurora{position:absolute; border-radius:50%; filter:blur(70px); opacity:.55; pointer-events:none; animation:auroraDrift 9s ease-in-out infinite alternate}
+.aurora.a1{width:55vmax; height:55vmax; top:-22vmax; left:-14vmax; background:var(--accent)}
+.aurora.a2{width:46vmax; height:46vmax; bottom:-20vmax; right:-12vmax; background:var(--gold); animation-delay:-3s}
+.aurora.a3{width:34vmax; height:34vmax; top:30%; left:40%; background:color-mix(in srgb,var(--accent) 55%,var(--gold)); opacity:.3; animation-delay:-6s}
+@keyframes auroraDrift{from{transform:translate(0,0) scale(1)} to{transform:translate(6vmax,4vmax) scale(1.18)}}
+.intro-sym{font-family:var(--font-head); animation:introSymIn .9s ease forwards, tsFloat 5s ease-in-out infinite 1s !important}
+.intro-orbit{position:relative; width:170px; height:170px; margin:0 auto 6px; display:grid; place-items:center}
+.o-ring{position:absolute; inset:0; border-radius:50%; border:2px dashed color-mix(in srgb,var(--accent) 55%,transparent); animation:spin 14s linear infinite}
+.o-ring.r2{inset:22px; border-style:solid; border-color:color-mix(in srgb,var(--gold) 50%,transparent) transparent; animation:spin 6s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.orb{position:absolute; top:50%; left:50%; width:30px; height:30px; margin:-15px 0 0 -15px; display:grid; place-items:center; border-radius:50%;
+  background:var(--surface); color:var(--accent); font-family:var(--font-head); font-size:16px; box-shadow:var(--shadow); border:1px solid var(--line);
+  animation:orbitMove 6s linear infinite}
+@keyframes orbitMove{
+  from{transform:rotate(var(--a)) translateX(85px) rotate(calc(var(--a) * -1))}
+  to{transform:rotate(calc(var(--a) + 360deg)) translateX(85px) rotate(calc((var(--a) + 360deg) * -1))}}
+.intro-logo{width:84px !important; height:84px !important; margin:0 !important; font-size:44px !important;
+  animation:introPop .8s cubic-bezier(.2,.9,.25,1) .2s forwards, logoGlow 2.4s ease-in-out 1s infinite !important}
+@keyframes logoGlow{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 45%,transparent)} 50%{box-shadow:0 0 0 18px transparent, 0 0 38px color-mix(in srgb,var(--accent) 55%,transparent)}}
+.intro-draw{width:min(60vw,200px) !important; margin:4px auto 6px !important}
+.intro-draw-path{stroke-dasharray:420 !important; stroke-dashoffset:420; animation:introDraw 1.8s ease-out .5s forwards !important}
+.intro-draw-dot{animation:introDotIn .4s ease 2.1s forwards !important}
+.intro-title{background:linear-gradient(100deg,var(--ink) 20%,var(--accent) 45%,var(--gold) 55%,var(--ink) 80%); background-size:240% 100%;
+  -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent;
+  animation:titleIn 1s cubic-bezier(.2,.9,.25,1) .7s forwards, titleShine 3.2s linear 1.7s infinite !important}
+@keyframes titleIn{from{opacity:0; filter:blur(14px); transform:translateY(14px) scale(.92)} to{opacity:1; filter:none; transform:none}}
+@keyframes titleShine{to{background-position:-240% 0}}
+.intro-sub{animation:introFadeUp .7s ease 1.2s forwards !important}
+.intro-bar{animation:introFadeUp .5s ease 1.4s forwards !important}
+/* أزرار الإشعارات والدارك مود جنب بعض */
+.mode-btn{position:fixed; top:calc(env(safe-area-inset-top,0px) + 18px); left:68px; z-index:57; margin:0; width:44px; height:44px;
+  color:var(--ink-soft); transition:.25s}
+.mode-btn:hover{color:var(--accent)}
+.mode-btn span{display:block; transition:transform .5s cubic-bezier(.2,.9,.25,1)}
+.mode-btn:active span{transform:rotate(360deg) scale(.7)}
+.topbar-in{padding-inline-end:124px}
+@media (max-width:640px){.topbar-in{padding-inline-end:120px}}
+@media print{.mode-btn{display:none !important}}
+/* دخول الصفحة بعد الافتتاح */
+@keyframes pageDrop{from{opacity:0; transform:translateY(-18px)} to{opacity:1; transform:none}}
+@keyframes pagePop{from{opacity:0; transform:scale(.4) rotate(-40deg)} to{opacity:1; transform:none}}
+@keyframes heroRise{from{opacity:0; transform:translateY(28px) scale(.97)} to{opacity:1; transform:none}}
+.page-in .topbar{animation:pageDrop .7s cubic-bezier(.2,.9,.25,1) backwards}
+.page-in .notif-btn,.page-in .mode-btn,.page-in .hamburger{animation:pagePop .6s cubic-bezier(.2,.9,.25,1) .25s backwards}
+.page-in .mode-btn{animation-delay:.4s}
+.page-in .hero{animation:heroRise .9s cubic-bezier(.2,.9,.25,1) .3s backwards}
+@media (prefers-reduced-motion:reduce){.aurora,.o-ring,.orb,.intro-logo,.intro-title{animation:none !important} .page-in *{animation:none !important}}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -1035,21 +1117,23 @@ html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:
     <span class="intro-sym" style="--x:34%; --y:66%; --d:1.9s">×</span>
     <span class="intro-sym" style="--x:70%; --y:30%; --d:2.4s">%</span>
   </div>
-  <div class="intro-stage">
-    <svg class="intro-draw" viewBox="0 0 220 100" aria-hidden="true">
-      <path class="intro-draw-path" d="M12 70 L45 70 L60 25 L78 88 L96 50 L130 50" />
-      <circle class="intro-draw-dot" cx="130" cy="50" r="4" />
-    </svg>
-    <div class="intro-logo">∑</div>
-    <h1 class="intro-title" id="introBrand">منصّة المحتوى</h1>
-    <p class="intro-sub">جاري تجهيز مساحتك الرياضية…</p>
-    <div class="intro-bar"><span></span></div>
-  </div>
-  <button class="intro-skip" id="introSkip" type="button">تخطي ⏭</button>
+  <i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i>
+<div class="intro-stage">
+<div class="intro-orbit" aria-hidden="true">
+<span class="o-ring r1"></span><span class="o-ring r2"></span>
+<b class="orb" style="--a:0deg">π</b><b class="orb" style="--a:120deg">∞</b><b class="orb" style="--a:240deg">√</b>
+<div class="intro-logo">∑</div>
+</div>
+<svg class="intro-draw" viewBox="0 0 220 60" aria-hidden="true"><path class="intro-draw-path" d="M6 30 Q 32 -6 58 30 T 110 30 T 162 30 T 214 30" /><circle class="intro-draw-dot" cx="214" cy="30" r="4" /></svg>
+<h1 class="intro-title" id="introBrand">منصّة المحتوى</h1>
+<p class="intro-sub">أهلاً بيك في مساحتك الرياضية ✨</p>
+<div class="intro-bar"><span></span></div>
+</div>
+<button class="intro-skip" id="introSkip" type="button">تخطي ⏭</button>
 </div>
 
 <!-- ===== شاشة اختيار الفرقة الدراسية ===== -->
-<div class="track-splash" id="trackSplash" aria-hidden="true">
+<div class="track-splash hide" id="trackSplash" aria-hidden="true">
   <div class="ts-bg" aria-hidden="true">
     <span class="ts-sym" style="--x:8%; --y:14%; --d:0s">π</span>
     <span class="ts-sym" style="--x:84%; --y:18%; --d:1.1s">∑</span>
@@ -1062,15 +1146,9 @@ html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:
   </div>
   <div class="ts-card">
     <div class="ts-icon">∑</div>
-    <h1 class="ts-title">اختر فرقتك الدراسية</h1>
-    <p class="ts-sub">لعرض المحاضرات والسكاشن والمراجعات الخاصة بفرقتك فقط — يمكنك تغيير الفرقة في أي وقت من أعلى الصفحة.</p>
+    <h1 class="ts-title">Math 2</h1>
+    <p class="ts-sub">أهلاً بيك! ادخل لتشوف المحاضرات والسكاشن والمراجعات.</p>
     <div class="ts-choices">
-      <button class="ts-choice" data-act="choose-track" data-track="math1" type="button">
-        <span class="ts-choice-ic">📘</span>
-        <span class="ts-choice-title">Math 1</span>
-        <span class="ts-choice-en">أولى</span>
-        <span class="ts-choice-sub">الفرقة الأولى</span>
-      </button>
       <button class="ts-choice" data-act="choose-track" data-track="math2" type="button">
         <span class="ts-choice-ic">📗</span>
         <span class="ts-choice-title">Math 2</span>
@@ -1088,17 +1166,17 @@ html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:
       <h2 class="brand" id="brandName">منصّة المحتوى</h2>
     </div>
     <nav class="navchips" id="nav"></nav>
-    <div class="tswitch" role="group" aria-label="تبديل الفرقة">
-      <button class="tswitch-btn" id="tsw1" data-act="choose-track" data-track="math1" type="button" title="Math 1 — أولى">1</button>
+    <div class="tswitch" role="group" aria-label="تبديل الفرقة" style="display:none">
       <button class="tswitch-btn" id="tsw2" data-act="choose-track" data-track="math2" type="button" title="Math 2 — تانية">2</button>
     </div>
-      <button class="mode-btn" id="modeBtn" data-act="toggle-mode" type="button" aria-label="تبديل الوضع الليلي / النهاري" title="الوضع الليلي / النهاري"><span class="m-sun">☀️</span><span class="m-moon">🌙</span></button>
+
   </div>
 </header>
 
 <button class="notif-btn" id="notifBtn" data-act="notif-open" type="button" aria-label="الإشعارات" title="الإشعارات">
   🔔<span class="notif-badge zero" id="notifBadge">0</span>
 </button>
+<button class="mode-btn" id="modeBtn" data-act="toggle-mode" type="button" aria-label="تبديل الوضع الليلي / النهاري" title="الوضع الليلي / النهاري"><span class="m-sun">☀️</span><span class="m-moon">🌙</span></button>
 <button class="hamburger" id="hamburgerBtn" data-act="menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false">
   <span></span><span></span><span></span>
 </button>
@@ -1125,6 +1203,7 @@ html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:
     <button class="btn" data-act="subject-settings">🎓 إعدادات المادة</button>
     <button class="btn" data-act="theme">🎨 المظهر والألوان</button>
     <button class="btn" data-act="notif-admin">🔔 إدارة الإشعارات</button>
+    <button class="btn" data-act="qa-manage">💬 إدارة الأسئلة</button>
     <button class="btn" data-act="export">⬇ نسخة احتياطية</button>
     <button class="btn" data-act="import">⬆ استيراد</button>
     <span class="spacer"></span>
@@ -1160,7 +1239,6 @@ html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:
         <div class="row">
           <div class="field"><label for="qaTrackSel">الفرقة</label>
             <select id="qaTrackSel">
-              <option value="math1">Math 1 — أولى</option>
               <option value="math2">Math 2 — تانية</option>
             </select></div>
         </div>
@@ -1214,9 +1292,9 @@ const TRACK_KEY = 'site_track_v1';
 let currentTrack = null;      // 'math1' | 'math2'
 let openSections  = new Set(); // أقسام مفتوحة حالياً (طيّ/فتح)
  
-function loadTrack(){ try{ return localStorage.getItem(TRACK_KEY); }catch(e){ return null; } }
+function loadTrack(){ return 'math2'; }   /* الموقع بقى لـ Math 2 فقط */
 function saveTrack(t){ try{ localStorage.setItem(TRACK_KEY, t); }catch(e){} }
-function trackLabel(t){ return t==='math2' ? 'Math 2 — تانية' : 'Math 1 — أولى'; }
+function trackLabel(t){ return 'Math 2 — تانية'; }
  
 function openSplash(){
   const el = $('#trackSplash'); if(!el) return;
@@ -1232,8 +1310,7 @@ function setTrack(t, opts){
   opts = opts || {};
   currentTrack = t;
   saveTrack(t);
-  const b1 = $('#tsw1'), b2 = $('#tsw2');
-  if(b1) b1.classList.toggle('active', t==='math1');
+  const b2 = $('#tsw2');
   if(b2) b2.classList.toggle('active', t==='math2');
   const sel = $('#qaTrackSel'); if(sel) sel.value = t;
   render();
@@ -1256,18 +1333,20 @@ const INTRO_KEY = 'site_intro_shown_v1';
 function playIntro(){
   return new Promise(resolve=>{
     const el = $('#introSplash');
-    if(!el) { resolve(); return; }
-    if(sessionStorage.getItem(INTRO_KEY)){ el.remove(); resolve(); return; }
+    const pageIn = ()=>document.body.classList.add('page-in');
+    if(!el) { pageIn(); resolve(); return; }
+    if(sessionStorage.getItem(INTRO_KEY)){ el.remove(); pageIn(); resolve(); return; }
     try{ sessionStorage.setItem(INTRO_KEY,'1'); }catch(e){}
     document.body.style.overflow = 'hidden';
     let done = false;
     const finish = ()=>{
       if(done) return; done = true;
       el.classList.add('hide');
-      setTimeout(()=>{ el.remove(); document.body.style.overflow=''; resolve(); }, 650);
+      pageIn();
+      setTimeout(()=>{ el.remove(); document.body.style.overflow=''; resolve(); }, 800);
     };
     const skip = $('#introSkip'); if(skip) skip.addEventListener('click', finish, {once:true});
-    setTimeout(finish, 2800);
+    setTimeout(finish, 3600);
   });
 }
  
@@ -1309,12 +1388,6 @@ function renderTopMenu(){
   const secs = visibleSections();
  
   let html = `
-    <div class="tm-group">
-      <div class="tm-group-label">📚 مواد التخصص</div>
-      <button class="tm-link ${currentTrack==='math1'?'active':''}" data-act="menu-switch-track" data-track="math1" type="button">Math 1 — أولى</button>
-      <button class="tm-link ${currentTrack==='math2'?'active':''}" data-act="menu-switch-track" data-track="math2" type="button">Math 2 — تانية</button>
-    </div>
-    <div class="tm-sep"></div>
     <div class="tm-group-label">الأقسام</div>`;
  
   const itemHtml = (s)=>{
@@ -1432,8 +1505,35 @@ function renderNotifBadge(){
   badge.textContent = n>99 ? '99+' : String(n);
   badge.classList.toggle('zero', n<=0);
 }
+/* نص الإشعار: يدعم أكثر من رابط داخل الرسالة — [نص الرابط](https://...) أو رابط مباشر، وأسطر جديدة */
+function notifRich(text){
+  const a = (u, t)=>'<a href="'+u+'" target="_blank" rel="noopener">'+t+'</a>';
+  let h = esc(String(text||''));
+  h = h.replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g, (m,t,u)=>a(u,t));
+  h = h.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, (m,pre,u)=>pre+a(u,u));
+  return h.replace(/\n/g,'<br>');
+}
 function fmtNotifDate(iso){
   try{ return new Date(iso).toLocaleString('ar-EG', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }); }catch(e){ return ''; }
+}
+/* ربط الإشعار بقسم: قائمة بكل الأقسام (بما فيها الفرعية) + الانتقال إليها */
+function flatSections(list, top, path, out){
+  list = list || site.sections; path = path || []; out = out || [];
+  list.forEach(s=>{
+    const t = top || s, p = path.concat(s.title || 'بدون عنوان');
+    out.push({ id:s.id, title:s.title || 'بدون عنوان', label:p.join(' › '), top:t });
+    flatSections(s.children || [], t, p, out);
+  });
+  return out;
+}
+function findSecFlat(id){ return flatSections().find(x=>x.id===id) || null; }
+function notifGoto(secId){
+  const f = findSecFlat(secId);
+  if(!f){ toast('القسم ده اتحذف أو مش موجود'); return; }
+  closeNotifDrawer();
+  const tr = f.top.track;
+  if((tr==='math1' || tr==='math2') && tr!==currentTrack) setTrack(tr, {silent:true});
+  setTimeout(()=>menuGoto(secId), 350);
 }
 function notifTrackLabel(tr){ if(tr==='math1') return 'Math 1'; if(tr==='math2') return 'Math 2'; return 'عام'; }
 function renderNotifList(){
@@ -1449,7 +1549,12 @@ function renderNotifList(){
         ${n.pinned ? '<span class="notif-pin-tag">📌 مثبّت</span>' : ''}
         <span class="notif-item-date">${fmtNotifDate(n.date)}</span>
       </div>
-      <div>${esc(n.text)}</div>
+      ${(n.lines && n.lines.some(l=>l.sec))
+        ? n.lines.map(l=> (l.sec && findSecFlat(l.sec))
+            ? `<button type="button" class="notif-line-link" data-act="notif-goto" data-sec="${esc(l.sec)}"><span>📂 ${esc(l.text)}</span><span>←</span></button>`
+            : `<div class="notif-line-text">${notifRich(l.text)}</div>`).join('')
+        : `<div>${notifRich(n.text)}</div>`}
+      ${(n.sec && findSecFlat(n.sec)) ? `<button type="button" class="notif-goto" data-act="notif-goto" data-sec="${esc(n.sec)}">📂 ${esc(findSecFlat(n.sec).title)} ←</button>` : ''}
       ${(n.once && !n.pinned) ? '<div class="notif-item-exp">👆 اضغط لإخفاء الإشعار</div>' : (n.expires ? `<div class="notif-item-exp">⏳ ${fmtNotifRemain(n)}</div>` : '')}
     </div>`).join('');
 }
@@ -1464,15 +1569,37 @@ function closeNotifDrawer(){
   $('#notifCatcher').classList.remove('open');
 }
 /* ---- لوحة الأدمن: كتابة ونشر إشعارات جديدة ---- */
+let _naLines = [], _naSel = {};
+function notifBuildLineLinks(){
+  const ta = $('#natext'), box = $('#naLines'); if(!ta || !box) return;
+  _naLines.forEach((txt,i)=>{ const sel = box.querySelector('select[data-i="'+i+'"]'); if(sel) _naSel[txt] = sel.value; });
+  _naLines = ta.value.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!_naLines.length){ box.innerHTML = '<p class="hint">اكتب سطور الإشعار فوق وهتظهر هنا عشان تربط كل سطر بقسمه.</p>'; return; }
+  const opts = flatSections().map(x=>({id:x.id, label:x.label}));
+  box.innerHTML = _naLines.map((txt,i)=>`
+    <div class="notif-line-row"><span class="lt">${esc(txt)}</span>
+      <select data-i="${i}"><option value="">— بدون ربط —</option>
+      ${opts.map(o=>`<option value="${esc(o.id)}"${_naSel[txt]===o.id?' selected':''}>${esc(o.label)}</option>`).join('')}
+      </select></div>`).join('');
+}
+document.addEventListener('input', e=>{ if(e.target && e.target.id==='natext') notifBuildLineLinks(); });
 function notifAdminModal(){
+  _naLines = []; _naSel = {};
   const items = [...activeNotifs()].sort((a,b)=> (b.pinned?1:0)-(a.pinned?1:0) || (b.date||'').localeCompare(a.date||''));
   openModal('إدارة الإشعارات', `
     <div class="field"><label for="natext">نص الإشعار الجديد</label>
-      <textarea id="natext" placeholder="مثال: تم إضافة شابتير جديد في Math 1" style="min-height:70px"></textarea></div>
+      <textarea id="natext" placeholder="مثال: تم إضافة شابتير جديد" style="min-height:90px"></textarea>
+      <div class="notif-link-row">
+        <input id="nalt" placeholder="نص الرابط (مثال: المحاضرة الأولى)">
+        <input id="naurl" dir="ltr" placeholder="https://...">
+        <button type="button" class="btn sm" data-act="notif-insert-link">🔗 إدراج الرابط</button>
+      </div>
+      <p class="hint">اكتب كل خبر في سطر لوحده (Enter). ولو عايز رابط خارجي جوه الكلام استخدم زرار الإدراج.</p></div>
+    <div class="field"><label>ربط كل سطر بقسم (اختياري — كل سطر ممكن يروح لقسم مختلف)</label>
+      <div id="naLines"><p class="hint">اكتب سطور الإشعار فوق وهتظهر هنا عشان تربط كل سطر بقسمه.</p></div></div>
     <div class="field"><label for="natrack">يخصّ</label>
       <select id="natrack">
         <option value="all">إشعار عام (للفرقتين)</option>
-        <option value="math1">Math 1 فقط</option>
         <option value="math2">Math 2 فقط</option>
       </select></div>
     <div class="field"><label for="naexp">نوع الإشعار / مدة الظهور</label>
@@ -1483,6 +1610,11 @@ function notifAdminModal(){
         <option value="month">شهر (مايتشالش بالضغط)</option>
         <option value="none">دائم (لحد ما تمسحه أنت)</option>
       </select></div>
+    <div class="field"><label for="nasec">ربط الإشعار كله بقسم واحد (اختياري)</label>
+      <select id="nasec">
+        <option value="">— بدون ربط —</option>
+        ${flatSections().map(x=>`<option value="${esc(x.id)}">${esc(x.label)}</option>`).join('')}
+      </select></div>
     <div class="field"><label style="display:flex;align-items:center;gap:8px;cursor:pointer">
       <input type="checkbox" id="napin"> 📌 تثبيت الإشعار (يفضل فوق ومينمسحش بزر "مسح الكل" ولا بالضغط)</label></div>
     <button type="button" class="btn primary sm" data-act="notif-add">＋ نشر الإشعار</button>
@@ -1490,12 +1622,27 @@ function notifAdminModal(){
     <div class="field"><label>الإشعارات الحالية</label>
       <div id="naList">${items.length ? items.map(n=>`
         <div class="notif-admin-row">
-          <span class="txt">${n.pinned ? '📌 ' : ''}${esc(notifTrackLabel(n.track))} — ${esc(n.text)} <small style="color:var(--ink-faint)">(${n.once ? 'عادي' : fmtNotifRemain(n)})</small></span>
+          <span class="txt">${n.pinned ? '📌 ' : ''}${esc(notifTrackLabel(n.track))} — ${esc(n.text)}${(n.sec && findSecFlat(n.sec)) ? ' 📂 ' + esc(findSecFlat(n.sec).title) : ''}${(n.lines && n.lines.some(l=>l.sec)) ? ' 📂×' + n.lines.filter(l=>l.sec).length : ''} <small style="color:var(--ink-faint)">(${n.once ? 'عادي' : fmtNotifRemain(n)})</small></span>
           <button class="btn sm ghost" data-act="notif-pin" data-id="${esc(n.id)}" type="button" title="${n.pinned ? 'إلغاء التثبيت' : 'تثبيت'}">${n.pinned ? 'إلغاء 📌' : '📌'}</button>
           <button class="btn sm danger" data-act="notif-del" data-id="${esc(n.id)}" type="button">✕</button>
         </div>`).join('') : '<p class="hint">لا توجد إشعارات منشورة بعد.</p>'}
       </div></div>
   `, `<button class="btn ghost" data-act="close">إغلاق</button>`, null);
+}
+function notifInsertLink(){
+  const ta = $('#natext'), tEl = $('#nalt'), uEl = $('#naurl');
+  if(!ta || !tEl || !uEl) return;
+  let label = tEl.value.trim(), url = uEl.value.trim();
+  if(!url){ toast('اكتب الرابط أولاً'); return; }
+  if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  if(/[\s)]/.test(url)){ toast('الرابط فيه مسافات أو أقواس — تأكد منه'); return; }
+  if(!label) label = url;
+  const md = '[' + label.replace(/[\[\]]/g,'') + '](' + url + ')';
+  const st = ta.selectionStart != null ? ta.selectionStart : ta.value.length, en = ta.selectionEnd != null ? ta.selectionEnd : st;
+  ta.value = ta.value.slice(0, st) + md + ta.value.slice(en);
+  const pos = st + md.length; ta.focus(); try{ ta.setSelectionRange(pos, pos); }catch(e){}
+  tEl.value = ''; uEl.value = '';
+  notifBuildLineLinks();
 }
 function notifAdd(){
   const textEl = $('#natext'), trackEl = $('#natrack');
@@ -1503,9 +1650,12 @@ function notifAdd(){
   const text = textEl.value.trim();
   if(!text){ toast('اكتب نص الإشعار أولاً'); return; }
   site.notifications = site.notifications || [];
+  notifBuildLineLinks();
+  const lineObjs = _naLines.map((txt,i)=>{ const sel = document.querySelector('#naLines select[data-i="'+i+'"]'); return { text:txt, sec: sel ? sel.value : '' }; });
   const expEl = $('#naexp'), kind = expEl ? expEl.value : 'tap', dur = NOTIF_DURATIONS[kind];
   site.notifications.unshift({ id:uid(), text, track: trackEl ? trackEl.value : 'all', date:new Date().toISOString(),
-    once: kind === 'tap', pinned: !!($('#napin') && $('#napin').checked), expires: dur ? new Date(Date.now()+dur).toISOString() : null });
+    lines: lineObjs.some(l=>l.sec) ? lineObjs : undefined,
+    once: kind === 'tap', pinned: !!($('#napin') && $('#napin').checked), sec: ($('#nasec') && $('#nasec').value) || '', expires: dur ? new Date(Date.now()+dur).toISOString() : null });
   scheduleSave(); renderNotifBadge();
   toast('تم نشر الإشعار');
   notifAdminModal();
@@ -1954,21 +2104,14 @@ function defaultSite(){
     theme: defaultTheme(),
     notifications:[],
     trackSettings:{
-      math1:{ label:'', banner:'', note:'', accent:'' },
       math2:{ label:'', banner:'', note:'', accent:'' }
     },
     sections:[
       { id:uid(), title:'نبذة تعريفية', desc:'ابدأ من هنا: عرّف بنفسك أو بمشروعك في فقرة قصيرة.', track:'all', pinned:true,
         blocks:[
           { id:uid(), type:'text', style:'paragraph', text:'هذا نصّ تجريبي يمكنك استبداله بالكامل. اضغط على زر القفل أسفل الصفحة، أدخل كلمة المرور، ثم عدّل أي شيء تراه.\nيدعم المحرّر تنسيقات بسيطة مثل **العريض** و*المائل* و==نص مظلّل== والقوائم:\n- عنصر أول\n- عنصر ثانٍ' },
-          { id:uid(), type:'text', style:'note', text:'نصيحة: استخدم "ملاحظة" للأشياء المهمة، و"اقتباس" للعبارات اللافتة. استخدم حقل «يظهر لِـ» عند تعديل أي قسم لتخصيصه بفرقة Math 1 أو Math 2 فقط. هذا القسم مثبّت ولا يُطوى أبداً.' }
+          { id:uid(), type:'text', style:'note', text:'نصيحة: استخدم "ملاحظة" للأشياء المهمة، و"اقتباس" للعبارات اللافتة. هذا القسم مثبّت ولا يُطوى أبداً.' }
         ] },
-      { id:uid(), title:'المحاضرات', desc:'محاضرات الفرقة الأولى (Math 1).', track:'math1',
-        blocks:[ { id:uid(), type:'text', style:'paragraph', text:'أضف روابط أو ملفات المحاضرات من هنا (زر ＋ إضافة محتوى).' } ] },
-      { id:uid(), title:'السكاشن', desc:'حصص السكاشن الأسبوعية للفرقة الأولى.', track:'math1',
-        blocks:[ { id:uid(), type:'text', style:'paragraph', text:'أضف مواعيد وملفات السكاشن هنا.' } ] },
-      { id:uid(), title:'المراجعات', desc:'مراجعات نهاية الفصل للفرقة الأولى.', track:'math1',
-        blocks:[ { id:uid(), type:'text', style:'paragraph', text:'أضف أوراق المراجعة أو الامتحانات السابقة هنا.' } ] },
       { id:uid(), title:'المحاضرات', desc:'محاضرات الفرقة الثانية (Math 2).', track:'math2',
         blocks:[ { id:uid(), type:'text', style:'paragraph', text:'أضف روابط أو ملفات المحاضرات من هنا (زر ＋ إضافة محتوى).' } ] },
       { id:uid(), title:'السكاشن', desc:'حصص السكاشن الأسبوعية للفرقة الثانية.', track:'math2',
@@ -2120,14 +2263,22 @@ const QA = {
   filter: 'cur',
   sending: false,
 
+  sb: null,
   async ensureClient(){
-    if(Store.sb) return Store.sb;
+    if(this.sb) return this.sb;
     if(!CONFIG.SUPABASE.enabled) return null;
     try{
       if(!window.supabase) await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js');
-      Store.sb = Store.sb || window.supabase.createClient(CONFIG.SUPABASE.url, CONFIG.SUPABASE.anonKey);
-      return Store.sb;
+      this.sb = window.supabase.createClient(CONFIG.QA.url, CONFIG.QA.anonKey);
+      return this.sb;
     }catch(e){ console.warn('تعذّر تهيئة Supabase للأسئلة:', e); return null; }
+  },
+
+  async fetchRows(sb){
+    let r = await sb.from(CONFIG.QA.table).select('*').order('created_at', { ascending:false });
+    if(r.error) r = await sb.from(CONFIG.QA.table).select('*');   /* لو عمود created_at مش موجود */
+    if(r.error) throw r.error;
+    return (r.data || []).filter(q => qaRowTrack(q) !== 'math1');   /* أسئلة Math 1 مخفية */
   },
 
   async init(){
@@ -2135,14 +2286,11 @@ const QA = {
     const sb = await this.ensureClient();
     if(!sb){ renderQA(); return; }
     try{
-      const { data, error } = await sb.from(CONFIG.SUPABASE.qaTable)
-        .select('*').order('created_at', { ascending:false });
-      if(error) throw error;
-      this.rows = data || [];
+      this.rows = await this.fetchRows(sb);
       this.ready = true; this.error = '';
       renderQA();
-      sb.channel('qa_live_'+CONFIG.SUPABASE.qaTable)
-        .on('postgres_changes', { event:'*', schema:'public', table:CONFIG.SUPABASE.qaTable }, payload=>{
+      sb.channel('qa_live_'+CONFIG.QA.table)
+        .on('postgres_changes', { event:'*', schema:'public', table:CONFIG.QA.table }, payload=>{
           if(payload.eventType==='INSERT'){
             if(!this.rows.some(r=>r.id===payload.new.id)) this.rows.unshift(payload.new);
           } else if(payload.eventType==='UPDATE'){
@@ -2162,22 +2310,50 @@ const QA = {
   async submit({name, question, track}){
     const sb = await this.ensureClient();
     if(!sb) throw new Error('no-supabase');
-    const row = { name: name || null, question, track, answer: null };
-    const { data, error } = await sb.from(CONFIG.SUPABASE.qaTable).insert(row).select().maybeSingle();
-    if(error) throw error;
-    if(data && !this.rows.some(r=>r.id===data.id)){ this.rows.unshift(data); renderQA(); }
+    /* الجدول بيخزّن الفرقة في عمود grade (مثال: Math 2 — تانية) */
+    const row = { name: name || null, grade: trackLabel(track), question };
+    const { error } = await sb.from(CONFIG.QA.table).insert([row]);
+    if(error){ console.error('Error inserting data:', error.message); throw error; }
+    try{ this.rows = await this.fetchRows(sb); renderQA(); }catch(e){ console.warn('تعذّر تحديث قائمة الأسئلة بعد الإرسال:', e); }
   },
 
   async answer(id, text){
+    /* 1) نحاول نحفظ الرد في جدول الأسئلة نفسه (لو فيه عمودي answer / answered_at) */
+    let saved = false;
+    try{
+      const sb = await this.ensureClient();
+      if(sb){
+        const { data, error } = await sb.from(CONFIG.QA.table)
+          .update({ answer:text, answered_at:new Date().toISOString() }).eq('id', id).select().maybeSingle();
+        if(!error && data && data.answer === text){
+          saved = true;
+          const i=this.rows.findIndex(r=>r.id===id); if(i>-1) this.rows[i]=data; else this.rows.unshift(data);
+        }
+      }
+    }catch(e){ console.warn('تعذّر حفظ الرد في جدول الأسئلة، هيتحفظ في بيانات الموقع:', e); }
+    /* 2) لو الجدول مفيهوش أعمدة الرد: نحفظه مع بيانات الموقع (ويظهر لكل الزوار) */
+    const key = String(id);
+    site.qaAnswers = site.qaAnswers || {};
+    if(saved){ if(site.qaAnswers[key]){ delete site.qaAnswers[key]; scheduleSave(); } }
+    else { site.qaAnswers[key] = { answer:text, at:new Date().toISOString() }; scheduleSave(); }
+    renderQA();
+  },
+
+  async remove(ids){
     const sb = await this.ensureClient();
     if(!sb) throw new Error('no-supabase');
-    const { data, error } = await sb.from(CONFIG.SUPABASE.qaTable)
-      .update({ answer:text, answered_at:new Date().toISOString() }).eq('id', id).select().maybeSingle();
+    if(!ids.length) return 0;
+    const { data, error } = await sb.from(CONFIG.QA.table).delete().in('id', ids).select('id');
     if(error) throw error;
-    /* تأكيد الحفظ فعلياً: لو الصلاحية ناقصة Supabase بيرجّع صفر صفوف من غير خطأ */
-    if(!data || data.answer !== text) throw new Error('الإجابة لم تُحفظ — فعّل سياسة UPDATE على جدول qa_questions في Supabase');
-    const i=this.rows.findIndex(r=>r.id===id); if(i>-1) this.rows[i]=data; else this.rows.unshift(data);
+    /* لو سياسة DELETE ناقصة Supabase بيرجّع صفر صفوف من غير خطأ */
+    if(!data || !data.length) throw new Error('الحذف لم يتم — فعّل سياسة DELETE على جدول qa_questions (شغّل كود SQL)');
+    const gone = new Set(data.map(d=>String(d.id)));
+    this.rows = this.rows.filter(r=>!gone.has(String(r.id)));
+    let ch = false;
+    gone.forEach(k=>{ if(site.qaAnswers && site.qaAnswers[k]){ delete site.qaAnswers[k]; ch = true; } });
+    if(ch) scheduleSave();
     renderQA();
+    return data.length;
   },
 
   async submitFromForm(){
@@ -2193,11 +2369,24 @@ const QA = {
       await this.submit({ name, question:text, track });
       nameEl.value=''; textEl.value='';
       toast('تم إرسال سؤالك وحفظه ✓');
-    }catch(e){ console.error(e); toast('تعذّر إرسال السؤال — تأكد من إعداد جدول qa_questions'); }
+    }catch(e){ console.error(e); toast('تعذّر إرسال السؤال' + (e && e.message ? ': ' + e.message : '')); }
     finally{ this.sending = false; }
   }
 };
 
+/* نص رد المدرّس: من عمود answer في الجدول، وإلا من الردود المحفوظة مع بيانات الموقع */
+function qaAns(r){
+  if(!r) return '';
+  return r.answer || ((site.qaAnswers || {})[String(r.id)] || {}).answer || '';
+}
+/* الفرقة الخاصة بالسؤال: من عمود track لو موجود، وإلا من عمود grade */
+function qaRowTrack(r){
+  if(r && (r.track==='math1' || r.track==='math2')) return r.track;
+  const g = String((r && r.grade) || '');
+  if(/math\s*2|تاني|ثاني/i.test(g)) return 'math2';
+  if(/math\s*1|أول|اول/i.test(g)) return 'math1';
+  return '';
+}
 function fmtQaDate(iso){
   try{ return new Date(iso).toLocaleDateString('ar-EG', { day:'numeric', month:'short' }); }catch(e){ return ''; }
 }
@@ -2205,19 +2394,23 @@ function fmtQaDate(iso){
 const QA_SQL = `create table if not exists public.qa_questions (
   id uuid primary key default gen_random_uuid(),
   name text,
+  grade text,
   question text not null,
-  track text not null check (track in ('math1','math2')),
-  answer text,
-  answered_at timestamptz,
   created_at timestamptz not null default now()
 );
+alter table public.qa_questions add column if not exists grade text;
+alter table public.qa_questions add column if not exists answer text;
+alter table public.qa_questions add column if not exists answered_at timestamptz;
+alter table public.qa_questions add column if not exists created_at timestamptz not null default now();
 alter table public.qa_questions enable row level security;
-drop policy if exists "qa public read" on public.qa_questions;
-drop policy if exists "qa public insert" on public.qa_questions;
-drop policy if exists "qa public update" on public.qa_questions;
-create policy "qa public read"   on public.qa_questions for select using (true);
-create policy "qa public insert" on public.qa_questions for insert with check (true);
-create policy "qa public update" on public.qa_questions for update using (true) with check (true);`;
+drop policy if exists \"qa public read\" on public.qa_questions;
+drop policy if exists \"qa public insert\" on public.qa_questions;
+drop policy if exists \"qa public update\" on public.qa_questions;
+drop policy if exists \"qa public delete\" on public.qa_questions;
+create policy \"qa public delete\" on public.qa_questions for delete using (true);
+create policy \"qa public read\"   on public.qa_questions for select using (true);
+create policy \"qa public insert\" on public.qa_questions for insert with check (true);
+create policy \"qa public update\" on public.qa_questions for update using (true) with check (true);`;
 
 function renderQA(){
   const list = $('#qaList'); if(!list) return;
@@ -2238,37 +2431,45 @@ function renderQA(){
       <button class="btn sm qa-admin-only" data-act="qa-copy-sql" type="button">📋 نسخ كود الإعداد (SQL)</button></div>`;
     return;
   }
-  const cur = currentTrack ? QA.rows.filter(r=>r.track===currentTrack) : QA.rows;
+  const cur = currentTrack ? QA.rows.filter(r=>qaRowTrack(r)===currentTrack) : QA.rows;
   let items = cur;
   if(isAdmin){
     if(QA.filter==='all') items = QA.rows;
-    else if(QA.filter==='pending') items = QA.rows.filter(r=>!r.answer);
+    else if(QA.filter==='pending') items = QA.rows.filter(r=>!qaAns(r));
   }
   if(fbar){
-    const pend = QA.rows.filter(r=>!r.answer).length;
+    const pend = QA.rows.filter(r=>!qaAns(r)).length;
     fbar.innerHTML = [['cur','الفرقة الحالية',cur.length],['all','كل الأسئلة',QA.rows.length],['pending','بانتظار الرد',pend]]
       .map(([k,l,n])=>`<button class="chip ${QA.filter===k?'on':''}" data-act="qa-filter" data-f="${k}" type="button">${l} (${n})</button>`).join('');
   }
   if(!items.length){ list.innerHTML = '<p class="qa-empty">لا توجد أسئلة بعد — كن أول من يسأل!</p>'; return; }
 
-  list.innerHTML = items.map(r => `
+  const cardHtml = r => `
     <div class="qa-card">
       <div class="qa-card-head">
         <span class="qa-name">${esc(r.name || 'زائر')}</span>
-        <span class="qa-track-badge">${r.track==='math2' ? 'Math 2' : 'Math 1'}</span>
-        ${r.answer ? '<span class="qa-answered-badge">✓ تم الرد</span>' : ''}
+        <span class="qa-track-badge">Math 2</span>
+        ${qaAns(r) ? '<span class="qa-answered-badge">✓ تم الرد</span>' : ''}
         <span class="qa-date">${fmtQaDate(r.created_at)}</span>
+        <button class="btn sm danger qa-admin-only" data-act="qa-del-card" data-id="${esc(String(r.id))}" type="button" title="مسح السؤال">🗑</button>
       </div>
       <p class="qa-q">${esc(r.question)}</p>
-      ${r.answer
-        ? `<div class="qa-answer"><b>إجابة المدرّس:</b> ${fmt(r.answer)}</div>
+      ${qaAns(r)
+        ? `<div class="qa-answer"><b>الإجابة:</b> ${fmt(qaAns(r))}</div>
            <div class="qa-pending" style="margin-top:8px">
              <button class="btn sm ghost qa-admin-only" data-act="qa-answer" data-id="${esc(String(r.id))}" type="button">✎ تعديل الإجابة</button>
            </div>`
         : `<div class="qa-pending">بانتظار الرد
              <button class="btn sm qa-admin-only" data-act="qa-answer" data-id="${esc(String(r.id))}" type="button">＋ إضافة إجابة</button>
            </div>`}
-    </div>`).join('');
+    </div>`;
+  const answered = items.filter(r=>qaAns(r)), pending = items.filter(r=>!qaAns(r));
+  const folderHtml = answered.length ? `<div class="qa-folder${QA.folderOpen?' open':''}">
+    <button class="qa-folder-head" data-act="qa-folder" type="button" aria-expanded="${!!QA.folderOpen}">
+      <span>📁</span><span class="qa-folder-name">الأسئلة وإجاباتها</span><span class="qa-folder-count">${answered.length}</span><span class="qa-folder-chev">▾</span>
+    </button>
+    <div class="qa-folder-body">${answered.map(cardHtml).join('')}</div></div>` : '';
+  list.innerHTML = folderHtml + pending.map(cardHtml).join('');
 }
 
 /* ---- تدفّق إضافة إجابة (كلمة مرور ثم نص الإجابة) ---- */
@@ -2287,11 +2488,33 @@ function qaAnswerFlow(row){
       qaAnswerEditor(row);
     });
 }
+/* ---- إعدادات الأسئلة: حذف سؤال / كل الأسئلة ---- */
+function qaManageModal(){
+  const rows = [...QA.rows];
+  openModal('إدارة الأسئلة', `
+    <p class="hint" style="margin-top:0">إجمالي الأسئلة: ${rows.length}</p>
+    ${rows.length ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <button type="button" class="btn sm danger" data-act="qa-del-answered">🗑 مسح المُجاب عنها</button>
+      <button type="button" class="btn sm danger" data-act="qa-del-all">🗑 مسح كل الأسئلة</button></div>` : ''}
+    <div id="qaManageList">${rows.length ? rows.map(r=>`
+      <div class="qa-manage-row">
+        <span class="txt">${qaAns(r) ? '✅ ' : '⏳ '}<b>${esc(r.name || 'زائر')}</b> — ${esc((r.question||'').slice(0,120))}</span>
+        <button type="button" class="btn sm danger" data-act="qa-del" data-id="${esc(String(r.id))}">✕</button>
+      </div>`).join('') : '<p class="hint">لا توجد أسئلة.</p>'}</div>
+  `, `<button class="btn ghost" data-act="close">إغلاق</button>`, null);
+}
+async function qaDeleteIds(ids, confirmMsg, reopen){
+  if(!ids.length){ toast('مفيش أسئلة للحذف'); return; }
+  if(confirmMsg && !confirm(confirmMsg)) return;
+  try{ const n = await QA.remove(ids); toast('تم حذف ' + n + ' سؤال ✓'); }
+  catch(e){ console.error(e); toast('تعذّر الحذف: ' + (e && e.message ? e.message : '')); }
+  if(reopen !== false) qaManageModal();
+}
 function qaAnswerEditor(row){
-  openModal(row.answer ? 'تعديل الإجابة' : 'إضافة إجابة', `
+  openModal(qaAns(row) ? 'تعديل الإجابة' : 'إضافة إجابة', `
     <p class="hint" style="margin-top:0">السؤال${row.name?' من '+esc(row.name):''}: ${esc(row.question)}</p>
     <div class="field"><label for="qaans">نص الإجابة</label>
-      <textarea id="qaans" placeholder="اكتب الإجابة هنا…">${esc(row.answer||'')}</textarea></div>
+      <textarea id="qaans" placeholder="اكتب الإجابة هنا…">${esc(qaAns(row))}</textarea></div>
   `, footSave('نشر الإجابة'), async ()=>{
     const text = $('#qaans').value.trim();
     if(!text){ toast('اكتب نص الإجابة'); return false; }
@@ -2339,7 +2562,15 @@ function scheduleSave(){
 /* =======================================================================
    4) العرض
    ======================================================================= */
+/* حذف كل ما يخص Math 1 من بيانات الموقع (يتثبّت في قاعدة البيانات عند أول حفظ من المحرّر) */
+function purgeMath1(){
+  if(!site) return;
+  if(Array.isArray(site.sections)) site.sections = site.sections.filter(sc => sc.track !== 'math1');
+  if(Array.isArray(site.notifications)) site.notifications = site.notifications.filter(n => n.track !== 'math1');
+  if(site.trackSettings && site.trackSettings.math1) delete site.trackSettings.math1;
+}
 function render(){
+  purgeMath1();
   site.theme = Object.assign(defaultTheme(), site.theme || {});
   if(site.theme.dv2!==2){ Object.assign(site.theme,{headFont:'Readex Pro',bodyFont:'IBM Plex Sans Arabic',radius:16,colors:{},colorsDark:{},bgPattern:'dots',dv2:2}); }
   if(site.theme.cv !== 3){   /* ترحيل المظهر القديم: لكل وضع ألوانه */
@@ -2349,10 +2580,10 @@ function render(){
     th.colorsDark = th.colorsDark || {}; th.cv = 3;
   }
   site.notifications = site.notifications || [];
+  site.qaAnswers = site.qaAnswers || {};
   site.folders = Array.isArray(site.folders) ? site.folders : [];
   window.__secFonts = collectSecFonts(site.sections, []);
   site.trackSettings = site.trackSettings || {};
-  site.trackSettings.math1 = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings.math1 || {});
   site.trackSettings.math2 = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings.math2 || {});
   applyTheme(site.theme);
   document.title = site.meta.title || 'منصّة المحتوى';
@@ -2373,8 +2604,7 @@ function render(){
 
   applySubjectOverrides();
  
-  const b1 = $('#tsw1'), b2 = $('#tsw2');
-  if(b1) b1.classList.toggle('active', currentTrack==='math1');
+  const b2 = $('#tsw2');
   if(b2) b2.classList.toggle('active', currentTrack==='math2');
 
   const secs = visibleSections();
@@ -2384,6 +2614,7 @@ function render(){
   $('#sections').innerHTML = secs.map((s,i)=>renderSection(s,i,secs)).join('');
   renderTopMenu();
   renderNotifBadge();
+  try{ if(typeof QA !== 'undefined' && QA.ready) renderQA(); }catch(e){}
 }
 
 /* =======================================================================
@@ -2410,12 +2641,12 @@ function applySubjectOverrides(){
   if(ts && ts.label){ const b=$('#brandName'); if(b) b.textContent = ts.label; }
 }
 function subjectSettingsModal(){
-  if(!currentTrack){ toast('اختر فرقة (Math 1 أو Math 2) أولاً'); return; }
-  const trackName = currentTrack==='math2' ? 'Math 2 — تانية' : 'Math 1 — أولى';
+  if(!currentTrack){ toast('اختر الفرقة أولاً'); return; }
+  const trackName = 'Math 2 — تانية';
   const ts = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings[currentTrack]||{});
   openModal('إعدادات مادة: ' + trackName, `
     <p class="hint" style="margin-top:0">هذه الإعدادات خاصة بـ${trackName} فقط ولا تؤثر إطلاقاً على الفرقة الأخرى.</p>
-    <div class="field"><label for="ts1">اسم يظهر بدل اسم الموقع (اختياري)</label><input id="ts1" value="${esc(ts.label)}" placeholder="مثال: بوابة Math 1"></div>
+    <div class="field"><label for="ts1">اسم يظهر بدل اسم الموقع (اختياري)</label><input id="ts1" value="${esc(ts.label)}" placeholder="مثال: بوابة Math 2"></div>
     <div class="field"><label for="ts2">رابط بانر خاص بهذه المادة (اختياري)</label><input id="ts2" value="${esc(ts.banner)}" placeholder="https://…"></div>
     <div class="field"><label for="ts3">ملاحظة/تنويه تظهر أعلى الصفحة (اختياري)</label><textarea id="ts3" style="min-height:80px">${esc(ts.note)}</textarea></div>
     <div class="field"><label for="ts4">لون مميّز خاص بهذه المادة (اختياري)</label>
@@ -2597,8 +2828,7 @@ function sectionModal(sec, parentId){
     </div>
     ${nested?'':`<div class="field"><label for="strk">يظهر لِـ</label>
       <select id="strk">
-        <option value="all" ${(!s.track||s.track==='all')?'selected':''}>الفرقتان (Math 1 و Math 2)</option>
-        <option value="math1" ${s.track==='math1'?'selected':''}>Math 1 — أولى فقط</option>
+        <option value="all" ${(!s.track||s.track==='all')?'selected':''}>الكل</option>
         <option value="math2" ${s.track==='math2'?'selected':''}>Math 2 — تانية فقط</option>
       </select></div>
     <div class="field"><label style="display:flex; align-items:center; gap:8px; font-weight:400">
@@ -2967,8 +3197,11 @@ document.addEventListener('click', async e=>{
   }
   if(act==='menu-close'){ closeMenu(); return; }
   if(act==='notif-open'){ openNotifDrawer(); return; }
+  if(act==='qa-folder'){ QA.folderOpen = !QA.folderOpen; renderQA(); return; }
+  if(act==='notif-goto'){ notifGoto(t.dataset.sec); return; }
   if(act==='notif-tap'){
     if(!id) return;
+    if(e.target.closest && e.target.closest('a')) return;   /* الضغط على رابط داخل الإشعار مايخفيش الإشعار */
     if(t.classList) t.classList.add('gone');
     setTimeout(()=>{ dismissNotifs([id]); renderNotifList(); renderNotifBadge(); }, 230);
     return;
@@ -2978,6 +3211,12 @@ document.addEventListener('click', async e=>{
   if(act==='notif-add'){ notifAdd(); return; }
   if(act==='notif-del'){ notifDel(id); return; }
   if(act==='notif-pin'){ notifPin(id); return; }
+  if(act==='notif-insert-link'){ notifInsertLink(); return; }
+  if(act==='qa-manage'){ qaManageModal(); return; }
+  if(act==='qa-del'){ const r = QA.rows.find(x=>String(x.id)===id); if(r) await qaDeleteIds([r.id], 'تمسح السؤال ده نهائياً؟'); return; }
+  if(act==='qa-del-card'){ const r = QA.rows.find(x=>String(x.id)===id); if(r) await qaDeleteIds([r.id], 'تمسح السؤال ده نهائياً؟', false); return; }
+  if(act==='qa-del-answered'){ await qaDeleteIds(QA.rows.filter(r=>qaAns(r)).map(r=>r.id), 'تمسح كل الأسئلة المُجاب عنها نهائياً؟'); return; }
+  if(act==='qa-del-all'){ await qaDeleteIds(QA.rows.map(r=>r.id), 'تمسح كل الأسئلة نهائياً؟ مينفعش ترجع تاني.'); return; }
   if(act==='ts-clear-accent'){ const el=$('#ts4'); if(el){ el.dataset.cleared='1'; toast('سيُستخدم اللون العام عند الحفظ'); } return; }
   if(act==='tm-folder-toggle'){ if(openFolders.has(id)) openFolders.delete(id); else openFolders.add(id); const fe=t.closest('.tm-folder'); if(fe){ fe.classList.toggle('open'); t.setAttribute('aria-expanded', fe.classList.contains('open')); } return; }
   if(act==='tm-toggle'){ t.closest('.tm-item')?.classList.toggle('open'); return; }
@@ -3102,6 +3341,7 @@ window.addEventListener('resize', syncTopbarHeight);
    ======================================================================= */
 (async function start(){
   try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{ if(themeBackup === null && site && site.theme) applyTheme(site.theme); }); }catch(e){}
+  currentTrack = loadTrack();
   render();
   syncTopbarHeight();
   const introPromise = playIntro();
