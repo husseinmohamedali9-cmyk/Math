@@ -8,7 +8,7 @@
 <script>try{var __m=localStorage.getItem('site_mode_pref')||localStorage.getItem('site_mode_last');if(__m==='dark'||__m==='light')document.documentElement.setAttribute('data-theme',__m);}catch(e){}</script>
 <script>try{var __c=JSON.parse(localStorage.getItem('site_theme_cache')||'null');if(__c&&__c.cols&&__c.mode===document.documentElement.getAttribute('data-theme')){var __r=document.documentElement,__V={boxBg:'--box-bg',bg:'--bg',surface:'--surface',surface2:'--surface-2',ink:'--ink',inkSoft:'--ink-soft',line:'--line',accent:'--accent',gold:'--gold',danger:'--danger',bgA:'--bg-a',bgB:'--bg-b'};for(var k in __V){if(__c.cols[k])__r.style.setProperty(__V[k],__c.cols[k]);}if(__c.cols.bgA||__c.cols.bgB)__r.classList.add('has-grad');if(__c.font)__r.style.setProperty('--font-head',__c.font);}}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Math 2</title>
+<title>Math</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link id="dynFonts" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -302,6 +302,37 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 }
 .tswitch-btn:hover{color:var(--accent)}
 .tswitch-btn.active{background:var(--accent); color:#fff}
+
+
+/* ===== اسم المادة فوق = زرار تبديل ===== */
+.brand-wrap{position:relative}
+.brand-btn{all:unset; box-sizing:border-box; display:flex; align-items:center; gap:6px; cursor:pointer; border-radius:12px; padding:4px 8px; transition:.2s}
+.brand-btn:hover{background:var(--accent-soft)}
+.brand-btn:focus-visible{outline:2px solid var(--accent)}
+.brand-caret{font-size:13px; color:var(--accent); transition:transform .25s}
+.brand-wrap.open .brand-caret{transform:rotate(180deg)}
+.brand-pop{position:absolute; top:calc(100% + 6px); inset-inline-start:0; min-width:190px; z-index:60; padding:6px;
+  background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
+  opacity:0; visibility:hidden; transform:translateY(-8px) scale(.97); transform-origin:top; transition:.22s ease}
+.brand-wrap.open .brand-pop{opacity:1; visibility:visible; transform:none}
+.brand-pop button{all:unset; box-sizing:border-box; width:100%; display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px;
+  cursor:pointer; font-weight:600; font-size:15px; color:var(--ink)}
+.brand-pop button small{margin-inline-start:auto; color:var(--ink-faint); font-weight:400; font-size:12px}
+.brand-pop button:hover{background:var(--accent-soft)}
+.brand-pop button.active{background:var(--accent); color:#fff}
+.brand-pop button.active small{color:#ffffffcc}
+/* ===== ترانزيشن التبديل بين Math 1 / Math 2 / الاتنين ===== */
+.tswitch-btn.tswitch-both{width:auto; padding:0 10px}
+#sections{transition:opacity .28s ease, transform .28s ease, filter .28s ease}
+#sections.tr-out{opacity:0; transform:translateY(14px) scale(.985); filter:blur(3px); pointer-events:none}
+#sections.tr-in .section{animation:trIn .5s cubic-bezier(.2,.9,.25,1) both; animation-delay:calc(var(--i,0) * 70ms)}
+@keyframes trIn{from{opacity:0; transform:translateY(22px)} to{opacity:1; transform:none}}
+body.track-both .sec-track-tag{display:inline-block}
+body.track-both .nested .sec-track-tag{display:none}
+.sec-track-tag.tt-math1{color:#2563a8; background:color-mix(in srgb,#2563a8 14%,transparent)}
+.sec-track-tag.tt-math2{color:var(--accent); background:var(--accent-soft)}
+.track-empty{margin:30px 0; padding:34px 20px; text-align:center; color:var(--ink-soft); border:1px dashed var(--line); border-radius:var(--radius); background:var(--surface)}
+@media (prefers-reduced-motion:reduce){#sections,#sections.tr-in .section{transition:none; animation:none}}
 
 /* =======================================================================
    خلفية رياضية متحركة (ثابتة خلف كل المحتوى)
@@ -862,6 +893,132 @@ footer{border-top:1px solid var(--line);margin-top:48px;color:var(--ink-soft)}
 .section.open>.wrap>.sec-head .sec-chevron{transform:rotate(180deg)}
 .section:not(.open)>.wrap>.sec-collapse>div{visibility:hidden}
 .section.open>.wrap>.sec-collapse>div{visibility:visible}
+
+/* ===== Math 3 + سلاسة الحركة ===== */
+.sec-track-tag.tt-math3{color:var(--gold); background:color-mix(in srgb,var(--gold) 16%,transparent)}
+.track-splash{overflow-y:auto}
+.ts-choices{grid-template-columns:1fr 1fr !important; max-width:360px !important; gap:12px}
+.ts-choice{padding:16px 10px}
+.ts-card{padding:36px 26px; margin:auto}
+.track-splash{align-items:flex-start}
+
+/* قفل/فتح الأقسام */
+.sec-collapse{transition:grid-template-rows .5s cubic-bezier(.22,.8,.25,1)}
+.sec-chevron{transition:transform .4s cubic-bezier(.22,.8,.25,1), color .2s}
+.section:not(.open)>.wrap>.sec-collapse>div{visibility:hidden; opacity:0; transform:translateY(-6px); transition:visibility 0s linear .5s, opacity .22s ease, transform .3s ease}
+.section.open>.wrap>.sec-collapse>div{visibility:visible; opacity:1; transform:none; transition:visibility 0s, opacity .45s ease .1s, transform .5s cubic-bezier(.22,.8,.25,1) .05s}
+
+/* ظهور الأقسام مع السكرول */
+#sections>.section.rv{opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .7s cubic-bezier(.22,.8,.25,1)}
+#sections>.section.rv.rv-in{opacity:1; transform:none}
+
+/* النوافذ */
+.overlay.open{animation:ovIn .25s ease both}
+.overlay.open .modal{animation:modalIn .4s cubic-bezier(.22,.9,.25,1) both}
+.overlay.closing{animation:ovOut .2s ease both}
+.overlay.closing .modal{animation:modalOut .2s ease both}
+@keyframes ovIn{from{opacity:0} to{opacity:1}}
+@keyframes ovOut{from{opacity:1} to{opacity:0}}
+@keyframes modalIn{from{opacity:0; transform:translateY(24px) scale(.96)} to{opacity:1; transform:none}}
+@keyframes modalOut{from{opacity:1; transform:none} to{opacity:0; transform:translateY(14px) scale(.97)}}
+
+/* سكرول ولمس */
+html{scrollbar-gutter:stable}
+body:has(.overlay.open){overflow:hidden}
+button,a,.chip,[data-act]{-webkit-tap-highlight-color:transparent; touch-action:manipulation}
+.topmenu,.notif-drawer,.modal,.brand-pop{overscroll-behavior:contain; -webkit-overflow-scrolling:touch}
+.btn,.chip,.tm-link,.ts-choice{transition:transform .18s ease, background .2s, color .2s, border-color .2s, box-shadow .2s}
+.btn:active,.chip:active,.tm-link:active,.ts-choice:active{transform:scale(.97)}
+.sec-head-btn:active{transform:scale(.992)}
+.topbar{transition:box-shadow .3s ease}
+.topbar.scrolled{box-shadow:0 10px 30px -14px rgba(0,0,0,.28)}
+
+/* ===== مربعات التأشير جنب الجمل ===== */
+.ck-wrap{display:flex; flex-direction:column; gap:4px}
+.ck-count{align-self:flex-start; margin-bottom:4px; font-size:.82em; font-weight:700; padding:2px 12px; border-radius:999px; color:#15803d; background:color-mix(in srgb,#16a34a 14%,transparent)}
+.ck-line{position:relative; display:flex; align-items:flex-start; gap:12px; padding:8px 10px; border-radius:12px; cursor:pointer; text-align:start; transition:background .2s}
+.ck-line:hover{background:var(--accent-soft)}
+.ck-line input{position:absolute; opacity:0; width:0; height:0}
+.ck-box{flex:none; width:26px; height:26px; margin-top:2px; border:2px solid var(--ink-faint); border-radius:8px; display:grid; place-items:center; background:var(--surface); transition:background .2s, border-color .2s, transform .25s cubic-bezier(.3,1.6,.5,1)}
+.ck-box::after{content:''; width:7px; height:13px; border:solid #fff; border-width:0 3px 3px 0; margin-top:-2px; transform:rotate(45deg) scale(0); transition:transform .28s cubic-bezier(.3,1.6,.5,1)}
+.ck-line input:checked+.ck-box{background:#16a34a; border-color:#16a34a}
+.ck-line input:checked+.ck-box::after{transform:rotate(45deg) scale(1)}
+.ck-line input:focus-visible+.ck-box{outline:2px solid var(--accent); outline-offset:2px}
+.ck-line:active .ck-box{transform:scale(.88)}
+.ck-t{flex:1; min-width:0}
+.ck-plain{padding:0 10px}
+.ck-gap{height:8px}
+
+/* ===== المفضلة: نجمة على أي محتوى + فولدر المفضلة في القايمة ===== */
+.fav-star{position:absolute; top:8px; inset-inline-start:8px; z-index:4; width:34px; height:34px; border-radius:50%; border:1px solid var(--line); padding:0;
+  background:color-mix(in srgb,var(--surface) 88%,transparent); backdrop-filter:blur(6px); color:var(--ink-faint); font-size:18px; line-height:1;
+  display:grid; place-items:center; cursor:pointer; opacity:0; transform:scale(.85);
+  transition:opacity .2s, transform .3s cubic-bezier(.3,1.6,.5,1), color .2s, border-color .2s}
+.block:hover>.fav-star,.fav-star:focus-visible,.fav-star.on{opacity:1; transform:none}
+@media (hover:none){ .fav-star{opacity:.75; transform:none} }
+.fav-star:hover{color:#EAB308; border-color:#EAB308}
+.fav-star.on{color:#EAB308; border-color:#EAB308; background:color-mix(in srgb,#EAB308 14%,var(--surface))}
+.fav-star:active{transform:scale(.88)}
+.fav-star.pop{animation:starPop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes starPop{0%{transform:scale(.6) rotate(-30deg)} 60%{transform:scale(1.3) rotate(12deg)} 100%{transform:none}}
+.fav-folder{border-color:color-mix(in srgb,#EAB308 50%,var(--line)); background:color-mix(in srgb,#EAB308 7%,var(--surface-2))}
+.fav-folder .tm-folder-count{color:#a37c00; border-color:color-mix(in srgb,#EAB308 50%,var(--line))}
+.fav-empty{margin:6px 8px 4px; font-size:13px; color:var(--ink-faint); line-height:1.7}
+.fav-item .tm-link{flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:2px; text-align:start}
+.fav-item .fav-l{overflow-wrap:anywhere}
+.fav-item .fav-w{font-size:11.5px; font-weight:400; opacity:.65}
+.fav-x{all:unset; box-sizing:border-box; flex:none; width:34px; height:34px; display:grid; place-items:center; border-radius:10px; cursor:pointer; color:#EAB308; font-size:18px; transition:background .2s, transform .2s}
+.fav-x:hover{background:var(--accent-soft)}
+.fav-x:active{transform:scale(.85)}
+@media print{.fav-star{display:none !important}}
+
+/* أنواع المحتوى الإضافية */
+.b-gallery-wrap .gal-title,.b-list .lst-title{font-weight:700; margin-bottom:10px}
+.b-gallery{display:grid; grid-template-columns:repeat(var(--gc,3),minmax(0,1fr)); gap:10px}
+.b-gallery figure{margin:0; border-radius:14px; overflow:hidden; border:1px solid var(--line); background:var(--surface-2)}
+.b-gallery img{width:100%; aspect-ratio:4/3; object-fit:cover; transition:transform .45s cubic-bezier(.22,.8,.25,1)}
+.b-gallery a:hover img{transform:scale(1.05)}
+.b-gallery figcaption{padding:8px 10px; font-size:.85em; color:var(--ink-soft); text-align:center}
+@media (max-width:560px){ .b-gallery{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.b-btn-wrap{text-align:center}
+.b-btn-wrap small{display:block; margin-top:8px; color:var(--ink-faint)}
+.b-btn{display:inline-flex; align-items:center; gap:8px; padding:13px 28px; border-radius:999px; font-weight:700; text-decoration:none; transition:transform .2s, box-shadow .25s, background .2s}
+.b-btn:hover{transform:translateY(-2px)}
+.b-btn:active{transform:scale(.97)}
+.b-btn-primary{background:var(--accent); color:#fff; box-shadow:0 10px 24px -10px var(--accent)}
+.b-btn-outline{border:2px solid var(--accent); color:var(--accent); background:transparent}
+.b-btn-outline:hover{background:var(--accent-soft)}
+.b-btn-gold{background:var(--gold); color:#fff; box-shadow:0 10px 24px -10px var(--gold)}
+.b-list ul,.b-list ol{margin:0; padding-inline-start:26px}
+.b-list li{margin:6px 0; line-height:1.9}
+.b-list .lst-checks{list-style:none; padding:0}
+.b-list .lst-checks label{display:flex; gap:10px; align-items:flex-start; cursor:pointer; padding:8px 12px; border-radius:12px; transition:background .2s}
+.b-list .lst-checks label:hover{background:var(--accent-soft)}
+.b-list .lst-checks input{width:20px; height:20px; margin-top:6px; accent-color:var(--accent); flex:none}
+.b-list .lst-checks input:checked+span{text-decoration:line-through; opacity:.55}
+body.admin .b-spacer{outline:1px dashed var(--line); outline-offset:-1px; border-radius:6px}
+.b-html{width:100%; border:1px solid var(--line); border-radius:14px; background:#fff}
+
+/* إضافة محتوى في نص القسم + محرّر قائمة الملفات */
+.ins-zone{display:none}
+body.admin .ins-zone{display:flex; position:absolute; top:-22px; inset-inline:0; height:22px; justify-content:center; align-items:center; opacity:0; transition:opacity .2s; z-index:3}
+body.admin .ins-zone:hover, body.admin .block:hover>.ins-zone{opacity:1}
+@media (hover:none){ body.admin .ins-zone{opacity:.6} }
+.ins-btn{border:1px dashed var(--accent); background:var(--surface); color:var(--accent); border-radius:999px; padding:0 14px; height:22px; font-size:12px; font-weight:600; cursor:pointer; box-shadow:var(--shadow)}
+.ins-btn:hover{background:var(--accent); color:#fff; border-style:solid}
+.fle-row{display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:10px; margin-bottom:10px; border:1px solid var(--line); border-radius:14px; background:var(--surface-2)}
+.fle-row input{width:100%; min-width:0; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:var(--surface); color:inherit; font:inherit}
+.fle-row .fle-name,.fle-row .fle-url{grid-column:1/-1}
+.fle-btns{grid-column:1/-1; display:flex; gap:6px; justify-content:flex-end}
+.fle-paste{margin-top:14px; border:1px dashed var(--line); border-radius:12px; padding:10px 12px}
+.fle-paste summary{cursor:pointer; font-weight:600; color:var(--accent)}
+.fle-paste textarea{width:100%; min-height:120px; margin-top:10px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:var(--surface); color:inherit; font:inherit}
+@media print{#sections>.section.rv{opacity:1 !important; transform:none !important}}
+@media (prefers-reduced-motion:reduce){
+  #sections>.section.rv{opacity:1; transform:none; transition:none}
+  .overlay.open,.overlay.open .modal,.overlay.closing,.overlay.closing .modal{animation:none}
+  .sec-collapse,.sec-collapse>div{transition:none !important}
+}
 
 /* ===== إزالة الشريط العلوي + مجلدات القائمة ===== */
 .navchips{display:none !important}
@@ -1584,14 +1741,32 @@ a.fl-row:hover{background:var(--accent-soft)}
   </div>
   <div class="ts-card">
     <div class="ts-icon">∑</div>
-    <h1 class="ts-title">Math 2</h1>
-    <p class="ts-sub">أهلاً بيك! ادخل لتشوف المحاضرات والسكاشن والمراجعات.</p>
+    <h1 class="ts-title">Math</h1>
+    <p class="ts-sub">أهلاً بيك! اختار المادة اللي عايز تشوفها.</p>
     <div class="ts-choices">
+      <button class="ts-choice" data-act="choose-track" data-track="math1" type="button">
+        <span class="ts-choice-ic">📘</span>
+        <span class="ts-choice-title">Math 1</span>
+        <span class="ts-choice-en">أولى</span>
+        <span class="ts-choice-sub">الفرقة الأولى</span>
+      </button>
       <button class="ts-choice" data-act="choose-track" data-track="math2" type="button">
         <span class="ts-choice-ic">📗</span>
         <span class="ts-choice-title">Math 2</span>
         <span class="ts-choice-en">تانية</span>
         <span class="ts-choice-sub">الفرقة الثانية</span>
+      </button>
+      <button class="ts-choice" data-act="choose-track" data-track="math3" type="button">
+        <span class="ts-choice-ic">📙</span>
+        <span class="ts-choice-title">Math 3</span>
+        <span class="ts-choice-en">تالتة</span>
+        <span class="ts-choice-sub">الفرقة الثالثة</span>
+      </button>
+      <button class="ts-choice" data-act="choose-track" data-track="both" type="button">
+        <span class="ts-choice-ic">📚</span>
+        <span class="ts-choice-title">الكل</span>
+        <span class="ts-choice-en">Math 1 + 2 + 3</span>
+        <span class="ts-choice-sub">اعرض المواد كلها</span>
       </button>
     </div>
   </div>
@@ -1599,9 +1774,17 @@ a.fl-row:hover{background:var(--accent-soft)}
 
 <header class="topbar" id="topbar">
   <div class="wrap topbar-in">
-    <div class="brand-wrap">
+    <div class="brand-wrap" id="brandWrap">
       <img class="brand-logo" id="brandLogo" alt="" hidden>
-      <h2 class="brand" id="brandName">منصّة المحتوى</h2>
+      <button class="brand-btn" type="button" data-act="brand-menu" aria-haspopup="true" aria-expanded="false" title="تبديل المادة">
+        <h2 class="brand" id="brandName">منصّة المحتوى</h2><span class="brand-caret">▾</span>
+      </button>
+      <div class="brand-pop" id="brandPop" role="menu">
+        <button type="button" role="menuitem" data-act="choose-track" data-track="math1"><span>📘</span> Math 1 <small>أولى</small></button>
+        <button type="button" role="menuitem" data-act="choose-track" data-track="math2"><span>📗</span> Math 2 <small>تانية</small></button>
+        <button type="button" role="menuitem" data-act="choose-track" data-track="math3"><span>📙</span> Math 3 <small>تالتة</small></button>
+        <button type="button" role="menuitem" data-act="choose-track" data-track="both"><span>📚</span> الكل <small>Math 1 + 2 + 3</small></button>
+      </div>
     </div>
     <div class="topbar-cd" id="topCd" hidden role="timer">
       <b class="tcd-label" id="tcdLabel"></b>
@@ -1612,9 +1795,6 @@ a.fl-row:hover{background:var(--accent-soft)}
       <b class="tcd-today" id="tcdToday" hidden>🎉 النهاردة!</b>
     </div>
     <nav class="navchips" id="nav"></nav>
-    <div class="tswitch" role="group" aria-label="تبديل الفرقة" style="display:none">
-      <button class="tswitch-btn" id="tsw2" data-act="choose-track" data-track="math2" type="button" title="Math 2 — تانية">2</button>
-    </div>
 
   </div>
 </header>
@@ -1688,7 +1868,9 @@ a.fl-row:hover{background:var(--accent-soft)}
         <div class="row">
           <div class="field"><label for="qaTrackSel">الفرقة</label>
             <select id="qaTrackSel">
+              <option value="math1">Math 1 — أولى</option>
               <option value="math2">Math 2 — تانية</option>
+              <option value="math3">Math 3 — تالتة</option>
             </select></div>
         </div>
         <div class="field"><label for="qaText">سؤالك</label>
@@ -1739,12 +1921,12 @@ function setStatus(txt){ $('#status').textContent = txt; }
    0) اختيار الفرقة الدراسية (Math 1 / Math 2)
    ======================================================================= */
 const TRACK_KEY = 'site_track_v1';
-let currentTrack = null;      // 'math1' | 'math2'
+let currentTrack = null;      // 'math1' | 'math2' | 'math3' | 'both'
 let openSections  = new Set(); // أقسام مفتوحة حالياً (طيّ/فتح)
  
-function loadTrack(){ return 'math2'; }   /* الموقع بقى لـ Math 2 فقط */
+function loadTrack(){ try{ const t = localStorage.getItem(TRACK_KEY); return (t==='math1'||t==='math2'||t==='math3'||t==='both') ? t : null; }catch(e){ return null; } }
 function saveTrack(t){ try{ localStorage.setItem(TRACK_KEY, t); }catch(e){} }
-function trackLabel(t){ return 'Math 2 — تانية'; }
+function trackLabel(t){ if(t==='math1') return 'Math 1 — أولى'; if(t==='math3') return 'Math 3 — تالتة'; if(t==='both') return 'الكل (Math 1 + 2 + 3)'; return 'Math 2 — تانية'; }
  
 function openSplash(){
   const el = $('#trackSplash'); if(!el) return;
@@ -1756,24 +1938,45 @@ function closeSplash(){
   el.classList.add('hide'); el.setAttribute('aria-hidden','true');
   document.body.style.overflow = '';
 }
+function applyTrackUI(t){
+  document.querySelectorAll('#brandPop [data-track]').forEach(b=>b.classList.toggle('active', b.dataset.track===t));
+  document.body.classList.toggle('track-both', t==='both');
+  const sel = $('#qaTrackSel'); if(sel && t!=='both') sel.value = t;
+}
+function closeBrandMenu(){ const w=document.getElementById('brandWrap'); if(w){ w.classList.remove('open'); const b=w.querySelector('.brand-btn'); if(b) b.setAttribute('aria-expanded','false'); } }
+function trackShort(t){ return t==='math1' ? 'Math 1' : (t==='math3' ? 'Math 3' : (t==='both' ? 'الكل' : 'Math 2')); }
 function setTrack(t, opts){
   opts = opts || {};
+  const changed = currentTrack !== t;
   currentTrack = t;
   saveTrack(t);
-  const b2 = $('#tsw2');
-  if(b2) b2.classList.toggle('active', t==='math2');
-  const sel = $('#qaTrackSel'); if(sel) sel.value = t;
-  render();
-  renderQA();
+  applyTrackUI(t);
+  const box = document.getElementById('sections');
+  const doRender = ()=>{
+    render();
+    renderQA();
+    if(box){
+      box.querySelectorAll(':scope > .section').forEach((el,i)=>el.style.setProperty('--i', i));
+      box.classList.remove('tr-out'); box.classList.add('tr-in');
+      setTimeout(()=>box.classList.remove('tr-in'), 900);
+    }
+  };
+  if(box && changed && !opts.silent){
+    if(scrollY>140) scrollTo({top:0, behavior:'smooth'});
+    box.classList.remove('tr-in'); box.classList.add('tr-out');
+    setTimeout(doRender, 280);
+  } else doRender();
   if(!opts.silent) toast('تم اختيار ' + trackLabel(t));
 }
 function visibleSections(){
-  return site.sections.filter(s => (!s.track || s.track==='all' || s.track===currentTrack) && (isAdmin || !secHidden(s)));
+  return site.sections.filter(s => (currentTrack==='both' || !s.track || s.track==='all' || s.track===currentTrack) && (isAdmin || !secHidden(s)));
 }
+function trackTagCls(t){ return t==='math1' ? 'tt-math1' : (t==='math2' ? 'tt-math2' : (t==='math3' ? 'tt-math3' : '')); }
 function trackTagLabel(t){
   if(t==='math1') return 'Math 1 فقط';
   if(t==='math2') return 'Math 2 فقط';
-  return 'الفرقتان';
+  if(t==='math3') return 'Math 3 فقط';
+  return 'كل الفرق';
 }
  
 /* =======================================================================
@@ -1840,7 +2043,7 @@ function renderTopMenu(){
   const list = $('#topMenuList'); if(!list) return;
   const secs = visibleSections();
  
-  let html = `
+  let html = favFolderHtml() + `
     <div class="tm-group-label">الأقسام</div>`;
  
   const itemHtml = (s)=>{
@@ -1985,10 +2188,10 @@ function notifGoto(secId){
   if(!f){ toast('القسم ده اتحذف أو مش موجود'); return; }
   closeNotifDrawer();
   const tr = f.top.track;
-  if((tr==='math1' || tr==='math2') && tr!==currentTrack) setTrack(tr, {silent:true});
+  if((tr==='math1' || tr==='math2' || tr==='math3') && tr!==currentTrack) setTrack(tr, {silent:true});
   setTimeout(()=>menuGoto(secId), 350);
 }
-function notifTrackLabel(tr){ if(tr==='math1') return 'Math 1'; if(tr==='math2') return 'Math 2'; return 'عام'; }
+function notifTrackLabel(tr){ if(tr==='math1') return 'Math 1'; if(tr==='math2') return 'Math 2'; if(tr==='math3') return 'Math 3'; return 'عام'; }
 function renderNotifList(){
   const list = $('#notifList'); if(!list) return;
   const items = [...visibleNotifs()].sort((a,b)=> (b.pinned?1:0)-(a.pinned?1:0) || (b.date||'').localeCompare(a.date||''));
@@ -2052,8 +2255,10 @@ function notifAdminModal(){
       <div id="naLines"><p class="hint">اكتب سطور الإشعار فوق وهتظهر هنا عشان تربط كل سطر بقسمه.</p></div></div>
     <div class="field"><label for="natrack">يخصّ</label>
       <select id="natrack">
-        <option value="all">إشعار عام (للفرقتين)</option>
+        <option value="all">إشعار عام (لكل الفرق)</option>
+        <option value="math1">Math 1 فقط</option>
         <option value="math2">Math 2 فقط</option>
+        <option value="math3">Math 3 فقط</option>
       </select></div>
     <div class="field"><label for="naexp">نوع الإشعار / مدة الظهور</label>
       <select id="naexp">
@@ -2793,7 +2998,9 @@ function defaultSite(){
     theme: defaultTheme(),
     notifications:[],
     trackSettings:{
-      math2:{ label:'', banner:'', note:'', accent:'' }
+      math1:{ label:'', banner:'', note:'', accent:'' },
+      math2:{ label:'', banner:'', note:'', accent:'' },
+      math3:{ label:'', banner:'', note:'', accent:'' }
     },
     sections:[
       { id:uid(), title:'نبذة تعريفية', desc:'ابدأ من هنا: عرّف بنفسك أو بمشروعك في فقرة قصيرة.', track:'all', pinned:true,
@@ -2931,7 +3138,7 @@ function loadScript(src){
      id uuid primary key default gen_random_uuid(),
      name text,
      question text not null,
-     track text not null check (track in ('math1','math2')),
+     track text not null check (track in ('math1','math2','math3')),
      answer text,
      answered_at timestamptz,
      created_at timestamptz not null default now()
@@ -2967,7 +3174,7 @@ const QA = {
     let r = await sb.from(CONFIG.QA.table).select('*').order('created_at', { ascending:false });
     if(r.error) r = await sb.from(CONFIG.QA.table).select('*');   /* لو عمود created_at مش موجود */
     if(r.error) throw r.error;
-    return (r.data || []).filter(q => qaRowTrack(q) !== 'math1');   /* أسئلة Math 1 مخفية */
+    return (r.data || []);
   },
 
   async init(){
@@ -3070,8 +3277,9 @@ function qaAns(r){
 }
 /* الفرقة الخاصة بالسؤال: من عمود track لو موجود، وإلا من عمود grade */
 function qaRowTrack(r){
-  if(r && (r.track==='math1' || r.track==='math2')) return r.track;
+  if(r && (r.track==='math1' || r.track==='math2' || r.track==='math3')) return r.track;
   const g = String((r && r.grade) || '');
+  if(/math\s*3|تالت|ثالث/i.test(g)) return 'math3';
   if(/math\s*2|تاني|ثاني/i.test(g)) return 'math2';
   if(/math\s*1|أول|اول/i.test(g)) return 'math1';
   return '';
@@ -3104,7 +3312,7 @@ create policy \"qa public update\" on public.qa_questions for update using (true
 function renderQA(){
   const list = $('#qaList'); if(!list) return;
   const fbar = $('#qaFilter');
-  const sel = $('#qaTrackSel'); if(sel && currentTrack) sel.value = currentTrack;
+  const sel = $('#qaTrackSel'); if(sel && currentTrack && currentTrack!=='both') sel.value = currentTrack;
 
   if(!CONFIG.SUPABASE.enabled){
     list.innerHTML = '<p class="qa-empty">قسم الأسئلة يحتاج تفعيل Supabase من إعدادات الصفحة (CONFIG.SUPABASE).</p>';
@@ -3120,7 +3328,7 @@ function renderQA(){
       <button class="btn sm qa-admin-only" data-act="qa-copy-sql" type="button">📋 نسخ كود الإعداد (SQL)</button></div>`;
     return;
   }
-  const cur = currentTrack ? QA.rows.filter(r=>qaRowTrack(r)===currentTrack) : QA.rows;
+  const cur = (currentTrack && currentTrack!=='both') ? QA.rows.filter(r=>qaRowTrack(r)===currentTrack) : QA.rows;
   let items = cur;
   if(isAdmin){
     if(QA.filter==='all') items = QA.rows;
@@ -3253,6 +3461,7 @@ function scheduleSave(){
    ======================================================================= */
 /* حذف كل ما يخص Math 1 من بيانات الموقع (يتثبّت في قاعدة البيانات عند أول حفظ من المحرّر) */
 function purgeMath1(){
+  return; /* Math 1 رجع — مبقاش بيتمسح */
   if(!site) return;
   if(Array.isArray(site.sections)) site.sections = site.sections.filter(sc => sc.track !== 'math1');
   if(Array.isArray(site.notifications)) site.notifications = site.notifications.filter(n => n.track !== 'math1');
@@ -3454,12 +3663,56 @@ function runSearch(q){
   });
   out.innerHTML = hits.length ? hits.slice(0,40).map(h=>`<button type="button" class="sb-item" data-go="${h.sec}" data-blk="${h.blk||''}"><b>${esc(h.t)}</b>${h.w?`<small>${esc(h.w)}</small>`:''}<span>${esc(h.sn)}</span></button>`).join('') : '<p class="sb-hint">مفيش نتايج 🤷</p>';
 }
+/* ---- المفضلة: أي قسم أو محتوى يتعلّم عليه بنجمة ويتحط في فولدر المفضلة بالقايمة ---- */
+const BLK_ICON = {text:'📝',image:'🖼️',video:'▶️',links:'🔗',pdf:'📄',badges:'🏷️',tasks:'✅',filelist:'🗂️',table:'📊',accordion:'❓',audio:'🎧',embed:'🧩',code:'💻',gallery:'🖼️',button:'🔘',list:'📋',html:'🧪',divider:'➖'};
+const BLK_NAME = {text:'نص',image:'صورة',video:'فيديو',links:'روابط',pdf:'ملف PDF',badges:'بطاقات',tasks:'مهام',filelist:'قائمة ملفات',table:'جدول',accordion:'أسئلة وأجوبة',audio:'ملف صوتي',embed:'محتوى مضمّن',code:'كود',gallery:'معرض صور',button:'زرار',list:'قائمة',html:'محتوى HTML'};
+function blkLabel(b){
+  let t = String(b.caption||'').trim();
+  if(!t){
+    if(['text','list','table','code','accordion','tasks'].includes(b.type)) t = String(b.text||'').split('\n').map(x=>x.trim()).find(Boolean) || '';
+    else if(b.type==='links') t = (b.items && b.items[0] && b.items[0].label) || '';
+    else if(b.type==='filelist') t = (String(b.text||'').split('\n')[0] || '').split('|')[0];
+    else if(b.type==='pdf') t = (typeof fileNameOf==='function' ? fileNameOf(b.url) : '') || '';
+  }
+  t = t.replace(/[*_`#{}\[\]$]/g,'').replace(/\s+/g,' ').trim() || BLK_NAME[b.type] || 'محتوى';
+  if(t.length > 46) t = t.slice(0,46) + '…';
+  return (BLK_ICON[b.type] || '📌') + ' ' + t;
+}
+function favItems(){
+  const f = lsGet('site_favs', {}), out = [];
+  flatSecs().forEach(({s,path})=>{
+    if(f[s.id]) out.push({id:s.id, sec:s.id, blk:'', label:'📂 '+s.title, where:path.join(' ‹ ')});
+    (s.blocks||[]).forEach(b=>{ if(f[b.id]) out.push({id:b.id, sec:s.id, blk:b.id, label:blkLabel(b), where:path.concat(s.title).join(' ‹ ')}); });
+  });
+  return out;
+}
+function favRowHtml(x){
+  return `<div class="tm-item fav-item"><div class="tm-row-flex">
+    <button class="tm-link" data-act="menu-goto-block" data-sec="${esc(x.sec)}" data-block="${esc(x.blk)}" type="button"><span class="fav-l">${esc(x.label)}</span>${x.where?`<small class="fav-w">${esc(x.where)}</small>`:''}</button>
+    <button class="fav-x" data-sx="fav" data-id="${esc(x.id)}" type="button" title="شيل من المفضلة" aria-label="شيل من المفضلة">★</button>
+  </div></div>`;
+}
+function favFolderHtml(){
+  if(!feat('favs')) return '';
+  const items = favItems(), op = openFolders.has('__favs');
+  return `<div class="tm-folder fav-folder ${op?'open':''}">
+    <button class="tm-folder-head" data-act="tm-folder-toggle" data-id="__favs" type="button" aria-expanded="${op}"><span>⭐</span><span class="tm-folder-name">المفضلة</span><span class="tm-folder-count">${items.length}</span><span class="tm-folder-chev">▾</span></button>
+    <div class="tm-folder-body"><div>${items.length ? items.map(favRowHtml).join('') : '<p class="fav-empty">لسه مفيش حاجة. دوس على ☆ جنب أي قسم أو محتوى وهيتحط هنا لوحده.</p>'}</div></div>
+  </div>`;
+}
+function updateFavUI(id, on){
+  document.querySelectorAll('[data-sx="fav"]').forEach(el=>{
+    if(el.dataset.id !== id) return;
+    if(el.classList.contains('fav-star')){ el.textContent = on ? '★' : '☆'; el.classList.toggle('on', on); el.setAttribute('aria-pressed', on); if(on){ el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); } }
+    else if(el.classList.contains('sx-btn')){ el.classList.toggle('on', on); el.textContent = on ? '⭐ في المفضلة' : '☆ أضف للمفضلة'; }
+  });
+}
 function openFavs(){
   let b = document.getElementById('favBox');
   if(!b){ b = document.createElement('div'); b.id = 'favBox'; document.body.appendChild(b);
-    b.addEventListener('click', e=>{ if(e.target===b){ b.classList.remove('on'); return; } const r = e.target.closest('[data-go]'); if(r){ b.classList.remove('on'); menuGoto(r.dataset.go, ''); } if(e.target.closest('[data-sbx]')) b.classList.remove('on'); }); }
-  const f = lsGet('site_favs', {}), items = flatSecs().filter(x=>f[x.s.id]);
-  b.innerHTML = `<div class="sb-panel"><div class="sb-row"><b>⭐ المفضلة</b><button type="button" data-sbx>✕</button></div><div class="sb-res">${items.length ? items.map(x=>`<button type="button" class="sb-item" data-go="${x.s.id}"><b>${esc(x.s.title)}</b>${x.path.length?`<small>${esc(x.path.join(' ‹ '))}</small>`:''}</button>`).join('') : '<p class="sb-hint">لسه مفيش مفضلة. افتح أي قسم واضغط "☆ أضف للمفضلة".</p>'}</div></div>`;
+    b.addEventListener('click', e=>{ if(e.target===b){ b.classList.remove('on'); return; } const r = e.target.closest('[data-go]'); if(r){ b.classList.remove('on'); menuGoto(r.dataset.go, r.dataset.blk || ''); } if(e.target.closest('[data-sbx]')) b.classList.remove('on'); }); }
+  const items = favItems();
+  b.innerHTML = `<div class="sb-panel"><div class="sb-row"><b>⭐ المفضلة</b><button type="button" data-sbx>✕</button></div><div class="sb-res">${items.length ? items.map(x=>`<button type="button" class="sb-item" data-go="${esc(x.sec)}" data-blk="${esc(x.blk)}"><b>${esc(x.label)}</b>${x.where?`<small>${esc(x.where)}</small>`:''}</button>`).join('') : '<p class="sb-hint">لسه مفيش مفضلة. دوس على ☆ جنب أي قسم أو محتوى.</p>'}</div></div>`;
   b.classList.add('on');
 }
 let __pm = {left:25*60, run:false, mode:'work', t:null};
@@ -3538,7 +3791,7 @@ document.addEventListener('click', e=>{
   if(sx){
     const k = sx.dataset.sx, id = sx.dataset.id, y = scrollY;
     if(k==='done'){ const d = lsGet('site_done', {}); d[id] ? delete d[id] : d[id] = 1; lsSet('site_done', d); }
-    if(k==='fav'){ const f = lsGet('site_favs', {}); f[id] ? delete f[id] : f[id] = 1; lsSet('site_favs', f); }
+    if(k==='fav'){ const f = lsGet('site_favs', {}); const on = !f[id]; if(on) f[id] = 1; else delete f[id]; lsSet('site_favs', f); updateFavUI(id, on); try{ renderTopMenu(); }catch(_){} toast(on ? '⭐ اتضافت للمفضلة' : 'اتشالت من المفضلة'); return; }
     if(k==='reset'){ if(!confirm('تصفير كل تقدّمك؟')) return; lsSet('site_done', {}); }
     render(); scrollTo(0, y); return;
   }
@@ -3606,6 +3859,18 @@ document.addEventListener('click', e=>{
 });
 try{ const ua0 = parseFloat(localStorage.getItem('site_ua')); if(ua0) document.documentElement.style.setProperty('--ua', ua0); }catch(e){}
 
+const __revealed = new Set(); let __rvIO = null;
+function setupReveal(){
+  const box = document.getElementById('sections'); if(!box || !('IntersectionObserver' in window)) return;
+  if(__rvIO) __rvIO.disconnect();
+  __rvIO = new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('rv-in'); __revealed.add(e.target.id); __rvIO.unobserve(e.target); }
+  }), {rootMargin:'0px 0px -6% 0px', threshold:0.04});
+  box.querySelectorAll(':scope > .section').forEach(el=>{
+    el.classList.add('rv');
+    if(__revealed.has(el.id)) el.classList.add('rv-in'); else __rvIO.observe(el);
+  });
+}
 function render(){
   purgeMath1();
   site.theme = Object.assign(defaultTheme(), site.theme || {});
@@ -3621,7 +3886,9 @@ function render(){
   site.folders = Array.isArray(site.folders) ? site.folders : [];
   window.__secFonts = collectSecFonts(site.sections, []);
   site.trackSettings = site.trackSettings || {};
+  site.trackSettings.math1 = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings.math1 || {});
   site.trackSettings.math2 = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings.math2 || {});
+  site.trackSettings.math3 = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings.math3 || {});
   applyTheme(site.theme);
   document.title = site.meta.title || 'منصّة المحتوى';
   $('#brandName').textContent = site.meta.title || '';
@@ -3643,14 +3910,14 @@ function render(){
 
   applySubjectOverrides();
  
-  const b2 = $('#tsw2');
-  if(b2) b2.classList.toggle('active', currentTrack==='math2');
+  applyTrackUI(currentTrack);
 
   const secs = visibleSections();
   $('#nav').innerHTML = secs
     .map(s=>`<a class="chip" href="#sec-${esc(s.id)}">${esc(s.title)}</a>`).join('');
  
-  $('#sections').innerHTML = secs.map((s,i)=>renderSection(s,i,secs)).join('');
+  $('#sections').innerHTML = secs.length ? secs.map((s,i)=>renderSection(s,i,secs)).join('') : `<div class="wrap"><div class="track-empty">لسه مفيش أقسام لـ ${trackLabel(currentTrack)}.${isAdmin?' دوس «＋ قسم جديد» واختار «يظهر لِـ» الفرقة المناسبة.':''}</div></div>`;
+  setupReveal();
   renderTopMenu();
   renderNotifBadge();
   try{ if(typeof QA !== 'undefined' && QA.ready) renderQA(); }catch(e){}
@@ -3677,15 +3944,15 @@ function applySubjectOverrides(){
   if(bannerEl) bannerEl.innerHTML = (ts && ts.banner) ? `<div class="subject-banner"><img src="${esc(ts.banner)}" alt=""></div>` : '';
   if(noteEl) noteEl.innerHTML = (ts && ts.note) ? `<div class="subject-note">${fmt(ts.note)}</div>` : '';
 
-  if(ts && ts.label){ const b=$('#brandName'); if(b) b.textContent = ts.label; }
+  { const b=$('#brandName'); if(b && currentTrack) b.textContent = (ts && ts.label) || trackShort(currentTrack); }
 }
 function subjectSettingsModal(){
-  if(!currentTrack){ toast('اختر الفرقة أولاً'); return; }
-  const trackName = 'Math 2 — تانية';
+  if(!currentTrack || currentTrack==='both'){ toast('اختار Math 1 أو Math 2 الأول عشان تعدّل إعدادات مادة'); return; }
+  const trackName = trackLabel(currentTrack);
   const ts = Object.assign({label:'',banner:'',note:'',accent:''}, site.trackSettings[currentTrack]||{});
   openModal('إعدادات مادة: ' + trackName, `
     <p class="hint" style="margin-top:0">هذه الإعدادات خاصة بـ${trackName} فقط ولا تؤثر إطلاقاً على الفرقة الأخرى.</p>
-    <div class="field"><label for="ts1">اسم يظهر بدل اسم الموقع (اختياري)</label><input id="ts1" value="${esc(ts.label)}" placeholder="مثال: بوابة Math 2"></div>
+    <div class="field"><label for="ts1">اسم يظهر بدل اسم الموقع (اختياري)</label><input id="ts1" value="${esc(ts.label)}" placeholder="مثال: بوابة ${trackName}"></div>
     <div class="field"><label for="ts2">رابط بانر خاص بهذه المادة (اختياري)</label><input id="ts2" value="${esc(ts.banner)}" placeholder="https://…"></div>
     <div class="field"><label for="ts3">ملاحظة/تنويه تظهر أعلى الصفحة (اختياري)</label><textarea id="ts3" style="min-height:80px">${esc(ts.note)}</textarea></div>
     <div class="field"><label for="ts4">لون مميّز خاص بهذه المادة (اختياري)</label>
@@ -3706,7 +3973,7 @@ function renderSection(s, i, secs, depth){
   const canNest = s.allowChildren !== false;
   const last = (secs||site.sections).length-1;
   const isOpen = s.pinned || openSections.has(s.id);
-  const titleInner = `<span class="st-text">${s.icon?esc(s.icon)+' ':''}${esc(s.title)}</span><span class="sec-track-tag">${trackTagLabel(s.track)}</span>${s.pinned?'<span class="pin-badge">📌 مثبّت</span>':''}${(feat('progress') && lsGet('site_done',{})[s.id])?'<span class="done-mark" title="خلّصته">✅</span>':''}${(isAdmin && secHidden(s))?'<span class="sec-badge sb-soon">🙈 مخفي عن الطلبة</span>':''}${isNewSec(s)?'<span class="sec-badge sb-new">🆕 جديد</span>':''}${s.badge?`<span class="sec-badge sb-${esc(s.badge)}">${({new:'🆕 جديد',hot:'🔥 مهم',soon:'⏳ قريباً'})[s.badge]||''}</span>`:''}`;
+  const titleInner = `<span class="st-text">${s.icon?esc(s.icon)+' ':''}${esc(s.title)}</span><span class="sec-track-tag ${trackTagCls(s.track)}">${trackTagLabel(s.track)}</span>${s.pinned?'<span class="pin-badge">📌 مثبّت</span>':''}${(feat('progress') && lsGet('site_done',{})[s.id])?'<span class="done-mark" title="خلّصته">✅</span>':''}${(isAdmin && secHidden(s))?'<span class="sec-badge sb-soon">🙈 مخفي عن الطلبة</span>':''}${isNewSec(s)?'<span class="sec-badge sb-new">🆕 جديد</span>':''}${s.badge?`<span class="sec-badge sb-${esc(s.badge)}">${({new:'🆕 جديد',hot:'🔥 مهم',soon:'⏳ قريباً'})[s.badge]||''}</span>`:''}`;
   const headInner = `
           <span style="flex:1; min-width:0${s.titleAlign?'; text-align:'+esc(s.titleAlign):''}">
             <h2 class="sec-title" data-st="${esc(s.titleStyle||'')}" style="${s.titleFont?'font-family:'+esc(secFontCss(s.titleFont))+';':''}${s.titleColor?'color:'+esc(s.titleColor)+';':''}${s.titleSize?'--ts:'+esc(s.titleSize)+';':''}">${titleInner}</h2>
@@ -3724,6 +3991,8 @@ function renderSection(s, i, secs, depth){
         ${headBtn}
         <div class="tools">
           ${canNest?`<button class="btn sm" data-act="add-subsection" data-id="${s.id}" title="إضافة قسم فرعي">＋ فرعي</button>`:''}
+          <button class="btn sm" data-act="add-section-at" data-id="${s.id}" data-pos="before" title="إضافة قسم قبل ده">＋ قبله</button>
+          <button class="btn sm" data-act="add-section-at" data-id="${s.id}" data-pos="after" title="إضافة قسم بعد ده">＋ بعده</button>
           <button class="btn sm" data-act="sec-up" data-id="${s.id}" ${i===0?'disabled':''} title="لأعلى">▲</button>
           <button class="btn sm" data-act="sec-down" data-id="${s.id}" ${i===last?'disabled':''} title="لأسفل">▼</button>
           <button class="btn sm" data-act="sec-edit" data-id="${s.id}">تعديل</button>
@@ -3744,32 +4013,91 @@ function renderSection(s, i, secs, depth){
   </section>`;
 }
  
+
+/* ---- أنواع محتوى إضافية: معرض صور / زرار / قائمة / مسافة / HTML حر ---- */
+function blkUrl(u){ u = String(u||'').trim(); return /^(https?:|data:image\/|mailto:|tel:|\/|\.\/|#)/i.test(u) ? u : (u ? 'https://'+u : ''); }
+function renderMore(b){
+  const t = String(b.text||'');
+  if(b.type==='gallery'){
+    const items = t.split('\n').map(r=>r.trim()).filter(Boolean).map(r=>{ const i=r.indexOf('|'); return i<0 ? {u:r,c:''} : {u:r.slice(0,i).trim(), c:r.slice(i+1).trim()}; }).filter(x=>x.u);
+    if(!items.length) return '';
+    const cols = [2,3,4].includes(+b.cols) ? +b.cols : 3;
+    return '<div class="b-gallery-wrap">'+(b.caption?'<div class="gal-title">'+esc(b.caption)+'</div>':'')
+      + '<div class="b-gallery" style="--gc:'+cols+'">'+items.map(x=>'<figure><a href="'+esc(blkUrl(x.u))+'" target="_blank" rel="noopener"><img src="'+esc(blkUrl(x.u))+'" alt="'+esc(x.c)+'" loading="lazy"></a>'+(x.c?'<figcaption>'+esc(x.c)+'</figcaption>':'')+'</figure>').join('')+'</div></div>';
+  }
+  if(b.type==='button'){
+    const v = ['primary','outline','gold'].includes(b.variant) ? b.variant : 'primary';
+    return '<div class="b-btn-wrap"><a class="b-btn b-btn-'+v+'" href="'+esc(blkUrl(b.url))+'" target="_blank" rel="noopener">'+esc(b.caption||'فتح')+' <span aria-hidden="true">↗</span></a>'
+      + (b.text?'<small>'+esc(b.text)+'</small>':'')+'</div>';
+  }
+  if(b.type==='list'){
+    const lines = t.split('\n').map(r=>r.trim()).filter(Boolean);
+    if(!lines.length) return '';
+    const v = ['bullets','numbers','checks'].includes(b.variant) ? b.variant : 'bullets';
+    const head = b.caption ? '<div class="lst-title">'+esc(b.caption)+'</div>' : '';
+    if(v==='checks'){
+      const st = lsGet('site_ck_'+b.id, {});
+      return '<div class="b-list">'+head+'<ul class="lst-checks">'+lines.map((l,i)=>'<li><label><input type="checkbox" data-ck="'+esc(b.id)+':'+i+'" '+(st[i]?'checked':'')+'><span>'+miniFmt(l)+'</span></label></li>').join('')+'</ul></div>';
+    }
+    const tag = v==='numbers' ? 'ol' : 'ul';
+    return '<div class="b-list">'+head+'<'+tag+' class="lst-'+v+'">'+lines.map(l=>'<li>'+miniFmt(l)+'</li>').join('')+'</'+tag+'></div>';
+  }
+  if(b.type==='spacer'){
+    const h = Math.max(8, Math.min(400, +b.h || 32));
+    return '<div class="b-spacer" style="height:'+h+'px" aria-hidden="true"></div>';
+  }
+  if(b.type==='html'){
+    const h = Math.max(60, Math.min(1600, +b.h || 320));
+    return '<iframe class="b-html" sandbox="allow-scripts allow-popups allow-forms allow-modals" srcdoc="'+esc(t)+'" style="height:'+h+'px" loading="lazy" title="'+esc(b.caption||'محتوى HTML')+'"></iframe>';
+  }
+  return '';
+}
+/* ---- مربعات التأشير جنب الجمل (صح أخضر / فاضي) ---- */
+function ckHash(t){ let h=5381; t=String(t); for(let i=0;i<t.length;i++) h=((h<<5)+h+t.charCodeAt(i))|0; return (h>>>0).toString(36); }
+function chkTransform(b){
+  const mode = b.checks || 'marked', lines = String(b.text||'').split('\n'), MK = /^\s*\[\s*\]\s?/;
+  const anyMark = lines.some(l=>MK.test(l));
+  const f1 = t => fmt(t).replace(/<br>$/,'');
+  if(mode==='off') return anyMark ? fmt(lines.map(l=>l.replace(MK,'')).join('\n')) : null;
+  if(mode==='marked' && !anyMark) return null;
+  const st = lsGet('site_ckl_'+b.id, {}); let total = 0, done = 0;
+  const out = lines.map(l=>{
+    const boxed = mode==='all' ? l.trim()!=='' : MK.test(l), txt = l.replace(MK,'');
+    if(!boxed) return txt.trim()==='' ? '<div class="ck-gap"></div>' : '<div class="ck-plain">'+f1(txt)+'</div>';
+    const h = ckHash(txt.trim()), on = !!st[h]; total++; if(on) done++;
+    return '<label class="ck-line'+(on?' is-on':'')+'"><input type="checkbox" data-ckl="'+esc(b.id)+':'+h+'"'+(on?' checked':'')+'><span class="ck-box" aria-hidden="true"></span><span class="ck-t">'+f1(txt)+'</span></label>';
+  }).join('');
+  const head = total>1 ? '<div class="ck-count">✅ <b>'+done+'</b> / '+total+'</div>' : '';
+  return '<div class="ck-wrap">'+head+out+'</div>';
+}
 function renderBlock(b, secId, j, last){
   const tools = `
     <div class="block-tools">
       <button class="btn sm" data-act="blk-up" data-sec="${secId}" data-id="${b.id}" ${j===0?'disabled':''}>▲</button>
       <button class="btn sm" data-act="blk-down" data-sec="${secId}" data-id="${b.id}" ${j===last?'disabled':''}>▼</button>
+      <button class="btn sm" data-act="blk-dup" data-sec="${secId}" data-id="${b.id}" title="نسخ">⧉</button>
       <button class="btn sm" data-act="blk-edit" data-sec="${secId}" data-id="${b.id}">تعديل</button>
       <button class="btn sm danger" data-act="blk-del" data-sec="${secId}" data-id="${b.id}">حذف</button>
     </div>`;
   let body='';
   if(b.type==='text'){
+    const TX = chkTransform(b) ?? fmt(b.text);
     const align = (!b.align || b.align==='right') ? 'center' : (b.align==='start' ? 'right' : b.align); /* النص في النص افتراضياً — 'start' = يمين فعلي */
     const alignAttr = ` style="text-align:${align}"`;
     if(b.style==='heading')      body = `<h3 class="b-h"${alignAttr}>${esc(b.text)}</h3>`;
-    else if(b.style==='quote')   body = `<blockquote class="b-quote"${alignAttr}>${fmt(b.text)}</blockquote>`;
-    else if(b.style==='note')    body = `<div class="b-note"${alignAttr}>${fmt(b.text)}</div>`;
-    else if(b.style==='formula') body = `<div class="b-formula"${alignAttr}>${fmt(b.text)}</div>`;
+    else if(b.style==='quote')   body = `<blockquote class="b-quote"${alignAttr}>${TX}</blockquote>`;
+    else if(b.style==='note')    body = `<div class="b-note"${alignAttr}>${TX}</div>`;
+    else if(b.style==='formula') body = `<div class="b-formula"${alignAttr}>${TX}</div>`;
     else if(b.style==='steps')   body = stepsHtml(b.text, align);
-    else if(b.style==='key')     body = `<div class="b-key"${alignAttr}>${fmt(b.text)}</div>`;
-    else if(b.style==='theorem') body = `<div class="b-theorem"${alignAttr}><span class="b-theorem-tag">نظرية / تعريف</span>${fmt(b.text)}</div>`;
-    else if(b.style==='law')     body = `<div class="b-law"${alignAttr}><span class="b-law-tag">قانون / نظرية</span>${fmt(b.text)}</div>`;
-    else if(b.style==='glow')    body = `<div class="b-glow"${alignAttr}>${fmt(b.text)}</div>`;
+    else if(b.style==='key')     body = `<div class="b-key"${alignAttr}>${TX}</div>`;
+    else if(b.style==='theorem') body = `<div class="b-theorem"${alignAttr}><span class="b-theorem-tag">نظرية / تعريف</span>${TX}</div>`;
+    else if(b.style==='law')     body = `<div class="b-law"${alignAttr}><span class="b-law-tag">قانون / نظرية</span>${TX}</div>`;
+    else if(b.style==='glow')    body = `<div class="b-glow"${alignAttr}>${TX}</div>`;
     else if(b.style==='reveal') body = revealHtml(b.text);
     else if(b.style==='quiz')   body = quizHtml(b.text);
     else if(b.style==='flash')  body = flashHtml(b.text);
-    else if(FX_STYLES.some(x=>x[0]===b.style)) body = `<div class="b-fx b-fx-${b.style}"${alignAttr}>${fmt(b.text)}</div>`;
-    else                         body = `<div class="b-p"${alignAttr}>${fmt(b.text)}</div>`;
+    else if(FX_STYLES.some(x=>x[0]===b.style)) body = `<div class="b-fx b-fx-${b.style}"${alignAttr}>${TX}</div>`;
+    else                         body = `<div class="b-p"${alignAttr}>${TX}</div>`;
     body = blkCustom(b, body);
   }
   else if(b.type==='image'){
@@ -3787,11 +4115,15 @@ function renderBlock(b, secId, j, last){
   }
   else if(b.type==='pdf'){ body = pdfCard(b); }
   else if(['table','tasks','accordion','audio','divider','code','embed','filelist'].includes(b.type)){ body = renderExtra(b); }
+  else if(['gallery','button','list','spacer','html'].includes(b.type)){ body = renderMore(b); }
   else if(b.type==='badges'){
     body = `<ul class="b-badges">${(b.items||[]).map(it=>
       `<li class="badge-tag" style="--tag-c:${esc(it.color||'#1F6F6B')}">${esc(it.label)}</li>`).join('')}</ul>`;
   }
-  return `<div class="block" data-id="${b.id}">${tools}${body}</div>`;
+  const favOn = !!lsGet('site_favs', {})[b.id];
+  const star = (feat('favs') && !['spacer','divider'].includes(b.type)) ? `<button type="button" class="fav-star${favOn?' on':''}" data-sx="fav" data-id="${b.id}" aria-pressed="${favOn}" title="أضف للمفضلة" aria-label="أضف للمفضلة">${favOn?'★':'☆'}</button>` : '';
+  const ins = `<div class="ins-zone"><button class="ins-btn" type="button" data-act="add-block-at" data-sec="${secId}" data-at="${j}">＋ أضف محتوى هنا</button></div>`;
+  return `<div class="block" data-id="${b.id}">${ins}${tools}${star}${body}</div>`;
 }
  
 /* =======================================================================
@@ -3803,11 +4135,12 @@ function openModal(title, bodyHTML, footHTML, handler){
   $('#mBody').innerHTML = bodyHTML;
   $('#mFoot').innerHTML = footHTML;
   onSaveModal = handler || null;
-  $('#overlay').classList.add('open');
+  clearTimeout(window.__ovT); $('#overlay').classList.remove('closing'); $('#overlay').classList.add('open');
   const f = $('#mBody').querySelector('input,textarea,select'); if(f) setTimeout(()=>f.focus(),60);
 }
 function closeModal(){
-  $('#overlay').classList.remove('open'); onSaveModal=null;
+  { const ov=$('#overlay'); if(ov && ov.classList.contains('open')){ ov.classList.add('closing'); clearTimeout(window.__ovT); window.__ovT=setTimeout(()=>ov.classList.remove('open','closing'),200); } }
+  onSaveModal=null;
   document.documentElement.classList.remove('th-clear'); themeOverridesDirty = false;
   if(themeBackup){ site.theme = themeBackup; themeBackup = null; applyTheme(site.theme); render(); }
 }
@@ -3836,7 +4169,8 @@ function askPassword(){
 /* ---- نافذة القسم ---- */
 function sectionModal(sec, parentId){
   const isNew = !sec;
-  const s = sec || { id:uid(), title:'', desc:'', blocks:[], children:[], allowChildren:true };
+  const __ins = window.__secIns; window.__secIns = null;
+  const s = sec || { id:uid(), title:'', desc:'', blocks:[], children:[], allowChildren:true, track:((currentTrack==='math1'||currentTrack==='math2'||currentTrack==='math3')?currentTrack:'all') };
   const found = isNew ? null : findSecDeep(s.id);
   const parent = isNew ? (parentId ? findSec(parentId) : null) : (found ? found.parent : null);
   const nested = !!parent;
@@ -3870,8 +4204,10 @@ function sectionModal(sec, parentId){
     </label><p class="hint">بيغيّر لون الصندوق ده بس، من غير ما يأثر على خلفية الصفحة أو باقي الأقسام.</p></div>
     ${nested?'':`<div class="field"><label for="strk">يظهر لِـ</label>
       <select id="strk">
-        <option value="all" ${(!s.track||s.track==='all')?'selected':''}>الكل</option>
+        <option value="all" ${(!s.track||s.track==='all')?'selected':''}>كل الفرق (Math 1 و 2 و 3)</option>
+        <option value="math1" ${s.track==='math1'?'selected':''}>Math 1 — أولى فقط</option>
         <option value="math2" ${s.track==='math2'?'selected':''}>Math 2 — تانية فقط</option>
+        <option value="math3" ${s.track==='math3'?'selected':''}>Math 3 — تالتة فقط</option>
       </select></div>
     <div class="field"><label style="display:flex; align-items:center; gap:8px; font-weight:400">
       <input type="checkbox" id="spin" ${s.pinned?'checked':''} style="width:auto">
@@ -3901,7 +4237,7 @@ function sectionModal(sec, parentId){
     if(!nested){ s.track=$('#strk').value; s.pinned=$('#spin').checked; }
     s.allowChildren = $('#sallow').checked;
     if(!s.children) s.children = [];
-    if(isNew){ siblings.push(s); if(parent){ openSections.add(parent.id); openAncestors(parent.id); } }
+    if(isNew){ let k=-1; if(__ins){ k=siblings.findIndex(x=>x.id===__ins.id); if(k>=0 && __ins.pos==='after') k++; } if(k>=0) siblings.splice(k,0,s); else siblings.push(s); if(parent){ openSections.add(parent.id); openAncestors(parent.id); } }
     else {
       const to = parseInt($('#so').value,10);
       const from = siblings.findIndex(x=>x.id===s.id);
@@ -3986,7 +4322,8 @@ function flRender(){
 }
  
 /* ---- اختيار نوع المحتوى ---- */
-function chooseType(secId){
+function chooseType(secId, at){
+  window.__insertAt = (typeof at === 'number' && at >= 0) ? at : null;
   openModal('نوع المحتوى', `
     <div class="typegrid">
       <button class="typecard" data-act="pick-type" data-type="text"  data-sec="${secId}"><div>📝</div>نص / ملخص</button>
@@ -4003,6 +4340,11 @@ function chooseType(secId){
       <button class="typecard" data-act="pick-type" data-type="embed" data-sec="${secId}"><div>🧩</div>تضمين (درايف / دوكس / فورم)</button>
       <button class="typecard" data-act="pick-type" data-type="code" data-sec="${secId}"><div>💻</div>كود</button>
       <button class="typecard" data-act="pick-type" data-type="divider" data-sec="${secId}"><div>➖</div>فاصل / عنوان فاصل</button>
+      <button class="typecard" data-act="pick-type" data-type="gallery" data-sec="${secId}"><div>🖼️</div>معرض صور</button>
+      <button class="typecard" data-act="pick-type" data-type="button" data-sec="${secId}"><div>🔘</div>زرار / رابط كبير</button>
+      <button class="typecard" data-act="pick-type" data-type="list" data-sec="${secId}"><div>📋</div>قائمة نقاط / ترقيم / تشيك ليست</button>
+      <button class="typecard" data-act="pick-type" data-type="spacer" data-sec="${secId}"><div>↕️</div>مسافة فاضية</button>
+      <button class="typecard" data-act="pick-type" data-type="html" data-sec="${secId}"><div>🧪</div>HTML حر (أي حاجة)</button>
     </div>`, `<button class="btn ghost" data-act="close">إلغاء</button>`, null);
 }
  
@@ -4054,6 +4396,10 @@ function blockModal(secId, block, type){
         <div class="dl-ins st-ins"><span class="hint">📦 بوكس حالة جنب النص:</span>
           <select id="st-k" aria-label="الحالة"><option value="تم">✅ خلصت</option><option value="جاري">⏳ جاري / لسه</option><option value="لا">❌ مخلصتش</option></select>
           <button type="button" class="btn sm" data-act="ins-status">إدراج البوكس</button></div>
+        <div class="dl-ins ck-ins"><span class="hint">☑ مربع تأشير جنب الجمل:</span>
+          <select id="bchk" aria-label="مربعات التأشير">${[['marked','على الأسطر اللي تبدأ بـ [] بس'],['all','على كل الأسطر'],['off','بدون مربعات (إخفاء)']].map(([v,l])=>`<option value="${v}" ${(b.checks||'marked')===v?'selected':''}>${l}</option>`).join('')}</select>
+          <button type="button" class="btn sm" data-act="ins-check">＋ مربع على السطر</button></div>
+        <p class="hint">المربع بيظهر لكل زائر ويقدر يدوس عليه فيبقى ✔ أخضر، ويفضل فاضي لحد ما يخلّص. العلامة محفوظة على جهاز كل شخص. اكتب <code>[]</code> في أول أي سطر لو عايز مربع جنبه.</p>
         <p class="hint">أو اكتب يدوي في آخر السطر: <code>{{تايمر 2026-12-20}}</code> أو <code>{{تايمر 2026-12-20 18:30}}</code> (من غير ساعة = لحد آخر اليوم). وللحالة: <code>{{حالة تم}}</code> أو <code>{{حالة جاري}}</code> أو <code>{{حالة لا}}</code>. لو حطيت «تم» جنب تايمر بيقف التايمر.</p>
         <p class="hint">التنسيق: **عريض** ، *مائل* ، `+"`كود`"+` ، [نص](رابط) ، ==تظليل== ، وسطر يبدأ بـ - يصبح قائمة.
         لـ«خطوات الحل» اكتب كل خطوة في سطر منفصل.</p>
@@ -4089,10 +4435,19 @@ function blockModal(secId, block, type){
       <div class="field"><label for="bc">اسم الملف (اختياري — بيظهر على الكارت)</label><input id="bc" value="${esc(b.caption||'')}" placeholder="مثال: ملزمة الفصل الأول"></div>`;
   }
   else if(b.type==='filelist'){
+    const rows0 = flParse(b.text); if(!rows0.length) rows0.push({});
     body = `
       <div class="field"><label for="bc">عنوان القائمة (اختياري)</label><input id="bc" value="${esc(b.caption||'')}" placeholder="مثال: محاضرات مادة التربية"></div>
-      <div class="field"><label for="bt">الملفات</label><textarea id="bt" style="min-height:170px" placeholder="مبادئ التربية والتعليم عند اليونان والرومان | https://…/video1 | 2026-09-26 | مصطفى عبد القادر&#10;القيم الأخلاقية في العصور الوسطى | https://…/video2 | 2026-10-03 | مصطفى عبد القادر">${esc(b.text||'')}</textarea>
-        <p class="hint">سطر لكل ملف بالشكل: <code>الاسم | الرابط | التاريخ | بواسطة</code>. كله اختياري ما عدا الاسم. التاريخ بصيغة <code>2026-09-26</code> وبيتعرض «من 5 أيام» تلقائياً (أو اكتب أي نص زي «الأسبوع الماضي»). الأيقونة (فيديو / PDF / وورد / إكسل / صوت / مجلد) بتتحدد لوحدها من الرابط أو الاسم. تقدر تحط <code>{{تايمر …}}</code> أو <code>{{حالة …}}</code> جوه الاسم.</p></div>`;
+      <div class="field"><label>الملفات</label>
+        <div id="fleRows">${rows0.map(flEditRow).join('')}</div>
+        <button class="btn sm" data-act="fle-add" type="button">＋ ملف آخر</button>
+        <details class="fle-paste"><summary>📋 لصق قائمة جاهزة (من OneDrive / SharePoint / إكسل)</summary>
+          <textarea id="flePaste" placeholder="انسخ الصفوف من الصفحة والصقها هنا…"></textarea>
+          <button class="btn sm primary" data-act="fle-import" type="button" style="margin-top:8px">استيراد الصفوف</button>
+          <p class="hint">كل سطر ملف. لو منسوخ من جدول (الاسم ⇥ التاريخ ⇥ بواسطة) هيتقسّم لوحده، ولو كتبته بالشكل <code>الاسم | الرابط | التاريخ | بواسطة</code> برضو. التواريخ الإنجليزي زي <code>5 days ago</code> أو <code>September 26</code> بتتحوّل لتاريخ عادي.</p>
+        </details>
+        <p class="hint">الأيقونة (فيديو / PDF / وورد…) بتتحدد تلقائي من الاسم والرابط، والتاريخ بيظهر «من 5 أيام» تلقائياً.</p>
+      </div>`;
   }
   else if(b.type==='tasks'){
     body = `
@@ -4130,6 +4485,36 @@ function blockModal(secId, block, type){
   else if(b.type==='divider'){
     body = `<div class="field"><label for="bc">كلمة على الفاصل (اختياري)</label><input id="bc" value="${esc(b.caption||'')}" placeholder="مثال: الباب التاني"><p class="hint">سيبها فاضية لو عايز خط فاصل بس.</p></div>`;
   }
+  else if(b.type==='gallery'){
+    body = `
+      <div class="field"><label for="bc">عنوان المعرض (اختياري)</label><input id="bc" value="${esc(b.caption||'')}" placeholder="مثال: صور السكشن"></div>
+      <div class="field"><label for="bt">الصور</label><textarea id="bt" dir="ltr" style="min-height:150px" placeholder="https://…/1.jpg | تعليق&#10;https://…/2.jpg">${esc(b.text||'')}</textarea>
+        <p class="hint">سطر لكل صورة: <code>الرابط | تعليق (اختياري)</code></p></div>
+      <div class="field"><label for="bcols">عدد الأعمدة</label><select id="bcols">${[2,3,4].map(n=>`<option value="${n}" ${(+b.cols||3)===n?'selected':''}>${n}</option>`).join('')}</select></div>`;
+  }
+  else if(b.type==='button'){
+    body = `
+      <div class="field"><label for="bc">كلمة على الزرار</label><input id="bc" value="${esc(b.caption||'')}" placeholder="مثال: ادخل على الجروب"></div>
+      <div class="field"><label for="bu">الرابط</label><input id="bu" dir="ltr" value="${esc(b.url||'')}" placeholder="https://…"></div>
+      <div class="field"><label for="bt">سطر صغير تحت الزرار (اختياري)</label><input id="bt" value="${esc(b.text||'')}"></div>
+      <div class="field"><label for="bv">الشكل</label><select id="bv">${[['primary','أساسي (ملوّن)'],['outline','بإطار'],['gold','ذهبي']].map(([v,l])=>`<option value="${v}" ${(b.variant||'primary')===v?'selected':''}>${l}</option>`).join('')}</select></div>`;
+  }
+  else if(b.type==='list'){
+    body = `
+      <div class="field"><label for="bc">عنوان (اختياري)</label><input id="bc" value="${esc(b.caption||'')}"></div>
+      <div class="field"><label for="bv">النوع</label><select id="bv">${[['bullets','• نقاط'],['numbers','1. ترقيم'],['checks','☑ تشيك ليست (الطالب يعلّم عليها)']].map(([v,l])=>`<option value="${v}" ${(b.variant||'bullets')===v?'selected':''}>${l}</option>`).join('')}</select></div>
+      <div class="field"><label for="bt">العناصر</label><textarea id="bt" style="min-height:150px" placeholder="العنصر الأول&#10;العنصر التاني">${esc(b.text||'')}</textarea><p class="hint">سطر لكل عنصر.</p></div>`;
+  }
+  else if(b.type==='spacer'){
+    body = `<div class="field"><label for="bh">ارتفاع المسافة (بالبكسل)</label><input id="bh" type="number" min="8" max="400" value="${+b.h||32}"></div>`;
+  }
+  else if(b.type==='html'){
+    body = `
+      <div class="field"><label for="bc">وصف قصير (اختياري)</label><input id="bc" value="${esc(b.caption||'')}"></div>
+      <div class="field"><label for="bt">كود HTML</label><textarea id="bt" dir="ltr" style="min-height:200px;font-family:monospace" placeholder="<div style='padding:16px'>أي حاجة…</div>">${esc(b.text||'')}</textarea>
+        <p class="hint">بيتعرض في إطار معزول (HTML و CSS و JavaScript شغّالين جواه ومش بيأثروا على باقي الموقع).</p></div>
+      <div class="field"><label for="bh">ارتفاع الإطار (بالبكسل)</label><input id="bh" type="number" min="60" max="1600" value="${+b.h||320}"></div>`;
+  }
   else if(b.type==='badges'){
     body = `<div class="field"><label>البطاقات/الأوسمة</label><div id="badges">${
       (b.items||[]).map(it=>badgeRow(it)).join('')
@@ -4139,6 +4524,7 @@ function blockModal(secId, block, type){
     if(b.type==='text'){
       b.style=$('#bs').value; b.text=$('#bt').value;
       b.align = $('#balign') ? $('#balign').value : 'center';
+      b.checks = $('#bchk') ? $('#bchk').value : 'marked';
       if($('#bfont')){ b.font = $('#bfont').value; b.bsize = $('#bsize').value; b.tcolor = $('#bclrOn').checked ? $('#bclr').value : ''; }
       if(!b.text.trim()){toast('اكتب النص');return false;}
     }
@@ -4150,7 +4536,15 @@ function blockModal(secId, block, type){
       b.url=$('#bu').value.trim(); b.caption=$('#bc').value.trim();
       if(!b.url){ toast('أضف رابط ملف أو ارفع ملفاً'); return false; }
     }
-    if(['tasks','table','accordion','code','filelist'].includes(b.type)){
+    if(b.type==='filelist'){
+      const rows = [...document.querySelectorAll('#fleRows .fle-row')].map((r,i)=>{
+        const a = ['.fle-name','.fle-url','.fle-date','.fle-by'].map(q=>r.querySelector(q).value.replace(/\|/g,'/').trim());
+        a[2] = flNormDate(a[2]); return a; }).filter(a=>a[0]);
+      if(!rows.length){ toast('أضف ملف واحد على الأقل'); return false; }
+      b.text = rows.map(a=>{ while(a.length>1 && !a[a.length-1]) a.pop(); return a.join(' | '); }).join('\n');
+      b.caption = $('#bc').value.trim();
+    }
+    if(['tasks','table','accordion','code'].includes(b.type)){
       b.text = $('#bt').value; b.caption = $('#bc') ? $('#bc').value.trim() : '';
       if(!b.text.trim()){ toast('اكتب المحتوى الأول'); return false; }
     }
@@ -4165,6 +4559,23 @@ function blockModal(secId, block, type){
       })).filter(x=>x.label && x.url);
       if(!b.items.length){ toast('أضف رابطاً واحداً على الأقل'); return false; }
     }
+    if(b.type==='gallery'){
+      b.text = $('#bt').value; b.caption = $('#bc').value.trim(); b.cols = +$('#bcols').value;
+      if(!b.text.trim()){ toast('أضف رابط صورة واحدة على الأقل'); return false; }
+    }
+    if(b.type==='button'){
+      b.caption = $('#bc').value.trim(); b.url = $('#bu').value.trim(); b.text = $('#bt').value.trim(); b.variant = $('#bv').value;
+      if(!b.caption || !b.url){ toast('اكتب كلمة الزرار والرابط'); return false; }
+    }
+    if(b.type==='list'){
+      b.caption = $('#bc').value.trim(); b.variant = $('#bv').value; b.text = $('#bt').value;
+      if(!b.text.trim()){ toast('اكتب عنصر واحد على الأقل'); return false; }
+    }
+    if(b.type==='spacer'){ b.h = Math.max(8, Math.min(400, +$('#bh').value || 32)); }
+    if(b.type==='html'){
+      b.caption = $('#bc').value.trim(); b.text = $('#bt').value; b.h = Math.max(60, Math.min(1600, +$('#bh').value || 320));
+      if(!b.text.trim()){ toast('اكتب كود HTML الأول'); return false; }
+    }
     if(b.type==='badges'){
       b.items=[...document.querySelectorAll('#badges .badgerow')].map(r=>({
         label:r.querySelector('.bg-label').value.trim(), color:r.querySelector('.bg-color').value
@@ -4172,7 +4583,7 @@ function blockModal(secId, block, type){
       if(!b.items.length){ toast('أضف بطاقة واحدة على الأقل'); return false; }
     }
     sec.updatedAt = Date.now();
-    if(isNew) sec.blocks.push(b);
+    if(isNew){ const at = window.__insertAt; if(at!=null && at<=sec.blocks.length) sec.blocks.splice(at,0,b); else sec.blocks.push(b); window.__insertAt = null; }
     commit();
   });
  
@@ -4183,6 +4594,44 @@ function blockModal(secId, block, type){
     if(f.size > maxSize){ toast('الملف كبير جداً — استخدم رابطاً مباشراً'); return; }
     const r=new FileReader(); r.onload=()=>{ $('#bu').value=r.result; toast('تم تحميل الملف'); }; r.readAsDataURL(f);
   });
+}
+
+/* ---- محرّر قائمة الملفات ---- */
+function flParse(text){
+  return String(text||'').split('\n').map(r=>r.trim()).filter(Boolean).map(r=>{ const a=r.split('|').map(x=>x.trim()); return {name:a[0]||'', url:a[1]||'', date:a[2]||'', by:a[3]||''}; });
+}
+function flEditRow(r){
+  r = r || {};
+  return `<div class="fle-row">
+    <input class="fle-name" value="${esc(r.name||'')}" placeholder="اسم الملف / المحاضرة">
+    <input class="fle-url" dir="ltr" value="${esc(r.url||'')}" placeholder="الرابط (اختياري) https://…">
+    <input class="fle-date" value="${esc(r.date||'')}" placeholder="التاريخ  2026-09-26">
+    <input class="fle-by" value="${esc(r.by||'')}" placeholder="بواسطة">
+    <span class="fle-btns"><button type="button" class="btn sm" data-act="fle-up" title="لأعلى">▲</button><button type="button" class="btn sm" data-act="fle-down" title="لأسفل">▼</button><button type="button" class="btn sm danger" data-act="fle-del" title="حذف">✕</button></span>
+  </div>`;
+}
+function flNormDate(d){
+  d = String(d||'').trim(); if(!d) return '';
+  const today = new Date(); today.setHours(0,0,0,0);
+  const iso = x => x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
+  const ago = n => { const x=new Date(today); x.setDate(x.getDate()-n); return iso(x); };
+  let m;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+  if(/^today$/i.test(d)) return iso(today);
+  if(/^yesterday$/i.test(d)) return ago(1);
+  if((m = d.match(/^(\d+)\s*(day|days|week|weeks)\s*ago$/i))) return ago(+m[1]*(/week/i.test(m[2])?7:1));
+  if((m = d.match(/^([A-Za-z]+)\s+(\d{1,2})(?:,?\s*(\d{4}))?$/))){
+    const mi = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(m[1].slice(0,3).toLowerCase());
+    if(mi>=0){ const y = m[3] ? +m[3] : today.getFullYear(); const x = new Date(y, mi, +m[2]); if(!m[3] && x>today) x.setFullYear(y-1); return iso(x); }
+  }
+  return d;
+}
+function flImport(text){
+  return String(text||'').split('\n').map(l=>l.replace(/\r/g,'').trim()).filter(Boolean).map(l=>{
+    if(l.includes('|')){ const a=l.split('|').map(x=>x.trim()); return {name:a[0]||'', url:a[1]||'', date:flNormDate(a[2]||''), by:a[3]||''}; }
+    const c = l.split('\t').map(x=>x.trim()).filter((x,i)=>x!=='' || i===0);
+    return {name:c[0]||'', url:'', date:flNormDate(c[1]||''), by:c[2]||''};
+  }).filter(r=>r.name);
 }
 function linkRow(it){
   it = it||{label:'',url:'',desc:''};
@@ -4327,17 +4776,31 @@ document.addEventListener('click', async e=>{
   if(act==='close'){ closeModal(); return; }
   if(act==='modal-save'){ if(onSaveModal) await onSaveModal(); return; }
   if(act==='pick-type'){ blockModal(secId, null, t.dataset.type); return; }
+  if(act==='fle-add'){ const box=$('#fleRows'); const lastBy=[...box.querySelectorAll('.fle-by')].map(i=>i.value).filter(Boolean).pop()||''; box.insertAdjacentHTML('beforeend', flEditRow({by:lastBy})); const rows=box.querySelectorAll('.fle-row'); rows[rows.length-1].querySelector('.fle-name').focus(); return; }
+  if(act==='fle-del'){ const r=t.closest('.fle-row'); if(r){ const box=r.parentElement; r.remove(); if(!box.children.length) box.insertAdjacentHTML('beforeend', flEditRow()); } return; }
+  if(act==='fle-up'){ const r=t.closest('.fle-row'); if(r && r.previousElementSibling) r.parentElement.insertBefore(r, r.previousElementSibling); return; }
+  if(act==='fle-down'){ const r=t.closest('.fle-row'); if(r && r.nextElementSibling) r.parentElement.insertBefore(r.nextElementSibling, r); return; }
+  if(act==='fle-import'){
+    const rows = flImport($('#flePaste').value);
+    if(!rows.length){ toast('الصق الصفوف الأول'); return; }
+    const box = $('#fleRows');
+    box.querySelectorAll('.fle-row').forEach(r=>{ if(![...r.querySelectorAll('input')].some(i=>i.value.trim())) r.remove(); });
+    box.insertAdjacentHTML('beforeend', rows.map(flEditRow).join(''));
+    $('#flePaste').value=''; toast('تم استيراد '+rows.length+' ملف'); return;
+  }
   if(act==='add-link'){ $('#links').insertAdjacentHTML('beforeend', linkRow()); return; }
   if(act==='del-link'){ t.parentElement.remove(); return; }
   if(act==='add-badge'){ $('#badges').insertAdjacentHTML('beforeend', badgeRow()); return; }
 
-  if(act==='choose-track'){ closeSplash(); setTrack(t.dataset.track); return; }
+  if(act==='brand-menu'){ const w=document.getElementById('brandWrap'); const o=!w.classList.contains('open'); w.classList.toggle('open',o); t.setAttribute('aria-expanded',o); return; }
+  if(act==='choose-track'){ closeBrandMenu(); closeSplash(); setTrack(t.dataset.track); return; }
   if(act==='sec-toggle'){
     const sec = findSec(id);
     if(sec && sec.pinned) return; // القسم المثبّت لا يُطوى أبداً
     if(openSections.has(id)) openSections.delete(id); else openSections.add(id);
     const el = document.getElementById('sec-'+id);
-    if(el){ el.classList.toggle('open'); t.setAttribute('aria-expanded', el.classList.contains('open')); }
+    if(el){ el.classList.toggle('open'); t.setAttribute('aria-expanded', el.classList.contains('open'));
+      if(el.classList.contains('open')) setTimeout(()=>{ const r=t.getBoundingClientRect(); if(r.top<90 || r.top>innerHeight*0.72) t.scrollIntoView({behavior:'smooth', block:'start'}); }, 120); }
     return;
   }
   if(act==='toggle-mode'){
@@ -4387,6 +4850,15 @@ document.addEventListener('click', async e=>{
   if(act==='menu-goto-section'){ menuGoto(id); return; }
   if(act==='menu-goto-block'){ menuGoto(t.dataset.sec, t.dataset.block); return; }
   if(act==='menu-switch-track'){ closeMenu(); setTrack(t.dataset.track); return; }
+  if(act==='ins-check'){
+    const ta=$('#bt'); if(!ta) return;
+    const v=ta.value, a=ta.selectionStart||0, z=ta.selectionEnd||0;
+    const st=v.lastIndexOf('\n', a-1)+1; let en=v.indexOf('\n', z); if(en<0) en=v.length;
+    const lines=v.slice(st,en).split('\n'), MK=/^\s*\[\s*\]\s?/;
+    const allMarked=lines.every(l=>!l.trim() || MK.test(l));
+    const out=lines.map(l=> !l.trim() ? l : (allMarked ? l.replace(MK,'') : (MK.test(l) ? l : '[] '+l))).join('\n');
+    ta.value=v.slice(0,st)+out+v.slice(en); ta.focus(); ta.setSelectionRange(st, st+out.length); return;
+  }
   if(act==='ins-timer'){
     const d = $('#dl-d') && $('#dl-d').value, tt = $('#dl-t') && $('#dl-t').value, ta = $('#bt');
     if(!d){ toast('اختار تاريخ الأول'); return; }
@@ -4434,10 +4906,13 @@ document.addEventListener('click', async e=>{
     case 'sec-up':   { const r=findSecDeep(id); if(r){ move(r.list,id,-1); commit(); } break; }
     case 'sec-down': { const r=findSecDeep(id); if(r){ move(r.list,id, 1); commit(); } break; }
     case 'add-block': chooseType(secId); break;
+    case 'add-block-at': chooseType(secId, +t.dataset.at); break;
     case 'blk-edit': blockModal(secId, findSec(secId).blocks.find(b=>b.id===id)); break;
     case 'blk-del':
       if(confirm('حذف هذا المحتوى؟')){ const s=findSec(secId); s.blocks=s.blocks.filter(b=>b.id!==id); commit(); }
       break;
+    case 'blk-dup': { const sc=findSec(secId); const i=sc.blocks.findIndex(x=>x.id===id); if(i>=0){ const c=JSON.parse(JSON.stringify(sc.blocks[i])); c.id=uid(); sc.blocks.splice(i+1,0,c); commit(); toast('تم نسخ المحتوى'); } break; }
+    case 'add-section-at': { const f=findSecDeep(t.dataset.id); window.__secIns={id:t.dataset.id,pos:t.dataset.pos}; sectionModal(null, f && f.parent ? f.parent.id : undefined); break; }
     case 'blk-up':   move(findSec(secId).blocks,id,-1); commit(); break;
     case 'blk-down': move(findSec(secId).blocks,id, 1); commit(); break;
     case 'settings': settingsModal(); break;
@@ -4524,11 +4999,15 @@ window.addEventListener('resize', syncTopbarHeight);
   try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{ if(themeBackup === null && site && site.theme) applyTheme(site.theme); }); }catch(e){}
   (function(){
     const bar=document.getElementById('readProg'), up=document.getElementById('toTop'); let tk=false;
-    const upd=()=>{ tk=false; const d=document.documentElement, h=d.scrollHeight-innerHeight, y=scrollY;
+    const upd=()=>{ tk=false; { const tb=document.getElementById('topbar'); if(tb) tb.classList.toggle('scrolled', scrollY>8); } const d=document.documentElement, h=d.scrollHeight-innerHeight, y=scrollY;
       if(bar) bar.style.transform='scaleX('+(h>0?Math.min(1,y/h):0)+')'; if(up) up.classList.toggle('on', y>500); };
     addEventListener('scroll',()=>{ if(!tk){ tk=true; requestAnimationFrame(upd); } },{passive:true});
     if(up) up.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
   })();
+  document.addEventListener('click', e=>{ if(!e.target.closest('#brandWrap')) closeBrandMenu(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeBrandMenu(); });
+  document.addEventListener('change', e=>{ const k=e.target.closest && e.target.closest('input[data-ckl]'); if(!k) return; const [bid,h]=k.dataset.ckl.split(':'); const st=lsGet('site_ckl_'+bid,{}); if(k.checked) st[h]=1; else delete st[h]; lsSet('site_ckl_'+bid, st); const ln=k.closest('.ck-line'); if(ln) ln.classList.toggle('is-on',k.checked); const w=k.closest('.ck-wrap'); const cb=w&&w.querySelector('.ck-count b'); if(cb) cb.textContent=[...w.querySelectorAll('input[data-ckl]')].filter(i=>i.checked).length; });
+  document.addEventListener('change', e=>{ const c=e.target.closest && e.target.closest('input[data-ck]'); if(!c) return; const [bid,i]=c.dataset.ck.split(':'); const st=lsGet('site_ck_'+bid,{}); st[i]=c.checked; lsSet('site_ck_'+bid, st); });
   currentTrack = loadTrack();
   render();
   syncTopbarHeight();
