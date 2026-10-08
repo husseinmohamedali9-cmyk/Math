@@ -1439,6 +1439,87 @@ body.admin #maintBox{display:none}
   .topbar.has-logo .tcc-t{font-size:10px;letter-spacing:0}
   .topbar.has-logo .tcd-label{font-size:9.5px}
 }
+
+.dl-timer{display:inline-flex;align-items:center;gap:6px;margin-inline-start:10px;padding:2px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);font-size:.82em;font-weight:700;white-space:nowrap;vertical-align:middle;line-height:1.7}
+.dl-timer .dl-v{font-variant-numeric:tabular-nums;direction:rtl;unicode-bidi:isolate;font-weight:700}
+.dl-timer .dl-v:empty::before{content:'…'}
+.dl-timer.urgent{background:rgba(239,68,68,.14);color:#ef4444;border-color:rgba(239,68,68,.45);animation:dlPulse 1.6s ease-in-out infinite}
+.dl-timer.done{background:rgba(120,120,120,.16);color:var(--ink-faint);text-decoration:line-through;animation:none}
+@keyframes dlPulse{50%{box-shadow:0 0 0 4px rgba(239,68,68,.12)}}
+.dl-ins{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.dl-ins input{width:auto;flex:1;min-width:120px}
+
+.st-box{display:inline-flex;align-items:center;justify-content:center;width:1.55em;height:1.55em;margin-inline-start:8px;border-radius:7px;font-size:.95em;font-weight:800;line-height:1;vertical-align:middle;border:2px solid;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.st-box.st-done{background:rgba(34,197,94,.18);color:#22c55e;border-color:#22c55e}
+.st-box.st-wip{background:rgba(245,158,11,.16);color:#f59e0b;border-color:#f59e0b}
+.st-box.st-no{background:rgba(239,68,68,.16);color:#ef4444;border-color:#ef4444}
+.st-ins select{width:auto;flex:1;min-width:120px}
+
+.pdf-card{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow);padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.pdf-main{display:flex;align-items:center;gap:12px;min-width:0}
+.pdf-ico{font-size:30px;flex:none}
+.pdf-info{display:flex;flex-direction:column;min-width:0}
+.pdf-name{font-size:1.05em;overflow-wrap:anywhere}
+.pdf-sub{font-size:.8em;color:var(--ink-faint)}
+.pdf-actions{display:flex;gap:8px;flex-wrap:wrap}
+.pdf-btn{font:inherit;font-weight:700;font-size:.88em;padding:7px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);cursor:pointer}
+.pdf-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pdf-btn:hover{filter:brightness(1.12)}
+.pdf-view iframe{width:100%;height:520px;border:1px solid var(--line);border-radius:12px;background:#fff;display:block}
+.pdf-note{font-size:.8em;color:var(--ink-faint);margin:6px 0 0}
+.b-tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.b-table{width:100%;border-collapse:collapse;font-size:.95em}
+.b-table th{background:var(--accent-soft);color:var(--accent);font-weight:800}
+.b-table th,.b-table td{padding:10px 14px;text-align:start;border-bottom:1px solid var(--line);white-space:nowrap}
+.b-table tbody tr:nth-child(even){background:var(--surface-2)}
+.b-table tbody tr:last-child td{border-bottom:0}
+.b-cap{font-size:.85em;color:var(--ink-faint);text-align:center;margin:8px 0 0}
+.b-tasks{border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow);padding:14px 16px}
+.tk-head{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:.95em}
+.tk-head span{color:var(--ink-faint);font-size:.85em}
+.tk-bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:10px 0 6px;border:1px solid var(--line)}
+.tk-bar i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#86efac);border-radius:99px;transition:width .5s}
+.b-tasks ul{list-style:none;margin:0;padding:0}
+.tk-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:9px 0;border-bottom:1px dashed var(--line)}
+.tk-row:last-child{border-bottom:0}
+.tk-row .st-box,.tk-row .dl-timer{margin:0}
+.tk-text{flex:1;min-width:140px}
+.tk-row.is-done .tk-text{opacity:.6;text-decoration:line-through}
+.b-acc{display:flex;flex-direction:column;gap:8px}
+.acc-item{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.acc-item summary{cursor:pointer;padding:12px 16px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.acc-item summary::-webkit-details-marker{display:none}
+.acc-item summary::after{content:'＋';color:var(--accent);font-weight:800}
+.acc-item[open] summary::after{content:'－'}
+.acc-item[open] summary{background:var(--accent-soft);color:var(--accent)}
+.acc-body{padding:12px 16px;color:var(--ink-soft);line-height:1.9}
+.b-audio audio{width:100%;display:block;border-radius:12px}
+.b-divider{display:flex;align-items:center;gap:14px;margin:10px 0;color:var(--ink-faint);font-weight:700}
+.b-divider::before,.b-divider::after{content:'';flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+.b-divider span:empty{display:none}
+.b-divider:has(span:empty)::after{display:none}
+.b-code{border:1px solid #30363d;border-radius:14px;overflow:hidden;background:#0D1117;direction:ltr;box-shadow:var(--shadow)}
+.code-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#161b22;color:#8b949e;font-size:.82em}
+.b-code pre{margin:0;padding:14px 16px;overflow-x:auto;color:#C9D1D9;font:.9em/1.7 ui-monospace,Menlo,Consolas,monospace;text-align:left}
+.b-embed{border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);background:var(--surface-2)}
+.b-embed iframe{width:100%;height:520px;border:0;display:block;background:#fff}
+
+.b-files{border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
+.fl-title{padding:12px 16px;font-weight:800;border-bottom:1px solid var(--line)}
+.fl-row{display:grid;grid-template-columns:34px minmax(0,1fr) 130px 190px;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}
+.fl-row:last-child{border-bottom:0}
+a.fl-row:hover{background:var(--accent-soft)}
+.fl-head{font-size:.8em;font-weight:800;color:var(--ink-faint);background:var(--surface-2)}
+.fl-ico{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;font-size:.78em;font-weight:800;color:#fff;background:#6b7280}
+.fl-video{background:#8b5cf6}.fl-pdf{background:#ef4444;font-size:.62em}.fl-doc{background:#2563eb}.fl-xls{background:#16a34a}.fl-ppt{background:#ea580c}.fl-audio{background:#0ea5e9}.fl-folder,.fl-img,.fl-file{background:transparent;font-size:1.3em}
+.fl-name{overflow-wrap:anywhere;line-height:1.7}
+.fl-date{color:var(--ink-faint);font-size:.88em}
+.fl-by i{font-style:normal;display:inline-block;max-width:100%;padding:3px 12px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);font-size:.82em;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+@media(max-width:640px){
+  .fl-head{display:none}
+  .fl-row{grid-template-columns:34px minmax(0,1fr);row-gap:4px}
+  .fl-date,.fl-by{grid-column:2}
+}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -2063,6 +2144,153 @@ async function hashPass(pass){
   }
 }
  
+/* ===== أنواع محتوى إضافية + كارت PDF ===== */
+function miniFmt(t){
+  return esc(String(t||''))
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/==(.+?)==/g,'<mark class="hl">$1</mark>')
+    .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(DL_RE, dlHtml).replace(ST_RE, stHtml);
+}
+function fileNameOf(url){
+  try{ if(/^data:/i.test(url)) return ''; const n = decodeURIComponent(new URL(url, location.href).pathname.split('/').filter(Boolean).pop()||''); return n.replace(/\.pdf$/i,'').replace(/[-_]+/g,' ').trim(); }catch(_){ return ''; }
+}
+/* يحوّل روابط جوجل درايف/دوكس لرابط معاينة قابل للتضمين */
+function embedUrl(u){
+  u = String(u||'').trim();
+  let m = u.match(/drive\.google\.com\/file\/d\/([^/?#]+)/); if(m) return 'https://drive.google.com/file/d/'+m[1]+'/preview';
+  m = u.match(/drive\.google\.com\/open\?id=([^&#]+)/); if(m) return 'https://drive.google.com/file/d/'+m[1]+'/preview';
+  m = u.match(/(docs\.google\.com\/(?:document|spreadsheets|presentation|forms)\/d\/[^/?#]+)/);
+  if(m) return 'https://'+m[1]+(/forms/.test(u) ? '/viewform?embedded=true' : '/preview');
+  return u;
+}
+function pdfCard(b){
+  const name = (b.caption||'').trim() || fileNameOf(b.url) || 'ملف PDF';
+  return '<div class="pdf-card" data-url="'+esc(b.url)+'" data-name="'+esc(name)+'">'
+    + '<div class="pdf-main"><span class="pdf-ico">📄</span><div class="pdf-info"><b class="pdf-name">'+esc(name)+'</b><span class="pdf-sub">ملف PDF</span></div></div>'
+    + '<div class="pdf-actions"><button type="button" class="pdf-btn" data-pdf="preview">👁 معاينة</button>'
+    + '<button type="button" class="pdf-btn primary" data-pdf="open">فتح ↗</button>'
+    + '<button type="button" class="pdf-btn" data-pdf="dl">⬇ تحميل</button></div>'
+    + '<div class="pdf-view" hidden></div></div>';
+}
+function pdfBlobUrl(u){
+  if(!/^data:/i.test(u)) return u;
+  try{ const i = u.indexOf(','), meta = u.slice(5,i), bin = /;base64/i.test(meta) ? atob(u.slice(i+1)) : decodeURIComponent(u.slice(i+1));
+    const arr = new Uint8Array(bin.length); for(let k=0;k<bin.length;k++) arr[k] = bin.charCodeAt(k);
+    return URL.createObjectURL(new Blob([arr], {type:'application/pdf'})); }catch(_){ return u; }
+}
+document.addEventListener('click', e=>{
+  const cp = e.target.closest('[data-copy-code]');
+  if(cp){ const code = cp.closest('.b-code'); const txt = code && code.querySelector('pre') ? code.querySelector('pre').textContent : '';
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(()=>toast('تم نسخ الكود ✅')).catch(()=>toast('تعذّر النسخ')); return; }
+  const bt = e.target.closest('.pdf-btn'); if(!bt) return;
+  const card = bt.closest('.pdf-card'), url = card.dataset.url, k = bt.dataset.pdf;
+  if(k==='open'){ window.open(pdfBlobUrl(url), '_blank', 'noopener'); return; }
+  if(k==='dl'){ const a = document.createElement('a'); a.href = pdfBlobUrl(url); a.download = (card.dataset.name||'file')+'.pdf'; document.body.appendChild(a); a.click(); a.remove(); return; }
+  if(k==='preview'){
+    const v = card.querySelector('.pdf-view');
+    if(!v.hidden){ v.hidden = true; v.innerHTML = ''; bt.textContent = '👁 معاينة'; return; }
+    v.innerHTML = '<iframe title="'+esc(card.dataset.name)+'" src="'+esc(embedUrl(pdfBlobUrl(url)))+'"></iframe><p class="pdf-note">لو المعاينة مظهرتش، اضغط «فتح» أو «تحميل».</p>';
+    v.hidden = false; bt.textContent = '✕ إخفاء المعاينة';
+  }
+});
+function renderExtra(b){
+  const t = String(b.text||'');
+  if(b.type==='table'){
+    const rows = t.split('\n').map(r=>r.trim()).filter(Boolean).map(r=>r.split('|').map(c=>c.trim()));
+    if(!rows.length) return '';
+    const cols = Math.max(...rows.map(r=>r.length));
+    const cell = (tag,r)=>Array.from({length:cols},(_,i)=>'<'+tag+'>'+miniFmt(r[i]||'')+'</'+tag+'>').join('');
+    return '<div class="b-tablewrap"><table class="b-table"><thead><tr>'+cell('th',rows[0])+'</tr></thead><tbody>'+rows.slice(1).map(r=>'<tr>'+cell('td',r)+'</tr>').join('')+'</tbody></table></div>'
+      + (b.caption ? '<p class="b-cap">'+esc(b.caption)+'</p>' : '');
+  }
+  if(b.type==='tasks'){
+    const dRe = /^\d{4}-\d{2}-\d{2}(?:[ T]+\d{1,2}:\d{2})?$/, sRe = /^(تم|خلص|جاري|لا|done|wip|no)$/i;
+    const items = t.split('\n').map(r=>r.trim()).filter(Boolean).map(r=>{
+      const parts = r.split('|').map(x=>x.trim()); const o = {text:parts[0]||'', date:'', st:''};
+      parts.slice(1).forEach(x=>{ if(dRe.test(x)) o.date = x; else if(sRe.test(x)) o.st = x; });
+      return o; });
+    if(!items.length) return '';
+    const done = items.filter(o=>/^(تم|خلص|done)$/i.test(o.st)).length, pct = Math.round(done/items.length*100);
+    return '<div class="b-tasks"><div class="tk-head"><b>'+esc(b.caption||'المهام والمواعيد')+'</b><span>'+done+' / '+items.length+' خلصت</span></div>'
+      + '<div class="tk-bar"><i style="width:'+pct+'%"></i></div><ul>'
+      + items.map(o=>{ const isDone = /^(تم|خلص|done)$/i.test(o.st);
+          const timer = o.date ? dlHtml(o.date, o.date.slice(0,10), (o.date.match(/(\d{1,2}:\d{2})$/)||[])[1]) : '';
+          return '<li class="tk-row'+(isDone?' is-done':'')+'">'+(o.st ? stHtml('', o.st.toLowerCase()) : '<span class="st-box st-wip" style="opacity:.35">·</span>')
+            +'<span class="tk-text">'+miniFmt(o.text)+'</span>'+timer+'</li>'; }).join('')
+      + '</ul></div>';
+  }
+  if(b.type==='filelist'){
+    const rows = t.split('\n').map(r=>r.trim()).filter(Boolean).map(r=>{ const a=r.split('|').map(x=>x.trim()); return {name:a[0]||'', url:a[1]||'', date:a[2]||'', by:a[3]||''}; });
+    if(!rows.length) return '';
+    const kindOf = r=>{ const u = (r.url+' '+r.name).toLowerCase();
+      if(/youtu|vimeo|\.(mp4|mov|mkv|webm|avi)\b|فيديو|محاضرة/.test(u)) return ['▶','video'];
+      if(/\.pdf\b|pdf/.test(u)) return ['PDF','pdf'];
+      if(/\.(docx?|dotx?)\b|docs\.google\.com\/document/.test(u)) return ['W','doc'];
+      if(/\.(xlsx?|csv)\b|spreadsheets/.test(u)) return ['X','xls'];
+      if(/\.(pptx?)\b|presentation/.test(u)) return ['P','ppt'];
+      if(/\.(mp3|wav|m4a|ogg)\b|صوت/.test(u)) return ['♪','audio'];
+      if(/\.(png|jpe?g|gif|webp)\b/.test(u)) return ['🖼','img'];
+      if(/folder|\/folders\/|مجلد/.test(u)) return ['📁','folder'];
+      return ['📄','file']; };
+    const rel = d=>{ if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+      const t0 = new Date(d+'T00:00:00').getTime(), now = new Date(); now.setHours(0,0,0,0);
+      const n = Math.round((now.getTime()-t0)/86400000);
+      if(isNaN(n)) return d; if(n<0) return 'بعد '+(-n)+' يوم'; if(n===0) return 'النهارده'; if(n===1) return 'إمبارح';
+      if(n<7) return 'من '+n+' أيام'; if(n<30) return 'من '+Math.floor(n/7)+' أسبوع'; return new Date(t0).toLocaleDateString('ar-EG',{day:'numeric',month:'long',year:'numeric'}); };
+    return '<div class="b-files">'+(b.caption?'<div class="fl-title">'+esc(b.caption)+'</div>':'')
+      + '<div class="fl-row fl-head"><span></span><span>الاسم</span><span>آخر تعديل</span><span>بواسطة</span></div>'
+      + rows.map(r=>{ const k = kindOf(r), inner = '<span class="fl-ico fl-'+k[1]+'">'+k[0]+'</span><span class="fl-name">'+miniFmt(r.name)+'</span><span class="fl-date" title="'+esc(r.date)+'">'+esc(rel(r.date))+'</span><span class="fl-by">'+(r.by?'<i>'+esc(r.by)+'</i>':'')+'</span>';
+          return r.url ? '<a class="fl-row" href="'+esc(r.url)+'" target="_blank" rel="noopener">'+inner+'</a>' : '<div class="fl-row">'+inner+'</div>'; }).join('')
+      + '</div>';
+  }
+  if(b.type==='accordion'){
+    const items = t.split('\n').map(r=>r.trim()).filter(Boolean).map(r=>{ const i = r.indexOf('::'); return i<0 ? [r,''] : [r.slice(0,i).trim(), r.slice(i+2).trim()]; });
+    return '<div class="b-acc">'+items.map(([q,a])=>'<details class="acc-item"><summary>'+miniFmt(q)+'</summary><div class="acc-body">'+miniFmt(a)+'</div></details>').join('')+'</div>';
+  }
+  if(b.type==='audio'){
+    return '<figure class="b-audio"><audio controls preload="metadata" src="'+esc(b.url)+'"></audio>'+(b.caption?'<figcaption>'+esc(b.caption)+'</figcaption>':'')+'</figure>';
+  }
+  if(b.type==='divider'){
+    return '<div class="b-divider" role="separator"><span>'+esc(b.caption||'')+'</span></div>';
+  }
+  if(b.type==='code'){
+    return '<div class="b-code"><div class="code-bar"><span>'+esc(b.caption||'كود')+'</span><button type="button" class="btn sm" data-copy-code>نسخ</button></div><pre dir="ltr">'+esc(t)+'</pre></div>';
+  }
+  if(b.type==='embed'){
+    return '<div class="b-embed"><iframe src="'+esc(embedUrl(b.url))+'" title="'+esc(b.caption||'محتوى مضمّن')+'" loading="lazy" allowfullscreen></iframe>'
+      + '<div class="pdf-fallback"><span>'+esc(b.caption||'محتوى مضمّن')+'</span><a href="'+esc(b.url)+'" target="_blank" rel="noopener">فتح في نافذة جديدة ↗</a></div></div>';
+  }
+  return '';
+}
+/* ✅⏳❌ بوكس حالة جنب أي نص: {{حالة تم}} أو {{حالة جاري}} أو {{حالة لا}} */
+const ST_RE = /\{\{\s*(?:حالة|status)\s*[:：]?\s*(تم|خلص|جاري|لا|done|wip|no)\s*\}\}/g;
+function stHtml(m, k){
+  const map = {'تم':'done','خلص':'done','done':'done','جاري':'wip','wip':'wip','لا':'no','no':'no'};
+  const kind = map[k], ico = {done:'✓', wip:'⏳', no:'✕'}[kind], tip = {done:'خلصت', wip:'جاري / لسه', no:'مخلصتش'}[kind];
+  return '<span class="st-box st-' + kind + '" role="img" aria-label="' + tip + '" title="' + tip + '">' + ico + '</span>';
+}
+/* ⏱ تايمر ديدلاين جنب أي نص: اكتب {{تايمر 2026-12-20}} أو {{تايمر 2026-12-20 18:30}} */
+const DL_RE = /\{\{\s*(?:تايمر|timer)\s*[:：]?\s*(\d{4}-\d{2}-\d{2})(?:[ T]+(\d{1,2}:\d{2}))?\s*\}\}/g;
+function dlHtml(m, d, t){
+  const ts = new Date(d + 'T' + (t ? t.padStart(5,'0') + ':00' : '23:59:59')).getTime();
+  if(isNaN(ts)) return m;
+  return '<span class="dl-timer" data-t="' + ts + '" title="الديدلاين: ' + d + (t ? ' ' + t : '') + '"><span class="dl-ico">⏱</span><b class="dl-v"></b></span>';
+}
+function dlTick(){
+  const now = Date.now(), pd = x=>String(x).padStart(2,'0');
+  document.querySelectorAll('.dl-timer').forEach(el=>{
+    const left = +el.dataset.t - now, v = el.querySelector('.dl-v'); if(!v) return;
+    const nb = [el.previousElementSibling, el.nextElementSibling];
+    if(nb.some(n=>n && n.classList && n.classList.contains('st-done'))){ el.classList.add('done'); el.classList.remove('urgent'); v.textContent = 'تم ✓'; return; }
+    if(left <= 0){ el.classList.add('done'); el.classList.remove('urgent'); v.textContent = 'انتهى الديدلاين'; return; }
+    el.classList.remove('done'); el.classList.toggle('urgent', left < 3*86400000);
+    const sec = Math.floor(left/1000), d = Math.floor(sec/86400), h = Math.floor(sec%86400/3600), mi = Math.floor(sec%3600/60), se = sec%60;
+    v.textContent = (d > 0 ? d + ' يوم ' : '') + pd(h) + ':' + pd(mi) + ':' + pd(se);
+  });
+}
+setInterval(dlTick, 1000); setTimeout(dlTick, 0);
+new MutationObserver(()=>{ clearTimeout(window.__dlT); window.__dlT = setTimeout(dlTick, 30); }).observe(document.documentElement, {childList:true, subtree:true});
+
 /* تنسيق نصّي مبسّط: **عريض** و*مائل* و`كود` و[نص](رابط) وقوائم تبدأ بـ - */
 function fmt(text){
   const lines = String(text||'').split(/\n/);
@@ -2072,7 +2300,8 @@ function fmt(text){
     .replace(/(^|\W)\*(.+?)\*(?=\W|$)/g,'$1<em>$2</em>')
     .replace(/`(.+?)`/g,'<code>$1</code>')
     .replace(/==(.+?)==/g,'<mark class="hl">$1</mark>')
-    .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+    .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(DL_RE, dlHtml).replace(ST_RE, stHtml);
   for(const line of lines){
     const t=line.trim();
     if(/^[-•]\s+/.test(t)){ if(!inList){out+='<ul>'; inList=true;} out+='<li>'+inline(t.replace(/^[-•]\s+/,''))+'</li>'; continue; }
@@ -2091,7 +2320,8 @@ function stepsHtml(text, align){
     .replace(/(^|\W)\*(.+?)\*(?=\W|$)/g,'$1<em>$2</em>')
     .replace(/`(.+?)`/g,'<code>$1</code>')
     .replace(/==(.+?)==/g,'<mark class="hl">$1</mark>')
-    .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+    .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(DL_RE, dlHtml).replace(ST_RE, stHtml);
   const lines = String(text||'').split(/\n/).map(l=>l.trim().replace(/^[-•]\s+/,'')).filter(Boolean);
   if(!lines.length) return '';
   return `<ol class="b-steps" style="text-align:${align||'right'}">` + lines.map(l=>'<li>'+inline(l)+'</li>').join('') + '</ol>';
@@ -3524,7 +3754,7 @@ function renderBlock(b, secId, j, last){
     </div>`;
   let body='';
   if(b.type==='text'){
-    const align = (!b.align || b.align==='right') ? 'center' : b.align; /* النص في النص افتراضياً */
+    const align = (!b.align || b.align==='right') ? 'center' : (b.align==='start' ? 'right' : b.align); /* النص في النص افتراضياً — 'start' = يمين فعلي */
     const alignAttr = ` style="text-align:${align}"`;
     if(b.style==='heading')      body = `<h3 class="b-h"${alignAttr}>${esc(b.text)}</h3>`;
     else if(b.style==='quote')   body = `<blockquote class="b-quote"${alignAttr}>${fmt(b.text)}</blockquote>`;
@@ -3555,13 +3785,8 @@ function renderBlock(b, secId, j, last){
       <li><a class="linkbtn" href="${esc(it.url)}" target="_blank" rel="noopener">
         <b>${esc(it.label)}</b>${it.desc?`<span>${esc(it.desc)}</span>`:''}</a></li>`).join('')}</ul>`;
   }
-  else if(b.type==='pdf'){
-    body = `<div class="pdf-box">
-      <iframe src="${esc(b.url)}" title="${esc(b.caption||'PDF')}" loading="lazy"></iframe>
-      <div class="pdf-fallback"><span>${esc(b.caption||'ملف PDF')}</span>
-        <a href="${esc(b.url)}" target="_blank" rel="noopener">فتح في نافذة جديدة ↗</a></div>
-    </div>`;
-  }
+  else if(b.type==='pdf'){ body = pdfCard(b); }
+  else if(['table','tasks','accordion','audio','divider','code','embed','filelist'].includes(b.type)){ body = renderExtra(b); }
   else if(b.type==='badges'){
     body = `<ul class="b-badges">${(b.items||[]).map(it=>
       `<li class="badge-tag" style="--tag-c:${esc(it.color||'#1F6F6B')}">${esc(it.label)}</li>`).join('')}</ul>`;
@@ -3770,6 +3995,14 @@ function chooseType(secId){
       <button class="typecard" data-act="pick-type" data-type="links" data-sec="${secId}"><div>🔗</div>روابط</button>
       <button class="typecard" data-act="pick-type" data-type="pdf" data-sec="${secId}"><div>📄</div>ملف PDF</button>
       <button class="typecard" data-act="pick-type" data-type="badges" data-sec="${secId}"><div>🏷️</div>بطاقات وأوسمة</button>
+      <button class="typecard" data-act="pick-type" data-type="tasks" data-sec="${secId}"><div>✅</div>مهام وديدلاينز</button>
+      <button class="typecard" data-act="pick-type" data-type="filelist" data-sec="${secId}"><div>🗂️</div>قائمة ملفات / محاضرات</button>
+      <button class="typecard" data-act="pick-type" data-type="table" data-sec="${secId}"><div>📊</div>جدول</button>
+      <button class="typecard" data-act="pick-type" data-type="accordion" data-sec="${secId}"><div>❓</div>أسئلة وأجوبة (مطويّة)</button>
+      <button class="typecard" data-act="pick-type" data-type="audio" data-sec="${secId}"><div>🎧</div>ملف صوتي</button>
+      <button class="typecard" data-act="pick-type" data-type="embed" data-sec="${secId}"><div>🧩</div>تضمين (درايف / دوكس / فورم)</button>
+      <button class="typecard" data-act="pick-type" data-type="code" data-sec="${secId}"><div>💻</div>كود</button>
+      <button class="typecard" data-act="pick-type" data-type="divider" data-sec="${secId}"><div>➖</div>فاصل / عنوان فاصل</button>
     </div>`, `<button class="btn ghost" data-act="close">إلغاء</button>`, null);
 }
  
@@ -3803,11 +4036,11 @@ function blockModal(secId, block, type){
         </select></div>
       <div class="field"><label>محاذاة النص</label>
         <div class="align-group">
-          <button type="button" class="btn sm align-btn" data-act="pick-align" data-align="right"  aria-pressed="${(b.align||'right')==='right'}">⇥ يمين</button>
-          <button type="button" class="btn sm align-btn" data-act="pick-align" data-align="center" aria-pressed="${b.align==='center'}">↔ في النص</button>
+          <button type="button" class="btn sm align-btn" data-act="pick-align" data-align="start"  aria-pressed="${b.align==='start'}">⇥ يمين</button>
+          <button type="button" class="btn sm align-btn" data-act="pick-align" data-align="center" aria-pressed="${!b.align||b.align==='right'||b.align==='center'}">↔ في النص</button>
           <button type="button" class="btn sm align-btn" data-act="pick-align" data-align="left"   aria-pressed="${b.align==='left'}">⇤ يسار</button>
         </div>
-        <input type="hidden" id="balign" value="${b.align||'right'}"></div>
+        <input type="hidden" id="balign" value="${(!b.align||b.align==='right')?'center':b.align}"></div>
       <div class="field"><label for="bfont">🔤 خط الكتابة</label>
         <select id="bfont"><option value="">الافتراضي (خط النصوص)</option>${FONTS.map(f=>`<option value="${f}" ${b.font===f?'selected':''} style="font-family:${stack(f)}">${f}</option>`).join('')}</select></div>
       <div class="field"><label for="bsize">📏 حجم الكتابة</label>
@@ -3815,6 +4048,13 @@ function blockModal(secId, block, type){
       <div class="field"><label style="display:flex;align-items:center;gap:8px;font-weight:400"><input type="checkbox" id="bclrOn" ${b.tcolor?'checked':''} style="width:auto"> 🎨 لون مخصص للكتابة
         <input type="color" id="bclr" value="${b.tcolor||'#d4380d'}" style="width:46px;height:32px;padding:0;border:0;cursor:pointer"></label></div>
       <div class="field"><label for="bt">النص</label><textarea id="bt">${esc(b.text)}</textarea>
+                <div class="dl-ins"><span class="hint">⏱ تايمر ديدلاين جنب النص:</span>
+          <input type="date" id="dl-d" aria-label="تاريخ الديدلاين"><input type="time" id="dl-t" aria-label="الساعة (اختياري)">
+          <button type="button" class="btn sm" data-act="ins-timer">إدراج التايمر</button></div>
+        <div class="dl-ins st-ins"><span class="hint">📦 بوكس حالة جنب النص:</span>
+          <select id="st-k" aria-label="الحالة"><option value="تم">✅ خلصت</option><option value="جاري">⏳ جاري / لسه</option><option value="لا">❌ مخلصتش</option></select>
+          <button type="button" class="btn sm" data-act="ins-status">إدراج البوكس</button></div>
+        <p class="hint">أو اكتب يدوي في آخر السطر: <code>{{تايمر 2026-12-20}}</code> أو <code>{{تايمر 2026-12-20 18:30}}</code> (من غير ساعة = لحد آخر اليوم). وللحالة: <code>{{حالة تم}}</code> أو <code>{{حالة جاري}}</code> أو <code>{{حالة لا}}</code>. لو حطيت «تم» جنب تايمر بيقف التايمر.</p>
         <p class="hint">التنسيق: **عريض** ، *مائل* ، `+"`كود`"+` ، [نص](رابط) ، ==تظليل== ، وسطر يبدأ بـ - يصبح قائمة.
         لـ«خطوات الحل» اكتب كل خطوة في سطر منفصل.</p>
         <details class="hint"><summary>📖 طريقة كتابة الأشكال التفاعلية والمعادلات</summary>
@@ -3845,8 +4085,50 @@ function blockModal(secId, block, type){
     body = `
       <div class="field"><label for="bu">رابط ملف PDF</label><input id="bu" value="${esc(b.url)}" placeholder="https://…/file.pdf"></div>
       <div class="field"><label for="bf">أو ارفع ملف PDF من جهازك</label><input type="file" id="bf" accept="application/pdf">
-        <p class="hint">الملفات المرفوعة تُخزَّن داخل بيانات الموقع — يُفضَّل أن تكون صغيرة (أقل من 2MB). الرابط المباشر أفضل للملفات الكبيرة.</p></div>
-      <div class="field"><label for="bc">عنوان/وصف الملف (اختياري)</label><input id="bc" value="${esc(b.caption||'')}" placeholder="مثال: ملزمة الفصل الأول"></div>`;
+        <p class="hint">الملفات المرفوعة تُخزَّن داخل بيانات الموقع — يُفضَّل أن تكون صغيرة (أقل من 2MB). الرابط المباشر أفضل للملفات الكبيرة. روابط جوجل درايف بتتعرض معاينتها تلقائياً.</p></div>
+      <div class="field"><label for="bc">اسم الملف (اختياري — بيظهر على الكارت)</label><input id="bc" value="${esc(b.caption||'')}" placeholder="مثال: ملزمة الفصل الأول"></div>`;
+  }
+  else if(b.type==='filelist'){
+    body = `
+      <div class="field"><label for="bc">عنوان القائمة (اختياري)</label><input id="bc" value="${esc(b.caption||'')}" placeholder="مثال: محاضرات مادة التربية"></div>
+      <div class="field"><label for="bt">الملفات</label><textarea id="bt" style="min-height:170px" placeholder="مبادئ التربية والتعليم عند اليونان والرومان | https://…/video1 | 2026-09-26 | مصطفى عبد القادر&#10;القيم الأخلاقية في العصور الوسطى | https://…/video2 | 2026-10-03 | مصطفى عبد القادر">${esc(b.text||'')}</textarea>
+        <p class="hint">سطر لكل ملف بالشكل: <code>الاسم | الرابط | التاريخ | بواسطة</code>. كله اختياري ما عدا الاسم. التاريخ بصيغة <code>2026-09-26</code> وبيتعرض «من 5 أيام» تلقائياً (أو اكتب أي نص زي «الأسبوع الماضي»). الأيقونة (فيديو / PDF / وورد / إكسل / صوت / مجلد) بتتحدد لوحدها من الرابط أو الاسم. تقدر تحط <code>{{تايمر …}}</code> أو <code>{{حالة …}}</code> جوه الاسم.</p></div>`;
+  }
+  else if(b.type==='tasks'){
+    body = `
+      <div class="field"><label for="bc">عنوان القائمة (اختياري)</label><input id="bc" value="${esc(b.caption||'')}" placeholder="مثال: ديدلاينات الترم"></div>
+      <div class="field"><label for="bt">المهام</label><textarea id="bt" style="min-height:150px" placeholder="واجب الكالكولس | 2026-12-20 | جاري&#10;مشروع الإحصاء | 2026-12-27 18:30 | لا&#10;ملخص الباب الأول | | تم">${esc(b.text||'')}</textarea>
+        <p class="hint">سطر لكل مهمة بالشكل: <code>النص | التاريخ | الحالة</code>. التاريخ والحالة اختياريين (الحالة: <code>تم</code> أو <code>جاري</code> أو <code>لا</code>). كل مهمة بيظهر جنبها تايمر وبوكس حالة، وفي الأعلى شريط تقدّم.</p></div>`;
+  }
+  else if(b.type==='table'){
+    body = `
+      <div class="field"><label for="bc">عنوان تحت الجدول (اختياري)</label><input id="bc" value="${esc(b.caption||'')}"></div>
+      <div class="field"><label for="bt">محتوى الجدول</label><textarea id="bt" style="min-height:150px" placeholder="المادة | الدكتور | الامتحان&#10;كالكولس | د. أحمد | 2026-12-20&#10;إحصاء | د. منى | 2026-12-27">${esc(b.text||'')}</textarea>
+        <p class="hint">سطر لكل صف، والأعمدة يفصلها <code>|</code>. أول سطر بيبقى عناوين الأعمدة. تقدر تحط <code>{{تايمر …}}</code> و<code>{{حالة …}}</code> جوّه أي خانة.</p></div>`;
+  }
+  else if(b.type==='accordion'){
+    body = `<div class="field"><label for="bt">الأسئلة والأجوبة</label><textarea id="bt" style="min-height:150px" placeholder="إيه هو المنوال؟ :: القيمة الأكثر تكراراً&#10;إزاي أحسب الوسيط؟ :: رتّب القيم وخد اللي في النص">${esc(b.text||'')}</textarea>
+      <p class="hint">كل سطر: <code>السؤال :: الإجابة</code>. الإجابة بتظهر لما الزائر يضغط على السؤال.</p></div>`;
+  }
+  else if(b.type==='audio'){
+    body = `
+      <div class="field"><label for="bu">رابط ملف صوتي</label><input id="bu" value="${esc(b.url)}" placeholder="https://…/lecture.mp3"></div>
+      <div class="field"><label for="bf">أو ارفع ملف صوتي</label><input type="file" id="bf" accept="audio/*"><p class="hint">الملفات المرفوعة بتتخزّن جوّه بيانات الموقع — الرابط المباشر أفضل.</p></div>
+      <div class="field"><label for="bc">عنوان (اختياري)</label><input id="bc" value="${esc(b.caption||'')}"></div>`;
+  }
+  else if(b.type==='embed'){
+    body = `
+      <div class="field"><label for="bu">رابط المحتوى</label><input id="bu" value="${esc(b.url)}" placeholder="https://docs.google.com/…  أو  https://drive.google.com/file/d/…">
+        <p class="hint">بيدعم ملفات جوجل درايف ومستندات/جداول/عروض/فورمز جوجل (لازم تكون مشاركة بـ«أي حد معاه الرابط»). بعض المواقع بتمنع التضمين، وساعتها الزائر هيستخدم زرار «فتح في نافذة جديدة».</p></div>
+      <div class="field"><label for="bc">عنوان (اختياري)</label><input id="bc" value="${esc(b.caption||'')}"></div>`;
+  }
+  else if(b.type==='code'){
+    body = `
+      <div class="field"><label for="bc">اسم / لغة الكود (اختياري)</label><input id="bc" value="${esc(b.caption||'')}" placeholder="Python"></div>
+      <div class="field"><label for="bt">الكود</label><textarea id="bt" dir="ltr" style="min-height:160px;font-family:ui-monospace,Menlo,Consolas,monospace">${esc(b.text||'')}</textarea></div>`;
+  }
+  else if(b.type==='divider'){
+    body = `<div class="field"><label for="bc">كلمة على الفاصل (اختياري)</label><input id="bc" value="${esc(b.caption||'')}" placeholder="مثال: الباب التاني"><p class="hint">سيبها فاضية لو عايز خط فاصل بس.</p></div>`;
   }
   else if(b.type==='badges'){
     body = `<div class="field"><label>البطاقات/الأوسمة</label><div id="badges">${
@@ -3856,7 +4138,7 @@ function blockModal(secId, block, type){
   openModal(isNew?'إضافة محتوى':'تعديل المحتوى', body, footSave(), ()=>{
     if(b.type==='text'){
       b.style=$('#bs').value; b.text=$('#bt').value;
-      b.align = $('#balign') ? $('#balign').value : 'right';
+      b.align = $('#balign') ? $('#balign').value : 'center';
       if($('#bfont')){ b.font = $('#bfont').value; b.bsize = $('#bsize').value; b.tcolor = $('#bclrOn').checked ? $('#bclr').value : ''; }
       if(!b.text.trim()){toast('اكتب النص');return false;}
     }
@@ -3868,6 +4150,15 @@ function blockModal(secId, block, type){
       b.url=$('#bu').value.trim(); b.caption=$('#bc').value.trim();
       if(!b.url){ toast('أضف رابط ملف أو ارفع ملفاً'); return false; }
     }
+    if(['tasks','table','accordion','code','filelist'].includes(b.type)){
+      b.text = $('#bt').value; b.caption = $('#bc') ? $('#bc').value.trim() : '';
+      if(!b.text.trim()){ toast('اكتب المحتوى الأول'); return false; }
+    }
+    if(b.type==='audio'||b.type==='embed'){
+      b.url = $('#bu').value.trim(); b.caption = $('#bc').value.trim();
+      if(!b.url){ toast('أضف رابطاً أولاً'); return false; }
+    }
+    if(b.type==='divider'){ b.caption = $('#bc').value.trim(); }
     if(b.type==='links'){
       b.items=[...document.querySelectorAll('#links .linkrow')].map(r=>({
         label:r.children[0].value.trim(), url:r.children[1].value.trim(), desc:r.children[2].value.trim()
@@ -3888,7 +4179,7 @@ function blockModal(secId, block, type){
   const file = $('#bf');
   if(file) file.addEventListener('change', e=>{
     const f=e.target.files[0]; if(!f) return;
-    const maxSize = b.type==='pdf' ? 2*1024*1024 : 1.5*1024*1024;
+    const maxSize = (b.type==='pdf'||b.type==='audio') ? 2*1024*1024 : 1.5*1024*1024;
     if(f.size > maxSize){ toast('الملف كبير جداً — استخدم رابطاً مباشراً'); return; }
     const r=new FileReader(); r.onload=()=>{ $('#bu').value=r.result; toast('تم تحميل الملف'); }; r.readAsDataURL(f);
   });
@@ -4096,6 +4387,22 @@ document.addEventListener('click', async e=>{
   if(act==='menu-goto-section'){ menuGoto(id); return; }
   if(act==='menu-goto-block'){ menuGoto(t.dataset.sec, t.dataset.block); return; }
   if(act==='menu-switch-track'){ closeMenu(); setTrack(t.dataset.track); return; }
+  if(act==='ins-timer'){
+    const d = $('#dl-d') && $('#dl-d').value, tt = $('#dl-t') && $('#dl-t').value, ta = $('#bt');
+    if(!d){ toast('اختار تاريخ الأول'); return; }
+    if(!ta) return;
+    const tok = ' {{تايمر ' + d + (tt ? ' ' + tt : '') + '}}', pos = ta.selectionStart != null ? ta.selectionStart : ta.value.length;
+    ta.value = ta.value.slice(0,pos) + tok + ta.value.slice(ta.selectionEnd != null ? ta.selectionEnd : pos);
+    ta.focus(); ta.selectionStart = ta.selectionEnd = pos + tok.length; toast('تمت إضافة التايمر ✅');
+    return;
+  }
+  if(act==='ins-status'){
+    const k = $('#st-k') && $('#st-k').value, ta = $('#bt'); if(!ta || !k) return;
+    const tok = ' {{حالة ' + k + '}}', pos = ta.selectionStart != null ? ta.selectionStart : ta.value.length;
+    ta.value = ta.value.slice(0,pos) + tok + ta.value.slice(ta.selectionEnd != null ? ta.selectionEnd : pos);
+    ta.focus(); ta.selectionStart = ta.selectionEnd = pos + tok.length; toast('تمت إضافة البوكس ✅');
+    return;
+  }
   if(act==='pick-align'){
     document.querySelectorAll('.align-btn').forEach(b=>b.setAttribute('aria-pressed', b===t ? 'true':'false'));
     const hid = $('#balign'); if(hid) hid.value = t.dataset.align;
