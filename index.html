@@ -276,7 +276,7 @@ footer{padding:40px 0; text-align:center; color:var(--ink-faint); font-size:14px
 .rng input[type=range]{flex:1}
 .rng output{font-size:13px; color:var(--ink-faint); min-width:54px; text-align:center}
 hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
-@media (prefers-reduced-motion: reduce){*{transition:none !important; scroll-behavior:auto !important}}
+
 @media print{.topbar,.adminbar,.fab,.block-tools,.addblock,.track-splash,.tswitch,.hamburger,.topmenu,.menu-catcher,.math-bg,.intro-splash,.notif-drawer,.notif-catcher,.notif-btn{display:none !important}}
 
 /* =======================================================================
@@ -318,7 +318,7 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
   50%{ transform:translate(-6px,-26px) rotate(-3deg); }
   75%{ transform:translate(-10px,-10px) rotate(3deg); }
 }
-@media (prefers-reduced-motion: reduce){ .mb-sym{animation:none} }
+
 
 /* =======================================================================
    شاشة اختيار الفرقة (Splash)
@@ -853,7 +853,7 @@ body.admin .addblock{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
 .qa-answer{border-radius:14px}
 footer{border-top:1px solid var(--line);margin-top:48px;color:var(--ink-soft)}
 @media (max-width:640px){.topbar-in{padding-inline:64px}.hero .wrap{padding:38px 22px;border-radius:22px}.subsections{padding-inline-start:12px}.section.nested::before{inset-inline-start:-12px;width:10px}}
-@media (prefers-reduced-motion:reduce){*{transition:none !important;scroll-behavior:auto !important}}
+
 
 /* إصلاح: القسم الفرعي المقفول يفضل مقفول حتى لو القسم الأب مفتوح */
 .section:not(.open)>.wrap>.sec-collapse{grid-template-rows:0fr}
@@ -1082,7 +1082,7 @@ html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:
 .page-in .notif-btn,.page-in .mode-btn,.page-in .hamburger{animation:pagePop .6s cubic-bezier(.2,.9,.25,1) .25s backwards}
 .page-in .mode-btn{animation-delay:.4s}
 .page-in .hero{animation:heroRise .9s cubic-bezier(.2,.9,.25,1) .3s backwards}
-@media (prefers-reduced-motion:reduce){.aurora,.o-ring,.orb,.intro-logo,.intro-title{animation:none !important} .page-in *{animation:none !important}}
+
 
 /* ===== تدرّج لون خلفية الصفحة (يتحكم فيه الأدمن من نافذة المظهر ويظهر للجميع) ===== */
 :root{--bg-a:var(--bg); --bg-b:var(--bg)}
@@ -1110,7 +1110,7 @@ html.has-grad body{background-color:transparent !important}
 .ni-bar{height:4px; width:180px; margin:24px auto 0; background:var(--line); border-radius:4px; overflow:hidden}
 .ni-bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--gold)); animation:niLoad 3.6s .1s linear forwards}
 @keyframes niLoad{to{width:100%}}
-@media (prefers-reduced-motion:reduce){.ni-c{animation-duration:.01s !important; animation-delay:0s !important}.ni-sym,.ni-bar i{animation:none !important}}
+
 :root{--box-bg:var(--bg)}
 .section.nested.open>.wrap>.sec-collapse>div>.sec-inner{background:var(--box-bg)}
 
@@ -1158,7 +1158,7 @@ html[data-motion="off"]{scroll-behavior:auto}
 .b-fx-glowline{padding:8px 0 14px;font-weight:600;background:linear-gradient(90deg,var(--accent),var(--gold),var(--accent)) bottom/200% 4px no-repeat;animation:fxLine 3s linear infinite}
 .b-fx-mint{background:#e6f6ee;color:#14532d;border:1px solid #a7dcc0;border-radius:22px 6px 22px 6px}
 html[data-motion="calm"] .b-fx,html[data-motion="off"] .b-fx{animation:none !important}
-@media (prefers-reduced-motion:reduce){.b-fx{animation:none !important}}
+
 .b-custom{zoom:var(--bz,1)}
 .b-custom.b-hasfont :is(.b-p,.b-h,.b-quote,.b-note,.b-formula,.b-key,.b-theorem,.b-law,.b-glow,.b-fx,.b-steps li){font-family:var(--bf) !important}
 .b-custom.b-hasclr :is(.b-p,.b-h,.b-quote,.b-note,.b-formula,.b-key,.b-theorem,.b-law,.b-glow,.b-fx,.b-steps li,p,li,span,b,strong){color:var(--bclr) !important}
@@ -1175,7 +1175,7 @@ body[data-bgpattern="twinkle"],.bgthumb[data-p="twinkle"]{background-image:radia
 body[data-bgpattern="stripes"],.bgthumb[data-p="stripes"]{background-image:repeating-linear-gradient(45deg,color-mix(in srgb,var(--accent) 10%,transparent) 0 14px,transparent 14px 30px);background-size:60px 60px;animation:bgSlide 3s linear infinite}
 body[data-bgpattern="gridmove"],.bgthumb[data-p="gridmove"]{background-image:linear-gradient(color-mix(in srgb,var(--accent) 14%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--accent) 14%,transparent) 1px,transparent 1px);background-size:48px 48px;animation:bgGrid 6s linear infinite}
 html[data-motion="calm"] body,html[data-motion="off"] body{animation:none !important}
-@media (prefers-reduced-motion:reduce){body{animation:none !important}}
+
 /* ===== تصاميم متحركة/تفاعلية إضافية ===== */
 @keyframes fxSweep{to{transform:translateX(-260%)}}
 @keyframes fxPulse{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 18%,transparent),0 0 28px color-mix(in srgb,var(--accent) 55%,transparent)}}
@@ -1222,7 +1222,7 @@ body:is([data-bgpattern="sine"],[data-bgpattern="formulas"],[data-bgpattern="num
 .bgthumb:is([data-p="sine"],[data-p="formulas"],[data-p="numbers"],[data-p="axes"],[data-p="geometry"],[data-p="waves"],[data-p="mathrain"],[data-p="formulasflow"])::before{z-index:0;-webkit-mask-size:calc(var(--mszn,300) * .38px);mask-size:calc(var(--mszn,300) * .38px)}
 body:is([data-bgpattern="sine"],[data-bgpattern="formulas"],[data-bgpattern="numbers"],[data-bgpattern="axes"],[data-bgpattern="geometry"],[data-bgpattern="waves"],[data-bgpattern="mathrain"],[data-bgpattern="formulasflow"])::after{position:fixed}
 html[data-motion="calm"] body::after,html[data-motion="off"] body::after{animation:none !important}
-@media (prefers-reduced-motion:reduce){body::after{animation:none !important}}
+
 body[data-bgpattern="sine"],.bgthumb[data-p="sine"]{--mk:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='240' viewBox='0 0 400 240'%3E%3Cpath d='M0 70C50 10 150 10 200 70S350 130 400 70' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M0 170C50 110 150 110 200 170S350 230 400 170' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-dasharray='6 8'/%3E%3C/svg%3E");--msz:400px 240px;--mszn:400;}
 body[data-bgpattern="formulas"],.bgthumb[data-p="formulas"]{--mk:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='440' height='330' viewBox='0 0 440 330'%3E%3Ctext x='20' y='50' font-size='34' font-family='serif' font-weight='bold' transform='rotate(-6 20 50)'%3EE=mc%C2%B2%3C/text%3E%3Ctext x='230' y='90' font-size='32' font-family='serif' font-weight='bold' transform='rotate(5 230 90)'%3E%E2%88%AB x dx%3C/text%3E%3Ctext x='40' y='170' font-size='30' font-family='serif' font-weight='bold' transform='rotate(4 40 170)'%3Ea%C2%B2%2Bb%C2%B2=c%C2%B2%3C/text%3E%3Ctext x='250' y='200' font-size='32' font-family='serif' font-weight='bold' transform='rotate(-5 250 200)'%3Ee%E2%81%B1%E1%B5%96%2B1=0%3C/text%3E%3Ctext x='30' y='280' font-size='26' font-family='serif' font-weight='bold' transform='rotate(-3 30 280)'%3E%CE%A3 n = n(n%2B1)/2%3C/text%3E%3Ctext x='270' y='300' font-size='40' font-family='serif' font-weight='bold' transform='rotate(6 270 300)'%3E%E2%88%9Ax%3C/text%3E%3Ctext x='330' y='40' font-size='44' font-family='serif' font-weight='bold' transform='rotate(0 330 40)'%3E%CF%80%3C/text%3E%3Ctext x='180' y='150' font-size='26' font-family='serif' font-weight='bold' transform='rotate(-4 180 150)'%3Elim%3C/text%3E%3C/svg%3E");--msz:440px 330px;--mszn:440;}
 body[data-bgpattern="numbers"],.bgthumb[data-p="numbers"]{--mk:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='260' viewBox='0 0 360 260'%3E%3Ctext x='10' y='40' font-size='28' font-family='monospace' font-weight='bold' transform='rotate(0 10 40)'%3E1  1  2  3  5  8%3C/text%3E%3Ctext x='120' y='100' font-size='26' font-family='monospace' font-weight='bold' transform='rotate(0 120 100)'%3E13  21  34  55%3C/text%3E%3Ctext x='0' y='160' font-size='28' font-family='monospace' font-weight='bold' transform='rotate(0 0 160)'%3E3.14159 26535%3C/text%3E%3Ctext x='100' y='220' font-size='26' font-family='monospace' font-weight='bold' transform='rotate(0 100 220)'%3E2.71828 18284%3C/text%3E%3Ctext x='250' y='130' font-size='30' font-family='monospace' font-weight='bold' transform='rotate(0 250 130)'%3E0 1 0 1%3C/text%3E%3C/svg%3E");--msz:360px 260px;--mszn:360;}
@@ -1306,13 +1306,13 @@ html[data-bgdrift="slow"] body[data-bgkind="calc"]::before,html[data-bgdrift="no
 .ann-mq:hover .ann-t{animation-play-state:paused}
 @keyframes annMq{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
 html[data-motion="off"] .ann-mq .ann-t{animation:none}
-@media (prefers-reduced-motion:reduce){.ann-mq .ann-t{animation:none}}
+
 /* عدّاد: لما يفضل أقل من 3 أيام */
 .topbar-cd.urgent .tcd-segs>span{border-color:#f97316;background:color-mix(in srgb,#f97316 14%,transparent)}
 .topbar-cd.urgent .tcd-segs i{color:#ea580c}
 .topbar-cd.urgent .tcd-s{animation:cdBeat 1s ease-in-out infinite}
 @keyframes cdBeat{50%{transform:scale(1.08)}}
-@media (prefers-reduced-motion:reduce){.topbar-cd.urgent .tcd-s{animation:none}}
+
 /* مشاركة / أوفلاين / تكبير الصور */
 .share-btn{margin-top:10px;border:1px solid var(--line);background:var(--surface);color:var(--accent);border-radius:999px;padding:8px 18px;font-weight:700;cursor:pointer}
 .share-btn[hidden]{display:none}
