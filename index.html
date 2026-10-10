@@ -4155,7 +4155,7 @@ function renderBlock(b, secId, j, last){
       `<li class="badge-tag" style="--tag-c:${esc(it.color||'#1F6F6B')}">${esc(it.label)}</li>`).join('')}</ul>`;
   }
   const favOn = !!lsGet('site_favs', {})[b.id];
-  const star = (feat('favs') && !['spacer','divider'].includes(b.type)) ? `<button type="button" class="fav-star${favOn?' on':''}" data-sx="fav" data-id="${b.id}" aria-pressed="${favOn}" title="أضف للمفضلة" aria-label="أضف للمفضلة">${favOn?'★':'☆'}</button>` : '';
+  const star = (false && !['spacer','divider'].includes(b.type)) ? `<button type="button" class="fav-star${favOn?' on':''}" data-sx="fav" data-id="${b.id}" aria-pressed="${favOn}" title="أضف للمفضلة" aria-label="أضف للمفضلة">${favOn?'★':'☆'}</button>` : '';
   const ins = `<div class="ins-zone"><button class="ins-btn" type="button" data-act="add-block-at" data-sec="${secId}" data-at="${j}">＋ أضف محتوى هنا</button></div>`;
   return `<div class="block" data-id="${b.id}">${ins}${tools}${star}${body}</div>`;
 }
