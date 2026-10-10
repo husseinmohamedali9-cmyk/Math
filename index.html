@@ -1725,6 +1725,13 @@ a.fl-row:hover{background:var(--accent-soft)}
   .tcd-segs em{font-size:10px}
 }
 .adminbar{top:calc(env(safe-area-inset-top,0px) + var(--topbar-h,80px))}
+/* ===== إشعارات الأجهزة ===== */
+.push-prompt{margin:10px 14px 0;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);font-size:13.5px;line-height:1.7;color:var(--ink-soft)}
+.push-prompt[hidden]{display:none}
+.push-prompt .btn{margin-top:6px}
+.push-prompt.ok{color:var(--accent)}
+.pk-box{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface-2);margin-bottom:10px}
+.pk-code{width:100%;min-height:120px;direction:ltr;text-align:left;font-family:monospace;font-size:12px}
 .pst-link{all:unset;box-sizing:border-box;cursor:pointer;color:var(--ink);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 50%,transparent);text-underline-offset:4px;overflow-wrap:anywhere}
 .pst-link:hover,.pst-link:focus-visible{color:var(--accent)}
 /* حجم البوستر + العناوين */
@@ -1924,6 +1931,7 @@ a.fl-row:hover{background:var(--accent-soft)}
     <button class="btn" data-act="subject-settings">🎓 إعدادات المادة</button>
     <button class="btn" data-act="theme">🎨 المظهر والألوان</button>
     <button class="btn" data-act="notif-admin">🔔 إدارة الإشعارات</button>
+    <button class="btn" data-act="push-admin">📲 إشعارات الأجهزة</button>
     <button class="btn" data-act="qa-manage">💬 إدارة الأسئلة</button>
     <button class="btn" data-act="export">⬇ نسخة احتياطية</button>
     <button class="btn" data-act="import">⬆ استيراد</button>
@@ -2410,6 +2418,7 @@ function notifAdd(){
     lines: lineObjs.some(l=>l.sec) ? lineObjs : undefined,
     once: kind === 'tap', pinned: !!($('#napin') && $('#napin').checked), sec: ($('#nasec') && $('#nasec').value) || '', expires: dur ? new Date(Date.now()+dur).toISOString() : null });
   scheduleSave(); renderNotifBadge();
+  try{ Push.autoSend('🔔 إشعار جديد', text.length>140 ? text.slice(0,140)+'…' : text); }catch(e){}
   toast('تم نشر الإشعار');
   notifAdminModal();
 }
@@ -4982,6 +4991,7 @@ document.addEventListener('click', async e=>{
     case 'adminbar-toggle': { const ab=document.getElementById('adminbar'); const o=ab.classList.toggle('open'); t.setAttribute('aria-expanded',o); try{localStorage.setItem('adminbar_open',o?'1':'0');}catch(e){} break; }
     case 'visitors': window.Visits && Visits.modal(); break;
     case 'poster': Poster.editor(); break;
+    case 'push-admin': Push.adminModal(); break;
     case 'add-section': sectionModal(null); break;
     case 'folders': foldersModal(); break;
     case 'fl-add': flSync(); flState.folders.push({id:uid(), name:'مجلد '+(flState.folders.length+1), parent:''}); flRender(); break;
@@ -5279,6 +5289,10 @@ const Poster = {
         else n.end = (idChanged || d.dur!==n.dur || (d.start||0)!==n.start) ? base + (+n.dur)*86400000 : (d.end||0);
         delete n.endCustom;
         site.meta.poster=n; scheduleSave(); closeModal(); Poster.syncBtn();
+        if(n.on && idChanged && this.active(n) && this.hasContent(n)){
+          const names=n.groups.map(g=>g.title).filter(Boolean).concat(this.autoGroups(n).map(g=>g.title.replace('🆕 ',''))).slice(0,3);
+          try{ Push.autoSend(n.title||'جديد على الموقع', names.length?names.join(' • '):'افتح الموقع وشوف الجديد'); }catch(e){}
+        }
         toast(n.on?'تم حفظ البوستر وهو شغّال ✓':'تم حفظ البوستر (مقفول)');
         return false;
       });
@@ -5299,6 +5313,135 @@ document.addEventListener('change',e=>{
   if(e.target && e.target.id==='ps-dur'){ const w=document.getElementById('ps-end-wrap'); if(w) w.style.display = e.target.value==='custom' ? 'block' : 'none'; }
 });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') Poster.hide(); });
+</script>
+<script>
+/* ===== Push Notifications (إشعارات برّه التطبيق) ===== */
+const Push = {
+  VAPID: "BHnpt3WDH85wKk_5l9NiWDySHVbMbVPbSSsZSaT7KWHplcUPw4aBoeFUjYivpQoxABeCUEox5oDv2mNUdGmnIHw",
+  FN: 'send-push',
+  SQL: "create table if not exists public.push_subscriptions (\n  id bigint generated always as identity primary key,\n  endpoint text unique not null,\n  p256dh text not null,\n  auth text not null,\n  created_at timestamptz not null default now()\n);\nalter table public.push_subscriptions enable row level security;\ndrop policy if exists \"push insert\" on public.push_subscriptions;\ncreate policy \"push insert\" on public.push_subscriptions for insert with check (true);\n",
+  FN_CODE: "// Supabase Edge Function: send-push\nimport { createClient } from \"npm:@supabase/supabase-js@2\";\nimport webpush from \"npm:web-push@3.6.7\";\n\nconst cors = {\n  \"Access-Control-Allow-Origin\": \"*\",\n  \"Access-Control-Allow-Headers\": \"authorization, x-client-info, apikey, content-type\",\n  \"Access-Control-Allow-Methods\": \"POST, OPTIONS\",\n};\nconst json = (o: unknown, status = 200) =>\n  new Response(JSON.stringify(o), { status, headers: { ...cors, \"Content-Type\": \"application/json\" } });\n\nDeno.serve(async (req) => {\n  if (req.method === \"OPTIONS\") return new Response(\"ok\", { headers: cors });\n  try {\n    const { key, action, title, body, url } = await req.json();\n    if (!key || key !== Deno.env.get(\"ADMIN_KEY\")) return json({ error: \"unauthorized\" }, 401);\n\n    const sb = createClient(Deno.env.get(\"SUPABASE_URL\")!, Deno.env.get(\"SUPABASE_SERVICE_ROLE_KEY\")!);\n    const { data: subs, error } = await sb.from(\"push_subscriptions\").select(\"id,endpoint,p256dh,auth\");\n    if (error) return json({ error: error.message }, 500);\n    if (action === \"count\") return json({ count: subs.length });\n\n    webpush.setVapidDetails(\n      Deno.env.get(\"VAPID_SUBJECT\") || \"mailto:admin@example.com\",\n      Deno.env.get(\"VAPID_PUBLIC\")!,\n      Deno.env.get(\"VAPID_PRIVATE\")!,\n    );\n    const payload = JSON.stringify({ title, body, url });\n    let sent = 0, failed = 0;\n    const dead: number[] = [];\n    await Promise.all(subs.map(async (s) => {\n      try {\n        await webpush.sendNotification(\n          { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },\n          payload,\n          { TTL: 86400 },\n        );\n        sent++;\n      } catch (e) {\n        if (e.statusCode === 404 || e.statusCode === 410) dead.push(s.id);\n        else failed++;\n      }\n    }));\n    if (dead.length) await sb.from(\"push_subscriptions\").delete().in(\"id\", dead);\n    return json({ sent, failed, removed: dead.length });\n  } catch (e) {\n    return json({ error: String(e) }, 500);\n  }\n});\n",
+  supported(){ return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; },
+  isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1); },
+  standalone(){ return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; },
+  key64(b){ const p='='.repeat((4-b.length%4)%4), r=(b+p).replace(/-/g,'+').replace(/_/g,'/'), raw=atob(r); return Uint8Array.from([...raw].map(c=>c.charCodeAt(0))); },
+  async save(sub){
+    const j=sub.toJSON(), sb=await QA.ensureClient(); if(!sb) throw new Error('no-supabase');
+    const { error } = await sb.from('push_subscriptions').insert({ endpoint:j.endpoint, p256dh:j.keys.p256dh, auth:j.keys.auth });
+    if(error && error.code!=='23505') throw error;
+  },
+  async enable(){
+    try{
+      const perm = await Notification.requestPermission();
+      if(perm!=='granted'){ toast('لازم توافق على الإشعارات'); this.refreshPrompt(); return; }
+      const reg = await navigator.serviceWorker.ready;
+      let sub = await reg.pushManager.getSubscription();
+      if(!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey:this.key64(this.VAPID) });
+      await this.save(sub);
+      localStorage.setItem('push_on','1'); toast('تم تفعيل إشعارات الجهاز ✓');
+    }catch(e){ console.warn('push enable', e); toast('تعذّر تفعيل الإشعارات'); }
+    this.refreshPrompt();
+  },
+  async disable(){
+    try{ const reg=await navigator.serviceWorker.ready, sub=await reg.pushManager.getSubscription(); if(sub) await sub.unsubscribe(); }catch(e){}
+    localStorage.setItem('push_on','0'); toast('اتقفلت إشعارات الجهاز'); this.refreshPrompt();
+  },
+  async resync(){
+    try{
+      if(!this.supported() || Notification.permission!=='granted' || localStorage.getItem('push_on')!=='1') return;
+      const reg=await navigator.serviceWorker.ready, sub=await reg.pushManager.getSubscription();
+      if(sub) await this.save(sub); else await this.enable();
+    }catch(e){}
+  },
+  refreshPrompt(){
+    const el=document.getElementById('pushPrompt'); if(!el) return;
+    if(!this.supported()){
+      if(this.isIOS() && !this.standalone()){ el.hidden=false; el.className='push-prompt'; el.innerHTML='📲 عشان توصلك إشعارات على الآيفون: دوس <b>مشاركة</b> ثم <b>إضافة إلى الشاشة الرئيسية</b>، وافتح الموقع من الأيقونة وفعّل الإشعارات.'; }
+      else el.hidden=true;
+      return;
+    }
+    el.hidden=false;
+    if(Notification.permission==='denied'){ el.className='push-prompt'; el.innerHTML='🔕 الإشعارات متقفلة من إعدادات المتصفح لهذا الموقع.'; return; }
+    if(Notification.permission==='granted' && localStorage.getItem('push_on')==='1'){
+      el.className='push-prompt ok'; el.innerHTML='✅ إشعارات الجهاز شغّالة <button class="btn sm ghost" type="button" data-push-off>إيقاف</button>'; return;
+    }
+    el.className='push-prompt'; el.innerHTML='📲 عايز يوصلك إشعار على جهازك لما ننزّل حاجة جديدة؟<br><button class="btn sm primary" type="button" data-push-on>فعّل إشعارات الجهاز</button>';
+  },
+  adminKey(){ try{ return localStorage.getItem('push_admin_key')||''; }catch(e){ return ''; } },
+  async call(payload){
+    const sb=await QA.ensureClient(); if(!sb) throw new Error('no-supabase');
+    const { data, error } = await sb.functions.invoke(this.FN, { body:Object.assign({ key:this.adminKey() }, payload) });
+    if(error){ let m=error.message||'خطأ'; try{ const j=await error.context.json(); if(j&&j.error) m=j.error; }catch(e){} throw new Error(m); }
+    return data;
+  },
+  async autoSend(title, body){
+    if(!this.adminKey() || localStorage.getItem('push_auto')==='0') return;
+    try{ const r=await this.call({ action:'send', title, body, url:new URL('./', location.href).href }); toast('📲 اتبعت إشعار لـ '+r.sent+' جهاز'); }
+    catch(e){ toast('تعذّر إرسال إشعار الأجهزة: '+e.message); }
+  },
+  summary(){
+    const g=Poster.autoGroups(Poster.get()); if(!g.length) return '';
+    return g.slice(0,4).map(x=>x.title.replace('🆕 ','')).join(' • ');
+  },
+  async adminModal(){
+    const esc2=x=>esc(x||'');
+    openModal('📲 إشعارات الأجهزة', `
+      <p class="hint" id="pk-stat">…</p>
+      <div class="field"><label for="pk-key">مفتاح الإرسال (ADMIN_KEY)</label><input type="password" id="pk-key" dir="ltr" value="${esc2(this.adminKey())}" placeholder="اللي حطيته في Supabase Secrets"></div>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin-bottom:12px"><input type="checkbox" id="pk-auto" ${localStorage.getItem('push_auto')==='0'?'':'checked'} style="width:auto"> ابعت تلقائياً لما أنشر إشعار جديد أو بوستر جديد</label>
+      <div class="pk-box">
+        <div class="field"><label for="pk-title">عنوان الإشعار</label><input id="pk-title" value="جديد على الموقع"></div>
+        <div class="field"><label for="pk-body">الرسالة</label><textarea id="pk-body" style="min-height:70px" placeholder="مثلاً: اتضافت محاضرة جديدة">${esc2(this.summary())}</textarea></div>
+        <div class="field" style="margin-bottom:0"><label for="pk-url">الرابط اللي يفتحه (اختياري)</label><input id="pk-url" dir="ltr" placeholder="سيبه فاضي لفتح الموقع"></div>
+      </div>
+      <details class="pk-box"><summary style="cursor:pointer;font-weight:600">🛠 خطوات التجهيز (مرة واحدة)</summary>
+        <ol class="hint" style="line-height:2;padding-inline-start:20px">
+          <li>في Supabase ← SQL Editor الصق كود الجدول واضغط Run.</li>
+          <li>Edge Functions ← Create function باسم <b>send-push</b> والصق كود الدالة، واقفل خيار <b>Enforce JWT Verification</b> ثم Deploy.</li>
+          <li>Edge Functions ← Secrets: ضيف VAPID_PUBLIC و VAPID_PRIVATE و VAPID_SUBJECT و ADMIN_KEY (القيم في ملف push-secrets).</li>
+          <li>اكتب نفس ADMIN_KEY هنا في «مفتاح الإرسال».</li>
+        </ol>
+        <button class="btn sm" type="button" data-pk-copy="sql">نسخ كود الجدول</button> <button class="btn sm" type="button" data-pk-copy="fn">نسخ كود الدالة</button>
+      </details>`,
+      '<button class="btn primary" type="button" data-pk-send>📲 ابعت الآن</button><button class="btn" type="button" data-pk-save>حفظ الإعدادات</button><button class="btn ghost" data-act="close">إغلاق</button>');
+    this.statCount();
+  },
+  async statCount(){
+    const el=document.getElementById('pk-stat'); if(!el) return;
+    if(!this.adminKey()){ el.textContent='اكتب مفتاح الإرسال واضغط حفظ عشان تشوف عدد الأجهزة.'; return; }
+    try{ const r=await this.call({ action:'count' }); el.innerHTML='الأجهزة المشتركة دلوقتي: <b>'+Number(r.count).toLocaleString('en')+'</b>'; }
+    catch(e){ el.textContent='تعذّر الاتصال: '+e.message+' (راجع خطوات التجهيز)'; }
+  },
+  saveSettings(){
+    try{
+      localStorage.setItem('push_admin_key', document.getElementById('pk-key').value.trim());
+      localStorage.setItem('push_auto', document.getElementById('pk-auto').checked ? '1' : '0');
+    }catch(e){}
+  }
+};
+document.addEventListener('click', async e=>{
+  if(e.target.closest('[data-push-on]')){ Push.enable(); return; }
+  if(e.target.closest('[data-push-off]')){ Push.disable(); return; }
+  const cp=e.target.closest('[data-pk-copy]');
+  if(cp){ const txt = cp.dataset.pkCopy==='sql' ? Push.SQL : Push.FN_CODE; try{ await navigator.clipboard.writeText(txt); toast('تم النسخ'); }catch(_){ prompt('انسخ الكود:', txt); } return; }
+  if(e.target.closest('[data-pk-save]')){ Push.saveSettings(); toast('تم حفظ الإعدادات'); Push.statCount(); return; }
+  if(e.target.closest('[data-pk-send]')){
+    Push.saveSettings();
+    const g=id=>document.getElementById(id).value.trim();
+    if(!Push.adminKey()){ toast('اكتب مفتاح الإرسال الأول'); return; }
+    if(!g('pk-body') && !g('pk-title')){ toast('اكتب رسالة'); return; }
+    try{ const r=await Push.call({ action:'send', title:g('pk-title')||'جديد على الموقع', body:g('pk-body'), url:g('pk-url')||new URL('./', location.href).href });
+      toast('📲 اتبعت لـ '+r.sent+' جهاز'+(r.removed?' (اتشال '+r.removed+' جهاز قديم)':'')); Push.statCount();
+    }catch(err){ toast('تعذّر الإرسال: '+err.message); }
+  }
+});
+(function(){
+  const dr=document.getElementById('notifDrawer');
+  if(dr){ const h=dr.querySelector('.notif-head'); if(h) h.insertAdjacentHTML('afterend','<div id="pushPrompt" class="push-prompt" hidden></div>'); }
+  const nb=document.getElementById('notifBtn'); if(nb) nb.addEventListener('click', ()=>Push.refreshPrompt());
+  Push.refreshPrompt();
+  setTimeout(()=>Push.resync(), 4000);
+})();
 </script>
 <script>
 /* ===== عدّاد الزوار (Supabase) ===== */
