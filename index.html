@@ -1680,6 +1680,63 @@ a.fl-row:hover{background:var(--accent-soft)}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
 <style>
+/* ===== بوستر الافتتاح ===== */
+#posterBox{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));background:rgba(8,12,22,.62);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+#posterBox.on{opacity:1;visibility:visible}
+.pst-card{position:relative;width:min(100%,440px);max-height:86vh;overflow-y:auto;overscroll-behavior:contain;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.35);padding:30px 22px 22px;text-align:center;transform:translateY(18px) scale(.96);transition:transform .35s cubic-bezier(.2,.9,.3,1.2)}
+#posterBox.on .pst-card{transform:none}
+.pst-card::before{content:'';position:absolute;inset:0 0 auto 0;height:6px;border-radius:22px 22px 0 0;background:linear-gradient(90deg,var(--accent),var(--gold))}
+.pst-x{position:absolute;top:12px;inset-inline-end:12px;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font-size:18px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0;transition:.2s}
+.pst-x:hover{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.pst-emoji{font-size:54px;line-height:1.1;margin:6px 0 4px}
+.pst-img{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:14px;margin:10px 0}
+.pst-title{margin:6px 0 8px;font-size:23px;font-weight:700;line-height:1.5}
+.pst-text{margin:0 0 4px;font-size:16px;line-height:1.9;color:var(--ink-soft);white-space:pre-line;overflow-wrap:anywhere}
+.pst-cta{display:inline-block;margin-top:16px;padding:11px 26px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;text-decoration:none}
+.pst-cta:hover{opacity:.9}
+@media print{#posterBox{display:none !important}}
+@media (prefers-reduced-motion:reduce){#posterBox,.pst-card{transition:none}}
+/* ===== زرار السبيكر + شريط علوي جديد + عدّاد أحلى ===== */
+.poster-btn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 18px);left:120px;z-index:57;width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);box-shadow:var(--shadow);font-size:19px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0;transition:.25s}
+.poster-btn[hidden]{display:none}
+.poster-btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+.poster-btn:active .pb-ico{transform:scale(.8)}
+.poster-btn .pb-ico{display:block;transition:transform .2s}
+.poster-dot{display:none;position:absolute;top:-4px;inset-inline-end:-4px;width:13px;height:13px;border-radius:50%;background:#ef4444;border:2px solid var(--surface)}
+.poster-btn.new .poster-dot{display:block}
+.poster-btn.new .pb-ico{animation:pbWig 2.4s ease-in-out infinite;transform-origin:70% 70%}
+@keyframes pbWig{0%,70%,100%{transform:none}76%{transform:rotate(-14deg)}84%{transform:rotate(12deg)}92%{transform:rotate(-8deg)}}
+.page-in .poster-btn{animation:pagePop .6s cubic-bezier(.2,.9,.25,1) .55s backwards}
+@media print{.poster-btn{display:none !important}}
+@media (prefers-reduced-motion:reduce){.poster-btn.new .pb-ico{animation:none}}
+.tcd-label::before{content:'⏳ '}
+.tcd-segs>span{background:linear-gradient(160deg,var(--accent-soft),color-mix(in srgb,var(--gold) 14%,transparent));box-shadow:0 6px 14px -9px var(--accent)}
+.tcd-segs .tcd-s{border-color:color-mix(in srgb,var(--gold) 55%,transparent)}
+@media (min-width:600px){ .topbar-in{padding-inline-end:176px} }
+@media (max-width:599px){
+  .topbar-in{flex-wrap:wrap;padding-inline:12px;gap:0;min-height:0}
+  .brand-wrap{flex:1 1 0;min-height:78px;margin-inline-start:54px;margin-inline-end:158px}
+  .topbar-cd{order:3;flex:1 1 100%;margin:0;padding:0 0 10px;gap:5px}
+  .topbar-cd:not(.is-today) .tcd-compact{display:none}
+  .topbar-cd:not(.is-today) .tcd-segs{display:flex;max-width:330px;margin-inline:auto;gap:6px}
+  .tcd-label{font-size:12.5px}
+  .tcd-segs>span{padding:5px 2px 4px;border-radius:13px}
+  .tcd-segs i{font-size:19px}
+  .tcd-segs em{font-size:10px}
+}
+.adminbar{top:calc(env(safe-area-inset-top,0px) + var(--topbar-h,80px))}
+/* حجم البوستر + العناوين */
+#posterBox .pst-card{width:min(100%,440px);max-height:86vh}
+#posterBox .pst-card.pst-s{width:min(100%,340px);max-height:60vh}
+#posterBox .pst-card.pst-m{width:min(100%,440px);max-height:78vh}
+#posterBox .pst-card.pst-l{width:min(100%,640px);max-height:88vh}
+#posterBox .pst-card.pst-xl{width:min(100%,960px);height:92vh;max-height:92vh}
+.pst-groups{text-align:start;margin-top:10px;display:grid;gap:14px}
+.pst-group{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.pst-group h3{margin:0 0 6px;font-size:17px;color:var(--accent)}
+.pst-group ul{margin:0;padding-inline-start:20px;display:grid;gap:6px;line-height:1.7;font-size:15.5px}
+.pst-group a{color:var(--accent);font-weight:600}
+.pst-ged{border:1px dashed var(--line);border-radius:12px;padding:10px;margin-bottom:8px;background:var(--surface-2)}
 /* ===== شريط التحميل: يظهر دايماً (حتى لو الموبايل على توفير الطاقة) ===== */
 .ni-bar{background:color-mix(in srgb,var(--ink) 18%,transparent) !important;min-height:4px}
 .ni-bar i{animation:niLoad var(--intro-ms,1.6s) .1s linear forwards !important}
@@ -1830,6 +1887,7 @@ a.fl-row:hover{background:var(--accent-soft)}
   🔔<span class="notif-badge zero" id="notifBadge">0</span>
 </button>
 <button class="mode-btn" id="modeBtn" data-act="toggle-mode" type="button" aria-label="تبديل الوضع الليلي / النهاري" title="الوضع الليلي / النهاري"><span class="m-sun">☀️</span><span class="m-moon">🌙</span></button>
+<button class="poster-btn" id="posterBtn" data-pst-open type="button" hidden aria-label="آخر المستجدات" title="آخر المستجدات"><span class="pb-ico">📢</span><i class="poster-dot"></i></button>
 <button class="hamburger" id="hamburgerBtn" data-act="menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false">
   <span></span><span></span><span></span>
 </button>
@@ -1858,6 +1916,7 @@ a.fl-row:hover{background:var(--accent-soft)}
   <div class="wrap adminbar-in" id="adminbarIn">
     <button class="btn primary" data-act="add-section">＋ قسم جديد</button>
     <button class="btn" data-act="settings">⚙ إعدادات الموقع</button>
+    <button class="btn" data-act="poster">📢 بوستر الافتتاح</button>
     <button class="btn" data-act="features">🧩 ميزات الموقع</button>
     <button class="btn" data-act="folders">📁 مجلدات القائمة</button>
     <button class="btn" data-act="subject-settings">🎓 إعدادات المادة</button>
@@ -4920,6 +4979,7 @@ document.addEventListener('click', async e=>{
   switch(act){
     case 'adminbar-toggle': { const ab=document.getElementById('adminbar'); const o=ab.classList.toggle('open'); t.setAttribute('aria-expanded',o); try{localStorage.setItem('adminbar_open',o?'1':'0');}catch(e){} break; }
     case 'visitors': window.Visits && Visits.modal(); break;
+    case 'poster': Poster.editor(); break;
     case 'add-section': sectionModal(null); break;
     case 'folders': foldersModal(); break;
     case 'fl-add': flSync(); flState.folders.push({id:uid(), name:'مجلد '+(flState.folders.length+1), parent:''}); flRender(); break;
@@ -5060,8 +5120,128 @@ window.addEventListener('resize', syncTopbarHeight);
   if(currentTrack){ setTrack(currentTrack, {silent:true}); closeSplash(); }
   else { openSplash(); }
 
+  try{ Poster.maybeShow(); }catch(e){ console.warn('poster', e); }
   await QA.init();
 })();
+</script>
+<script>
+/* ===== بوستر الافتتاح: عناوين متعددة + تحكم في الحجم ===== */
+const Poster = {
+  SIZES:[['s','صغير'],['m','متوسط'],['l','كبير'],['xl','ملء الشاشة تقريباً']],
+  get(){ const m=(site&&site.meta)||{}; return m.poster||{}; },
+  safeLink(u){ u=String(u||'').trim(); return /^https?:\/\//i.test(u)?u:''; },
+  groupsOf(d){
+    if(Array.isArray(d.groups) && d.groups.length) return d.groups;
+    return d.text ? [{title:'',items:d.text}] : [];   /* توافق مع النسخة القديمة */
+  },
+  itemHtml(line){
+    const parts=line.split('|').map(x=>x.trim()), link=this.safeLink(parts[1]);
+    return (parts[1] && link) ? `<li><a href="${esc(link)}" target="_blank" rel="noopener">${esc(parts[0])}</a></li>` : `<li>${esc(line.trim())}</li>`;
+  },
+  build(d){
+    const link=this.safeLink(d.link), img=this.safeLink(d.img);
+    const groups=this.groupsOf(d).map(g=>{
+      const items=String(g.items||'').split('\n').map(x=>x.trim()).filter(Boolean);
+      if(!g.title && !items.length) return '';
+      return `<section class="pst-group">${g.title?`<h3>${esc(g.title)}</h3>`:''}${items.length?`<ul>${items.map(x=>this.itemHtml(x)).join('')}</ul>`:''}</section>`;
+    }).join('');
+    return `<div class="pst-card pst-${esc(d.size||'m')}" role="dialog" aria-modal="true" aria-label="${esc(d.title||'إعلان')}">
+      <button class="pst-x" type="button" data-pst-x aria-label="إغلاق">✕</button>
+      ${d.emoji?`<div class="pst-emoji" aria-hidden="true">${esc(d.emoji)}</div>`:''}
+      ${img?`<img class="pst-img" src="${esc(img)}" alt="" loading="lazy">`:''}
+      ${d.title?`<h2 class="pst-title">${esc(d.title)}</h2>`:''}
+      ${groups?`<div class="pst-groups">${groups}</div>`:''}
+      ${link?`<div style="text-align:center"><a class="pst-cta" href="${esc(link)}" target="_blank" rel="noopener" data-pst-x>${esc(d.btn||'افتح')}</a></div>`:''}
+    </div>`;
+  },
+  show(d){
+    let b=document.getElementById('posterBox');
+    if(!b){ b=document.createElement('div'); b.id='posterBox';
+      b.addEventListener('click',e=>{ if(e.target===b || e.target.closest('[data-pst-x]')) this.hide(); });
+      document.body.appendChild(b); }
+    b.innerHTML=this.build(d);
+    requestAnimationFrame(()=>{ b.classList.add('on'); const x=b.querySelector('.pst-x'); if(x) x.focus({preventScroll:true}); });
+  },
+  hide(){ const b=document.getElementById('posterBox'); if(b) b.classList.remove('on'); },
+  syncBtn(){
+    const b=document.getElementById('posterBtn'); if(!b) return;
+    const d=this.get(), has=!!(d.on && this.hasContent(d));
+    b.hidden=!has;
+    let seen=''; try{ seen=localStorage.getItem('poster_btn_seen')||''; }catch(e){}
+    b.classList.toggle('new', has && seen!==String(d.id));
+  },
+  markSeen(){ try{ localStorage.setItem('poster_btn_seen', String(this.get().id)); }catch(e){} this.syncBtn(); },
+  open(){ const d=this.get(); if(!d.on || !this.hasContent(d)){ toast('مفيش جديد دلوقتي'); return; } this.show(d); this.markSeen(); },
+  hasContent(d){ return !!(d.title || d.img || this.groupsOf(d).some(g=>g.title||String(g.items||'').trim())); },
+  maybeShow(){
+    const d=this.get();
+    this.syncBtn();
+    if(!d.on || !this.hasContent(d)) return;
+    if(d.auto===false) return;
+    try{ if(localStorage.getItem('site_no_count')) return; }catch(e){}   /* جهاز الأدمن */
+    if(d.freq!=='always'){ try{ if(localStorage.getItem('poster_seen')===String(d.id)) return; }catch(e){} }
+    const sp=document.getElementById('trackSplash');
+    if(sp && !sp.classList.contains('hide')){ setTimeout(()=>this.maybeShow(),400); return; }   /* استنى لحد ما الزائر يختار المادة */
+    this.show(d); this.markSeen();
+    if(d.freq!=='always'){ try{ localStorage.setItem('poster_seen', String(d.id)); }catch(e){} }
+  },
+  groupEd(g){
+    return `<div class="pst-ged"><div style="display:flex;gap:8px;align-items:center"><input class="pg-title" value="${esc(g.title||'')}" placeholder="عنوان (مثلاً: محاضرات Math 2)" style="flex:1"><button type="button" class="btn sm danger" data-pst-delg title="حذف العنوان">🗑</button></div>
+      <textarea class="pg-items" style="min-height:90px;margin-top:8px" placeholder="كل سطر = حاجة اتضافت&#10;ممكن تحط لينك: اسم المحاضرة | https://…">${esc(g.items||'')}</textarea></div>`;
+  },
+  read(){
+    const g=id=>document.getElementById(id).value.trim();
+    return { on:document.getElementById('ps-on').checked, emoji:g('ps-emoji'), title:g('ps-title'),
+      groups:[...document.querySelectorAll('#ps-groups .pst-ged')].map(el=>({title:el.querySelector('.pg-title').value.trim(), items:el.querySelector('.pg-items').value.trim()})).filter(x=>x.title||x.items),
+      img:g('ps-img'), btn:g('ps-btn'), link:g('ps-link'), size:g('ps-size'), freq:g('ps-freq'), auto:document.getElementById('ps-auto').checked };
+  },
+  editor(){
+    const d=this.get(), v=x=>esc(x||''), groups=this.groupsOf(d);
+    openModal('📢 بوستر الافتتاح', `
+      <label style="display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:12px"><input type="checkbox" id="ps-on" ${d.on?'checked':''} style="width:auto"> شغّل البوستر (يظهر لكل اللي يفتح الموقع)</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="field" style="width:90px"><label for="ps-emoji">إيموجي</label><input id="ps-emoji" value="${v(d.emoji||'🎉')}" maxlength="4"></div>
+        <div class="field" style="flex:1;min-width:160px"><label for="ps-title">العنوان الرئيسي (اختياري)</label><input id="ps-title" value="${v(d.title)}" placeholder="مثلاً: جديد على الموقع"></div>
+      </div>
+      <div class="field"><label>العناوين وتحتها اللي اتضاف</label><div id="ps-groups">${(groups.length?groups:[{}]).map(g=>this.groupEd(g)).join('')}</div>
+        <button type="button" class="btn sm" data-pst-addg style="margin-top:8px">＋ إضافة عنوان جديد</button></div>
+      <div class="field"><label for="ps-img">رابط صورة (اختياري)</label><input id="ps-img" value="${v(d.img)}" placeholder="https://…" dir="ltr"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="field" style="flex:1;min-width:130px"><label for="ps-btn">نص الزرار (اختياري)</label><input id="ps-btn" value="${v(d.btn)}" placeholder="افتح الموقع"></div>
+        <div class="field" style="flex:2;min-width:160px"><label for="ps-link">رابط الزرار</label><input id="ps-link" value="${v(d.link)}" placeholder="https://…" dir="ltr"></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="field" style="flex:1;min-width:150px"><label for="ps-size">حجم البوستر</label><select id="ps-size">${this.SIZES.map(([k,l])=>`<option value="${k}" ${(d.size||'m')===k?'selected':''}>${l}</option>`).join('')}</select></div>
+        <div class="field" style="flex:1;min-width:150px"><label for="ps-freq">يظهر إمتى؟</label><select id="ps-freq"><option value="once" ${d.freq!=='always'?'selected':''}>مرة لكل زائر (لحد ما تغيّره)</option><option value="always" ${d.freq==='always'?'selected':''}>كل مرة يفتح الموقع</option></select></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin-bottom:6px"><input type="checkbox" id="ps-auto" ${d.auto===false?'':'checked'} style="width:auto"> يظهر تلقائياً أول ما الموقع يتفتح (بدونه يفتحه الزائر من 📢 فوق)</label>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400"><input type="checkbox" id="ps-again" style="width:auto"> أظهره تاني حتى للي قفله قبل كده</label>
+      <p class="hint">لو غيّرت الكلام، البوستر بيظهر تلقائياً من جديد للكل. لو المحتوى أكتر من حجم البوستر بيتعمله سكرول جواه.</p>`,
+      footSave('حفظ')+'<button class="btn" type="button" data-pst-prev>👁 معاينة</button>',
+      async ()=>{
+        const n=this.read();
+        const sig=o=>JSON.stringify([o.emoji,o.title,o.groups,o.img,o.btn,o.link,o.size]);
+        const old={emoji:d.emoji,title:d.title,groups:groups.map(x=>({title:(x.title||'').trim(),items:(x.items||'').trim()})),img:d.img,btn:d.btn,link:d.link,size:d.size||'m'};
+        const again=document.getElementById('ps-again').checked;
+        n.id = (again || sig(n)!==sig(old) || !d.id) ? Date.now() : d.id;
+        site.meta.poster=n; scheduleSave(); closeModal(); Poster.syncBtn();
+        toast(n.on?'تم حفظ البوستر وهو شغّال ✓':'تم حفظ البوستر (مقفول)');
+        return false;
+      });
+  }
+};
+document.addEventListener('click',e=>{
+  if(e.target.closest('[data-pst-open]')){ Poster.open(); return; }
+  if(e.target.closest('[data-pst-prev]')){ Poster.show(Poster.read()); return; }
+  if(e.target.closest('[data-pst-addg]')){
+    const box=document.getElementById('ps-groups'); box.insertAdjacentHTML('beforeend', Poster.groupEd({}));
+    const t=box.lastElementChild.querySelector('.pg-title'); if(t) t.focus(); return;
+  }
+  const del=e.target.closest('[data-pst-delg]');
+  if(del){ const box=document.getElementById('ps-groups'), el=del.closest('.pst-ged');
+    if(box.children.length>1) el.remove(); else { el.querySelector('.pg-title').value=''; el.querySelector('.pg-items').value=''; } }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') Poster.hide(); });
 </script>
 <script>
 /* ===== عدّاد الزوار (Supabase) ===== */
@@ -5136,6 +5316,7 @@ document.addEventListener('click', async e=>{
   try{ if(localStorage.getItem('adminbar_open')==='1'){ const ab=document.getElementById('adminbar'); ab.classList.add('open'); document.getElementById('adminbarToggle').setAttribute('aria-expanded','true'); } }catch(e){}
   new MutationObserver(()=>{ if(document.body.classList.contains('admin')) Visits.refresh(); }).observe(document.body,{attributes:true,attributeFilter:['class']});
   setTimeout(()=>Visits.track(), 2500);
+  try{ const tb=document.getElementById('topbar'); if(tb && window.ResizeObserver) new ResizeObserver(()=>syncTopbarHeight()).observe(tb); }catch(e){}
 })();
 </script>
  <script>
