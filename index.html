@@ -1725,12 +1725,14 @@ a.fl-row:hover{background:var(--accent-soft)}
   .tcd-segs em{font-size:10px}
 }
 .adminbar{top:calc(env(safe-area-inset-top,0px) + var(--topbar-h,80px))}
+.pst-link{all:unset;box-sizing:border-box;cursor:pointer;color:var(--ink);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 50%,transparent);text-underline-offset:4px;overflow-wrap:anywhere}
+.pst-link:hover,.pst-link:focus-visible{color:var(--accent)}
 /* حجم البوستر + العناوين */
 #posterBox .pst-card{width:min(100%,440px);max-height:86vh}
 #posterBox .pst-card.pst-s{width:min(100%,340px);max-height:60vh}
 #posterBox .pst-card.pst-m{width:min(100%,440px);max-height:78vh}
 #posterBox .pst-card.pst-l{width:min(100%,640px);max-height:88vh}
-#posterBox .pst-card.pst-xl{width:min(100%,960px);height:92vh;max-height:92vh}
+#posterBox .pst-card.pst-xl{width:min(100%,960px);max-height:92vh}
 .pst-groups{text-align:start;margin-top:10px;display:grid;gap:14px}
 .pst-group{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
 .pst-group h3{margin:0 0 6px;font-size:17px;color:var(--accent)}
@@ -4330,7 +4332,7 @@ function sectionModal(sec, parentId){
     if(!nested){ s.track=$('#strk').value; s.pinned=$('#spin').checked; }
     s.allowChildren = $('#sallow').checked;
     if(!s.children) s.children = [];
-    if(isNew){ let k=-1; if(__ins){ k=siblings.findIndex(x=>x.id===__ins.id); if(k>=0 && __ins.pos==='after') k++; } if(k>=0) siblings.splice(k,0,s); else siblings.push(s); if(parent){ openSections.add(parent.id); openAncestors(parent.id); } }
+    if(isNew){ s.addedAt=Date.now(); let k=-1; if(__ins){ k=siblings.findIndex(x=>x.id===__ins.id); if(k>=0 && __ins.pos==='after') k++; } if(k>=0) siblings.splice(k,0,s); else siblings.push(s); if(parent){ openSections.add(parent.id); openAncestors(parent.id); } }
     else {
       const to = parseInt($('#so').value,10);
       const from = siblings.findIndex(x=>x.id===s.id);
@@ -4676,7 +4678,7 @@ function blockModal(secId, block, type){
       if(!b.items.length){ toast('أضف بطاقة واحدة على الأقل'); return false; }
     }
     sec.updatedAt = Date.now();
-    if(isNew){ const at = window.__insertAt; if(at!=null && at<=sec.blocks.length) sec.blocks.splice(at,0,b); else sec.blocks.push(b); window.__insertAt = null; }
+    if(isNew){ b.addedAt=Date.now(); const at = window.__insertAt; if(at!=null && at<=sec.blocks.length) sec.blocks.splice(at,0,b); else sec.blocks.push(b); window.__insertAt = null; }
     commit();
   });
  
@@ -5127,7 +5129,7 @@ window.addEventListener('resize', syncTopbarHeight);
 <script>
 /* ===== بوستر الافتتاح: عناوين متعددة + تحكم في الحجم ===== */
 const Poster = {
-  SIZES:[['s','صغير'],['m','متوسط'],['l','كبير'],['xl','ملء الشاشة تقريباً']],
+  SIZES:[['s','صغير'],['m','متوسط'],['l','كبير'],['xl','كبير جداً (عريض)']],
   get(){ const m=(site&&site.meta)||{}; return m.poster||{}; },
   safeLink(u){ u=String(u||'').trim(); return /^https?:\/\//i.test(u)?u:''; },
   groupsOf(d){
@@ -5140,16 +5142,19 @@ const Poster = {
   },
   build(d){
     const link=this.safeLink(d.link), img=this.safeLink(d.img);
+    const autoG=this.autoGroups(d);
+    const autoHtml=autoG.map(g=>`<section class="pst-group"><h3>${esc(g.title)}</h3><ul>${g.items.map(x=>`<li><button type="button" class="pst-link" data-act="menu-goto-block" data-sec="${esc(x.sec)}" data-block="${esc(x.blk)}" data-pst-x>${esc(x.label)}</button></li>`).join('')}</ul></section>`).join('');
+    const mainTitle=d.title || (autoG.length ? 'جديد على الموقع' : '');
     const groups=this.groupsOf(d).map(g=>{
       const items=String(g.items||'').split('\n').map(x=>x.trim()).filter(Boolean);
       if(!g.title && !items.length) return '';
       return `<section class="pst-group">${g.title?`<h3>${esc(g.title)}</h3>`:''}${items.length?`<ul>${items.map(x=>this.itemHtml(x)).join('')}</ul>`:''}</section>`;
-    }).join('');
-    return `<div class="pst-card pst-${esc(d.size||'m')}" role="dialog" aria-modal="true" aria-label="${esc(d.title||'إعلان')}">
+    }).join('') + autoHtml;
+    return `<div class="pst-card pst-${esc(d.size||'m')}" role="dialog" aria-modal="true" aria-label="${esc(mainTitle||'إعلان')}">
       <button class="pst-x" type="button" data-pst-x aria-label="إغلاق">✕</button>
       ${d.emoji?`<div class="pst-emoji" aria-hidden="true">${esc(d.emoji)}</div>`:''}
       ${img?`<img class="pst-img" src="${esc(img)}" alt="" loading="lazy">`:''}
-      ${d.title?`<h2 class="pst-title">${esc(d.title)}</h2>`:''}
+      ${mainTitle?`<h2 class="pst-title">${esc(mainTitle)}</h2>`:''}
       ${groups?`<div class="pst-groups">${groups}</div>`:''}
       ${link?`<div style="text-align:center"><a class="pst-cta" href="${esc(link)}" target="_blank" rel="noopener" data-pst-x>${esc(d.btn||'افتح')}</a></div>`:''}
     </div>`;
@@ -5165,25 +5170,55 @@ const Poster = {
   hide(){ const b=document.getElementById('posterBox'); if(b) b.classList.remove('on'); },
   syncBtn(){
     const b=document.getElementById('posterBtn'); if(!b) return;
-    const d=this.get(), has=!!(d.on && this.hasContent(d));
+    const d=this.get(), has=!!(d.on && this.hasContent(d) && this.active(d));
     b.hidden=!has;
     let seen=''; try{ seen=localStorage.getItem('poster_btn_seen')||''; }catch(e){}
-    b.classList.toggle('new', has && seen!==String(d.id));
+    b.classList.toggle('new', has && seen!==this.key(d));
   },
-  markSeen(){ try{ localStorage.setItem('poster_btn_seen', String(this.get().id)); }catch(e){} this.syncBtn(); },
-  open(){ const d=this.get(); if(!d.on || !this.hasContent(d)){ toast('مفيش جديد دلوقتي'); return; } this.show(d); this.markSeen(); },
-  hasContent(d){ return !!(d.title || d.img || this.groupsOf(d).some(g=>g.title||String(g.items||'').trim())); },
+  markSeen(){ try{ localStorage.setItem('poster_btn_seen', this.key(this.get())); }catch(e){} this.syncBtn(); },
+  open(){ const d=this.get(); if(!d.on || !this.hasContent(d) || !this.active(d)){ toast('مفيش جديد دلوقتي'); return; } this.show(d); this.markSeen(); },
+  autoGroups(d){
+    if(d.autolist===false) return [];
+    const since=Date.now()-(+d.autodays||7)*86400000, out=[];
+    try{
+      flatSecs().forEach(({s,path})=>{
+        const secNew=!!(s.addedAt && s.addedAt>=since);
+        const blks=(s.blocks||[]).filter(b=>b.addedAt && b.addedAt>=since && !['spacer','divider'].includes(b.type));
+        if(!secNew && !blks.length) return;
+        const items=blks.map(b=>({label:blkLabel(b), sec:s.id, blk:b.id}));
+        if(!items.length) items.push({label:'تمت إضافة القسم', sec:s.id, blk:''});
+        out.push({title:(secNew?'🆕 ':'')+path.concat(s.title).join(' ‹ '), auto:true, items});
+      });
+    }catch(e){ console.warn('autoGroups', e); }
+    return out;
+  },
+  key(d){
+    let h=0; const str=this.autoGroups(d).map(g=>g.items.map(x=>x.sec+x.blk).join(',')).join(';');
+    for(let i=0;i<str.length;i++) h=(h*31+str.charCodeAt(i))|0;
+    return String(d.id||0)+':'+h;
+  },
+  active(d){ const n=Date.now(); return !((d.start && n<d.start) || (d.end && n>=d.end)); },
+  fmt(ts){ try{ return new Date(ts).toLocaleString('ar-EG',{dateStyle:'medium',timeStyle:'short'}); }catch(e){ return new Date(ts).toLocaleString(); } },
+  loc(ts){ return ts ? new Date(ts-new Date(ts).getTimezoneOffset()*60000).toISOString().slice(0,16) : ''; },
+  statusText(d){
+    if(!d.on) return 'الحالة: مقفول';
+    if(d.start && Date.now()<d.start) return 'الحالة: مجدول — يبدأ ' + this.fmt(d.start);
+    if(d.end && Date.now()>=d.end) return 'الحالة: انتهت فترة الظهور (' + this.fmt(d.end) + ')';
+    return d.end ? 'الحالة: شغّال حتى ' + this.fmt(d.end) : 'الحالة: شغّال بدون تاريخ انتهاء';
+  },
+  hasContent(d){ return !!(d.title || d.img || this.groupsOf(d).some(g=>g.title||String(g.items||'').trim()) || this.autoGroups(d).length); },
   maybeShow(){
     const d=this.get();
     this.syncBtn();
     if(!d.on || !this.hasContent(d)) return;
+    if(!this.active(d)) return;   /* برّه فترة الظهور */
     if(d.auto===false) return;
-    try{ if(localStorage.getItem('site_no_count')) return; }catch(e){}   /* جهاز الأدمن */
-    if(d.freq!=='always'){ try{ if(localStorage.getItem('poster_seen')===String(d.id)) return; }catch(e){} }
+   /* جهاز الأدمن */
+    if(d.freq!=='always'){ try{ if(localStorage.getItem('poster_seen')===this.key(d)) return; }catch(e){} }
     const sp=document.getElementById('trackSplash');
     if(sp && !sp.classList.contains('hide')){ setTimeout(()=>this.maybeShow(),400); return; }   /* استنى لحد ما الزائر يختار المادة */
     this.show(d); this.markSeen();
-    if(d.freq!=='always'){ try{ localStorage.setItem('poster_seen', String(d.id)); }catch(e){} }
+    if(d.freq!=='always'){ try{ localStorage.setItem('poster_seen', this.key(d)); }catch(e){} }
   },
   groupEd(g){
     return `<div class="pst-ged"><div style="display:flex;gap:8px;align-items:center"><input class="pg-title" value="${esc(g.title||'')}" placeholder="عنوان (مثلاً: محاضرات Math 2)" style="flex:1"><button type="button" class="btn sm danger" data-pst-delg title="حذف العنوان">🗑</button></div>
@@ -5193,7 +5228,8 @@ const Poster = {
     const g=id=>document.getElementById(id).value.trim();
     return { on:document.getElementById('ps-on').checked, emoji:g('ps-emoji'), title:g('ps-title'),
       groups:[...document.querySelectorAll('#ps-groups .pst-ged')].map(el=>({title:el.querySelector('.pg-title').value.trim(), items:el.querySelector('.pg-items').value.trim()})).filter(x=>x.title||x.items),
-      img:g('ps-img'), btn:g('ps-btn'), link:g('ps-link'), size:g('ps-size'), freq:g('ps-freq'), auto:document.getElementById('ps-auto').checked };
+      img:g('ps-img'), btn:g('ps-btn'), link:g('ps-link'), size:g('ps-size'), freq:g('ps-freq'), auto:document.getElementById('ps-auto').checked, autolist:document.getElementById('ps-autolist').checked, autodays:+document.getElementById('ps-autodays').value,
+      dur:g('ps-dur'), start:(g('ps-start')?new Date(g('ps-start')).getTime():0), endCustom:(g('ps-end')?new Date(g('ps-end')).getTime():0) };
   },
   editor(){
     const d=this.get(), v=x=>esc(x||''), groups=this.groupsOf(d);
@@ -5214,6 +5250,18 @@ const Poster = {
         <div class="field" style="flex:1;min-width:150px"><label for="ps-size">حجم البوستر</label><select id="ps-size">${this.SIZES.map(([k,l])=>`<option value="${k}" ${(d.size||'m')===k?'selected':''}>${l}</option>`).join('')}</select></div>
         <div class="field" style="flex:1;min-width:150px"><label for="ps-freq">يظهر إمتى؟</label><select id="ps-freq"><option value="once" ${d.freq!=='always'?'selected':''}>مرة لكل زائر (لحد ما تغيّره)</option><option value="always" ${d.freq==='always'?'selected':''}>كل مرة يفتح الموقع</option></select></div>
       </div>
+      <div class="field" style="border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface-2)">
+        <label style="display:flex;align-items:center;gap:8px;font-weight:600"><input type="checkbox" id="ps-autolist" ${d.autolist===false?'':'checked'} style="width:auto"> 📥 اعرض تلقائياً كل قسم/محتوى بضيفه في الموقع</label>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap"><span class="hint" style="margin:0">يفضل ظاهر في البوستر لمدة</span>
+          <select id="ps-autodays" style="width:auto">${[[1,'يوم'],[2,'يومين'],[3,'3 أيام'],[7,'أسبوع'],[14,'أسبوعين'],[30,'شهر']].map(([k,l])=>`<option value="${k}" ${(+d.autodays||7)===k?'selected':''}>${l}</option>`).join('')}</select><span class="hint" style="margin:0">من وقت إضافته</span></div>
+        <p class="hint" style="margin:8px 0 0">دلوقتي في <b>${this.autoGroups(d).reduce((n,g)=>n+g.items.length,0)}</b> إضافة هتظهر تلقائياً. الأقسام والمحتوى اللي اتضاف قبل التحديث ده مش بيتحسب.</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="field" style="flex:1;min-width:150px"><label for="ps-dur">يظهر لمدة</label><select id="ps-dur">${[['none','بدون حد (لحد ما أقفله)'],['1','يوم واحد'],['2','يومين'],['3','3 أيام'],['7','أسبوع'],['custom','لحد تاريخ معيّن']].map(([k,l])=>`<option value="${k}" ${(d.dur||'none')===k?'selected':''}>${l}</option>`).join('')}</select></div>
+        <div class="field" style="flex:1;min-width:170px"><label for="ps-start">يبدأ من (اختياري)</label><input type="datetime-local" id="ps-start" value="${this.loc(d.start)}"></div>
+      </div>
+      <div class="field" id="ps-end-wrap" style="display:${d.dur==='custom'?'block':'none'}"><label for="ps-end">ينتهي في</label><input type="datetime-local" id="ps-end" value="${this.loc(d.end)}"></div>
+      <p class="hint" id="ps-status" style="margin-top:0"><b>${this.statusText(d)}</b></p>
       <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin-bottom:6px"><input type="checkbox" id="ps-auto" ${d.auto===false?'':'checked'} style="width:auto"> يظهر تلقائياً أول ما الموقع يتفتح (بدونه يفتحه الزائر من 📢 فوق)</label>
       <label style="display:flex;align-items:center;gap:8px;font-weight:400"><input type="checkbox" id="ps-again" style="width:auto"> أظهره تاني حتى للي قفله قبل كده</label>
       <p class="hint">لو غيّرت الكلام، البوستر بيظهر تلقائياً من جديد للكل. لو المحتوى أكتر من حجم البوستر بيتعمله سكرول جواه.</p>`,
@@ -5223,7 +5271,13 @@ const Poster = {
         const sig=o=>JSON.stringify([o.emoji,o.title,o.groups,o.img,o.btn,o.link,o.size]);
         const old={emoji:d.emoji,title:d.title,groups:groups.map(x=>({title:(x.title||'').trim(),items:(x.items||'').trim()})),img:d.img,btn:d.btn,link:d.link,size:d.size||'m'};
         const again=document.getElementById('ps-again').checked;
-        n.id = (again || sig(n)!==sig(old) || !d.id) ? Date.now() : d.id;
+        const idChanged = again || sig(n)!==sig(old) || !d.id;
+        n.id = idChanged ? Date.now() : d.id;
+        const base = n.start || Date.now();
+        if(n.dur==='custom') n.end = n.endCustom || 0;
+        else if(n.dur==='none') n.end = 0;
+        else n.end = (idChanged || d.dur!==n.dur || (d.start||0)!==n.start) ? base + (+n.dur)*86400000 : (d.end||0);
+        delete n.endCustom;
         site.meta.poster=n; scheduleSave(); closeModal(); Poster.syncBtn();
         toast(n.on?'تم حفظ البوستر وهو شغّال ✓':'تم حفظ البوستر (مقفول)');
         return false;
@@ -5240,6 +5294,9 @@ document.addEventListener('click',e=>{
   const del=e.target.closest('[data-pst-delg]');
   if(del){ const box=document.getElementById('ps-groups'), el=del.closest('.pst-ged');
     if(box.children.length>1) el.remove(); else { el.querySelector('.pg-title').value=''; el.querySelector('.pg-items').value=''; } }
+});
+document.addEventListener('change',e=>{
+  if(e.target && e.target.id==='ps-dur'){ const w=document.getElementById('ps-end-wrap'); if(w) w.style.display = e.target.value==='custom' ? 'block' : 'none'; }
 });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') Poster.hide(); });
 </script>
