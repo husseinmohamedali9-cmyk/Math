@@ -1679,6 +1679,33 @@ a.fl-row:hover{background:var(--accent-soft)}
 }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ===== شريط التحميل: يظهر دايماً (حتى لو الموبايل على توفير الطاقة) ===== */
+.ni-bar{background:color-mix(in srgb,var(--ink) 18%,transparent) !important;min-height:4px}
+.ni-bar i{animation:niLoad var(--intro-ms,1.6s) .1s linear forwards !important}
+@media (prefers-reduced-motion:reduce){
+  .ni-bar i{animation:niLoad var(--intro-ms,1.6s) .1s linear forwards !important}
+  .ni-c{animation:niDraw 1.1s .1s ease-out forwards !important}
+  .ni-c.b{animation:niDraw 1.1s .4s ease-out forwards !important}
+  html .intro-splash .intro-title,html.respect-rm .intro-splash .intro-title{animation:introFadeUp .5s ease .3s forwards !important}
+  html .intro-splash .intro-sub{animation:introFadeUp .5s ease .5s forwards !important}
+}
+/* ===== شريط الأدوات القابل للطي + عدّاد الزوار ===== */
+.adminbar-top{display:flex;align-items:center;gap:8px;padding:8px 0}
+.adminbar-toggle{font-weight:600}
+.adminbar-toggle .ab-arrow{display:inline-block;transition:transform .25s}
+.adminbar.open .adminbar-toggle .ab-arrow{transform:rotate(180deg)}
+.adminbar .adminbar-in{display:none;border-top:1px solid var(--line)}
+.adminbar.open .adminbar-in{display:flex;max-height:62vh;overflow-y:auto;overscroll-behavior:contain;animation:abDrop .22s ease}
+@keyframes abDrop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.vis-btn b{font-variant-numeric:tabular-nums}
+.vis-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vis-card{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+.vis-card b{display:block;font-size:28px;color:var(--accent);font-variant-numeric:tabular-nums}
+.vis-card span{font-size:13px;color:var(--ink-soft)}
+.vis-sql{width:100%;min-height:150px;direction:ltr;text-align:left;font-family:monospace;font-size:12px}
+@media (prefers-reduced-motion:reduce){.adminbar.open .adminbar-in{animation:none}}
+</style>
 </head>
 <body>
 
@@ -1821,8 +1848,14 @@ a.fl-row:hover{background:var(--accent-soft)}
   <div class="notif-list" id="notifList"></div>
 </aside>
  
-<div class="adminbar">
-  <div class="wrap adminbar-in">
+<div class="adminbar" id="adminbar">
+  <div class="wrap adminbar-top">
+    <button class="btn adminbar-toggle" id="adminbarToggle" data-act="adminbar-toggle" type="button" aria-expanded="false" aria-controls="adminbarIn">⚙ أدوات التحرير <span class="ab-arrow">▾</span></button>
+    <button class="btn vis-btn" id="visBtn" data-act="visitors" type="button" title="إحصائيات الزوار">👁 <b id="visCount">…</b></button>
+    <span class="spacer"></span>
+    <span class="status" id="status"></span>
+  </div>
+  <div class="wrap adminbar-in" id="adminbarIn">
     <button class="btn primary" data-act="add-section">＋ قسم جديد</button>
     <button class="btn" data-act="settings">⚙ إعدادات الموقع</button>
     <button class="btn" data-act="features">🧩 ميزات الموقع</button>
@@ -1834,7 +1867,6 @@ a.fl-row:hover{background:var(--accent-soft)}
     <button class="btn" data-act="export">⬇ نسخة احتياطية</button>
     <button class="btn" data-act="import">⬆ استيراد</button>
     <span class="spacer"></span>
-    <span class="status" id="status"></span>
     <button class="btn ghost" data-act="logout">خروج من التحرير</button>
   </div>
 </div>
@@ -1991,7 +2023,9 @@ function playIntro(){
     try{ const sb = localStorage.getItem('site_intro_sub'); const is = el.querySelector('.intro-sub'); if(sb && is) is.textContent = sb; }catch(e){}
     let introMs = 2200;
     try{ const c = JSON.parse(localStorage.getItem('site_theme_cache')||'null'); if(c && c.introMs!=null) introMs = +c.introMs; }catch(e){}
-    if(sessionStorage.getItem(INTRO_KEY) || introMs <= 0){ el.remove(); pageIn(); resolve(); return; }
+    if(introMs <= 0){ el.remove(); pageIn(); resolve(); return; }
+    introMs = Math.min(2000, Math.max(1300, introMs));
+    el.style.setProperty('--intro-ms', (introMs-250)+'ms');
     try{ sessionStorage.setItem(INTRO_KEY,'1'); }catch(e){}
     document.body.style.overflow = 'hidden';
     let done = false;
@@ -4159,7 +4193,7 @@ function askPassword(){
       const h = await hashPass(val);
       if(!site.auth.passHash){ site.auth.passHash = await hashPass(CONFIG.DEFAULT_PASSWORD); }
       if(h === site.auth.passHash){
-        isAdmin = true; document.body.classList.add('admin'); $('#fab').textContent='🔓'; renderQA();
+        isAdmin = true; document.body.classList.add('admin'); try{localStorage.setItem('site_no_count','1');}catch(e){} $('#fab').textContent='🔓'; renderQA();
         closeModal(); toast('وضع التحرير مفعّل'); setStatus(Store.mode==='local'?'حفظ محلي':'جاهز');
       } else { toast('كلمة المرور غير صحيحة'); }
       return false;
@@ -4884,6 +4918,8 @@ document.addEventListener('click', async e=>{
   if(!isAdmin) return; // كل ما تحت هذا السطر للمحرّر فقط
  
   switch(act){
+    case 'adminbar-toggle': { const ab=document.getElementById('adminbar'); const o=ab.classList.toggle('open'); t.setAttribute('aria-expanded',o); try{localStorage.setItem('adminbar_open',o?'1':'0');}catch(e){} break; }
+    case 'visitors': window.Visits && Visits.modal(); break;
     case 'add-section': sectionModal(null); break;
     case 'folders': foldersModal(); break;
     case 'fl-add': flSync(); flState.folders.push({id:uid(), name:'مجلد '+(flState.folders.length+1), parent:''}); flRender(); break;
@@ -5025,6 +5061,81 @@ window.addEventListener('resize', syncTopbarHeight);
   else { openSplash(); }
 
   await QA.init();
+})();
+</script>
+<script>
+/* ===== عدّاد الزوار (Supabase) ===== */
+const VIS_SQL = `create table if not exists public.site_visits (
+  id bigint generated always as identity primary key,
+  visitor_id text not null,
+  created_at timestamptz not null default now()
+);
+alter table public.site_visits enable row level security;
+drop policy if exists "visits insert" on public.site_visits;
+create policy "visits insert" on public.site_visits for insert with check (true);
+
+create or replace function public.visit_stats() returns json
+language sql security definer set search_path = public as $$
+  select json_build_object(
+    'total',  count(*),
+    'unique', count(distinct visitor_id),
+    'today',  count(*) filter (where created_at >= date_trunc('day', now() at time zone 'Africa/Cairo') at time zone 'Africa/Cairo'),
+    'today_unique', count(distinct visitor_id) filter (where created_at >= date_trunc('day', now() at time zone 'Africa/Cairo') at time zone 'Africa/Cairo'),
+    'week',   count(*) filter (where created_at >= now() - interval '7 days')
+  ) from public.site_visits
+$$;
+grant execute on function public.visit_stats() to anon, authenticated;`;
+const Visits = {
+  async client(){ try{ return await QA.ensureClient(); }catch(e){ return null; } },
+  async track(){
+    try{
+      if(localStorage.getItem('site_no_count')) return;
+      if(sessionStorage.getItem('visit_logged')) return;
+      let vid = localStorage.getItem('site_vid');
+      if(!vid){ vid = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())+Math.random().toString(16).slice(2)); localStorage.setItem('site_vid', vid); }
+      const sb = await this.client(); if(!sb) return;
+      const { error } = await sb.from('site_visits').insert({ visitor_id: vid });
+      if(!error) sessionStorage.setItem('visit_logged','1');
+    }catch(e){ console.warn('visit track', e); }
+  },
+  async stats(){
+    const sb = await this.client(); if(!sb) return null;
+    const { data, error } = await sb.rpc('visit_stats');
+    if(error){ console.warn('visit_stats', error); return null; }
+    return data;
+  },
+  async refresh(){
+    const el = document.getElementById('visCount'); if(!el) return;
+    const d = await this.stats();
+    el.textContent = d ? Number(d.unique).toLocaleString('en') : '—';
+  },
+  async modal(){
+    const n = v => Number(v||0).toLocaleString('en');
+    openModal('👁 إحصائيات الزوار', '<p class="hint">جاري التحميل…</p>', '<button class="btn ghost" data-act="close">إغلاق</button>');
+    const d = await this.stats();
+    if(!d){
+      document.getElementById('mBody').innerHTML = `<p>الجدول لسه مش متعمل في Supabase. انسخ الكود ده والصقه في <b>SQL Editor</b> (مشروع الأسئلة) واضغط Run، وبعدها أعد فتح الصفحة.</p>
+        <textarea class="vis-sql" readonly>${VIS_SQL.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</textarea>`;
+      document.getElementById('mFoot').innerHTML = '<button class="btn primary" data-vis-sql>نسخ الكود</button><button class="btn ghost" data-act="close">إغلاق</button>';
+      return;
+    }
+    document.getElementById('mBody').innerHTML = `<div class="vis-grid">
+      <div class="vis-card"><b>${n(d.unique)}</b><span>عدد الزوار (أشخاص مختلفين)</span></div>
+      <div class="vis-card"><b>${n(d.total)}</b><span>إجمالي الزيارات</span></div>
+      <div class="vis-card"><b>${n(d.today_unique)}</b><span>زوار النهاردة</span></div>
+      <div class="vis-card"><b>${n(d.today)}</b><span>زيارات النهاردة</span></div>
+      <div class="vis-card" style="grid-column:1/-1"><b>${n(d.week)}</b><span>زيارات آخر 7 أيام</span></div></div>
+      <p class="hint" style="margin-top:12px">كل جهاز بيتحسب زائر واحد، والزيارة بتتحسب مرة واحدة في كل جلسة. زياراتك إنت (بعد دخول وضع التحرير) مش بتتحسب.</p>`;
+    document.getElementById('visCount').textContent = n(d.unique);
+  }
+};
+document.addEventListener('click', async e=>{
+  if(e.target.closest('[data-vis-sql]')){ try{ await navigator.clipboard.writeText(VIS_SQL); toast('تم النسخ — الصقه في Supabase ← SQL Editor'); }catch(_){ prompt('انسخ الكود:', VIS_SQL); } }
+});
+(function(){
+  try{ if(localStorage.getItem('adminbar_open')==='1'){ const ab=document.getElementById('adminbar'); ab.classList.add('open'); document.getElementById('adminbarToggle').setAttribute('aria-expanded','true'); } }catch(e){}
+  new MutationObserver(()=>{ if(document.body.classList.contains('admin')) Visits.refresh(); }).observe(document.body,{attributes:true,attributeFilter:['class']});
+  setTimeout(()=>Visits.track(), 2500);
 })();
 </script>
  <script>
