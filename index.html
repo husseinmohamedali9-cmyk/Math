@@ -1777,6 +1777,135 @@ a.fl-row:hover{background:var(--accent-soft)}
 .sec-inner [style*="text-align:center"] .ck-line{justify-content:center; text-align:center; width:fit-content; max-width:100%; margin-inline:auto}
 .sec-inner [style*="text-align:center"] .ck-t{flex:0 1 auto; text-align:center}
 .sec-inner [style*="text-align:center"] .ck-plain{text-align:center; width:100%}
+/* ===== إضافات المرح والتحفيز ===== */
+#funBox{padding:0 20px}
+.fun-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px auto;max-width:var(--w)}
+.fun-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)}
+.fun-card>b{display:block;margin-bottom:6px;color:var(--accent)}
+.fun-hubrow{max-width:var(--w);margin:0 auto 10px;text-align:center}
+.fh-btn{border:0;border-radius:12px;padding:10px 20px;background:var(--accent);color:#fff;font:700 15px var(--font-body);cursor:pointer;transition:transform .15s,opacity .2s}
+.fh-btn:hover{opacity:.92}.fh-btn:active{transform:scale(.97)}
+.fh-link{border:0;background:transparent;color:var(--accent);font:600 13px var(--font-body);cursor:pointer;padding:6px 0}
+.fh-hint{color:var(--ink-faint);font-size:14px;margin:6px 0}
+.fh-big{font-size:54px;line-height:1.1}
+
+/* الستريك المتطوّر */
+.fp-top{display:flex;align-items:center;gap:14px}
+.fp-info b{display:block}.fp-info small{color:var(--ink-faint)}
+.fp-badge{--sc:#f97316;--k:0;position:relative;flex:none;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:30px;
+  background:radial-gradient(circle at 30% 25%,color-mix(in srgb,var(--sc) 28%,#fff),color-mix(in srgb,var(--sc) 55%,transparent));
+  border:2px solid var(--sc);box-shadow:0 0 calc(4px + var(--k)*5px) color-mix(in srgb,var(--sc) calc(35% + var(--k)*6%),transparent)}
+.fp-badge.big{width:96px;height:96px;font-size:50px}
+.fp-e{display:block;line-height:1}
+.fp-badge.g1 .fp-e{animation:funFlick 1.8s ease-in-out infinite}
+.fp-badge.g3{animation:funPulse 2.2s ease-in-out infinite}
+.fp-badge.g4::before{content:'';position:absolute;inset:-6px;border-radius:50%;background:conic-gradient(from 0deg,transparent,var(--sc),transparent 60%);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));animation:funSpin 3s linear infinite}
+.fp-badge.g5{overflow:hidden}
+.fp-badge.g5::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);transform:translateX(-120%);animation:funShine 2.6s ease-in-out infinite}
+.fp-badge.g6 .fp-e{animation:funFloat 2.4s ease-in-out infinite}
+.fp-badge.g7{border-width:3px}
+.fp-badge.g8{background:conic-gradient(from 0deg,#6366f1,#ec4899,#06b6d4,#6366f1);background-size:200% 200%}
+.fp-badge.g8 .fp-e{filter:drop-shadow(0 0 6px #fff)}
+@keyframes funFlick{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.14) rotate(3deg)}}
+@keyframes funPulse{0%,100%{box-shadow:0 0 14px color-mix(in srgb,var(--sc) 55%,transparent)}50%{box-shadow:0 0 34px var(--sc)}}
+@keyframes funSpin{to{transform:rotate(360deg)}}
+@keyframes funShine{to{transform:translateX(120%)}}
+@keyframes funFloat{0%,100%{transform:translateY(2px)}50%{transform:translateY(-4px)}}
+.fp-bar{height:9px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:10px 0 4px}
+.fp-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sc,var(--accent)),var(--gold));transition:width .6s ease}
+.fp-note{font-size:13.5px;color:var(--ink-soft)}
+.fp-xp{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
+.fp-xp-top{display:flex;justify-content:space-between;gap:8px;font-size:14px}.fp-xp-top span{color:var(--ink-faint)}
+.fun-chip{display:flex;align-items:center;justify-content:center;gap:4px;width:auto !important;min-width:40px;height:auto !important;padding:6px 8px !important;border-color:var(--sc) !important;box-shadow:0 0 10px color-mix(in srgb,var(--sc) 40%,transparent) !important;color:var(--ink) !important;cursor:pointer}
+#funPop{position:fixed;inset:0;z-index:260;display:grid;place-items:center;background:rgba(8,12,22,.6);backdrop-filter:blur(5px);padding:20px}
+.fpop-card{width:min(100%,360px);text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:26px 22px;box-shadow:0 24px 60px rgba(0,0,0,.4);animation:funPopIn .5s cubic-bezier(.2,.9,.3,1.3)}
+.fpop-t{font-weight:800;font-size:18px;color:var(--accent)}
+.fpop-row{display:flex;align-items:center;justify-content:center;gap:16px;margin:18px 0 8px}
+.fpop-old{font-size:38px;opacity:.5;filter:grayscale(.6)}.fpop-arr{font-size:22px;color:var(--ink-faint)}
+.fpop-card h3{margin:6px 0}.fpop-card p{margin:0 0 14px;color:var(--ink-soft)}
+@keyframes funPopIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+#funConf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:300}
+
+/* عدّاد الامتحان + النكتة */
+.fx-n{font-size:15px;color:var(--ink-soft)}.fx-n em{font-style:normal;font-size:38px;font-weight:800;color:var(--accent);margin-inline-end:4px}
+.fx-card.warm .fx-n em,.fx-card.warm>b{color:#f59e0b}.fx-card.hot .fx-n em,.fx-card.hot>b{color:var(--danger)}
+.fx-card.hot{border-color:color-mix(in srgb,var(--danger) 50%,var(--line))}
+.fx-more{display:flex;flex-direction:column;gap:2px;margin-top:8px;font-size:12.5px;color:var(--ink-faint)}
+.fj-t{font-size:15.5px;line-height:1.9;font-weight:600}
+
+/* الهَب */
+#funHub{position:fixed;inset:0;z-index:230;display:grid;place-items:center;padding:16px;background:rgba(8,12,22,.55);backdrop-filter:blur(5px);opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+#funHub.on{opacity:1;visibility:visible}
+.fh-panel{width:min(520px,100%);max-height:88vh;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.35);overflow:hidden}
+.fh-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+.fh-head button{border:0;background:transparent;color:var(--ink-soft);font-size:18px;cursor:pointer}
+.fh-tabs,.fh-sub{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;scrollbar-width:none}
+.fh-tabs::-webkit-scrollbar,.fh-sub::-webkit-scrollbar{display:none}
+.fh-tabs button,.fh-sub button{flex:none;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-soft);border-radius:999px;padding:6px 14px;font:600 13.5px var(--font-body);cursor:pointer;white-space:nowrap}
+.fh-tabs button.on,.fh-sub button.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.fh-body{padding:8px 16px 18px;overflow-y:auto;text-align:center}
+.fh-body h3{margin:6px 0}
+.fs-q{font-size:34px;font-weight:800;margin:18px 0;direction:ltr;font-family:var(--font-body)}.fs-q sup{font-size:.6em}
+.fs-top{display:flex;justify-content:space-between;font-size:16px}
+.fs-bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:8px 0}.fs-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .1s linear}
+.fs-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fs-opts button,.pl-opt{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:14px;padding:14px 8px;font:700 20px var(--font-body);cursor:pointer}
+.fs-opts button:hover,.pl-opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.xo-grid{display:grid;grid-template-columns:repeat(3,76px);gap:8px;justify-content:center;margin:12px 0;direction:ltr}
+.xo-grid button{height:76px;border-radius:14px;border:1px solid var(--line);background:var(--surface-2);font-size:34px;cursor:pointer}
+.xo-grid button:not(:disabled):hover{border-color:var(--accent);background:var(--accent-soft)}
+.fg-msg{font-weight:700;margin:6px 0}
+.mem-grid{display:grid;grid-template-columns:repeat(4,64px);gap:8px;justify-content:center;margin:12px 0;direction:ltr}
+.mem-grid button{height:64px;border-radius:12px;border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);font:800 26px var(--font-body);cursor:pointer;transition:transform .2s}
+.mem-grid button.sh{background:var(--surface);color:var(--ink);transform:rotateY(0)}.mem-grid button.ok{background:color-mix(in srgb,#16a34a 18%,var(--surface));color:#15803d;border-color:#16a34a}
+.fsd-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.fsd-grid button{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:14px;padding:12px 6px;font:600 14px var(--font-body);cursor:pointer;display:flex;flex-direction:column;gap:4px;align-items:center}
+.fsd-grid button span{font-size:28px}.fsd-grid button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.fsd-vol{display:flex;align-items:center;gap:8px;justify-content:center;margin:10px 0}.fsd-vol input{flex:1;max-width:240px}
+.fp-q{margin:10px 0}
+.pl-opt{display:block;width:100%;margin:8px 0;font-size:16px}
+.pl-res{position:relative;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 14px;margin:8px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface-2);text-align:start}
+.pl-res i{position:absolute;inset-block:0;inset-inline-start:0;background:var(--accent-soft);transition:width .6s}.pl-res span,.pl-res b{position:relative}.pl-res.me{border-color:var(--accent)}
+.fw-form{display:grid;gap:8px;margin:8px 0}
+.fw-form input,.fw-form textarea{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit;width:100%}
+.fw-form textarea{min-height:70px;resize:vertical}
+.fw-item{text-align:start;border:1px solid var(--line);background:var(--surface-2);border-radius:14px;padding:10px 14px;margin:8px 0}
+.fw-item b{color:var(--accent);font-size:14px}.fw-item p{margin:4px 0 0;overflow-wrap:anywhere;white-space:pre-line}
+.fw-act{display:flex;gap:6px;margin-top:8px}
+#funBreak{position:fixed;inset-inline:16px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:240;max-width:380px;margin-inline:auto;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--accent);border-radius:16px;padding:10px 14px;box-shadow:var(--shadow);animation:funPopIn .4s}
+#funBreak span{flex:1;font-size:14px}#funBreak button{border:0;border-radius:10px;padding:7px 12px;font:700 13px var(--font-body);cursor:pointer;background:var(--accent);color:#fff}#funBreak button[data-fb="x"]{background:transparent;color:var(--ink-faint)}
+/* الإعدادات */
+.fs-feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:2px 10px}
+.fs-chk{display:flex;align-items:center;gap:8px;font-weight:400;margin:5px 0}.fs-chk input{width:auto}
+.fs-row{display:flex;gap:10px;flex-wrap:wrap}.fs-num{flex:1;min-width:130px}
+@media (prefers-reduced-motion:reduce){.fp-badge,.fp-badge *,.fp-badge::before,.fp-badge::after{animation:none !important}}
+@media print{#funBox,#funHub,#funPop,#funBreak,#funConf{display:none !important}}
+/* ===== تايمر الديدلاين جوه مربعات التأشير: تحت العنوان ومتناسق مع المربع ===== */
+.ck-t .dl-timer{display:flex;width:fit-content;margin:6px 0 0;padding:2px 10px;font-size:.78em;gap:5px}
+.ck-t .dl-timer .dl-ico{font-size:.95em}
+.sec-inner [style*="text-align:center"] .ck-line{align-items:center;gap:14px}
+.sec-inner [style*="text-align:center"] .ck-box{margin-top:0}
+.sec-inner [style*="text-align:center"] .ck-t .dl-timer{margin-inline:auto}
+/* ألعاب إضافية */
+.fh-sub{padding-top:0}
+.fs-opts button.right{background:color-mix(in srgb,#16a34a 22%,var(--surface));border-color:#16a34a;color:#15803d}
+.fs-opts button.wrong{background:color-mix(in srgb,#ef4444 18%,var(--surface));border-color:#ef4444;color:#ef4444}
+.pat-q{font-size:26px}
+.c4-cols,.c4-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;direction:ltr;max-width:340px;margin:0 auto}
+.c4-cols button{border:0;background:transparent;color:var(--accent);font-size:16px;cursor:pointer;padding:2px}.c4-cols button:disabled{opacity:.25;cursor:default}
+.c4-grid{background:#2563eb;padding:6px;border-radius:14px;gap:5px}
+.c4-grid i{aspect-ratio:1;border-radius:50%;background:var(--surface);display:block}
+.c4-grid i.p1{background:#ef4444;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2)}.c4-grid i.p2{background:#facc15;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2)}
+.g48-board{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:300px;margin:8px auto;padding:8px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);touch-action:none;direction:ltr;user-select:none}
+.g48-board i{aspect-ratio:1;border-radius:10px;display:grid;place-items:center;font-style:normal;font-weight:800;background:color-mix(in srgb,var(--ink) 7%,transparent)}
+.g48-pad{display:grid;justify-items:center;gap:4px;margin:4px 0 8px;direction:ltr}.g48-pad div{display:flex;gap:4px}
+.g48-pad button{width:48px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);cursor:pointer;font-size:16px}
+.sl-grid{display:grid;grid-template-columns:repeat(3,80px);gap:6px;justify-content:center;margin:10px 0;direction:ltr}
+.sl-grid button{height:80px;border-radius:14px;border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);font:800 28px var(--font-body);cursor:pointer}
+.sl-grid button.e{background:transparent;border-style:dashed;cursor:default}
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:260px;margin:10px auto}
+.sim-pad{aspect-ratio:1;border:0;border-radius:18px;background:var(--c);opacity:.55;cursor:pointer;transition:opacity .15s,transform .15s}
+.sim-pad.lit{opacity:1;transform:scale(1.05);box-shadow:0 0 22px var(--c)}
 </style>
 </head>
 <body>
@@ -1933,6 +2062,7 @@ a.fl-row:hover{background:var(--accent-soft)}
     <button class="btn" data-act="settings">⚙ إعدادات الموقع</button>
     <button class="btn" data-act="poster">📢 بوستر الافتتاح</button>
     <button class="btn" data-act="features">🧩 ميزات الموقع</button>
+    <button class="btn" data-act="fun-settings">🎮 المرح والتحفيز</button>
     <button class="btn" data-act="folders">📁 مجلدات القائمة</button>
     <button class="btn" data-act="subject-settings">🎓 إعدادات المادة</button>
     <button class="btn" data-act="theme">🎨 المظهر والألوان</button>
@@ -1948,7 +2078,7 @@ a.fl-row:hover{background:var(--accent-soft)}
  
 <main>
   <div id="siteAnn" class="wrap"></div>
-  <div class="wrap" id="progBox"></div><div class="wrap" id="dailyBox"></div>
+  <div class="wrap" id="progBox"></div><div class="wrap" id="dailyBox"></div><div id="funBox"></div>
   <section class="hero">
     <div class="wrap">
       <h1 id="heroTitle"></h1>
@@ -3647,7 +3777,16 @@ const FEATURES = [
   ['favs','⭐ المفضلة',true],
   ['search','🔍 البحث في كل الأقسام',true],
   ['math','🧮 معادلات LaTeX (اكتب $x^2$ أو $$…$$)',true],
-  ['streak','🔥 عدّاد الأيام المتتالية',true],
+  ['streak','🔥 ستريك الأيام المتتالية (بيتطوّر شكله)',true],
+  ['xp','⭐ نقاط ومستويات (XP)',true],
+  ['confetti','🎉 كونفتي واحتفال عند الإنجاز',true],
+  ['cdexam','⏳ كارت عدّاد الامتحان لكل فرقة',true],
+  ['jokeday','😄 معلومة / نكتة رياضية اليوم',true],
+  ['sounds','🎧 أصوات التركيز',true],
+  ['speed','⚡ تحدي السرعة (حساب ذهني)',true],
+  ['arcade','🎮 ركن الألعاب (إكس أو + ذاكرة الرموز)',true],
+  ['poll','🗳️ تصويت الأسبوع (محتاج جداول Supabase)',false],
+  ['wall','💬 حيط التشجيع (محتاج جداول Supabase)',false],
   ['pomo','⏱️ مؤقت المذاكرة (بومودورو)',true],
   ['daily','💡 معادلة / سؤال اليوم',true],
   ['expand','⇕ فتح / قفل كل الأقسام',true],
@@ -3705,7 +3844,7 @@ function buildDock(){
   if(feat('favs')) it.push('<button type="button" data-tool="favs" aria-label="المفضلة" title="المفضلة">⭐</button>');
   if(feat('expand')) it.push('<button type="button" data-tool="expand" aria-label="فتح أو قفل كل الأقسام" title="فتح / قفل الكل">⇕</button>');
   if(feat('pomo')) it.push('<button type="button" data-tool="pomo" aria-label="مؤقت المذاكرة" title="مؤقت المذاكرة">⏱️</button>');
-  if(feat('streak')){ const n = streakCount(); if(n) it.push(`<span class="rt-chip" title="أيام متتالية">🔥 ${n}</span>`); }
+  try{ const fh = Fun.dockHtml(); if(fh) it.push(fh); }catch(e){ if(feat('streak')){ const n = streakCount(); if(n) it.push(`<span class="rt-chip" title="أيام متتالية">🔥 ${n}</span>`); } }
   rt.hidden = !it.length;
   rt.innerHTML = `<button type="button" class="rt-toggle" data-tool="dock" aria-label="أدوات الطالب" aria-expanded="${__dockOpen}">🧰</button><div class="rt-list">${it.join('')}</div>`;
   rt.classList.toggle('open', __dockOpen);
@@ -3954,6 +4093,7 @@ function renderExtras(){
   if(fu) fu.textContent = (m.showUpd!==false && site._savedAt) ? 'آخر تحديث للمحتوى: ' + new Date(site._savedAt).toLocaleDateString('ar-EG',{day:'numeric',month:'long',year:'numeric'}) : '';
   const sh = document.getElementById('shareBtn'); if(sh) sh.hidden = (m.shareBtn === false);
   buildDock(); renderProgress(); renderDaily(); renderMaint();
+  try{ Fun.render(); }catch(e){}
   setTimeout(typesetMath, 60);
   const intro = document.querySelector('.intro-sub'); if(intro && m.introSub) intro.textContent = m.introSub;
   try{ localStorage.setItem('site_intro_sub', m.introSub||''); }catch(e){}
@@ -3963,7 +4103,7 @@ function renderExtras(){
 }
 document.addEventListener('click', e=>{
   if(e.target.closest('[data-ann-x]')){ try{ sessionStorage.setItem('site_ann_hide', site.meta.annText||''); }catch(_){} renderExtras(); }
-  const rb = e.target.closest('#readTools button'); if(rb){
+  const rb = e.target.closest('#readTools button[data-d]'); if(rb){
     let ua = parseFloat(localStorage.getItem('site_ua')) || 1; ua = Math.min(1.5, Math.max(.8, Math.round((ua + .1*(+rb.dataset.d))*10)/10));
     try{ localStorage.setItem('site_ua', String(ua)); }catch(_){} document.documentElement.style.setProperty('--ua', ua);
   }
@@ -4998,6 +5138,7 @@ document.addEventListener('click', async e=>{
     case 'adminbar-toggle': { const ab=document.getElementById('adminbar'); const o=ab.classList.toggle('open'); t.setAttribute('aria-expanded',o); try{localStorage.setItem('adminbar_open',o?'1':'0');}catch(e){} break; }
     case 'visitors': window.Visits && Visits.modal(); break;
     case 'poster': Poster.editor(); break;
+    case 'fun-settings': Fun.settings(); break;
     case 'push-admin': Push.adminModal(); break;
     case 'add-section': sectionModal(null); break;
     case 'folders': foldersModal(); break;
@@ -5537,6 +5678,823 @@ document.addEventListener('click', async e=>{
 })();
 </script>
  <script>
+/* ===== إضافات المرح والتحفيز (ستريك متطوّر • XP • كونفتي • عدّاد امتحان • أصوات • ألعاب • تصويت • حيط) ===== */
+const FUN_SQL = `create table if not exists public.fun_poll_votes (
+  poll_id text not null,
+  option_idx int not null,
+  voter text not null,
+  created_at timestamptz default now(),
+  primary key (poll_id, voter)
+);
+alter table public.fun_poll_votes enable row level security;
+drop policy if exists "fpv read" on public.fun_poll_votes;
+drop policy if exists "fpv insert" on public.fun_poll_votes;
+create policy "fpv read" on public.fun_poll_votes for select using (true);
+create policy "fpv insert" on public.fun_poll_votes for insert with check (true);
+
+create table if not exists public.fun_wall (
+  id bigint generated always as identity primary key,
+  track text,
+  name text,
+  body text not null,
+  approved boolean not null default false,
+  created_at timestamptz default now()
+);
+alter table public.fun_wall enable row level security;
+drop policy if exists "fw read" on public.fun_wall;
+drop policy if exists "fw insert" on public.fun_wall;
+drop policy if exists "fw update" on public.fun_wall;
+drop policy if exists "fw delete" on public.fun_wall;
+create policy "fw read" on public.fun_wall for select using (true);
+create policy "fw insert" on public.fun_wall for insert with check (true);
+create policy "fw update" on public.fun_wall for update using (true) with check (true);
+create policy "fw delete" on public.fun_wall for delete using (true);`;
+
+const FUN_JOKES = [
+  'معلومة: كلمة «جبر» جاية من كتاب الخوارزمي «الجبر والمقابلة»، وكلمة Algorithm جاية من اسمه كمان 📚',
+  'معلومة: العدد 6 عدد «كامل» لأن مجموع قواسمه (1 + 2 + 3) بيساوي 6 نفسه.',
+  'معلومة: π عدد غير نسبي — يعني أرقامه ما بتنتهيش ولا بتتكرر بنمط ثابت.',
+  'معلومة: مجموع الأعداد من 1 لـ 100 بيساوي 5050 — بيتقال إن جاوس حلّها وهو طفل بحيلة التجميع من الطرفين.',
+  'معلومة: العدد e ≈ 2.71828 هو أساس اللوغاريتم الطبيعي، وبيظهر في النمو والتناقص الأسّي.',
+  'معلومة: e^0 = 1 و ln(1) = 0 — دالتين عكس بعض.',
+  'معلومة: مجموع زوايا أي مثلث في المستوى = 180°.',
+  'معلومة: الصفر العدد الوحيد اللي مش موجب ولا سالب.',
+  'نكتة: التفاضل قال للتكامل: أنا بشوف الميل اللحظي… وإنت بتجمع كل اللي فات 😄',
+  'نكتة: الطالب اللي بيذاكر ليلة الامتحان زي دالة متزايدة بسرعة… وبتقف فجأة الصبح ☕',
+  'نكتة: ليه المثلث ما كملش الامتحان؟ لأن زواياه كانت مش مظبوطة 😅',
+  'نكتة: قالوله «خد المشتقة»، قال: أنا لسه ماخدتش الأصل 🤔',
+  'تحفيز: كل خطوة غلط في المسألة بتعلّمك الخطوة الصح اللي بعدها 💪',
+  'تحفيز: 25 دقيقة تركيز + 5 راحة أحسن من ساعتين شرود 🍅',
+  'تحفيز: مسألة واحدة كل يوم × 30 يوم = 30 مسألة اتحلّت. ابدأ بواحدة النهاردة ✨'
+];
+
+const Fun = {
+  D: {
+    evolve: true, games: ['xo', 'c4', 'g48', 'slide', 'pat', 'simon', 'mem'],
+    streakDays: 10, grace: 0, stageBonus: 50,
+    stages: '🌱|براعم|#84cc16\n🔥|شرارة|#f97316\n☄️|شهاب|#ef4444\n⚡|صاعقة|#eab308\n🌟|نجم|#f59e0b\n💎|ماسة|#06b6d4\n👑|ملك|#a855f7\n🐉|تنين|#dc2626\n🌌|مجرة|#6366f1',
+    xpDay: 10, xpBox: 2, xpSec: 25, xpGame: 5, xpPerLevel: 100,
+    levels: 'مبتدئ,متحمس,مجتهد,متفوق,محترف,خبير,أسطورة',
+    confettiAmount: 120, confettiBoxes: true, confettiSec: true,
+    exams: { math1: '', math2: '', math3: '' },
+    jokes: '', jokesBuiltin: true,
+    sounds: ['rain', 'wind', 'white', 'library', 'calm'], soundVol: 40,
+    speedSecs: 60, speedLevel: 2, speedOps: ['add', 'sub', 'mul', 'div', 'sq', 'der'],
+    xoLevel: 'medium', arcadeAfterPomo: true,
+    pollQ: '', pollOpts: '',
+    wallApprove: true, wallMax: 10, wallMaxLen: 120, wallBad: ''
+  },
+  cfg() { return Object.assign({}, this.D, (site && site.meta && site.meta.fun) || {}); },
+  on(k) { try { return feat(k); } catch (e) { return false; } },
+  today() { return new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10); },
+  dn(iso) { return Math.round(Date.parse(iso + 'T00:00:00Z') / 86400000); },
+  rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); },
+  shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; },
+  rm() { try { return document.documentElement.classList.contains('respect-rm') && matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } },
+  voter() { let v = lsGet('fun_voter', ''); if (!v) { v = Math.random().toString(36).slice(2) + Date.now().toString(36); lsSet('fun_voter', v); } return v; },
+  tk() { return (currentTrack === 'math1' || currentTrack === 'math2' || currentTrack === 'math3') ? currentTrack : null; },
+
+  /* ---------- الستريك المتطوّر ---------- */
+  parseStages(str) {
+    const a = String(str || '').split('\n').map(l => l.split('|').map(x => x.trim())).filter(a => a[0])
+      .map(a => ({ e: a[0], name: a[1] || '', col: /^#[0-9a-f]{3,8}$/i.test(a[2] || '') ? a[2] : '#f97316' }));
+    return a.length ? a : this.parseStages(this.D.stages);
+  },
+  stages() { return this.parseStages(this.cfg().stages); },
+  stageOf(n) {
+    const c = this.cfg(), days = Math.max(1, +c.streakDays || 10), st = this.stages();
+    if (c.evolve === false) return { i: 1, days, last: true, into: days, next: null, fixed: true, e: '🔥', name: 'ستريك النار', col: '#f97316' };
+    const i = Math.min(Math.floor(Math.max(0, n) / days), st.length - 1), last = i === st.length - 1;
+    return Object.assign({ i, days, last, into: last ? days : (n - i * days), next: last ? null : st[i + 1] }, st[i]);
+  },
+  streak() {
+    const c = this.cfg(), t = this.today();
+    let st = lsGet('fun_streak', null);
+    if (!st) {
+      const o = lsGet('site_streak', { last: '', n: 0 });
+      st = { last: '', n: o.n || 0, best: o.n || 0 };
+      if (o.last) { const d = new Date(o.last); if (!isNaN(d)) st.last = new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
+    }
+    if (st.last !== t) {
+      const diff = st.last ? this.dn(t) - this.dn(st.last) : 999;
+      if (diff === 1) st.n++;
+      else if (diff < 0) { /* ساعة الجهاز اتأخرت: نسيبه زي ما هو */ }
+      else if (diff > 1 && diff - 1 <= (+c.grace || 0) && st.n > 0) st.n++;
+      else st.n = 1;
+      st.last = t; st.best = Math.max(st.best || 0, st.n); lsSet('fun_streak', st);
+      this.award('visit:' + t, c.xpDay, 'دخلت النهاردة');
+    }
+    return st;
+  },
+  badge(s, extra) {
+    const g = Array.from({ length: Math.min(s.i, 8) }, (_, i) => 'g' + (i + 1)).join(' ');
+    return `<div class="fp-badge ${g} ${extra || ''}" style="--sc:${esc(s.col)};--k:${Math.min(s.i, 8)}"><span class="fp-e">${esc(s.e)}</span></div>`;
+  },
+  maybeEvolve() {
+    if (!this.on('streak') || this.cfg().evolve === false) return;
+    const st = this.streak(), s = this.stageOf(st.n), all = this.stages();
+    let seen = lsGet('fun_stage_seen', null);
+    if (seen === null) { lsSet('fun_stage_seen', s.i); return; }
+    if (s.i <= seen) { if (s.i < seen) lsSet('fun_stage_seen', s.i); return; }
+    const sp = document.getElementById('trackSplash'); if (sp && !sp.classList.contains('hide')) return;
+    const old = all[Math.min(seen, all.length - 1)];
+    lsSet('fun_stage_seen', s.i);
+    this.evoPop(old, s, st.n);
+    this.award('stage:' + s.i, this.cfg().stageBonus, 'تطوّر السلسلة');
+  },
+  evoPop(old, s, n) {
+    let p = document.getElementById('funPop'); if (p) p.remove();
+    p = document.createElement('div'); p.id = 'funPop';
+    p.innerHTML = `<div class="fpop-card" style="--sc:${esc(s.col)}"><div class="fpop-t">🎉 سلسلتك اتطوّرت!</div>
+      <div class="fpop-row"><span class="fpop-old">${esc(old.e)}</span><span class="fpop-arr">⬅</span>${this.badge(s, 'big')}</div>
+      <h3>${esc(s.name)}</h3><p>${n} يوم متتالي — كمّل كده 💪</p><button type="button" class="fh-btn" data-fpop-x>تمام</button></div>`;
+    p.addEventListener('click', e => { if (e.target === p || e.target.closest('[data-fpop-x]')) p.remove(); });
+    document.body.appendChild(p);
+    this.confetti(220);
+  },
+
+  /* ---------- XP والمستويات ---------- */
+  lv() {
+    const c = this.cfg(), per = Math.max(10, +c.xpPerLevel || 100), x = lsGet('fun_xp', { t: 0, l: {} }), t = x.t || 0;
+    const names = String(c.levels || '').split(',').map(s => s.trim()).filter(Boolean);
+    const L = Math.floor(t / per) + 1;
+    return { t, L, into: t % per, per, name: names.length ? names[Math.min(L - 1, names.length - 1)] : '' };
+  },
+  award(key, pts, label) {
+    if (!this.on('xp')) return;
+    pts = Math.round(+pts || 0); if (pts <= 0) return;
+    const x = lsGet('fun_xp', { t: 0, l: {} }); x.l = x.l || {}; if (x.l[key]) return;
+    const before = this.lv().L; x.l[key] = 1; x.t = (x.t || 0) + pts; lsSet('fun_xp', x);
+    const a = this.lv();
+    toast('⭐ +' + pts + ' XP' + (label ? ' — ' + label : ''));
+    if (a.L > before) setTimeout(() => { toast('🎉 مستوى جديد: ' + a.L + (a.name ? ' — ' + a.name : '')); this.confetti(160); }, 1100);
+    clearTimeout(this._rt); this._rt = setTimeout(() => this.renderBox(), 80);
+  },
+  awardCapped(prefix, pts, cap, label) {
+    const d = this.today(), x = lsGet('fun_xp', { l: {} });
+    for (let i = 1; i <= cap; i++) { const k = prefix + ':' + d + ':' + i; if (!(x.l && x.l[k])) { this.award(k, pts, label); return; } }
+  },
+
+  /* ---------- كونفتي ---------- */
+  confetti(n) {
+    if (!this.on('confetti') || this.rm()) return;
+    n = Math.min(400, n || this.cfg().confettiAmount || 120);
+    const cv = document.createElement('canvas'); cv.id = 'funConf'; document.body.appendChild(cv);
+    const W = cv.width = innerWidth, H = cv.height = innerHeight, ctx = cv.getContext('2d');
+    const cols = ['#f97316', '#eab308', '#22c55e', '#06b6d4', '#6366f1', '#ec4899', '#ef4444'];
+    const ps = Array.from({ length: n }, () => ({ x: W / 2 + (Math.random() - .5) * W * .3, y: H * .35, vx: (Math.random() - .5) * 14, vy: -Math.random() * 13 - 3, s: Math.random() * 7 + 4, r: Math.random() * 6, vr: (Math.random() - .5) * .3, c: cols[Math.random() * cols.length | 0] }));
+    const t0 = performance.now();
+    (function f(t) {
+      const el = t - t0; ctx.clearRect(0, 0, W, H);
+      ps.forEach(p => { p.vy += .32; p.x += p.vx; p.y += p.vy; p.vx *= .99; p.r += p.vr; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.globalAlpha = Math.max(0, 1 - el / 2600); ctx.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * .6); ctx.restore(); });
+      if (el < 2600) requestAnimationFrame(f); else cv.remove();
+    })(t0);
+  },
+
+  /* ---------- كروت الصفحة الرئيسية ---------- */
+  playerCard() {
+    const c = this.cfg(); let h = '';
+    if (this.on('streak')) {
+      const st = this.streak(), s = this.stageOf(st.n), pct = s.last ? 100 : Math.round(s.into / s.days * 100);
+      h += `<div class="fp-top">${this.badge(s)}<div class="fp-info"><b>${esc(s.name)} · ${st.n} يوم متتالي</b><small>أطول سلسلة: ${st.best || st.n} يوم</small></div></div>
+        ${s.fixed ? '' : `<div class="fp-bar" style="--sc:${esc(s.col)}"><i style="width:${pct}%"></i></div>`}
+        <div class="fp-note">${s.fixed ? '🔥 حافظ على النار مشتعلة — ادخل كل يوم!' : s.last ? '🏆 وصلت لأعلى شكل — إنت أسطورة!' : `باقي <b>${s.days - s.into}</b> يوم وتتطوّر إلى ${esc(s.next.e)} ${esc(s.next.name)}`}</div>`;
+    }
+    if (this.on('xp')) {
+      const l = this.lv();
+      h += `<div class="fp-xp"><div class="fp-xp-top"><b>⭐ مستوى ${l.L}${l.name ? ' — ' + esc(l.name) : ''}</b><span>${l.t} XP</span></div><div class="fp-bar"><i style="width:${Math.round(l.into / l.per * 100)}%"></i></div></div>`;
+    }
+    return h ? `<div class="fun-card fp-card">${h}</div>` : '';
+  },
+  examCard() {
+    const c = this.cfg(), tk = this.tk(), ex = c.exams || {}, today = this.dn(this.today()), list = [];
+    (tk ? [tk] : ['math1', 'math2', 'math3']).forEach(k => String(ex[k] || '').split('\n').forEach(l => {
+      const a = l.split('|').map(x => x.trim()); if (a.length < 2 || !/^\d{4}-\d{2}-\d{2}$/.test(a[1])) return;
+      const d = this.dn(a[1]) - today; if (d >= 0) list.push({ name: a[0], d, tag: tk ? '' : trackShort(k) });
+    }));
+    if (!list.length) return '';
+    list.sort((a, b) => a.d - b.d);
+    const f = list[0], cls = f.d <= 3 ? 'hot' : (f.d <= 14 ? 'warm' : '');
+    const big = f.d === 0 ? 'النهاردة!' : (f.d === 1 ? 'بكرة' : f.d), unit = f.d > 1 ? 'يوم' : '';
+    const msg = f.d === 0 ? 'بالتوفيق يا بطل 💪' : (f.d <= 3 ? 'مراجعة أخيرة وتركيز 🔥' : (f.d <= 14 ? 'وقت الشغل الجاد 📚' : 'لسه فيه وقت — نظّم مذاكرتك ✨'));
+    const more = list.slice(1, 3).map(x => `<span>${esc(x.tag ? x.tag + ' ' : '')}${esc(x.name)} — ${x.d} يوم</span>`).join('');
+    return `<div class="fun-card fx-card ${cls}"><b>⏳ ${esc(f.tag ? f.tag + ' · ' : '')}${esc(f.name)}</b><div class="fx-n"><em>${big}</em> ${unit}</div><div class="fp-note">${msg}</div>${more ? `<div class="fx-more">${more}</div>` : ''}</div>`;
+  },
+  jokeList() {
+    const c = this.cfg(), mine = String(c.jokes || '').split('\n').map(x => x.trim()).filter(Boolean);
+    return (c.jokesBuiltin === false ? [] : FUN_JOKES).concat(mine);
+  },
+  jokeCard(rand) {
+    const L = this.jokeList(); if (!L.length) return '';
+    const i = rand ? Math.floor(Math.random() * L.length) : this.dn(this.today()) % L.length;
+    return `<div class="fun-card fj-card"><b>😄 معلومة / نكتة اليوم</b><div class="fj-t">${esc(L[i])}</div><button type="button" class="fh-link" data-fun-joke>🔀 واحدة تانية</button></div>`;
+  },
+  renderBox() {
+    const box = document.getElementById('funBox'); if (!box) return;
+    const parts = [];
+    if (this.on('streak') || this.on('xp')) parts.push(this.playerCard());
+    if (this.on('cdexam')) parts.push(this.examCard());
+    if (this.on('jokeday')) parts.push(this.jokeCard());
+    const cards = parts.filter(Boolean).join('');
+    const hub = this.hubTabs().length ? `<div class="fun-hubrow"><button type="button" class="fh-btn" data-tool="fun">🎮 ركن المرح والتحدّيات</button></div>` : '';
+    box.innerHTML = (cards ? `<div class="fun-grid">${cards}</div>` : '') + hub;
+  },
+  render() { this.renderBox(); try { this.maybeEvolve(); } catch (e) { console.warn('fun', e); } },
+  dockHtml() {
+    let h = '';
+    if (this.on('streak')) {
+      const st = this.streak(), s = this.stageOf(st.n);
+      h += `<button type="button" class="rt-chip fun-chip" data-tool="fun" data-fun-tab="first" style="--sc:${esc(s.col)}" title="${esc(s.name)} — ${st.n} يوم متتالي"><span>${esc(s.e)}</span> ${st.n}</button>`;
+    } else if (this.hubTabs().length) {
+      h += `<button type="button" data-tool="fun" data-fun-tab="first" aria-label="ركن المرح" title="ركن المرح">🎮</button>`;
+    }
+    return h;
+  },
+
+  /* ---------- الهَب (نافذة الألعاب والأصوات والتصويت والحيط) ---------- */
+  hubTabs() {
+    const t = [];
+    if (this.on('speed')) t.push(['speed', '⚡', 'تحدي السرعة']);
+    if (this.on('arcade')) t.push(['games', '🎮', 'ألعاب']);
+    if (this.on('sounds')) t.push(['sounds', '🎧', 'أصوات تركيز']);
+    if (this.on('poll') && String(this.cfg().pollQ || '').trim()) t.push(['poll', '🗳️', 'تصويت']);
+    if (this.on('wall')) t.push(['wall', '💬', 'حيط التشجيع']);
+    return t;
+  },
+  open(tab) {
+    const tabs = this.hubTabs(); if (!tabs.length) { toast('مفيش إضافات مفعّلة دلوقتي'); return; }
+    let h = document.getElementById('funHub');
+    if (!h) { h = document.createElement('div'); h.id = 'funHub'; document.body.appendChild(h);
+      h.addEventListener('click', e => this.hubClick(e));
+      let tx = 0, ty = 0;
+      h.addEventListener('touchstart', e => { if (e.target.closest('[data-swipe]')) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; } }, { passive: true });
+      h.addEventListener('touchend', e => { if (!e.target.closest('[data-swipe]')) return; const t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty; if (Math.max(Math.abs(dx), Math.abs(dy)) < 28) return; this.g48Move(Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 0 : 1) : (dy < 0 ? 2 : 3)); }, { passive: true });
+      h.addEventListener('input', e => { const v = e.target.closest('[data-fvol]'); if (v) this.setVol(+v.value); }); }
+    this.tab = tabs.some(t => t[0] === tab) ? tab : tabs[0][0];
+    h.classList.add('on'); this.paint();
+  },
+  close() { const h = document.getElementById('funHub'); if (h) h.classList.remove('on'); this.stopSpeed(); this.stopGames(); },
+  paint() {
+    const h = document.getElementById('funHub'); if (!h) return;
+    const tabs = this.hubTabs();
+    h.innerHTML = `<div class="fh-panel" role="dialog" aria-modal="true" aria-label="ركن المرح"><div class="fh-head"><b>🎮 ركن المرح</b><button type="button" data-fh="x" aria-label="إغلاق">✕</button></div>
+      <div class="fh-tabs">${tabs.map(t => `<button type="button" data-fh-tab="${t[0]}" class="${t[0] === this.tab ? 'on' : ''}">${t[1]} ${t[2]}</button>`).join('')}</div>
+      <div class="fh-body" id="fhBody">${this['tab_' + this.tab]()}</div></div>`;
+  },
+  body(html) { const b = document.getElementById('fhBody'); if (b) b.innerHTML = html; },
+  sub(html) { const b = document.getElementById('fgBody'); if (b) b.innerHTML = html; },
+  hubClick(e) {
+    const h = document.getElementById('funHub');
+    if (e.target === h || e.target.closest('[data-fh="x"]')) { this.close(); return; }
+    const tb = e.target.closest('[data-fh-tab]'); if (tb) { this.stopSpeed(); this.stopGames(); this.tab = tb.dataset.fhTab; this.paint(); return; }
+    const a = e.target.closest('[data-fa]'); if (!a) return;
+    const k = a.dataset.fa, i = +a.dataset.i;
+    switch (k) {
+      case 'speed-start': this.speedStart(); break;
+      case 'speed-ans': this.speedAns(i); break;
+      case 'game-sub': this.stopGames(); this.gsub = a.dataset.g; this.body(this.tab_games()); break;
+      case 'c4-col': this.c4Play(i); break;
+      case 'c4-reset': this.c4New(); this.sub(this.c4Html()); break;
+      case 'g48-mv': this.g48Move(i); break;
+      case 'g48-reset': this.g48New(); this.sub(this.g48Html()); break;
+      case 'sl-tap': this.slTap(i); break;
+      case 'sl-reset': this.slNew(); this.sub(this.slHtml()); break;
+      case 'pat-new': this.patNew(); break;
+      case 'pat-ans': this.patAns(i); break;
+      case 'sim-start': this.simStart(); break;
+      case 'sim-pad': this.simTap(i); break;
+      case 'xo-cell': this.xoPlay(i); break;
+      case 'xo-reset': this.xoReset(); break;
+      case 'mem-card': this.memFlip(i); break;
+      case 'mem-reset': this.memReset(); break;
+      case 'snd': this.sndPlay(a.dataset.k); this.body(this.tab_sounds()); try { buildDock(); } catch (_) { } break;
+      case 'snd-stop': this.sndStop(); this.body(this.tab_sounds()); break;
+      case 'vote': this.pollVote(i); break;
+      case 'wall-send': this.wallSend(); break;
+    }
+  },
+
+  /* ---------- تحدي السرعة ---------- */
+  sp: null,
+  tab_speed() {
+    const c = this.cfg(), best = lsGet('fun_speed_best', 0);
+    return `<div class="fs-start"><div class="fh-big">⚡</div><h3>تحدي السرعة</h3><p>${Math.max(10, +c.speedSecs || 60)} ثانية — جاوب على أكبر عدد من العمليات.</p><p class="fh-hint">أعلى نتيجة ليك: <b>${best}</b></p><button type="button" class="fh-btn" data-fa="speed-start">ابدأ التحدي</button></div>`;
+  },
+  genQ() {
+    const c = this.cfg(), L = Math.min(3, Math.max(1, +c.speedLevel || 2)), r = (a, b) => this.rnd(a, b);
+    let ops = (Array.isArray(c.speedOps) ? c.speedOps : []).filter(x => ['add', 'sub', 'mul', 'div', 'sq', 'der'].includes(x)); if (!ops.length) ops = ['add'];
+    const op = ops[r(0, ops.length - 1)]; let t, ans;
+    if (op === 'add') { const m = [20, 99, 500][L - 1], lo = [2, 10, 50][L - 1], a = r(lo, m), b = r(lo, m); t = a + ' + ' + b; ans = a + b; }
+    else if (op === 'sub') { const m = [20, 99, 500][L - 1], lo = [2, 10, 50][L - 1]; let a = r(lo, m), b = r(lo, m); if (b > a) [a, b] = [b, a]; t = a + ' − ' + b; ans = a - b; }
+    else if (op === 'mul') { const R = [[2, 9, 2, 9], [2, 12, 6, 19], [11, 25, 6, 19]][L - 1], a = r(R[0], R[1]), b = r(R[2], R[3]); t = a + ' × ' + b; ans = a * b; }
+    else if (op === 'div') { const m = [9, 12, 19][L - 1], b = r(2, m), q = r(2, m); t = (b * q) + ' ÷ ' + b; ans = q; }
+    else if (op === 'sq') { const n = r([2, 11, 15][L - 1], [12, 25, 35][L - 1]); t = n + '<sup>2</sup>'; ans = n * n; }
+    else { const n = L === 1 ? 2 : r(2, 3), a = r(1, 3), k = r(1, L === 3 ? 5 : 4); t = `f(x) = ${a === 1 ? '' : a}x<sup>${n}</sup> ⇒ f′(${k}) = ?`; ans = a * n * Math.pow(k, n - 1); }
+    const set = new Set([ans]); let guard = 0;
+    while (set.size < 4 && guard++ < 60) { const d = r(1, Math.max(3, Math.ceil(Math.abs(ans) * .12))) * (Math.random() < .5 ? -1 : 1), v = ans + d; if (v >= 0) set.add(v); }
+    while (set.size < 4) set.add(ans + set.size + 1);
+    return { t, ans, opts: this.shuffle([...set]) };
+  },
+  speedStart() {
+    const c = this.cfg(), secs = Math.max(10, +c.speedSecs || 60);
+    this.stopSpeed();
+    this.sp = { tot: secs, end: Date.now() + secs * 1000, score: 0, miss: 0, q: this.genQ() };
+    this.sp.t = setInterval(() => this.speedTick(), 100);
+    this.body(this.speedHtml());
+  },
+  speedHtml() {
+    const s = this.sp;
+    return `<div class="fs-play"><div class="fs-top"><span>✅ <b id="fsScore">${s.score}</b></span><span>⏱ <b id="fsTime">${Math.ceil((s.end - Date.now()) / 1000)}</b></span></div><div class="fs-bar"><i id="fsBar" style="width:${Math.max(0, (s.end - Date.now()) / 1000 / s.tot * 100)}%"></i></div>
+      <div class="fs-q" dir="ltr">${s.q.t}</div><div class="fs-opts">${s.q.opts.map((o, i) => `<button type="button" data-fa="speed-ans" data-i="${i}">${o}</button>`).join('')}</div></div>`;
+  },
+  speedTick() {
+    const s = this.sp; if (!s) return;
+    const left = Math.max(0, (s.end - Date.now()) / 1000), bar = document.getElementById('fsBar'), tm = document.getElementById('fsTime');
+    if (bar) bar.style.width = (left / s.tot * 100) + '%'; if (tm) tm.textContent = Math.ceil(left);
+    if (left <= 0) this.speedEnd();
+  },
+  speedAns(i) {
+    const s = this.sp; if (!s) return;
+    if (s.q.opts[i] === s.q.ans) s.score++; else s.miss++;
+    s.q = this.genQ(); this.body(this.speedHtml());
+  },
+  stopSpeed() { if (this.sp) { clearInterval(this.sp.t); this.sp = null; } },
+  speedEnd() {
+    const s = this.sp; if (!s) return; clearInterval(s.t); this.sp = null;
+    const best = lsGet('fun_speed_best', 0), rec = s.score > best; if (rec) lsSet('fun_speed_best', s.score);
+    const tot = s.score + s.miss, acc = tot ? Math.round(s.score / tot * 100) : 0;
+    if (s.score > 0) { this.awardCapped('speed', s.score, 5, 'تحدي السرعة'); if (rec) this.confetti(140); }
+    this.body(`<div class="fs-start"><div class="fh-big">${rec ? '🏆' : '🎯'}</div><h3>${rec ? 'رقم قياسي جديد!' : 'خلص الوقت!'}</h3><p>نتيجتك: <b>${s.score}</b> — دقّة ${acc}%</p><p class="fh-hint">أعلى نتيجة: <b>${Math.max(best, s.score)}</b></p><button type="button" class="fh-btn" data-fa="speed-start">↻ جرّب تاني</button></div>`);
+  },
+
+  /* ---------- الألعاب ---------- */
+  gsub: 'xo',
+  GAMES: [['xo', '❌⭕', 'إكس أو'], ['c4', '🔴', 'أربعة في صف'], ['g48', '🔢', '2048'], ['slide', '🧩', 'بازل الأرقام'], ['pat', '🔮', 'كمّل النمط'], ['simon', '🎵', 'سيمون'], ['mem', '🧠', 'ذاكرة الرموز']],
+  gamesOn() { const c = this.cfg(), a = Array.isArray(c.games) ? c.games : this.D.games; return this.GAMES.filter(g => a.includes(g[0])); },
+  tab_games() {
+    const on = this.gamesOn(); if (!on.length) return '<p class="fh-hint">مفيش ألعاب متاحة دلوقتي.</p>';
+    if (!on.some(g => g[0] === this.gsub)) this.gsub = on[0][0];
+    const g = this.gsub;
+    return `<div class="fh-sub">${on.map(x => `<button type="button" data-fa="game-sub" data-g="${x[0]}" class="${g === x[0] ? 'on' : ''}">${x[1]} ${x[2]}</button>`).join('')}</div><div id="fgBody">${this.gameHtml(g)}</div>`;
+  },
+  gameHtml(g) { const m = { xo: () => this.xoHtml(), mem: () => this.memHtml(), c4: () => this.c4Html(), g48: () => this.g48Html(), slide: () => this.slHtml(), pat: () => this.patHtml(), simon: () => this.simHtml() }; return m[g] ? m[g]() : ''; },
+  stopGames() { (this.simT || []).forEach(clearTimeout); this.simT = []; this.sim = null; if (this.pat && this.pat.t) clearTimeout(this.pat.t); },
+  win(key, extra) { this.awardCapped(key, (+this.cfg().xpGame || 0) + (extra || 0), 5, 'لعبة'); },
+
+  /* ---- أربعة في صف ---- */
+  c4: null, c4T: { w: 0, l: 0, d: 0 },
+  c4New() { this.c4 = { b: Array(42).fill(0), over: 0 }; },
+  c4Drop(b, col, p) { for (let r = 5; r >= 0; r--) if (!b[r * 7 + col]) { b[r * 7 + col] = p; return r; } return -1; },
+  c4Four(b, p) {
+    const D = [[0, 1], [1, 0], [1, 1], [1, -1]];
+    for (let r = 0; r < 6; r++) for (let c = 0; c < 7; c++) { if (b[r * 7 + c] !== p) continue; for (const [dr, dc] of D) { let k = 1; while (k < 4) { const rr = r + dr * k, cc = c + dc * k; if (rr < 0 || rr > 5 || cc < 0 || cc > 6 || b[rr * 7 + cc] !== p) break; k++; } if (k === 4) return true; } }
+    return false;
+  },
+  c4Eval(b) {
+    let s = 0; const D = [[0, 1], [1, 0], [1, 1], [1, -1]];
+    for (let r = 0; r < 6; r++) for (let c = 0; c < 7; c++) for (const [dr, dc] of D) {
+      const er = r + dr * 3, ec = c + dc * 3; if (er < 0 || er > 5 || ec < 0 || ec > 6) continue;
+      let a = 0, h = 0, e = 0; for (let k = 0; k < 4; k++) { const v = b[(r + dr * k) * 7 + c + dc * k]; if (v === 2) a++; else if (v === 1) h++; else e++; }
+      if (a && h) continue; if (a === 3 && e === 1) s += 6; else if (a === 2 && e === 2) s += 2; if (h === 3 && e === 1) s -= 7; else if (h === 2 && e === 2) s -= 2;
+    }
+    for (let r = 0; r < 6; r++) if (b[r * 7 + 3] === 2) s += 3;
+    return s;
+  },
+  c4Mini(b, depth, al, be, max) {
+    if (this.c4Four(b, 2)) return 100000 + depth; if (this.c4Four(b, 1)) return -100000 - depth;
+    const cols = [3, 2, 4, 1, 5, 0, 6].filter(c => !b[c]); if (!cols.length) return 0; if (!depth) return this.c4Eval(b);
+    if (max) { let v = -1e9; for (const c of cols) { const r = this.c4Drop(b, c, 2); v = Math.max(v, this.c4Mini(b, depth - 1, al, be, false)); b[r * 7 + c] = 0; al = Math.max(al, v); if (al >= be) break; } return v; }
+    let v = 1e9; for (const c of cols) { const r = this.c4Drop(b, c, 1); v = Math.min(v, this.c4Mini(b, depth - 1, al, be, true)); b[r * 7 + c] = 0; be = Math.min(be, v); if (al >= be) break; } return v;
+  },
+  c4Cpu() {
+    const b = this.c4.b, lvl = this.cfg().xoLevel, cols = [0, 1, 2, 3, 4, 5, 6].filter(c => !b[c]);
+    if (lvl === 'easy') { for (const p of [2, 1]) for (const c of cols) { const r = this.c4Drop(b, c, p), w = this.c4Four(b, p); b[r * 7 + c] = 0; if (w) return c; } return cols[Math.random() * cols.length | 0]; }
+    const depth = lvl === 'hard' ? 5 : 3; let best = cols[0], bv = -1e9;
+    for (const c of [3, 2, 4, 1, 5, 0, 6].filter(c => cols.includes(c))) { const r = this.c4Drop(b, c, 2), v = this.c4Mini(b, depth - 1, -1e9, 1e9, false); b[r * 7 + c] = 0; if (v > bv) { bv = v; best = c; } }
+    return best;
+  },
+  c4Play(col) {
+    if (!this.c4) this.c4New(); const g = this.c4, b = g.b; if (g.over) return;
+    if (this.c4Drop(b, col, 1) < 0) return;
+    if (this.c4Four(b, 1)) g.over = 1; else if (b.every(Boolean)) g.over = 3;
+    else { const c = this.c4Cpu(); this.c4Drop(b, c, 2); if (this.c4Four(b, 2)) g.over = 2; else if (b.every(Boolean)) g.over = 3; }
+    if (g.over === 1) { this.c4T.w++; this.win('c4', 3); this.confetti(90); } else if (g.over === 2) this.c4T.l++; else if (g.over === 3) this.c4T.d++;
+    this.sub(this.c4Html());
+  },
+  c4Html() {
+    if (!this.c4) this.c4New(); const g = this.c4, T = this.c4T;
+    const msg = g.over === 1 ? '🎉 كسبت!' : g.over === 2 ? '😅 الكمبيوتر كسب' : g.over === 3 ? '🤝 تعادل' : 'إنت 🔴 — اختار عمود';
+    return `<div class="fg-c4"><div class="c4-cols">${[0, 1, 2, 3, 4, 5, 6].map(c => `<button type="button" data-fa="c4-col" data-i="${c}" ${g.over || g.b[c] ? 'disabled' : ''}>▼</button>`).join('')}</div>
+      <div class="c4-grid">${g.b.map(v => `<i class="${v === 1 ? 'p1' : v === 2 ? 'p2' : ''}"></i>`).join('')}</div><p class="fg-msg">${msg}</p><p class="fh-hint">كسبت ${T.w} • خسرت ${T.l} • تعادل ${T.d}</p><button type="button" class="fh-btn" data-fa="c4-reset">↻ جولة جديدة</button></div>`;
+  },
+
+  /* ---- 2048 ---- */
+  g48: null,
+  g48Add(b) { const e = b.map((v, i) => v ? -1 : i).filter(i => i >= 0); if (e.length) b[e[Math.random() * e.length | 0]] = Math.random() < .9 ? 2 : 4; },
+  g48New() { const b = Array(16).fill(0); this.g48Add(b); this.g48Add(b); this.g48 = { b, score: 0, over: false, won: false }; },
+  g48Move(d) {
+    if (!this.g48) this.g48New(); const g = this.g48; if (g.over) return;
+    const b = g.b.slice(); let moved = false, gain = 0;
+    for (let i = 0; i < 4; i++) {
+      const line = [0, 1, 2, 3].map(j => d === 0 ? i * 4 + j : d === 1 ? i * 4 + 3 - j : d === 2 ? j * 4 + i : (3 - j) * 4 + i);
+      const vals = line.map(k => b[k]).filter(Boolean), out = [];
+      for (let k = 0; k < vals.length; k++) { if (vals[k] === vals[k + 1]) { out.push(vals[k] * 2); gain += vals[k] * 2; k++; } else out.push(vals[k]); }
+      while (out.length < 4) out.push(0);
+      line.forEach((k, j) => { if (b[k] !== out[j]) moved = true; b[k] = out[j]; });
+    }
+    if (!moved) return;
+    g.b = b; g.score += gain; this.g48Add(b);
+    if (!g.won && b.includes(2048)) { g.won = true; this.confetti(200); toast('🏆 وصلت 2048!'); this.win('g48w', 15); }
+    const can = b.some((v, i) => !v || (i % 4 < 3 && v === b[i + 1]) || (i < 12 && v === b[i + 4]));
+    if (!can) { g.over = true; const best = lsGet('fun_2048_best', 0); if (g.score > best) { lsSet('fun_2048_best', g.score); if (g.score > 0) this.confetti(100); } this.win('g48', Math.min(30, Math.floor(g.score / 300))); }
+    this.sub(this.g48Html());
+  },
+  g48Html() {
+    if (!this.g48) this.g48New(); const g = this.g48, best = Math.max(lsGet('fun_2048_best', 0), g.score);
+    const tile = v => { if (!v) return '<i></i>'; const l = Math.log2(v); return `<i style="background:hsl(${(25 + l * 27) % 360} 78% ${l < 3 ? 86 : 60}%);color:${l < 3 ? '#5b4a3a' : '#fff'};font-size:${v > 999 ? 18 : v > 99 ? 22 : 26}px">${v}</i>`; };
+    return `<div class="fg-48"><div class="fh-hint">النقاط: <b>${g.score}</b> • الأفضل: ${best}</div><div class="g48-board" data-swipe>${g.b.map(tile).join('')}</div>
+      <div class="g48-pad"><button type="button" data-fa="g48-mv" data-i="2">▲</button><div><button type="button" data-fa="g48-mv" data-i="0">◀</button><button type="button" data-fa="g48-mv" data-i="3">▼</button><button type="button" data-fa="g48-mv" data-i="1">▶</button></div></div>
+      <p class="fg-msg">${g.over ? '😅 خلصت الحركات' : 'اسحب أو استخدم الأسهم'}</p><button type="button" class="fh-btn" data-fa="g48-reset">↻ لعبة جديدة</button></div>`;
+  },
+
+  /* ---- بازل الأرقام ---- */
+  sl: null,
+  slNb(z) { const r = z / 3 | 0, c = z % 3, o = []; if (r > 0) o.push(z - 3); if (r < 2) o.push(z + 3); if (c > 0) o.push(z - 1); if (c < 2) o.push(z + 1); return o; },
+  slNew() {
+    const b = [1, 2, 3, 4, 5, 6, 7, 8, 0]; let z = 8, last = -1;
+    for (let i = 0; i < 90; i++) { const nb = this.slNb(z).filter(x => x !== last), m = nb[Math.random() * nb.length | 0]; [b[z], b[m]] = [b[m], b[z]]; last = z; z = m; }
+    this.sl = { b, moves: 0, over: false };
+    if (b.join() === '1,2,3,4,5,6,7,8,0') this.slNew();
+  },
+  slTap(i) {
+    const s = this.sl; if (!s || s.over) return; const z = s.b.indexOf(0); if (!this.slNb(z).includes(i)) return;
+    [s.b[z], s.b[i]] = [s.b[i], s.b[z]]; s.moves++;
+    if (s.b.join() === '1,2,3,4,5,6,7,8,0') { s.over = true; const best = lsGet('fun_sl_best', 0); if (!best || s.moves < best) lsSet('fun_sl_best', s.moves); this.win('sl', 3); this.confetti(120); }
+    this.sub(this.slHtml());
+  },
+  slHtml() {
+    if (!this.sl) this.slNew(); const s = this.sl, best = lsGet('fun_sl_best', 0);
+    return `<div class="fg-sl"><div class="fh-hint">الحركات: <b>${s.moves}</b>${best ? ' • أفضل: ' + best : ''}</div><div class="sl-grid">${s.b.map((v, i) => `<button type="button" data-fa="sl-tap" data-i="${i}" class="${v ? '' : 'e'}">${v || ''}</button>`).join('')}</div>
+      <p class="fg-msg">${s.over ? '🎉 رتّبتها!' : 'رتّب الأرقام من 1 لـ 8'}</p><button type="button" class="fh-btn" data-fa="sl-reset">↻ بازل جديد</button></div>`;
+  },
+
+  /* ---- كمّل النمط ---- */
+  pat: null,
+  patGen() {
+    const r = (a, b) => this.rnd(a, b), t = r(0, 5); let arr;
+    if (t === 0) { const a = r(1, 15), d = r(2, 9); arr = [0, 1, 2, 3, 4, 5].map(i => a + d * i); }
+    else if (t === 1) { const a = r(1, 4), q = r(2, 3); arr = [0, 1, 2, 3, 4].map(i => a * Math.pow(q, i)); }
+    else if (t === 2) { const s = r(1, 6); arr = [0, 1, 2, 3, 4, 5].map(i => (s + i) * (s + i)); }
+    else if (t === 3) { const s = r(1, 5); arr = [0, 1, 2, 3, 4, 5].map(i => (s + i) * (s + i + 1) / 2); }
+    else if (t === 4) { arr = [r(1, 5), r(2, 7)]; for (let i = 2; i < 6; i++) arr.push(arr[i - 1] + arr[i - 2]); }
+    else { const a = r(1, 9), x = r(2, 6), y = r(7, 12); arr = [a]; for (let i = 1; i < 6; i++) arr.push(arr[i - 1] + (i % 2 ? x : y)); }
+    const ans = arr[arr.length - 1], seq = arr.slice(0, -1), set = new Set([ans]); let g = 0;
+    while (set.size < 4 && g++ < 60) { const v = ans + r(1, Math.max(3, Math.ceil(ans * .15))) * (Math.random() < .5 ? -1 : 1); if (v > 0) set.add(v); }
+    while (set.size < 4) set.add(ans + set.size + 1);
+    return { seq, ans, opts: this.shuffle([...set]) };
+  },
+  patNew() { this.pat = { i: 1, score: 0, q: this.patGen(), pick: -1, done: false }; this.sub(this.patHtml()); },
+  patAns(i) {
+    const p = this.pat; if (!p || p.pick >= 0 || p.done) return; p.pick = i; if (p.q.opts[i] === p.q.ans) p.score++;
+    this.sub(this.patHtml());
+    p.t = setTimeout(() => {
+      if (this.pat !== p) return;
+      if (p.i >= 10) { p.done = true; const best = lsGet('fun_pat_best', 0); if (p.score > best) lsSet('fun_pat_best', p.score); if (p.score >= 7) this.confetti(100); this.awardCapped('pat', p.score, 5, 'كمّل النمط'); }
+      else { p.i++; p.q = this.patGen(); p.pick = -1; }
+      this.sub(this.patHtml());
+    }, 750);
+  },
+  patHtml() {
+    const p = this.pat; if (!p) return `<div class="fs-start"><div class="fh-big">🔮</div><h3>كمّل النمط</h3><p>10 أسئلة — اكتشف الرقم الجاي في المتتابعة.</p><p class="fh-hint">أفضل نتيجة: <b>${lsGet('fun_pat_best', 0)}</b> / 10</p><button type="button" class="fh-btn" data-fa="pat-new">ابدأ</button></div>`;
+    if (p.done) return `<div class="fs-start"><div class="fh-big">${p.score >= 7 ? '🏆' : '🎯'}</div><h3>نتيجتك ${p.score} / 10</h3><p class="fh-hint">أفضل نتيجة: <b>${Math.max(p.score, lsGet('fun_pat_best', 0))}</b></p><button type="button" class="fh-btn" data-fa="pat-new">↻ جولة جديدة</button></div>`;
+    return `<div class="fs-play"><div class="fs-top"><span>سؤال ${p.i} / 10</span><span>✅ ${p.score}</span></div><div class="fs-q pat-q" dir="ltr">${p.q.seq.join(' , ')} , ?</div>
+      <div class="fs-opts">${p.q.opts.map((o, i) => `<button type="button" data-fa="pat-ans" data-i="${i}" class="${p.pick >= 0 ? (o === p.q.ans ? 'right' : (i === p.pick ? 'wrong' : '')) : ''}">${o}</button>`).join('')}</div></div>`;
+  },
+
+  /* ---- سيمون ---- */
+  sim: null, simT: [],
+  SIMC: [['#22c55e', 261.6], ['#ef4444', 329.6], ['#eab308', 392], ['#3b82f6', 523.3]],
+  tone(f, d) {
+    try { const C = window.AudioContext || window.webkitAudioContext; if (!C) return; this._bc = this._bc || new C(); const c = this._bc; if (c.state === 'suspended') c.resume();
+      const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(.12, c.currentTime); g.gain.exponentialRampToValueAtTime(.001, c.currentTime + d); o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + d); } catch (e) { }
+  },
+  simStart() { this.stopGames(); this.sim = { seq: [], pos: 0, lock: true, over: false }; this.simNext(); },
+  simNext() {
+    const s = this.sim; if (!s) return; s.seq.push(this.rnd(0, 3)); s.pos = 0; s.lock = true; this.sub(this.simHtml());
+    s.seq.forEach((p, i) => this.simT.push(setTimeout(() => this.simFlash(p), 700 + i * 650)));
+    this.simT.push(setTimeout(() => { s.lock = false; this.sub(this.simHtml()); }, 700 + s.seq.length * 650));
+  },
+  simFlash(p) { const el = document.querySelector('.sim-pad[data-i="' + p + '"]'); if (!el) return; el.classList.add('lit'); this.tone(this.SIMC[p][1], .35); setTimeout(() => el.classList.remove('lit'), 400); },
+  simTap(i) {
+    const s = this.sim; if (!s || s.lock || s.over) return; this.simFlash(i);
+    if (s.seq[s.pos] !== i) {
+      s.over = true; const sc = s.seq.length - 1, best = lsGet('fun_sim_best', 0); s.sc = sc; if (sc > best) { lsSet('fun_sim_best', sc); if (sc > 0) this.confetti(100); } if (sc > 0) this.awardCapped('sim', sc, 5, 'سيمون');
+      this.simT.push(setTimeout(() => this.sub(this.simHtml()), 500)); return;
+    }
+    s.pos++; if (s.pos === s.seq.length) { s.lock = true; this.simT.push(setTimeout(() => this.simNext(), 700)); }
+  },
+  simHtml() {
+    const s = this.sim, best = lsGet('fun_sim_best', 0);
+    if (!s || s.over) return `<div class="fs-start"><div class="fh-big">🎵</div><h3>${s ? 'خلصت — وصلت لمستوى ' + s.sc : 'سيمون'}</h3><p>اتفرج على التسلسل وكرّره بنفس الترتيب.</p><p class="fh-hint">أعلى مستوى: <b>${Math.max(best, s ? s.sc : 0)}</b></p><button type="button" class="fh-btn" data-fa="sim-start">${s ? '↻ جرّب تاني' : 'ابدأ'}</button></div>`;
+    return `<div class="fs-play"><p class="fg-msg">${s.lock ? '👀 بص كويس…' : '👆 دورك!'} <span class="fh-hint">(مستوى ${s.seq.length})</span></p><div class="sim-grid">${this.SIMC.map((c, i) => `<button type="button" class="sim-pad" data-fa="sim-pad" data-i="${i}" style="--c:${c[0]}" ${s.lock ? 'tabindex="-1"' : ''}></button>`).join('')}</div></div>`;
+  },
+  XL: [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]],
+  xo: null, xoT: { w: 0, l: 0, d: 0 },
+  xoWin(b) { for (const [a, c, d] of this.XL) if (b[a] && b[a] === b[c] && b[a] === b[d]) return b[a]; return b.every(Boolean) ? 'd' : ''; },
+  xoMini(b, turn) {
+    const w = this.xoWin(b); if (w === 'O') return 1; if (w === 'X') return -1; if (w === 'd') return 0;
+    let best = turn === 'O' ? -2 : 2;
+    for (let i = 0; i < 9; i++) if (!b[i]) { b[i] = turn; const s = this.xoMini(b, turn === 'O' ? 'X' : 'O'); b[i] = ''; if (turn === 'O' ? s > best : s < best) best = s; }
+    return best;
+  },
+  xoCpu() {
+    const b = this.xo.b, lvl = this.cfg().xoLevel, free = b.map((v, i) => v ? -1 : i).filter(i => i >= 0);
+    if (lvl === 'easy') return free[Math.random() * free.length | 0];
+    if (lvl === 'medium') {
+      for (const p of ['O', 'X']) for (const i of free) { b[i] = p; const w = this.xoWin(b); b[i] = ''; if (w === p) return i; }
+      if (!b[4]) return 4; return free[Math.random() * free.length | 0];
+    }
+    let bi = free[0], bs = -2; for (const i of free) { b[i] = 'O'; const s = this.xoMini(b, 'X'); b[i] = ''; if (s > bs) { bs = s; bi = i; } } return bi;
+  },
+  xoReset() { this.xo = { b: Array(9).fill(''), over: '' }; this.sub(this.xoHtml()); },
+  xoPlay(i) {
+    if (!this.xo) this.xo = { b: Array(9).fill(''), over: '' };
+    const x = this.xo; if (x.over || x.b[i]) return;
+    x.b[i] = 'X'; let w = this.xoWin(x.b);
+    if (!w) { x.b[this.xoCpu()] = 'O'; w = this.xoWin(x.b); }
+    if (w) { x.over = w; if (w === 'X') { this.xoT.w++; this.awardCapped('xo', this.cfg().xpGame, 5, 'كسبت إكس أو'); this.confetti(90); } else if (w === 'O') this.xoT.l++; else this.xoT.d++; }
+    this.sub(this.xoHtml());
+  },
+  xoHtml() {
+    if (!this.xo) this.xo = { b: Array(9).fill(''), over: '' };
+    const x = this.xo, T = this.xoT, lv = { easy: 'سهل', medium: 'متوسط', hard: 'صعب' }[this.cfg().xoLevel] || 'متوسط';
+    const msg = x.over === 'X' ? '🎉 كسبت!' : (x.over === 'O' ? '😅 الكمبيوتر كسب' : (x.over === 'd' ? '🤝 تعادل' : 'إنت X — دورك'));
+    return `<div class="fg-xo"><div class="fh-hint">المستوى: ${lv}</div><div class="xo-grid">${x.b.map((v, i) => `<button type="button" data-fa="xo-cell" data-i="${i}" class="${v ? 'f' + v : ''}" ${v || x.over ? 'disabled' : ''}>${v === 'X' ? '❌' : (v === 'O' ? '⭕' : '')}</button>`).join('')}</div>
+      <p class="fg-msg">${msg}</p><p class="fh-hint">كسبت ${T.w} • خسرت ${T.l} • تعادل ${T.d}</p><button type="button" class="fh-btn" data-fa="xo-reset">↻ جولة جديدة</button></div>`;
+  },
+  mem: null,
+  memReset() {
+    const sy = ['∫', '∑', 'π', '√', '∞', 'Δ', 'θ', 'λ'];
+    this.mem = { c: this.shuffle(sy.concat(sy)), open: [], done: {}, moves: 0, lock: false };
+    this.sub(this.memHtml());
+  },
+  memFlip(i) {
+    const m = this.mem; if (!m || m.lock || m.done[i] || m.open.includes(i)) return;
+    m.open.push(i); this.sub(this.memHtml());
+    if (m.open.length === 2) {
+      m.moves++; const [a, b] = m.open;
+      if (m.c[a] === m.c[b]) { m.done[a] = m.done[b] = 1; m.open = []; this.sub(this.memHtml()); if (Object.keys(m.done).length === 16) this.memWin(); }
+      else { m.lock = true; setTimeout(() => { m.open = []; m.lock = false; if (this.mem === m) this.sub(this.memHtml()); }, 800); }
+    }
+  },
+  memWin() {
+    const m = this.mem, best = lsGet('fun_mem_best', 0), rec = !best || m.moves < best; if (rec) lsSet('fun_mem_best', m.moves);
+    this.awardCapped('mem', this.cfg().xpGame, 5, 'كسبت لعبة الذاكرة'); this.confetti(120);
+    setTimeout(() => toast(rec ? '🏆 رقم قياسي: ' + m.moves + ' حركة' : '🎉 خلّصت في ' + m.moves + ' حركة'), 300);
+  },
+  memHtml() {
+    if (!this.mem) { const sy = ['∫', '∑', 'π', '√', '∞', 'Δ', 'θ', 'λ']; this.mem = { c: this.shuffle(sy.concat(sy)), open: [], done: {}, moves: 0, lock: false }; }
+    const m = this.mem, best = lsGet('fun_mem_best', 0);
+    return `<div class="fg-mem"><div class="fh-hint">الحركات: <b>${m.moves}</b>${best ? ' • أفضل: ' + best : ''}</div><div class="mem-grid">${m.c.map((v, i) => { const sh = m.done[i] || m.open.includes(i); return `<button type="button" data-fa="mem-card" data-i="${i}" class="${m.done[i] ? 'ok' : (sh ? 'sh' : '')}">${sh ? v : '؟'}</button>`; }).join('')}</div><button type="button" class="fh-btn" data-fa="mem-reset">↻ لعبة جديدة</button></div>`;
+  },
+  onPomoEnd() {
+    if (!this.on('arcade') || !this.cfg().arcadeAfterPomo) return;
+    setTimeout(() => { if (typeof __pm !== 'undefined' && __pm.mode === 'break') this.breakPrompt(); }, 80);
+  },
+  breakPrompt() {
+    let p = document.getElementById('funBreak'); if (p) p.remove();
+    p = document.createElement('div'); p.id = 'funBreak';
+    p.innerHTML = '<span>☕ وقت الراحة! تحب تلعب جولة؟</span><button type="button" data-fb="go">🎮 يلا</button><button type="button" data-fb="x" aria-label="إغلاق">✕</button>';
+    p.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (!b) return; p.remove(); if (b.dataset.fb === 'go') { this.gsub = 'xo'; this.open('games'); } });
+    document.body.appendChild(p); setTimeout(() => { if (p.isConnected) p.remove(); }, 20000);
+  },
+
+  /* ---------- أصوات التركيز ---------- */
+  SND: [['rain', '🌧️', 'مطر'], ['wind', '🌬️', 'رياح'], ['white', '⚪', 'ضوضاء بيضاء'], ['library', '📚', 'مكتبة هادية'], ['calm', '🎵', 'نغمة هادية']],
+  snd: { ctx: null, g: null, k: '', nodes: [], t: null },
+  vol() { return Math.min(100, Math.max(0, +lsGet('fun_snd_vol', this.cfg().soundVol))) / 100 * .5; },
+  setVol(v) { lsSet('fun_snd_vol', v); if (this.snd.g) this.snd.g.gain.value = this.vol(); },
+  noiseBuf(ctx, type) {
+    const n = ctx.sampleRate * 2, b = ctx.createBuffer(1, n, ctx.sampleRate), d = b.getChannelData(0);
+    let l = 0, b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+    for (let i = 0; i < n; i++) {
+      const w = Math.random() * 2 - 1;
+      if (type === 'brown') { l = (l + .02 * w) / 1.02; d[i] = l * 3.5; }
+      else if (type === 'pink') { b0 = .99886 * b0 + w * .0555179; b1 = .99332 * b1 + w * .0750759; b2 = .969 * b2 + w * .153852; b3 = .8665 * b3 + w * .3104856; b4 = .55 * b4 + w * .5329522; b5 = -.7616 * b5 - w * .016898; d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * .5362) * .11; b6 = w * .115926; }
+      else d[i] = w;
+    }
+    return b;
+  },
+  sndPlay(k) {
+    this.sndStop();
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) { toast('جهازك مش بيدعم الصوت'); return; }
+    const ctx = new AC(), g = ctx.createGain(); g.gain.value = this.vol(); g.connect(ctx.destination);
+    const S = this.snd; S.ctx = ctx; S.g = g; S.k = k; S.nodes = [];
+    const loop = type => { const s = ctx.createBufferSource(); s.buffer = this.noiseBuf(ctx, type); s.loop = true; s.start(); S.nodes.push(s); return s; };
+    const filt = (t, f, q) => { const x = ctx.createBiquadFilter(); x.type = t; x.frequency.value = f; if (q) x.Q.value = q; return x; };
+    const lfo = (param, rate, depth) => { const o = ctx.createOscillator(), a = ctx.createGain(); o.frequency.value = rate; a.gain.value = depth; o.connect(a); a.connect(param); o.start(); S.nodes.push(o); };
+    if (k === 'rain') { const s = loop('white'), hp = filt('highpass', 900), lp = filt('lowpass', 7000); s.connect(hp); hp.connect(lp); lp.connect(g); }
+    else if (k === 'wind') { const s = loop('brown'), lp = filt('lowpass', 500); s.connect(lp); lp.connect(g); lfo(lp.frequency, .12, 250); }
+    else if (k === 'white') { const s = loop('white'), lp = filt('lowpass', 9000); s.connect(lp); lp.connect(g); }
+    else if (k === 'library') {
+      const s = loop('pink'), lp = filt('lowpass', 800); s.connect(lp); lp.connect(g);
+      const buf = this.noiseBuf(ctx, 'white');
+      S.t = setInterval(() => { try { const x = ctx.createBufferSource(), bp = filt('bandpass', 3200, 1.2), e = ctx.createGain(); x.buffer = buf; e.gain.setValueAtTime(0, ctx.currentTime); e.gain.linearRampToValueAtTime(.35, ctx.currentTime + .08); e.gain.linearRampToValueAtTime(0, ctx.currentTime + .4); x.connect(bp); bp.connect(e); e.connect(g); x.start(); x.stop(ctx.currentTime + .45); } catch (_) { } }, 4500 + Math.random() * 3000);
+    }
+    else if (k === 'calm') {
+      const lp = filt('lowpass', 1200); lp.connect(g);
+      [174.6, 220, 261.6, 329.6].forEach((f, i) => { const o = ctx.createOscillator(), a = ctx.createGain(); o.type = 'sine'; o.frequency.value = f; a.gain.value = .22; o.connect(a); a.connect(lp); o.start(); S.nodes.push(o); lfo(a.gain, .06 + i * .03, .12); });
+    }
+  },
+  sndStop() {
+    const S = this.snd; if (!S.ctx) return;
+    S.nodes.forEach(n => { try { n.stop(); } catch (_) { } }); clearInterval(S.t);
+    try { S.ctx.close(); } catch (_) { }
+    this.snd = { ctx: null, g: null, k: '', nodes: [], t: null };
+  },
+  tab_sounds() {
+    const c = this.cfg(), allow = Array.isArray(c.sounds) ? c.sounds : [], cur = this.snd.k, v = Math.round(Math.min(100, Math.max(0, +lsGet('fun_snd_vol', c.soundVol))));
+    const list = this.SND.filter(s => allow.includes(s[0]));
+    if (!list.length) return '<p class="fh-hint">مفيش أصوات متاحة دلوقتي.</p>';
+    return `<div class="fsd"><p class="fh-hint">شغّل صوت هادي وانت بتذاكر. هيفضل شغّال لحد ما توقفه.</p><div class="fsd-grid">${list.map(s => `<button type="button" data-fa="snd" data-k="${s[0]}" class="${cur === s[0] ? 'on' : ''}"><span>${s[1]}</span>${s[2]}</button>`).join('')}</div>
+      <label class="fsd-vol">🔈 <input type="range" min="0" max="100" value="${v}" data-fvol> 🔊</label>${cur ? '<button type="button" class="fh-btn" data-fa="snd-stop">⏹ إيقاف الصوت</button>' : ''}</div>`;
+  },
+
+  /* ---------- التصويت ---------- */
+  pollSt: null,
+  tab_poll() { setTimeout(() => this.pollLoad(), 0); return '<div id="fpBody" class="fh-hint">⏳ بحمّل…</div>'; },
+  async pollLoad() {
+    const c = this.cfg(), q = String(c.pollQ || '').trim(), opts = String(c.pollOpts || '').split('\n').map(x => x.trim()).filter(Boolean).slice(0, 6);
+    const el = () => document.getElementById('fpBody'); if (!el()) return;
+    if (!q || opts.length < 2) { el().textContent = 'مفيش تصويت دلوقتي.'; return; }
+    const id = 'p' + ckHash(q + '|' + opts.join('|')); let counts = null;
+    try {
+      const sb = await QA.ensureClient(); if (!sb) throw 0; counts = [];
+      for (let i = 0; i < opts.length; i++) { const r = await sb.from('fun_poll_votes').select('*', { count: 'exact', head: true }).eq('poll_id', id).eq('option_idx', i); if (r.error) throw r.error; counts.push(r.count || 0); }
+    } catch (e) { counts = null; }
+    this.pollSt = { id, q, opts, counts, mine: lsGet('fun_vote_' + id, null) }; this.pollPaint();
+  },
+  pollPaint() {
+    const s = this.pollSt, el = document.getElementById('fpBody'); if (!s || !el) return;
+    if (!s.counts) { el.innerHTML = `<h3 class="fp-q">${esc(s.q)}</h3><p class="fh-hint">التصويت مش متاح دلوقتي. جرّب بعد شوية.</p>`; return; }
+    const tot = s.counts.reduce((a, b) => a + b, 0), show = s.mine !== null;
+    el.innerHTML = `<h3 class="fp-q">${esc(s.q)}</h3>` + s.opts.map((o, i) => {
+      const p = tot ? Math.round(s.counts[i] / tot * 100) : 0;
+      return show ? `<div class="pl-res ${s.mine === i ? 'me' : ''}"><i style="width:${p}%"></i><span>${esc(o)}${s.mine === i ? ' ✓' : ''}</span><b>${p}%</b></div>` : `<button type="button" class="pl-opt" data-fa="vote" data-i="${i}">${esc(o)}</button>`;
+    }).join('') + `<p class="fh-hint">${tot} صوت${show ? '' : ' — صوّت عشان تشوف النتيجة'}</p>`;
+  },
+  async pollVote(i) {
+    const s = this.pollSt; if (!s || s.mine !== null) return;
+    try {
+      const sb = await QA.ensureClient(); if (!sb) throw 0;
+      const r = await sb.from('fun_poll_votes').insert({ poll_id: s.id, option_idx: i, voter: this.voter() });
+      if (r.error && r.error.code !== '23505') throw r.error;
+      lsSet('fun_vote_' + s.id, r.error ? 0 : i); this.awardCapped('poll', 3, 1, 'صوّت');
+      toast(r.error ? 'صوّتّ قبل كده' : 'تم تسجيل صوتك ✓'); this.pollLoad();
+    } catch (e) { toast('تعذّر تسجيل الصوت دلوقتي'); }
+  },
+
+  /* ---------- حيط التشجيع ---------- */
+  tab_wall() {
+    const c = this.cfg();
+    setTimeout(() => this.wallLoad(), 0);
+    return `<div class="fw"><div class="fw-form"><input id="fwName" maxlength="20" placeholder="اسمك (اختياري)"><textarea id="fwBody" maxlength="${Math.max(20, +c.wallMaxLen || 120)}" placeholder="اكتب كلمة تشجيع أو نصيحة قصيرة لزمايلك 💙"></textarea><button type="button" class="fh-btn" data-fa="wall-send">إرسال</button><p class="fh-hint">${c.wallApprove !== false ? 'رسالتك هتظهر بعد مراجعة المسؤول.' : 'رسالتك هتظهر فوراً.'}</p></div><div id="fwList" class="fh-hint">⏳ بحمّل…</div></div>`;
+  },
+  async wallLoad() {
+    const el = document.getElementById('fwList'); if (!el) return;
+    try {
+      const sb = await QA.ensureClient(); if (!sb) throw 0;
+      let q = sb.from('fun_wall').select('*').eq('approved', true).order('created_at', { ascending: false }).limit(Math.max(1, +this.cfg().wallMax || 10));
+      const t = this.tk(); if (t) q = q.eq('track', t);
+      const r = await q; if (r.error) throw r.error;
+      el.className = ''; el.innerHTML = (r.data || []).length ? r.data.map(m => `<div class="fw-item"><b>${esc(m.name || 'طالب')}</b><p>${esc(m.body)}</p></div>`).join('') : '<p class="fh-hint">لسه مفيش رسائل — كن أول واحد 💙</p>';
+    } catch (e) { el.className = 'fh-hint'; el.textContent = 'الحيط مش متاح دلوقتي.'; }
+  },
+  async wallSend() {
+    const c = this.cfg(), nm = document.getElementById('fwName'), bd = document.getElementById('fwBody'); if (!bd) return;
+    const body = bd.value.trim().slice(0, Math.max(20, +c.wallMaxLen || 120)), name = (nm.value || '').trim().slice(0, 20);
+    if (body.length < 3) { toast('اكتب رسالة أطول شوية'); return; }
+    const bad = String(c.wallBad || '').split(/[,،\n]/).map(x => x.trim()).filter(Boolean);
+    if (bad.some(w => (body + ' ' + name).includes(w))) { toast('الرسالة فيها كلمة غير مناسبة'); return; }
+    const last = lsGet('fun_wall_last', 0); if (Date.now() - last < 90000) { toast('استنى شوية قبل رسالة تانية ⏳'); return; }
+    try {
+      const sb = await QA.ensureClient(); if (!sb) throw 0;
+      const r = await sb.from('fun_wall').insert({ track: this.tk() || 'all', name, body, approved: c.wallApprove === false });
+      if (r.error) throw r.error;
+      lsSet('fun_wall_last', Date.now()); bd.value = '';
+      toast(c.wallApprove === false ? 'تم النشر ✓' : 'اتبعتت للمراجعة ✓'); this.awardCapped('wall', 3, 1, 'شاركت في الحيط'); this.wallLoad();
+    } catch (e) { toast('تعذّر الإرسال دلوقتي'); }
+  },
+
+  /* ---------- شاشة الإعدادات (للأدمن) ---------- */
+  settings() {
+    const c = this.cfg(), v = x => esc(x == null ? '' : x);
+    const chk = (id, label, on) => `<label class="fs-chk"><input type="checkbox" id="${id}" ${on ? 'checked' : ''}> ${label}</label>`;
+    const num = (id, label, val, min, max) => `<div class="field fs-num"><label for="${id}">${label}</label><input type="number" id="${id}" value="${v(val)}" min="${min}" max="${max}"></div>`;
+    const feats = [['streak', '🔥 الستريك المتطوّر'], ['xp', '⭐ نقاط ومستويات'], ['confetti', '🎉 كونفتي واحتفال'], ['cdexam', '⏳ عدّاد الامتحان'], ['jokeday', '😄 معلومة / نكتة اليوم'], ['sounds', '🎧 أصوات التركيز'], ['speed', '⚡ تحدي السرعة'], ['arcade', '🎮 ركن الألعاب'], ['poll', '🗳️ تصويت الأسبوع'], ['wall', '💬 حيط التشجيع']];
+    const ops = [['add', 'جمع'], ['sub', 'طرح'], ['mul', 'ضرب'], ['div', 'قسمة'], ['sq', 'تربيع'], ['der', 'تفاضل بسيط']];
+    openModal('🎮 المرح والتحفيز', `
+      <p class="hint">كل حاجة هنا بتتحكم فيها. بيانات الطالب (الستريك والنقاط) بتتحفظ على جهازه هو.</p>
+      <div class="field"><label>تشغيل / إيقاف الإضافات</label><div class="fs-feats">${feats.map(f => chk('fk-' + f[0], f[1], feat(f[0]))).join('')}</div></div>
+      <hr class="sep"><h4>🔥 الستريك</h4>
+      ${chk('fs-ev', 'يتطوّر شكله (لو قفلته يفضل ستريك على شكل 🔥 ثابت)', c.evolve !== false)}
+      <div class="fs-row">${num('fs-sd', 'يتطوّر كل كام يوم؟', c.streakDays, 1, 100)}${num('fs-gr', 'أيام سماح (غياب مسموح)', c.grace, 0, 7)}${num('fs-sb', 'مكافأة التطوّر (XP)', c.stageBonus, 0, 1000)}</div>
+      <div class="field"><label for="fs-st">مراحل التطوّر (سطر لكل مرحلة: إيموجي | الاسم | #لون)</label><textarea id="fs-st" style="min-height:120px" dir="rtl">${v(c.stages)}</textarea></div>
+      <hr class="sep"><h4>⭐ النقاط والمستويات</h4>
+      <div class="fs-row">${num('fs-xd', 'دخول يوم', c.xpDay, 0, 500)}${num('fs-xb', 'تأشير مربع', c.xpBox, 0, 100)}${num('fs-xs', 'إنهاء قسم', c.xpSec, 0, 500)}${num('fs-xg', 'فوز في لعبة', c.xpGame, 0, 100)}${num('fs-xp', 'XP لكل مستوى', c.xpPerLevel, 10, 5000)}</div>
+      <div class="field"><label for="fs-lv">ألقاب المستويات (مفصولة بفاصلة)</label><input id="fs-lv" value="${v(c.levels)}"></div>
+      <hr class="sep"><h4>🎉 الكونفتي</h4>
+      <div class="fs-row">${num('fs-ca', 'كمية الورق', c.confettiAmount, 20, 400)}</div>${chk('fs-cb', 'عند إنهاء كل مربعات بلوك', c.confettiBoxes !== false)}${chk('fs-cs', 'عند إنهاء قسم', c.confettiSec !== false)}
+      <hr class="sep"><h4>⏳ مواعيد الامتحانات (سطر لكل امتحان: الاسم | yyyy-mm-dd)</h4>
+      ${['math1', 'math2', 'math3'].map(k => `<div class="field"><label for="fs-ex-${k}">${trackLabel(k)}</label><textarea id="fs-ex-${k}" style="min-height:56px" dir="rtl" placeholder="الميدترم | 2026-12-20">${v((c.exams || {})[k])}</textarea></div>`).join('')}
+      <hr class="sep"><h4>😄 نكت ومعلومات</h4>
+      <div class="field"><label for="fs-jk">إضافاتك (سطر لكل واحدة)</label><textarea id="fs-jk" style="min-height:80px" dir="rtl">${v(c.jokes)}</textarea></div>${chk('fs-jb', 'استخدم المجموعة الجاهزة كمان', c.jokesBuiltin !== false)}
+      <hr class="sep"><h4>🎧 الأصوات</h4>
+      <div class="fs-feats">${this.SND.map(s => chk('fs-sn-' + s[0], s[1] + ' ' + s[2], (c.sounds || []).includes(s[0]))).join('')}</div><div class="fs-row">${num('fs-sv', 'مستوى الصوت الافتراضي %', c.soundVol, 0, 100)}</div>
+      <hr class="sep"><h4>⚡ تحدي السرعة</h4>
+      <div class="fs-row">${num('fs-ss', 'مدة التحدي (ثانية)', c.speedSecs, 10, 300)}<div class="field fs-num"><label for="fs-sl">الصعوبة</label><select id="fs-sl">${[[1, 'سهل'], [2, 'متوسط'], [3, 'صعب']].map(o => `<option value="${o[0]}" ${(+c.speedLevel || 2) === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div></div>
+      <div class="fs-feats">${ops.map(o => chk('fs-op-' + o[0], o[1], (c.speedOps || []).includes(o[0]))).join('')}</div>
+      <hr class="sep"><h4>🎮 الألعاب</h4>
+      <div class="fs-feats">${this.GAMES.map(x => chk('fs-gm-' + x[0], x[1] + ' ' + x[2], this.gamesOn().some(y => y[0] === x[0]))).join('')}</div>
+      <div class="fs-row"><div class="field fs-num"><label for="fs-xl">صعوبة الكمبيوتر (إكس أو وأربعة في صف)</label><select id="fs-xl">${[['easy', 'سهل'], ['medium', 'متوسط'], ['hard', 'صعب (مستحيل تكسبه)']].map(o => `<option value="${o[0]}" ${c.xoLevel === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div></div>${chk('fs-ap', 'اقترح لعبة لما البومودورو يخلّص ويبدأ الراحة', c.arcadeAfterPomo !== false)}
+      <hr class="sep"><h4>🗳️ تصويت الأسبوع</h4>
+      <div class="field"><label for="fs-pq">السؤال (لو غيّرته التصويت يبدأ من الأول)</label><input id="fs-pq" value="${v(c.pollQ)}" placeholder="أصعب باب عندكم؟"></div>
+      <div class="field"><label for="fs-po">الاختيارات (من 2 لـ 6 — سطر لكل اختيار)</label><textarea id="fs-po" style="min-height:80px" dir="rtl">${v(c.pollOpts)}</textarea></div>
+      <hr class="sep"><h4>💬 حيط التشجيع</h4>
+      ${chk('fs-wa', 'مراجعة الرسائل قبل ظهورها', c.wallApprove !== false)}
+      <div class="fs-row">${num('fs-wm', 'عدد الرسائل الظاهرة', c.wallMax, 1, 50)}${num('fs-wl', 'أقصى طول للرسالة', c.wallMaxLen, 20, 300)}</div>
+      <div class="field"><label for="fs-wb">كلمات ممنوعة (مفصولة بفاصلة)</label><input id="fs-wb" value="${v(c.wallBad)}"></div>
+      <div class="field"><label>رسائل مستنية المراجعة</label><div id="fsPend" class="fh-hint">⏳ بحمّل…</div></div>
+      <hr class="sep"><div class="field"><label for="fs-sql">🛠️ للتصويت والحيط: انسخ الكود ده وشغّله مرة واحدة في SQL Editor في مشروع Supabase بتاع الأسئلة</label><textarea id="fs-sql" readonly style="min-height:110px;direction:ltr;text-align:left;font-family:monospace;font-size:12px">${esc(FUN_SQL)}</textarea></div>`,
+      footSave(), () => {
+        const m = site.meta; m.feat = m.feat || {};
+        ['streak', 'xp', 'confetti', 'cdexam', 'jokeday', 'sounds', 'speed', 'arcade', 'poll', 'wall'].forEach(k => { m.feat[k] = document.getElementById('fk-' + k).checked; });
+        const g = id => document.getElementById(id), n = (id, d, lo, hi) => { const x = +g(id).value; return isFinite(x) && g(id).value !== '' ? Math.min(hi, Math.max(lo, x)) : d; };
+        m.fun = {
+          evolve: g('fs-ev').checked, games: this.GAMES.map(x => x[0]).filter(k => g('fs-gm-' + k).checked),
+          streakDays: n('fs-sd', 10, 1, 100), grace: n('fs-gr', 0, 0, 7), stageBonus: n('fs-sb', 50, 0, 1000), stages: g('fs-st').value.trim() || this.D.stages,
+          xpDay: n('fs-xd', 10, 0, 500), xpBox: n('fs-xb', 2, 0, 100), xpSec: n('fs-xs', 25, 0, 500), xpGame: n('fs-xg', 5, 0, 100), xpPerLevel: n('fs-xp', 100, 10, 5000), levels: g('fs-lv').value.trim(),
+          confettiAmount: n('fs-ca', 120, 20, 400), confettiBoxes: g('fs-cb').checked, confettiSec: g('fs-cs').checked,
+          exams: { math1: g('fs-ex-math1').value.trim(), math2: g('fs-ex-math2').value.trim(), math3: g('fs-ex-math3').value.trim() },
+          jokes: g('fs-jk').value.trim(), jokesBuiltin: g('fs-jb').checked,
+          sounds: this.SND.map(s => s[0]).filter(k => g('fs-sn-' + k).checked), soundVol: n('fs-sv', 40, 0, 100),
+          speedSecs: n('fs-ss', 60, 10, 300), speedLevel: +g('fs-sl').value, speedOps: ops.map(o => o[0]).filter(k => g('fs-op-' + k).checked),
+          xoLevel: g('fs-xl').value, arcadeAfterPomo: g('fs-ap').checked,
+          pollQ: g('fs-pq').value.trim(), pollOpts: g('fs-po').value.trim(),
+          wallApprove: g('fs-wa').checked, wallMax: n('fs-wm', 10, 1, 50), wallMaxLen: n('fs-wl', 120, 20, 300), wallBad: g('fs-wb').value.trim()
+        };
+        commit();
+      });
+    setTimeout(() => this.pendLoad(), 200);
+  },
+  async pendLoad() {
+    const el = document.getElementById('fsPend'); if (!el) return;
+    try {
+      const sb = await QA.ensureClient(); if (!sb) throw 0;
+      const r = await sb.from('fun_wall').select('*').eq('approved', false).order('created_at', { ascending: true }).limit(50); if (r.error) throw r.error;
+      el.className = ''; el.innerHTML = (r.data || []).length ? r.data.map(m => `<div class="fw-item" data-fwid="${m.id}"><b>${esc(m.name || 'طالب')} <small>(${esc(m.track || '')})</small></b><p>${esc(m.body)}</p><div class="fw-act"><button type="button" class="btn sm" data-fw-ok="${m.id}">✔ نشر</button><button type="button" class="btn sm danger" data-fw-del="${m.id}">🗑 حذف</button></div></div>`).join('') : 'مفيش رسائل مستنية.';
+    } catch (e) { el.className = 'fh-hint'; el.textContent = 'مش قادر أوصل لجدول الحيط (شغّل كود SQL تحت الأول).'; }
+  },
+  async pendAct(id, ok) {
+    try {
+      const sb = await QA.ensureClient(); if (!sb) throw 0;
+      const r = ok ? await sb.from('fun_wall').update({ approved: true }).eq('id', id) : await sb.from('fun_wall').delete().eq('id', id);
+      if (r.error) throw r.error; const row = document.querySelector('[data-fwid="' + id + '"]'); if (row) row.remove(); toast(ok ? 'تم النشر ✓' : 'تم الحذف');
+    } catch (e) { toast('تعذّر تنفيذ العملية'); }
+  }
+};
+
+/* ---- ربط الأحداث ---- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-tool="fun"]'); if (t) { const d = t.dataset.funTab; Fun.open(d === 'first' || !d ? '' : d); return; }
+  if (e.target.closest('[data-fun-joke]')) { const c = e.target.closest('.fj-card'); if (c) c.outerHTML = Fun.jokeCard(true); return; }
+  const ok = e.target.closest('[data-fw-ok]'); if (ok) { Fun.pendAct(ok.dataset.fwOk, true); return; }
+  const del = e.target.closest('[data-fw-del]'); if (del) { Fun.pendAct(del.dataset.fwDel, false); return; }
+  const dn = e.target.closest('[data-sx="done"]');
+  if (dn) {
+    const id = dn.dataset.id;
+    setTimeout(() => {
+      if (!(lsGet('site_done', {})[id])) return;
+      const c = Fun.cfg(); if (c.confettiSec !== false) Fun.confetti();
+      Fun.award('sec:' + id, c.xpSec, 'خلّصت قسم');
+      try { const all = flatSecs().filter(x => (x.s.blocks || []).length), done = lsGet('site_done', {}); if (all.length && all.every(x => done[x.s.id])) { Fun.confetti(300); toast('🏆 خلّصت كل الأقسام!'); } } catch (_) { }
+    }, 120);
+  }
+});
+document.addEventListener('change', e => {
+  const k = e.target.closest && e.target.closest('input[data-ckl]'); if (!k) return;
+  setTimeout(() => {
+    const c = Fun.cfg();
+    if (k.checked) Fun.award('box:' + k.dataset.ckl, c.xpBox);
+    const w = k.closest('.ck-wrap'); if (!w || !k.checked) return;
+    const all = [...w.querySelectorAll('input[data-ckl]')]; if (all.length && all.every(x => x.checked) && c.confettiBoxes !== false) { Fun.confetti(); toast('🎉 خلّصت كل المربعات!'); }
+  }, 40);
+});
+document.addEventListener('keydown', e => { const hb = document.getElementById('funHub'); if (hb && hb.classList.contains('on') && Fun.tab === 'games' && Fun.gsub === 'g48') { const m = { ArrowLeft: 0, ArrowRight: 1, ArrowUp: 2, ArrowDown: 3 }[e.key]; if (m !== undefined) { e.preventDefault(); Fun.g48Move(m); return; } }
+  if (e.key === 'Escape') { const p = document.getElementById('funPop'); if (p) p.remove(); const h = document.getElementById('funHub'); if (h && h.classList.contains('on')) Fun.close(); } });
+(function () { const o = window.pomoBeep; if (typeof o === 'function') window.pomoBeep = function () { const r = o.apply(this, arguments); try { Fun.onPomoEnd(); } catch (e) { } return r; }; })();
+</script>
+<script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js');
   }
