@@ -1771,6 +1771,12 @@ a.fl-row:hover{background:var(--accent-soft)}
 .vis-card span{font-size:13px;color:var(--ink-soft)}
 .vis-sql{width:100%;min-height:150px;direction:ltr;text-align:left;font-family:monospace;font-size:12px}
 @media (prefers-reduced-motion:reduce){.adminbar.open .adminbar-in{animation:none}}
+/* ===== مربعات التأشير: لما المحاذاة "في النص" كل السطر (المربع + الجملة) يتوسّط ===== */
+.sec-inner [style*="text-align:center"] .ck-wrap{align-items:center}
+.sec-inner [style*="text-align:center"] .ck-count{align-self:center}
+.sec-inner [style*="text-align:center"] .ck-line{justify-content:center; text-align:center; width:fit-content; max-width:100%; margin-inline:auto}
+.sec-inner [style*="text-align:center"] .ck-t{flex:0 1 auto; text-align:center}
+.sec-inner [style*="text-align:center"] .ck-plain{text-align:center; width:100%}
 </style>
 </head>
 <body>
@@ -2067,6 +2073,7 @@ function setTrack(t, opts){
     box.classList.remove('tr-in'); box.classList.add('tr-out');
     setTimeout(doRender, 280);
   } else doRender();
+  try{ Poster.hide(); Poster.syncBtn(); if(!opts.silent) setTimeout(()=>Poster.maybeShow(), 450); }catch(e){}
   if(!opts.silent) toast('تم اختيار ' + trackLabel(t));
 }
 function visibleSections(){
@@ -5140,7 +5147,15 @@ window.addEventListener('resize', syncTopbarHeight);
 /* ===== بوستر الافتتاح: عناوين متعددة + تحكم في الحجم ===== */
 const Poster = {
   SIZES:[['s','صغير'],['m','متوسط'],['l','كبير'],['xl','كبير جداً (عريض)']],
-  get(){ const m=(site&&site.meta)||{}; return m.poster||{}; },
+  /* كل فرقة ليها بوستر مستقل: meta.posters = { math1:{}, math2:{}, math3:{} } */
+  trackKey(){ return (currentTrack==='math1'||currentTrack==='math2'||currentTrack==='math3') ? currentTrack : null; },
+  get(){
+    const m=(site&&site.meta)||{}, t=this.trackKey(); if(!t) return {};
+    const ps=m.posters;
+    if(ps && ps[t]) return ps[t];
+    return (ps && Object.keys(ps).length) ? {} : (m.poster||{});   /* توافق: البوستر القديم يفضل شغّال لحد ما تحفظ بوستر للفرقة */
+  },
+  sk(name){ return name+'_'+(this.trackKey()||'x'); },
   safeLink(u){ u=String(u||'').trim(); return /^https?:\/\//i.test(u)?u:''; },
   groupsOf(d){
     if(Array.isArray(d.groups) && d.groups.length) return d.groups;
@@ -5182,10 +5197,10 @@ const Poster = {
     const b=document.getElementById('posterBtn'); if(!b) return;
     const d=this.get(), has=!!(d.on && this.hasContent(d) && this.active(d));
     b.hidden=!has;
-    let seen=''; try{ seen=localStorage.getItem('poster_btn_seen')||''; }catch(e){}
+    let seen=''; try{ seen=localStorage.getItem(this.sk('poster_btn_seen'))||''; }catch(e){}
     b.classList.toggle('new', has && seen!==this.key(d));
   },
-  markSeen(){ try{ localStorage.setItem('poster_btn_seen', this.key(this.get())); }catch(e){} this.syncBtn(); },
+  markSeen(){ try{ localStorage.setItem(this.sk('poster_btn_seen'), this.key(this.get())); }catch(e){} this.syncBtn(); },
   open(){ const d=this.get(); if(!d.on || !this.hasContent(d) || !this.active(d)){ toast('مفيش جديد دلوقتي'); return; } this.show(d); this.markSeen(); },
   autoGroups(d){
     if(d.autolist===false) return [];
@@ -5224,11 +5239,11 @@ const Poster = {
     if(!this.active(d)) return;   /* برّه فترة الظهور */
     if(d.auto===false) return;
    /* جهاز الأدمن */
-    if(d.freq!=='always'){ try{ if(localStorage.getItem('poster_seen')===this.key(d)) return; }catch(e){} }
+    if(d.freq!=='always'){ try{ if(localStorage.getItem(this.sk('poster_seen'))===this.key(d)) return; }catch(e){} }
     const sp=document.getElementById('trackSplash');
     if(sp && !sp.classList.contains('hide')){ setTimeout(()=>this.maybeShow(),400); return; }   /* استنى لحد ما الزائر يختار المادة */
     this.show(d); this.markSeen();
-    if(d.freq!=='always'){ try{ localStorage.setItem('poster_seen', this.key(d)); }catch(e){} }
+    if(d.freq!=='always'){ try{ localStorage.setItem(this.sk('poster_seen'), this.key(d)); }catch(e){} }
   },
   groupEd(g){
     return `<div class="pst-ged"><div style="display:flex;gap:8px;align-items:center"><input class="pg-title" value="${esc(g.title||'')}" placeholder="عنوان (مثلاً: محاضرات Math 2)" style="flex:1"><button type="button" class="btn sm danger" data-pst-delg title="حذف العنوان">🗑</button></div>
@@ -5242,9 +5257,11 @@ const Poster = {
       dur:g('ps-dur'), start:(g('ps-start')?new Date(g('ps-start')).getTime():0), endCustom:(g('ps-end')?new Date(g('ps-end')).getTime():0) };
   },
   editor(){
+    const tk=this.trackKey();
+    if(!tk){ toast('اختار فرقة (Math 1 أو 2 أو 3) الأول عشان تعدّل بوستر بتاعها'); return; }
     const d=this.get(), v=x=>esc(x||''), groups=this.groupsOf(d);
-    openModal('📢 بوستر الافتتاح', `
-      <label style="display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:12px"><input type="checkbox" id="ps-on" ${d.on?'checked':''} style="width:auto"> شغّل البوستر (يظهر لكل اللي يفتح الموقع)</label>
+    openModal('📢 بوستر الافتتاح — '+trackLabel(tk), `
+      <label style="display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:12px"><input type="checkbox" id="ps-on" ${d.on?'checked':''} style="width:auto"> شغّل البوستر (يظهر لطلبة الفرقة دي بس)</label>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <div class="field" style="width:90px"><label for="ps-emoji">إيموجي</label><input id="ps-emoji" value="${v(d.emoji||'🎉')}" maxlength="4"></div>
         <div class="field" style="flex:1;min-width:160px"><label for="ps-title">العنوان الرئيسي (اختياري)</label><input id="ps-title" value="${v(d.title)}" placeholder="مثلاً: جديد على الموقع"></div>
@@ -5288,10 +5305,10 @@ const Poster = {
         else if(n.dur==='none') n.end = 0;
         else n.end = (idChanged || d.dur!==n.dur || (d.start||0)!==n.start) ? base + (+n.dur)*86400000 : (d.end||0);
         delete n.endCustom;
-        site.meta.poster=n; scheduleSave(); closeModal(); Poster.syncBtn();
+        site.meta.posters = Object.assign({}, site.meta.posters||{}, {[tk]:n}); scheduleSave(); closeModal(); Poster.syncBtn();
         if(n.on && idChanged && this.active(n) && this.hasContent(n)){
           const names=n.groups.map(g=>g.title).filter(Boolean).concat(this.autoGroups(n).map(g=>g.title.replace('🆕 ',''))).slice(0,3);
-          try{ Push.autoSend(n.title||'جديد على الموقع', names.length?names.join(' • '):'افتح الموقع وشوف الجديد'); }catch(e){}
+          try{ Push.autoSend(trackShort(tk)+' — '+(n.title||'جديد على الموقع'), names.length?names.join(' • '):'افتح الموقع وشوف الجديد'); }catch(e){}
         }
         toast(n.on?'تم حفظ البوستر وهو شغّال ✓':'تم حفظ البوستر (مقفول)');
         return false;
