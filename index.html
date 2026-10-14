@@ -2071,6 +2071,105 @@ html.tb-compact .poster-btn{left:92px}
 .dx-th.sel::after{content:'✓';position:absolute;top:4px;inset-inline-start:4px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:13px}
 .dx-urlrow{display:flex;gap:8px}.dx-urlrow input{flex:1}
 </style>
+<style>
+/* ===== شطرنج + كوتشينة + تزيين الألعاب ===== */
+.fg-deco{margin:8px 0;border:1px dashed var(--line);border-radius:12px;padding:6px 12px;background:var(--surface-2)}
+.fg-deco summary{cursor:pointer;font-weight:700;font-size:14px}
+.fg-deco .gd-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.fg-deco .gd-row>b{font-size:13px;color:var(--ink-soft);min-width:70px}
+.fg-deco button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 11px;font:600 13px var(--font-body);cursor:pointer}
+.fg-deco button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.fg-deco .sw{display:inline-block;width:12px;height:12px;border-radius:50%;margin-inline-end:5px;vertical-align:-1px;border:1px solid rgba(0,0,0,.25)}
+.ch-grid{display:grid;grid-template-columns:repeat(8,1fr);width:min(100%,400px);margin:8px auto;border:3px solid var(--bd,#b58863);border-radius:8px;overflow:hidden;direction:ltr;box-shadow:var(--shadow)}
+.ch-sq{position:relative;aspect-ratio:1;border:0;padding:0;margin:0;display:grid;place-items:center;font-size:clamp(22px,8.2vw,40px);line-height:1;cursor:pointer;font-family:"Segoe UI Symbol","Noto Sans Symbols 2","Apple Symbols",sans-serif}
+.ch-sq.l{background:var(--bl,#f0d9b5)}.ch-sq.d{background:var(--bd,#b58863)}
+.ch-sq .pw{color:#fff;text-shadow:0 0 2px #000,0 0 2px #000,0 1px 3px #000}
+.ch-sq .pk{color:#16110d;text-shadow:0 0 1px rgba(255,255,255,.5)}
+.ch-sq.last{box-shadow:inset 0 0 0 100px rgba(250,204,21,.32)}
+.ch-sq.sel{box-shadow:inset 0 0 0 100px rgba(34,197,94,.38)}
+.ch-sq.chk{background:radial-gradient(circle,#ef4444 0,#ef4444 35%,transparent 75%),var(--bl)}
+.ch-sq.chk.d{background:radial-gradient(circle,#ef4444 0,#ef4444 35%,transparent 75%),var(--bd)}
+.ch-sq.tgt::after{content:'';position:absolute;width:30%;height:30%;border-radius:50%;background:rgba(20,20,20,.35)}
+.ch-sq.tgt.cap::after{width:86%;height:86%;background:none;border:4px solid rgba(20,20,20,.35)}
+.ch-sq i{position:absolute;font:700 9px/1 sans-serif;font-style:normal;opacity:.55}
+.ch-sq i.rk{top:2px;left:3px}.ch-sq i.fl{bottom:2px;right:3px}
+.ch-promo{display:flex;gap:8px;justify-content:center;margin:8px 0}
+.ch-promo button{width:52px;height:52px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);font-size:30px;cursor:pointer;color:var(--ink)}
+.fg-felt{background:var(--felt,#14532d);color:#fff;border-radius:16px;padding:12px 10px;margin:8px 0;text-align:center}
+.fg-felt .fh-hint,.fg-felt .fg-msg{color:#fff}
+.cd-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0;min-height:70px;align-items:center}
+.pc{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:44px;height:64px;border-radius:8px;background:#fff;color:#111;border:1px solid #cbd5e1;font:700 15px/1.15 sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.28);padding:0}
+.pc span{font-size:20px;line-height:1}
+.pc.red{color:#dc2626}
+.pc.back{background:repeating-linear-gradient(45deg,var(--cb,#1d4ed8) 0 5px,color-mix(in srgb,var(--cb,#1d4ed8) 65%,#fff) 5px 10px);border:2px solid #fff}
+button.pc{cursor:pointer;font-family:sans-serif}
+button.pc.ok{outline:3px solid #22c55e;outline-offset:1px}
+button.pc.no{opacity:.5}
+.pc.sm{width:34px;height:50px;font-size:12px}.pc.sm span{font-size:15px}
+.cd-cap{font-size:13px;opacity:.9}
+.cd-opts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
+.cd-opts button{border:1px solid #fff;background:rgba(255,255,255,.15);color:#fff;border-radius:12px;padding:8px 12px;font:700 14px var(--font-body);cursor:pointer}
+.cd-cover{padding:28px 10px}
+.cd-suits{display:flex;gap:10px;justify-content:center;margin:8px 0}
+.cd-suits button{width:54px;height:54px;border-radius:14px;border:1px solid #fff;background:#fff;font-size:28px;cursor:pointer}
+/* ===== تحكم في كروت الستريك والعدّاد ===== */
+#funBox .fun-card{zoom:var(--fcs,1);border-radius:var(--fr,18px)}
+#funBox .fun-grid{gap:var(--fgap,12px)}
+.fun-card{min-width:0;overflow-wrap:anywhere}
+.fp-info{min-width:0}
+.fp-xp-top{flex-wrap:wrap;align-items:baseline}.fp-xp-top span{white-space:nowrap}
+.fun-grid.side{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fun-grid.side>.fun-card:only-child,.fun-grid.side>.fj-card{grid-column:1/-1}
+.fun-grid.mini .fun-card{padding:9px 10px}
+.fun-grid.mini .fp-top{gap:8px;flex-wrap:nowrap}
+.fun-grid.mini .fp-badge{width:38px;height:38px;font-size:19px;border-width:1.5px}
+.fun-grid.mini .fp-info b{font-size:13px;line-height:1.35}
+.fun-grid.mini .fp-info small{font-size:11px}
+.fun-grid.mini .fp-bar{height:6px;margin:7px 0 3px}
+.fun-grid.mini .fp-note{font-size:11.5px;line-height:1.5}
+.fun-grid.mini .fp-xp{margin-top:7px;padding-top:6px}
+.fun-grid.mini .fp-xp-top{font-size:12px}
+.fun-grid.mini .fun-card>b{font-size:12.5px;margin-bottom:3px}
+.fun-grid.mini .fx-n{font-size:12px}.fun-grid.mini .fx-n em{font-size:26px}
+.fun-grid.mini .fx-more{font-size:11px}
+.fun-grid.side.mini .fx-more{display:none}
+/* مربعات */
+.fun-grid.sq{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch}
+.fun-grid.sq>.fun-card{flex:none;box-sizing:border-box;width:calc(var(--cw,150px) / var(--fcs,1));aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:8px}
+.fun-grid.sq.cwa>.fun-card{width:calc((100% - var(--fgap,12px) / var(--fcs,1)) / 2)}
+.fun-grid.sq>.fj-card{width:100%;aspect-ratio:auto;flex:1 1 100%}
+.fun-grid.sq .fp-top{flex-direction:column;gap:4px;align-items:center}
+.fun-grid.sq .fp-badge{width:34px;height:34px;font-size:18px}.fun-grid.sq .fp-bar{margin:5px 0 2px}.fun-grid.sq .fp-xp{margin-top:5px;padding-top:4px}
+.fun-grid.sq .fp-info b{font-size:12.5px}
+.fun-grid.sq .fp-info small{display:none}
+.fun-grid.sq .fp-bar{width:100%}
+.fun-grid.sq .fp-note,.fun-grid.sq .fx-more{display:none}
+.fun-grid.sq .fp-xp{width:100%}
+.fun-grid.sq .fp-xp-top{justify-content:center;gap:2px 6px}
+.fun-grid.sq .fx-n em{font-size:32px}
+/* إخفاء سطور */
+.fun-grid.hn .fp-note{display:none}
+.fun-grid.hx .fp-xp{display:none}
+.fun-grid.nos .fun-card{box-shadow:none}
+/* أشكال جاهزة */
+.fun-grid.look-glass .fun-card{background:color-mix(in srgb,var(--surface) 55%,transparent);-webkit-backdrop-filter:blur(10px) saturate(1.3);backdrop-filter:blur(10px) saturate(1.3);border-color:color-mix(in srgb,var(--line) 55%,#fff)}
+.fun-grid.look-outline .fun-card{background:transparent;border:2px solid var(--accent);box-shadow:none}
+.fun-grid.look-gradient .fun-card{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 16%,var(--surface)),var(--surface) 72%)}
+/* ألوان مخصصة */
+.fun-card.fc-ac .fp-info b,.fun-card.fc-ac .fp-xp-top b,.fun-card.fc-ac>b,.fun-card.fc-ac .fx-n em{color:var(--fc-ac) !important}
+.fun-card.fc-ac .fp-bar i{background:var(--fc-ac) !important}
+.fun-card.fc-ink .fp-note,.fun-card.fc-ink .fx-n,.fun-card.fc-ink .fp-info small,.fun-card.fc-ink .fp-xp-top span,.fun-card.fc-ink .fx-more{color:var(--fc-ink) !important}
+/* شاشة الإعدادات */
+.cu-c{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}
+.cu-c label{min-width:92px;font-size:13px}
+.cu-c input[type=color]{width:44px;height:32px;padding:0;border:1px solid var(--line);border-radius:8px;background:none;cursor:pointer}
+.cu-c input[data-off="1"]{opacity:.35}
+.cu-card{border:1px dashed var(--line);border-radius:12px;padding:8px 12px;margin:8px 0}
+.cu-card h5{margin:0 0 4px;font-size:14px}
+.cu-presets{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.cu-presets button{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:999px;padding:7px 13px;font:600 13px var(--font-body);cursor:pointer}
+.cu-presets button:hover{border-color:var(--accent);color:var(--accent)}
+</style>
 </head>
 <body>
 <div id="decorBg" aria-hidden="true"></div><div id="decorFx" aria-hidden="true"></div>
@@ -3979,6 +4078,7 @@ const FEATURES = [
   ['sounds','🎧 أصوات التركيز',true],
   ['speed','⚡ تحدي السرعة (حساب ذهني)',true],
   ['arcade','🎮 ركن الألعاب (إكس أو + ذاكرة الرموز)',true],
+  ['gdeco','🎨 تزيين الألعاب (ثيمات الرقعة والكروت واحتفال الفوز)',true],
   ['poll','🗳️ تصويت الأسبوع (محتاج جداول Supabase)',false],
   ['wall','💬 حيط التشجيع (محتاج جداول Supabase)',false],
   ['pomo','⏱️ مؤقت المذاكرة (بومودورو)',true],
@@ -4599,6 +4699,7 @@ function closeModal(){
   { const ov=$('#overlay'); if(ov && ov.classList.contains('open')){ ov.classList.add('closing'); clearTimeout(window.__ovT); window.__ovT=setTimeout(()=>ov.classList.remove('open','closing'),200); } }
   onSaveModal=null;
   try{ if(Decor.ed){ Decor.ed=null; Decor.apply(true); } }catch(e){}
+  try{ Fun.cuCancel(); }catch(e){}
   document.documentElement.classList.remove('th-clear'); themeOverridesDirty = false;
   if(themeBackup){ site.theme = themeBackup; themeBackup = null; applyTheme(site.theme); render(); }
 }
@@ -5939,7 +6040,7 @@ const FUN_JOKES = [
 
 const Fun = {
   D: {
-    evolve: true, games: ['xo', 'c4', 'g48', 'slide', 'pat', 'simon', 'mem', 'rps', 'guess', 'duel', 'snake', 'mole', 'pong', 'pool', 'oth', 'mine', 'toss'],
+    evolve: true, games: ['xo', 'c4', 'g48', 'slide', 'pat', 'simon', 'mem', 'rps', 'guess', 'duel', 'snake', 'mole', 'pong', 'pool', 'oth', 'mine', 'toss', 'chess', 'basra', 'crazy'],
     streakDays: 10, grace: 0, stageBonus: 50,
     stages: '🌱|براعم|#84cc16\n🔥|شرارة|#f97316\n☄️|شهاب|#ef4444\n⚡|صاعقة|#eab308\n🌟|نجم|#f59e0b\n💎|ماسة|#06b6d4\n👑|ملك|#a855f7\n🐉|تنين|#dc2626\n🌌|مجرة|#6366f1',
     xpDay: 10, xpBox: 2, xpSec: 25, xpGame: 5, xpPerLevel: 100,
@@ -6080,7 +6181,7 @@ const Fun = {
       const l = this.lv();
       h += `<div class="fp-xp"><div class="fp-xp-top"><b>⭐ مستوى ${l.L}${l.name ? ' — ' + esc(l.name) : ''}</b><span>${l.t} XP</span></div><div class="fp-bar"><i style="width:${Math.round(l.into / l.per * 100)}%"></i></div></div>`;
     }
-    return h ? `<div class="fun-card fp-card">${h}</div>` : '';
+    const ca = this.cuAttr('streak'); return h ? `<div class="fun-card fp-card${ca.cls}"${ca.style}>${h}</div>` : '';
   },
   examCard() {
     const c = this.cfg(), tk = this.tk(), ex = c.exams || {}, today = this.dn(this.today()), list = [];
@@ -6094,7 +6195,7 @@ const Fun = {
     const big = f.d === 0 ? 'النهاردة!' : (f.d === 1 ? 'بكرة' : f.d), unit = f.d > 1 ? 'يوم' : '';
     const msg = f.d === 0 ? 'بالتوفيق يا بطل 💪' : (f.d <= 3 ? 'مراجعة أخيرة وتركيز 🔥' : (f.d <= 14 ? 'وقت الشغل الجاد 📚' : 'لسه فيه وقت — نظّم مذاكرتك ✨'));
     const more = list.slice(1, 3).map(x => `<span>${esc(x.tag ? x.tag + ' ' : '')}${esc(x.name)} — ${x.d} يوم</span>`).join('');
-    return `<div class="fun-card fx-card ${cls}"><b>⏳ ${esc(f.tag ? f.tag + ' · ' : '')}${esc(f.name)}</b><div class="fx-n"><em>${big}</em> ${unit}</div><div class="fp-note">${msg}</div>${more ? `<div class="fx-more">${more}</div>` : ''}</div>`;
+    const ca = this.cuAttr('exam'); return `<div class="fun-card fx-card ${cls}${ca.cls}"${ca.style}><b>⏳ ${esc(f.tag ? f.tag + ' · ' : '')}${esc(f.name)}</b><div class="fx-n"><em>${big}</em> ${unit}</div><div class="fp-note">${msg}</div>${more ? `<div class="fx-more">${more}</div>` : ''}</div>`;
   },
   jokeList() {
     const c = this.cfg(), mine = String(c.jokes || '').split('\n').map(x => x.trim()).filter(Boolean);
@@ -6107,13 +6208,17 @@ const Fun = {
   },
   renderBox() {
     const box = document.getElementById('funBox'); if (!box) return;
-    const parts = [];
-    if (this.on('streak') || this.on('xp')) parts.push(this.playerCard());
-    if (this.on('cdexam')) parts.push(this.examCard());
+    const u = this.cui(), parts = [];
+    const pc = (this.on('streak') || this.on('xp')) ? this.playerCard() : '', ec = this.on('cdexam') ? this.examCard() : '';
+    (u.swap ? [ec, pc] : [pc, ec]).forEach(x => { if (x) parts.push(x); });
     if (this.on('jokeday')) parts.push(this.jokeCard());
     const cards = parts.filter(Boolean).join('');
     const hub = (this.hubTabs().length && this.pl('games', 'home')) ? `<div class="fun-hubrow"><button type="button" class="fh-btn" data-tool="fun">🎮 الألعاب</button></div>` : '';
-    box.innerHTML = (cards ? `<div class="fun-grid">${cards}</div>` : '') + hub;
+    const cls = ['fun-grid']; if (u.shape === 'square') { cls.push('sq', 'mini'); if (u.cwAuto) cls.push('cwa'); } else { if (u.side) cls.push('side'); if (u.mini) cls.push('mini'); }
+    if (u.hideNote) cls.push('hn'); if (u.hideXp) cls.push('hx'); if (!u.shadow) cls.push('nos'); cls.push('look-' + u.look);
+    box.style.setProperty('--fcs', (u.shape === 'square' && !u.cwAuto ? u.scale / 100 * Math.min(1.15, u.cw / 150) : u.scale / 100)); box.style.setProperty('--cw', u.cw + 'px'); box.style.setProperty('--fgap', u.gap + 'px'); box.style.setProperty('--fr', u.radius + 'px');
+    box.innerHTML = (cards ? `<div class="${cls.join(' ')}">${cards}</div>` : '') + hub;
+    this.cuPlace(box, u.pos);
   },
   render() { this.renderBox(); try { this.maybeEvolve(); } catch (e) { console.warn('fun', e); } },
   dockHtml() {
@@ -6191,9 +6296,10 @@ const Fun = {
       case 'sn-dir': this.snDir(i); break;
       case 'mo-start': this.moStart(); break;
       case 'mo-hit': this.moHit(i); break;
-      case 'g-mode': { const g = a.dataset.g, rs = { pong: 'pg', pool: 'bl', oth: 'oth' }; lsSet('fun_' + g + '_mode', a.dataset.m === 'two' ? 'two' : 'cpu'); this.stopGames(); if (rs[g]) this[rs[g]] = null; this.sub(this.gameHtml(g)); break; }
+      case 'g-mode': { const g = a.dataset.g, rs = { pong: 'pg', pool: 'bl', oth: 'oth', chess: 'chs', basra: 'bs', crazy: 'c8' }; lsSet('fun_' + g + '_mode', a.dataset.m === 'two' ? 'two' : 'cpu'); this.stopGames(); if (rs[g]) this[rs[g]] = null; this.sub(this.gameHtml(g)); break; }
       case 'g-lvl': lsSet('fun_game_lvl', a.dataset.l); this.stopGames(); this.sub(this.gameHtml(this.gsub)); break;
       case 'g-snd': lsSet('fun_g_mute', !lsGet('fun_g_mute', false)); this.sub(this.gameHtml(this.gsub)); break;
+      case 'ch-sq': case 'ch-reset': case 'ch-undo': case 'ch-promo': case 'bs-play': case 'bs-pick': case 'bs-cancel': case 'bs-ready': case 'bs-reset': case 'c8-play': case 'c8-draw': case 'c8-suit': case 'c8-ready': case 'c8-reset': case 'gdeco': this.xaClick(k, a, i); break;
       case 'pg-start': this.pgStart(); break;
       case 'bl-start': this.blStart(); break;
       case 'ot-cell': this.othPlay(i); break;
@@ -6266,16 +6372,16 @@ const Fun = {
 
   /* ---------- الألعاب ---------- */
   gsub: 'xo',
-  GAMES: [['xo', '❌⭕', 'إكس أو'], ['c4', '🔴', 'أربعة في صف'], ['g48', '🔢', '2048'], ['slide', '🧩', 'بازل الأرقام'], ['pat', '🔮', 'كمّل النمط'], ['simon', '🎵', 'سيمون'], ['mem', '🧠', 'ذاكرة الرموز'], ['rps', '✊', 'حجر ورقة مقص'], ['guess', '🎯', 'خمّن الرقم'], ['duel', '⚔️', 'تحدي الحساب (لاعبين)'], ['snake', '🐍', 'الثعبان'], ['mole', '🐹', 'اضرب الخلد'], ['pong', '🏓', 'بينج بونج'], ['pool', '🎱', 'بلياردو'], ['oth', '⚫', 'أوثيلو'], ['mine', '💣', 'كاسحة الألغام'], ['toss', '🎲', 'نرد وعملة']],
-  gamesOn() { const c = this.cfg(); let a = Array.isArray(c.games) ? c.games : this.D.games; if (c.gamesV !== 3) a = a.concat(c.gamesV === 2 ? ['pong', 'pool', 'oth', 'mine', 'toss'] : ['rps', 'guess', 'duel', 'snake', 'mole', 'pong', 'pool', 'oth', 'mine', 'toss']); return this.GAMES.filter(g => a.includes(g[0])); },
+  GAMES: [['xo', '❌⭕', 'إكس أو'], ['c4', '🔴', 'أربعة في صف'], ['g48', '🔢', '2048'], ['slide', '🧩', 'بازل الأرقام'], ['pat', '🔮', 'كمّل النمط'], ['simon', '🎵', 'سيمون'], ['mem', '🧠', 'ذاكرة الرموز'], ['rps', '✊', 'حجر ورقة مقص'], ['guess', '🎯', 'خمّن الرقم'], ['duel', '⚔️', 'تحدي الحساب (لاعبين)'], ['snake', '🐍', 'الثعبان'], ['mole', '🐹', 'اضرب الخلد'], ['pong', '🏓', 'بينج بونج'], ['pool', '🎱', 'بلياردو'], ['oth', '⚫', 'أوثيلو'], ['mine', '💣', 'كاسحة الألغام'], ['toss', '🎲', 'نرد وعملة'], ['chess', '♟️', 'شطرنج'], ['basra', '🃏', 'بصرة (كوتشينة)'], ['crazy', '🎴', 'الثمانية المجنونة (كوتشينة)']],
+  gamesOn() { const c = this.cfg(); let a = Array.isArray(c.games) ? c.games : this.D.games; const NEW = ['chess', 'basra', 'crazy']; if (c.gamesV !== 4) { if (c.gamesV === 3) a = a.concat(NEW); else a = a.concat(c.gamesV === 2 ? ['pong', 'pool', 'oth', 'mine', 'toss'] : ['rps', 'guess', 'duel', 'snake', 'mole', 'pong', 'pool', 'oth', 'mine', 'toss'], NEW); } return this.GAMES.filter(g => a.includes(g[0])); },
   tab_games() {
     const on = this.gamesOn(); if (!on.length) return '<p class="fh-hint">مفيش ألعاب متاحة دلوقتي.</p>';
     if (!on.some(g => g[0] === this.gsub)) this.gsub = on[0][0];
     const g = this.gsub;
     return `<div class="fh-sub">${on.map(x => `<button type="button" data-fa="game-sub" data-g="${x[0]}" class="${g === x[0] ? 'on' : ''}">${x[1]} ${x[2]}</button>`).join('')}</div><div id="fgBody">${this.gameHtml(g)}</div>`;
   },
-  gameHtml(g) { const m = { xo: () => this.xoHtml(), mem: () => this.memHtml(), c4: () => this.c4Html(), g48: () => this.g48Html(), slide: () => this.slHtml(), pat: () => this.patHtml(), simon: () => this.simHtml(), rps: () => this.rpsHtml(), guess: () => this.gsHtml(), duel: () => this.duHtml(), snake: () => this.snHtml(), mole: () => this.moHtml(), pong: () => this.pgHtml(), pool: () => this.blHtml(), oth: () => this.othHtml(), mine: () => this.mnHtml(), toss: () => this.tossHtml() }; return m[g] ? m[g]() : ''; },
-  stopGames() { (this.simT || []).forEach(clearTimeout); this.simT = []; this.sim = null; if (this.pat && this.pat.t) clearTimeout(this.pat.t); this.snStop(); this.moStop(); this.pgStop(); this.blStop(); this.du = null; clearInterval(this._tt); if (this.oth) clearTimeout(this.oth.t); },
+  gameHtml(g) { const m = { xo: () => this.xoHtml(), mem: () => this.memHtml(), c4: () => this.c4Html(), g48: () => this.g48Html(), slide: () => this.slHtml(), pat: () => this.patHtml(), simon: () => this.simHtml(), rps: () => this.rpsHtml(), guess: () => this.gsHtml(), duel: () => this.duHtml(), snake: () => this.snHtml(), mole: () => this.moHtml(), pong: () => this.pgHtml(), pool: () => this.blHtml(), oth: () => this.othHtml(), mine: () => this.mnHtml(), toss: () => this.tossHtml(), chess: () => this.chHtml(), basra: () => this.bsHtml(), crazy: () => this.c8Html() }; return m[g] ? m[g]() : ''; },
+  stopGames() { (this.simT || []).forEach(clearTimeout); this.simT = []; this.sim = null; if (this.pat && this.pat.t) clearTimeout(this.pat.t); this.snStop(); this.moStop(); this.pgStop(); this.blStop(); this.du = null; clearInterval(this._tt); if (this.oth) clearTimeout(this.oth.t); if (this.chs) clearTimeout(this.chs.t); if (this.bs) clearTimeout(this.bs.t); if (this.c8) clearTimeout(this.c8.t); },
   win(key, extra) { this.awardCapped(key, (+this.cfg().xpGame || 0) + (extra || 0), 5, 'لعبة'); },
 
   /* ---- أربعة في صف ---- */
@@ -7102,12 +7208,13 @@ const Fun = {
     const c = this.cfg(), v = x => esc(x == null ? '' : x);
     const chk = (id, label, on) => `<label class="fs-chk"><input type="checkbox" id="${id}" ${on ? 'checked' : ''}> ${label}</label>`;
     const num = (id, label, val, min, max) => `<div class="field fs-num"><label for="${id}">${label}</label><input type="number" id="${id}" value="${v(val)}" min="${min}" max="${max}"></div>`;
-    const feats = [['streak', '🔥 الستريك المتطوّر'], ['xp', '⭐ نقاط ومستويات'], ['confetti', '🎉 كونفتي واحتفال'], ['cdexam', '⏳ عدّاد الامتحان'], ['jokeday', '😄 معلومة / نكتة اليوم'], ['sounds', '🎧 أصوات التركيز'], ['speed', '⚡ تحدي السرعة'], ['arcade', '🎮 ركن الألعاب'], ['poll', '🗳️ تصويت الأسبوع'], ['wall', '💬 حيط التشجيع']];
+    const feats = [['streak', '🔥 الستريك المتطوّر'], ['xp', '⭐ نقاط ومستويات'], ['confetti', '🎉 كونفتي واحتفال'], ['cdexam', '⏳ عدّاد الامتحان'], ['jokeday', '😄 معلومة / نكتة اليوم'], ['sounds', '🎧 أصوات التركيز'], ['speed', '⚡ تحدي السرعة'], ['arcade', '🎮 ركن الألعاب'], ['gdeco', '🎨 تزيين الألعاب'], ['poll', '🗳️ تصويت الأسبوع'], ['wall', '💬 حيط التشجيع']];
     const ops = [['add', 'جمع'], ['sub', 'طرح'], ['mul', 'ضرب'], ['div', 'قسمة'], ['sq', 'تربيع'], ['der', 'تفاضل بسيط']];
     openModal('🎮 المرح والتحفيز', `
       <p class="hint">كل حاجة هنا بتتحكم فيها. بيانات الطالب (الستريك والنقاط) بتتحفظ على جهازه هو.</p>
       <div class="field"><label>تشغيل / إيقاف الإضافات</label><div class="fs-feats">${feats.map(f => chk('fk-' + f[0], f[1], feat(f[0]))).join('')}</div></div>
       ${this.placeHtml(chk)}
+      ${this.cuHtml()}
       <hr class="sep"><h4>🔥 الستريك</h4>
       ${chk('fs-ev', 'يتطوّر شكله (لو قفلته يفضل ستريك على شكل 🔥 ثابت)', c.evolve !== false)}
       <div class="fs-row">${num('fs-sd', 'يتطوّر كل كام يوم؟', c.streakDays, 1, 100)}${num('fs-gr', 'أيام سماح (غياب مسموح)', c.grace, 0, 7)}${num('fs-sb', 'مكافأة التطوّر (XP)', c.stageBonus, 0, 1000)}</div>
@@ -7140,10 +7247,10 @@ const Fun = {
       <hr class="sep"><div class="field"><label for="fs-sql">🛠️ للتصويت والحيط: انسخ الكود ده وشغّله مرة واحدة في SQL Editor في مشروع Supabase بتاع الأسئلة</label><textarea id="fs-sql" readonly style="min-height:110px;direction:ltr;text-align:left;font-family:monospace;font-size:12px">${esc(FUN_SQL)}</textarea></div>`,
       footSave(), () => {
         const m = site.meta; m.feat = m.feat || {};
-        ['streak', 'xp', 'confetti', 'cdexam', 'jokeday', 'sounds', 'speed', 'arcade', 'poll', 'wall'].forEach(k => { m.feat[k] = document.getElementById('fk-' + k).checked; });
+        ['streak', 'xp', 'confetti', 'cdexam', 'jokeday', 'sounds', 'speed', 'arcade', 'gdeco', 'poll', 'wall'].forEach(k => { m.feat[k] = document.getElementById('fk-' + k).checked; });
         const g = id => document.getElementById(id), n = (id, d, lo, hi) => { const x = +g(id).value; return isFinite(x) && g(id).value !== '' ? Math.min(hi, Math.max(lo, x)) : d; };
         m.fun = {
-          evolve: g('fs-ev').checked, games: this.GAMES.map(x => x[0]).filter(k => g('fs-gm-' + k).checked), gamesV: 3,
+          cardUi: this.cuRead() || this.cui(), evolve: g('fs-ev').checked, games: this.GAMES.map(x => x[0]).filter(k => g('fs-gm-' + k).checked), gamesV: 4,
           streakDays: n('fs-sd', 10, 1, 100), grace: n('fs-gr', 0, 0, 7), stageBonus: n('fs-sb', 50, 0, 1000), stages: g('fs-st').value.trim() || this.D.stages,
           xpDay: n('fs-xd', 10, 0, 500), xpBox: n('fs-xb', 2, 0, 100), xpSec: n('fs-xs', 25, 0, 500), xpGame: n('fs-xg', 5, 0, 100), xpPerLevel: n('fs-xp', 100, 10, 5000), levels: g('fs-lv').value.trim(),
           confettiAmount: n('fs-ca', 120, 20, 400), confettiBoxes: g('fs-cb').checked, confettiSec: g('fs-cs').checked,
@@ -7156,7 +7263,7 @@ const Fun = {
           pollQ: g('fs-pq').value.trim(), pollOpts: g('fs-po').value.trim(),
           wallApprove: g('fs-wa').checked, wallMax: n('fs-wm', 10, 1, 50), wallMaxLen: n('fs-wl', 120, 20, 300), wallBad: g('fs-wb').value.trim()
         };
-        commit();
+        this._cuPrev = null; this._cuDirty = false; commit();
       });
     setTimeout(() => this.pendLoad(), 200);
   },
@@ -7669,6 +7776,486 @@ document.addEventListener('change', e => {
   } else if (t.id === 'dxFile') { Decor.collect(); const fl = t.files; Decor.addFiles(fl); }
 });
 try { Decor.apply(); } catch (e) { }
+</script>
+<script>
+/* =======================================================================
+   ♟️ شطرنج + 🃏 كوتشينة (بصرة / الثمانية المجنونة) + 🎨 تزيين الألعاب
+   كلهم: ضد الكمبيوتر (سهل/متوسط/صعب) أو لاعبين اتنين على نفس الجهاز
+   ======================================================================= */
+const CH_N = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]];
+const CH_K = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+const CH_D = [[-1, -1], [-1, 1], [1, -1], [1, 1]], CH_O = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+const CH_V = { P: 100, N: 320, B: 330, R: 500, Q: 900, K: 0 };
+function chAtt(b, sq, by) {
+  const r = sq >> 3, c = sq & 7, pr = by === 'w' ? r + 1 : r - 1;
+  if (pr >= 0 && pr < 8) for (const dc of [-1, 1]) { const cc = c + dc; if (cc >= 0 && cc < 8 && b[pr * 8 + cc] === by + 'P') return true; }
+  for (const [dr, dc] of CH_N) { const rr = r + dr, cc = c + dc; if (rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && b[rr * 8 + cc] === by + 'N') return true; }
+  for (const [dr, dc] of CH_K) { const rr = r + dr, cc = c + dc; if (rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && b[rr * 8 + cc] === by + 'K') return true; }
+  for (const [dr, dc] of CH_D) { let rr = r + dr, cc = c + dc; while (rr >= 0 && rr < 8 && cc >= 0 && cc < 8) { const p = b[rr * 8 + cc]; if (p) { if (p[0] === by && (p[1] === 'B' || p[1] === 'Q')) return true; break; } rr += dr; cc += dc; } }
+  for (const [dr, dc] of CH_O) { let rr = r + dr, cc = c + dc; while (rr >= 0 && rr < 8 && cc >= 0 && cc < 8) { const p = b[rr * 8 + cc]; if (p) { if (p[0] === by && (p[1] === 'R' || p[1] === 'Q')) return true; break; } rr += dr; cc += dc; } }
+  return false;
+}
+function chGen(s, color) {
+  const b = s.b, out = [], opp = color === 'w' ? 'b' : 'w';
+  for (let i = 0; i < 64; i++) {
+    const p = b[i]; if (!p || p[0] !== color) continue; const t = p[1], r = i >> 3, c = i & 7;
+    if (t === 'P') {
+      const dir = color === 'w' ? -1 : 1, st = color === 'w' ? 6 : 1, pr = color === 'w' ? 0 : 7, r1 = r + dir;
+      const add = (to) => { if (r1 === pr) for (const q of ['Q', 'R', 'B', 'N']) out.push({ f: i, t: to, p: q }); else out.push({ f: i, t: to }); };
+      if (r1 >= 0 && r1 < 8) {
+        if (!b[r1 * 8 + c]) { add(r1 * 8 + c); if (r === st && !b[(r + 2 * dir) * 8 + c]) out.push({ f: i, t: (r + 2 * dir) * 8 + c }); }
+        for (const dc of [-1, 1]) { const cc = c + dc; if (cc < 0 || cc > 7) continue; const to = r1 * 8 + cc; if (b[to] && b[to][0] === opp) add(to); else if (to === s.ep) out.push({ f: i, t: to }); }
+      }
+    } else if (t === 'N' || t === 'K') {
+      for (const [dr, dc] of (t === 'N' ? CH_N : CH_K)) { const rr = r + dr, cc = c + dc; if (rr < 0 || rr > 7 || cc < 0 || cc > 7) continue; const to = rr * 8 + cc; if (!b[to] || b[to][0] === opp) out.push({ f: i, t: to }); }
+      if (t === 'K') {
+        const home = color === 'w' ? 60 : 4, rk = color === 'w' ? 56 : 0;
+        if (i === home && !chAtt(b, home, opp)) {
+          if (s.cast[color + 'K'] && b[home + 3] === color + 'R' && !b[home + 1] && !b[home + 2] && !chAtt(b, home + 1, opp) && !chAtt(b, home + 2, opp)) out.push({ f: i, t: home + 2 });
+          if (s.cast[color + 'Q'] && b[rk] === color + 'R' && !b[home - 1] && !b[home - 2] && !b[home - 3] && !chAtt(b, home - 1, opp) && !chAtt(b, home - 2, opp)) out.push({ f: i, t: home - 2 });
+        }
+      }
+    } else {
+      const dirs = t === 'B' ? CH_D : t === 'R' ? CH_O : CH_D.concat(CH_O);
+      for (const [dr, dc] of dirs) { let rr = r + dr, cc = c + dc; while (rr >= 0 && rr < 8 && cc >= 0 && cc < 8) { const to = rr * 8 + cc; if (!b[to]) out.push({ f: i, t: to }); else { if (b[to][0] === opp) out.push({ f: i, t: to }); break; } rr += dr; cc += dc; } }
+    }
+  }
+  return out;
+}
+function chApply(s, m) {
+  const nb = s.b.slice(), piece = nb[m.f], color = piece[0], type = piece[1], cap = nb[m.t];
+  const cast = { wK: s.cast.wK, wQ: s.cast.wQ, bK: s.cast.bK, bQ: s.cast.bQ };
+  if (type === 'P' && m.t === s.ep && !cap && (m.f & 7) !== (m.t & 7)) nb[(m.f >> 3) * 8 + (m.t & 7)] = '';
+  nb[m.t] = m.p ? color + m.p : piece; nb[m.f] = '';
+  if (type === 'K') {
+    cast[color + 'K'] = 0; cast[color + 'Q'] = 0;
+    if (m.t - m.f === 2) { nb[m.f + 1] = nb[m.f + 3]; nb[m.f + 3] = ''; } else if (m.f - m.t === 2) { nb[m.f - 1] = nb[m.f - 4]; nb[m.f - 4] = ''; }
+  }
+  if (m.f === 63 || m.t === 63) cast.wK = 0; if (m.f === 56 || m.t === 56) cast.wQ = 0; if (m.f === 7 || m.t === 7) cast.bK = 0; if (m.f === 0 || m.t === 0) cast.bQ = 0;
+  const ep = (type === 'P' && Math.abs(m.t - m.f) === 16) ? (m.f + m.t) / 2 : -1;
+  return { b: nb, turn: color === 'w' ? 'b' : 'w', cast, ep, half: (type === 'P' || cap) ? 0 : s.half + 1 };
+}
+function chLegal(s) {
+  const color = s.turn, opp = color === 'w' ? 'b' : 'w';
+  return chGen(s, color).filter(m => { const n = chApply(s, m); return !chAtt(n.b, n.b.indexOf(color + 'K'), opp); });
+}
+function chInCheck(s) { return chAtt(s.b, s.b.indexOf(s.turn + 'K'), s.turn === 'w' ? 'b' : 'w'); }
+function chStatus(s) {
+  if (!chLegal(s).length) return chInCheck(s) ? 'mate' : 'stale';
+  if (s.half >= 100) return 'fifty';
+  const ps = s.b.filter(x => x && x[1] !== 'K');
+  if (!ps.length || (ps.length === 1 && (ps[0][1] === 'B' || ps[0][1] === 'N'))) return 'insuf';
+  return '';
+}
+function chEval(b) {
+  let sc = 0;
+  for (let i = 0; i < 64; i++) {
+    const p = b[i]; if (!p) continue; const t = p[1], r = i >> 3, c = i & 7, w = p[0] === 'w'; let v = CH_V[t];
+    const cen = 7 - Math.abs(c - 3.5) - Math.abs(r - 3.5);
+    if (t === 'P') v += (w ? 6 - r : r - 1) * 8 + (c >= 2 && c <= 5 ? cen * 2 : 0);
+    else if (t === 'N' || t === 'B') v += cen * 5; else if (t === 'Q') v += cen; else if (t === 'K') v += (w ? (r === 7 ? 15 : 0) : (r === 0 ? 15 : 0));
+    sc += w ? v : -v;
+  }
+  return sc;
+}
+function chOrder(s, moves) {
+  return moves.map(m => ({ m, k: (s.b[m.t] ? CH_V[s.b[m.t][1]] * 10 - CH_V[s.b[m.f][1]] : 0) + (m.p ? 800 : 0) })).sort((a, b) => b.k - a.k).map(x => x.m);
+}
+function chSearch(s, d, alpha, beta, ply) {
+  const moves = chLegal(s);
+  if (!moves.length) return chInCheck(s) ? -100000 + ply : 0;
+  if (d === 0) return (s.turn === 'w' ? 1 : -1) * chEval(s.b);
+  for (const m of chOrder(s, moves)) { const sc = -chSearch(chApply(s, m), d - 1, -beta, -alpha, ply + 1); if (sc >= beta) return beta; if (sc > alpha) alpha = sc; }
+  return alpha;
+}
+function chBest(s, lvl) {
+  const moves = chLegal(s); if (!moves.length) return null;
+  if (lvl === 'easy' && Math.random() < .4) return moves[Math.random() * moves.length | 0];
+  const depth = lvl === 'easy' ? 1 : lvl === 'medium' ? 2 : 3;
+  const sc = chOrder(s, moves).map(m => ({ m, v: -chSearch(chApply(s, m), depth - 1, -1e9, 1e9, 1) }));
+  const best = Math.max(...sc.map(x => x.v)), top = sc.filter(x => x.v >= best - (lvl === 'easy' ? 40 : 3));
+  return top[Math.random() * top.length | 0].m;
+}
+function chFromFen(fen) {
+  const [pl, tn, ca, ep] = fen.split(' '), b = []; 
+  for (const ch of pl) { if (ch === '/') continue; if (/\d/.test(ch)) for (let k = 0; k < +ch; k++) b.push(''); else b.push((ch === ch.toUpperCase() ? 'w' : 'b') + ch.toUpperCase()); }
+  return { b, turn: tn, cast: { wK: ca.includes('K') ? 1 : 0, wQ: ca.includes('Q') ? 1 : 0, bK: ca.includes('k') ? 1 : 0, bQ: ca.includes('q') ? 1 : 0 }, ep: ep && ep !== '-' ? (8 - +ep[1]) * 8 + (ep.charCodeAt(0) - 97) : -1, half: 0 };
+}
+
+/* ---------- كروت ---------- */
+const CD_SYM = { S: '♠', H: '♥', D: '♦', C: '♣' }, CD_R = ['', 'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+function cdDeck() {
+  const d = []; for (const s of ['S', 'H', 'D', 'C']) for (let r = 1; r <= 13; r++) d.push({ r, s });
+  for (let i = d.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [d[i], d[j]] = [d[j], d[i]]; }
+  return d;
+}
+function cdEl(c, attrs, cls) { return `<${attrs ? 'button type="button"' : 'span'} class="pc${c.s === 'H' || c.s === 'D' ? ' red' : ''} ${cls || ''}" ${attrs || ''}><b>${CD_R[c.r]}</b><span>${CD_SYM[c.s]}\uFE0E</span></${attrs ? 'button' : 'span'}>`; }
+function cdBack(n, cls) { return Array.from({ length: n }, () => `<span class="pc back ${cls || ''}"></span>`).join(''); }
+function cdLbl(c) { return CD_R[c.r] + CD_SYM[c.s]; }
+function bsOpts(table, card) {
+  if (card.r === 11) return table.length ? [table.map((_, i) => i)] : [];
+  const opts = [], same = table.map((c, i) => c.r === card.r ? i : -1).filter(i => i >= 0); if (same.length) opts.push(same);
+  if (card.r <= 10) {
+    const need = 11 - card.r, idx = table.map((c, i) => c.r <= 10 ? i : -1).filter(i => i >= 0).slice(0, 12), extra = [];
+    for (let mask = 1; mask < (1 << idx.length); mask++) { let sum = 0; const sel = []; for (let j = 0; j < idx.length; j++) if (mask >> j & 1) { sum += table[idx[j]].r; sel.push(idx[j]); } if (sum === need) extra.push(sel); }
+    extra.sort((a, b) => b.length - a.length); extra.slice(0, 6).forEach(x => opts.push(x));
+  }
+  return opts;
+}
+function bsPts(c) { let v = .7; if (c.r === 1 || c.r === 11) v += 1.2; if (c.r === 10 && c.s === 'D') v += 3.5; if (c.r === 2 && c.s === 'C') v += 2.5; if (c.s === 'C') v += .5; return v; }
+
+Object.assign(Fun, {
+  /* ---------- تزيين الألعاب ---------- */
+  DECO: {
+    board: [['wood', 'خشبي', '#f0d9b5', '#b58863'], ['green', 'أخضر', '#eeeed2', '#769656'], ['blue', 'أزرق', '#dee3e6', '#8ca2ad'], ['pink', 'وردي', '#fde8ef', '#e58ab0'], ['night', 'ليلي', '#8e9bb5', '#44516b']],
+    back: [['blue', 'أزرق', '#1d4ed8'], ['red', 'أحمر', '#b91c1c'], ['green', 'أخضر', '#15803d'], ['gold', 'ذهبي', '#b8862f'], ['purple', 'بنفسجي', '#6d28d9']],
+    felt: [['green', 'أخضر', '#14532d'], ['blue', 'أزرق', '#1e3a8a'], ['wine', 'نبيتي', '#7f1d1d'], ['dark', 'غامق', '#1f2937']],
+    cele: [['confetti', '🎉 كونفتي'], ['stars', '⭐ نجوم'], ['hearts', '❤️ قلوب'], ['balloons', '🎈 بالونات'], ['snow', '❄️ ثلج'], ['none', '🚫 بدون']]
+  },
+  decoGet() { return Object.assign({ board: 'wood', back: 'blue', felt: 'green', cele: 'confetti' }, lsGet('fun_deco', {})); },
+  decoPick(k) { const v = this.decoGet()[k], L = this.DECO[k]; return L.find(x => x[0] === v) || L[0]; },
+  decoPanel(kind) {
+    if (!this.on('gdeco')) return '';
+    const d = this.decoGet(), D = this.DECO;
+    const row = (label, k, sw) => `<div class="gd-row"><b>${label}</b>${D[k].map(o => `<button type="button" data-fa="gdeco" data-k="${k}" data-v="${o[0]}" class="${d[k] === o[0] ? 'on' : ''}">${sw ? `<i class="sw" style="background:${o[sw]}"></i>` : ''}${o[1]}</button>`).join('')}</div>`;
+    return `<details class="fg-deco"><summary>🎨 تزيين</summary>${kind === 'chess' ? row('الرقعة', 'board', 3) : row('ضهر الكروت', 'back', 2) + row('الطاولة', 'felt', 2)}<div class="gd-row"><b>احتفال الفوز</b>${D.cele.map(o => `<button type="button" data-fa="gdeco" data-k="cele" data-v="${o[0]}" class="${d.cele === o[0] ? 'on' : ''}">${o[1]}</button>`).join('')}</div></details>`;
+  },
+  cele() {
+    const k = this.decoGet().cele; if (!this.on('gdeco')) { this.confetti(90); return; }
+    if (k === 'none') return; if (k === 'confetti') { this.confetti(110); return; }
+    try { const h = Decor.host(); h.classList.add('top'); Decor.burst(Object.assign(Decor.newFx(k), { duration: 4, when: 'open' })); setTimeout(() => h.classList.remove('top'), 7500); } catch (e) { this.confetti(90); }
+  },
+  xaClick(k, a, i) {
+    if (k === 'gdeco') { const d = this.decoGet(); d[a.dataset.k] = a.dataset.v; lsSet('fun_deco', d); this.sub(this.gameHtml(this.gsub)); return; }
+    if (k.startsWith('ch-')) return this.chClick(k, a, i);
+    if (k.startsWith('bs-')) return this.bsClick(k, a, i);
+    if (k.startsWith('c8-')) return this.c8Click(k, a, i);
+  },
+
+  /* ---------- ♟️ شطرنج ---------- */
+  chs: null, chT: { w: 0, l: 0, d: 0 }, chT2: { w: 0, b: 0, d: 0 },
+  chNew() {
+    const b = Array(64).fill(''), back = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'];
+    for (let c = 0; c < 8; c++) { b[c] = 'b' + back[c]; b[8 + c] = 'bP'; b[48 + c] = 'wP'; b[56 + c] = 'w' + back[c]; }
+    this.chs = { s: { b, turn: 'w', cast: { wK: 1, wQ: 1, bK: 1, bQ: 1 }, ep: -1, half: 0 }, sel: -1, tg: [], last: [-1, -1], over: '', hist: [], promo: null, t: null, thinking: false };
+  },
+  chClick(k, a, i) {
+    if (k === 'ch-sq') this.chSq(i);
+    else if (k === 'ch-reset') { if (this.chs && this.chs.t) clearTimeout(this.chs.t); this.chNew(); this.sub(this.chHtml()); }
+    else if (k === 'ch-undo') this.chUndo();
+    else if (k === 'ch-promo') this.chPromo(a.dataset.p);
+  },
+  chSq(i) {
+    const S = this.chs; if (!S || S.over || S.promo || S.thinking) return; const s = S.s, two = this.gMode('chess') === 'two';
+    if (!two && s.turn !== 'w') return;
+    const p = s.b[i];
+    if (S.sel >= 0 && S.tg.includes(i)) {
+      const mvs = chLegal(s).filter(m => m.f === S.sel && m.t === i);
+      if (mvs.length > 1) { S.promo = { f: S.sel, t: i }; this.sub(this.chHtml()); return; }
+      this.chMove(mvs[0]); return;
+    }
+    if (p && p[0] === s.turn) { S.sel = i; S.tg = chLegal(s).filter(m => m.f === i).map(m => m.t); } else { S.sel = -1; S.tg = []; }
+    this.sub(this.chHtml());
+  },
+  chPromo(pc) {
+    const S = this.chs; if (!S || !S.promo) return; const { f, t } = S.promo; S.promo = null;
+    const m = chLegal(S.s).find(x => x.f === f && x.t === t && x.p === pc); if (m) this.chMove(m);
+  },
+  chMove(m) {
+    const S = this.chs; S.hist.push({ s: S.s, last: S.last }); S.s = chApply(S.s, m); S.last = [m.f, m.t]; S.sel = -1; S.tg = [];
+    this.gBeep(440, .06); this.chEnd();
+  },
+  chUndo() {
+    const S = this.chs; if (!S || S.over || !S.hist.length) return; clearTimeout(S.t); S.thinking = false;
+    let h = S.hist.pop(); S.s = h.s; S.last = h.last;
+    if (this.gMode('chess') !== 'two' && S.s.turn === 'b' && S.hist.length) { h = S.hist.pop(); S.s = h.s; S.last = h.last; }
+    S.sel = -1; S.tg = []; S.promo = null; this.sub(this.chHtml());
+  },
+  chEnd() {
+    const S = this.chs, st = chStatus(S.s), two = this.gMode('chess') === 'two';
+    if (st) {
+      S.over = st; const win = st === 'mate' ? (S.s.turn === 'w' ? 'b' : 'w') : '';
+      if (two) { if (win) { this.chT2[win]++; this.cele(); } else this.chT2.d++; }
+      else if (win === 'w') { this.chT.w++; this.awardCapped('chess', (+this.cfg().xpGame || 0) * 2, 5, 'كسبت شطرنج'); this.cele(); } else if (win === 'b') this.chT.l++; else this.chT.d++;
+      this.sub(this.chHtml()); return;
+    }
+    if (!two && S.s.turn === 'b') {
+      S.thinking = true; this.sub(this.chHtml());
+      S.t = setTimeout(() => {
+        if (this.chs !== S || this.tab !== 'games' || this.gsub !== 'chess') return;
+        const m = chBest(S.s, this.gLvl()); if (m) { S.hist.push({ s: S.s, last: S.last }); S.s = chApply(S.s, m); S.last = [m.f, m.t]; this.gBeep(330, .06); }
+        S.thinking = false; this.chEnd();
+      }, 150);
+    } else this.sub(this.chHtml());
+  },
+  chHtml() {
+    if (!this.chs) this.chNew();
+    const S = this.chs, s = S.s, two = this.gMode('chess') === 'two', th = this.decoPick('board'), G = { K: '♚', Q: '♛', R: '♜', B: '♝', N: '♞', P: '♟' };
+    const chk = !S.over || S.over === 'mate' ? chInCheck(s) : false, ksq = chk ? s.b.indexOf(s.turn + 'K') : -1;
+    let cells = '';
+    for (let i = 0; i < 64; i++) {
+      const r = i >> 3, c = i & 7, p = s.b[i], l = (r + c) % 2 === 0;
+      const cls = ['ch-sq', l ? 'l' : 'd', S.sel === i ? 'sel' : '', S.last.includes(i) ? 'last' : '', i === ksq ? 'chk' : '', S.tg.includes(i) ? 'tgt' + (p ? ' cap' : '') : ''].filter(Boolean).join(' ');
+      cells += `<button type="button" class="${cls}" data-fa="ch-sq" data-i="${i}" aria-label="${'abcdefgh'[c]}${8 - r}">${c === 0 ? `<i class="rk">${8 - r}</i>` : ''}${r === 7 ? `<i class="fl">${'abcdefgh'[c]}</i>` : ''}${p ? `<span class="${p[0] === 'w' ? 'pw' : 'pk'}">${G[p[1]]}\uFE0E</span>` : ''}</button>`;
+    }
+    let msg;
+    if (S.over === 'mate') { const w = s.turn === 'w' ? 'b' : 'w'; msg = two ? `♟️ كش مات! ${w === 'w' ? '⚪ الأبيض' : '⚫ الأسود'} كسب 🎉` : (w === 'w' ? '🎉 كش مات — كسبت!' : '😅 كش مات — الكمبيوتر كسب'); }
+    else if (S.over === 'stale') msg = '🤝 تعادل (ستيل ميت)'; else if (S.over === 'fifty') msg = '🤝 تعادل (50 نقلة من غير تقدم)'; else if (S.over) msg = '🤝 تعادل (مفيش مادة كفاية للكش مات)';
+    else if (two) msg = `دور ${s.turn === 'w' ? '⚪ الأبيض' : '⚫ الأسود'}${chk ? ' — كش! ⚠️' : ''}`;
+    else msg = S.thinking ? '🤔 الكمبيوتر بيفكّر…' : `إنت الأبيض ⚪ — دورك${chk ? ' — كش! ⚠️' : ''}`;
+    const score = two ? `⚪ ${this.chT2.w} • ⚫ ${this.chT2.b} • تعادل ${this.chT2.d}` : `كسبت ${this.chT.w} • خسرت ${this.chT.l} • تعادل ${this.chT.d}`;
+    const promo = S.promo ? `<div class="ch-promo">${['Q', 'R', 'B', 'N'].map(q => `<button type="button" data-fa="ch-promo" data-p="${q}">${G[q]}\uFE0E</button>`).join('')}</div><p class="fh-hint" style="text-align:center">اختار القطعة اللي هيتحول ليها البيدق</p>` : '';
+    return `${this.gSetup('chess', false)}${this.decoPanel('chess')}<div class="fg-chess" style="--bl:${th[2]};--bd:${th[3]}"><div class="ch-grid">${cells}</div>${promo}<p class="fg-msg">${msg}</p><p class="fh-hint">${score}</p>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button type="button" class="fh-btn" data-fa="ch-undo" ${S.over || !S.hist.length ? 'disabled' : ''}>↩ تراجع</button><button type="button" class="fh-btn" data-fa="ch-reset">↻ لعبة جديدة</button></div></div>`;
+  },
+
+  /* ---------- أدوات الكروت المشتركة ---------- */
+  cdFelt() { const f = this.decoPick('felt'), b = this.decoPick('back'); return `--felt:${f[2]};--cb:${b[2]}`; },
+  cdCover(n, btn) { return `<div class="fg-felt cd-cover" style="${this.cdFelt()}"><h3 style="margin:0 0 10px">🔄 سلّم الجهاز للاعب ${n}</h3><p class="fh-hint">متبصّش على كروت اللاعب التاني 😉</p><button type="button" class="fh-btn" data-fa="${btn}">أنا جاهز ✋</button></div>`; },
+
+  /* ---------- 🃏 بصرة ---------- */
+  bs: null, bsT: { w: 0, l: 0, d: 0 }, bsT2: { a: 0, b: 0, d: 0 },
+  bsNew() {
+    let d, t; do { d = cdDeck(); t = d.splice(0, 4); } while (t.some(c => c.r === 11));
+    this.bs = { deck: d, table: t, hands: [d.splice(0, 4), d.splice(0, 4)], cap: [[], []], bas: [0, 0], turn: 0, last: -1, over: false, msg: 'ابدأ — اختار كارت تلعبه', cover: false, pend: null, t: null, sc: [0, 0] };
+  },
+  bsClick(k, a, i) {
+    const S = this.bs; if (!S) return;
+    if (k === 'bs-reset') { clearTimeout(S.t); this.bsNew(); this.sub(this.bsHtml()); }
+    else if (k === 'bs-ready') { S.cover = false; this.sub(this.bsHtml()); }
+    else if (k === 'bs-play') this.bsPlay(i);
+    else if (k === 'bs-pick') { if (!S.pend) return; const { hi, opts } = S.pend; S.pend = null; this.bsDo(hi, opts[i]); }
+    else if (k === 'bs-cancel') { S.pend = null; this.sub(this.bsHtml()); }
+  },
+  bsHuman() { return this.gMode('basra') === 'two' || this.bs.turn === 0; },
+  bsPlay(hi) {
+    const S = this.bs; if (!S || S.over || S.cover || S.pend || !this.bsHuman()) return;
+    const card = S.hands[S.turn][hi]; if (!card) return; const opts = bsOpts(S.table, card);
+    if (opts.length > 1) { S.pend = { hi, opts }; this.sub(this.bsHtml()); return; }
+    this.bsDo(hi, opts[0] || null);
+  },
+  bsDo(hi, opt) {
+    const S = this.bs, p = S.turn, name = this.gMode('basra') === 'two' ? 'لاعب ' + (p + 1) : (p === 0 ? 'إنت' : 'الكمبيوتر'), card = S.hands[p].splice(hi, 1)[0];
+    if (opt) {
+      const got = opt.map(i => S.table[i]); S.table = S.table.filter((_, i) => !opt.includes(i)); S.cap[p].push(card, ...got); S.last = p;
+      let extra = ''; if (!S.table.length && card.r !== 11) { S.bas[p]++; extra = ' — 🎯 بصرة! +10'; this.gBeep(660, .15); }
+      S.msg = `${name} لعب ${cdLbl(card)} وأخد ${got.map(cdLbl).join(' ')}${extra}`;
+    } else { S.table.push(card); S.msg = `${name} نزّل ${cdLbl(card)}`; }
+    S.turn ^= 1;
+    if (!S.hands[0].length && !S.hands[1].length) {
+      if (S.deck.length) { S.hands = [S.deck.splice(0, 4), S.deck.splice(0, 4)]; S.msg += ' — توزيع جديد 🃏'; }
+      else { this.bsFinish(); return; }
+    }
+    this.bsNext();
+  },
+  bsNext() {
+    const S = this.bs, two = this.gMode('basra') === 'two';
+    if (two) S.cover = true;
+    this.sub(this.bsHtml());
+    if (!two && S.turn === 1) S.t = setTimeout(() => { if (this.bs !== S || this.tab !== 'games' || this.gsub !== 'basra') return; this.bsCpu(); }, 800);
+  },
+  bsCpu() {
+    const S = this.bs, h = S.hands[1], lvl = this.gLvl(), cands = [];
+    h.forEach((c, hi) => {
+      const opts = bsOpts(S.table, c);
+      if (!opts.length) cands.push({ hi, opt: null, v: -bsPts(c) - 1 });
+      else opts.forEach(o => { const got = o.map(i => S.table[i]), left = S.table.length - o.length; let v = got.concat(c).reduce((s, x) => s + bsPts(x), 0) + (left === 0 && c.r !== 11 ? 10 : 0); if (c.r === 11 && S.table.length <= 2) v -= 1.5; cands.push({ hi, opt: o, v }); });
+    });
+    let pick = cands.slice().sort((a, b) => b.v - a.v)[0];
+    if (lvl === 'easy' && Math.random() < .5) pick = cands[Math.random() * cands.length | 0];
+    this.bsDo(pick.hi, pick.opt);
+  },
+  bsFinish() {
+    const S = this.bs; if (S.table.length && S.last >= 0) { S.cap[S.last].push(...S.table); S.table = []; }
+    const sc = [0, 0];
+    for (let p = 0; p < 2; p++) { S.cap[p].forEach(c => { if (c.r === 1 || c.r === 11) sc[p]++; if (c.r === 10 && c.s === 'D') sc[p] += 3; if (c.r === 2 && c.s === 'C') sc[p] += 2; }); sc[p] += S.bas[p] * 10; }
+    const n = [S.cap[0].length, S.cap[1].length], cl = [0, 1].map(p => S.cap[p].filter(c => c.s === 'C').length);
+    if (n[0] !== n[1]) sc[n[0] > n[1] ? 0 : 1] += 30; if (cl[0] !== cl[1]) sc[cl[0] > cl[1] ? 0 : 1] += 7;
+    S.sc = sc; S.over = true; S.cover = false; const two = this.gMode('basra') === 'two';
+    if (sc[0] === sc[1]) { (two ? this.bsT2 : this.bsT).d++; }
+    else if (two) { this.bsT2[sc[0] > sc[1] ? 'a' : 'b']++; this.cele(); }
+    else if (sc[0] > sc[1]) { this.bsT.w++; this.awardCapped('basra', this.cfg().xpGame, 5, 'كسبت بصرة'); this.cele(); } else this.bsT.l++;
+    this.sub(this.bsHtml());
+  },
+  bsHtml() {
+    if (!this.bs) this.bsNew();
+    const S = this.bs, two = this.gMode('basra') === 'two', me = two ? S.turn : 0, st = this.cdFelt();
+    const rules = `<details class="fg-deco"><summary>📖 القواعد</summary><p class="fh-hint" style="line-height:1.9">كل لاعب 4 كروت و4 على الأرض. العب كارت: لو شبيه لكارت على الأرض بتاخد كل الشبيه. أو لو الكارت رقم (A–10) وجمعه مع كروت أرقام على الأرض = <b>11</b> بتاخدهم. الولد (J) بياخد كل اللي على الأرض. الكارت اللي مالوش حاجة يتحط على الأرض. لو خدت كل الأرض بكارت غير الولد = <b>بصرة +10</b>. النقط: الأكتر كروت 30، الأكتر سباتي 7، 10♦ = 3، 2♣ = 2، كل آص وولد = 1.</p></details>`;
+    const score = two ? `لاعب 1: ${this.bsT2.a} • لاعب 2: ${this.bsT2.b} • تعادل ${this.bsT2.d}` : `كسبت ${this.bsT.w} • خسرت ${this.bsT.l} • تعادل ${this.bsT.d}`;
+    if (S.cover && !S.over) return `${this.gSetup('basra', false)}${this.decoPanel('cards')}${this.cdCover(S.turn + 1, 'bs-ready')}<p class="fh-hint">${score}</p>`;
+    const opp = two ? '' : `<div class="cd-cap">الكمبيوتر (${S.hands[1].length} كروت) • كروته المكسوبة: ${S.cap[1].length}</div><div class="cd-row">${cdBack(S.hands[1].length, 'sm')}</div>`;
+    const table = `<div class="cd-cap">الأرض (${S.table.length})</div><div class="cd-row">${S.table.length ? S.table.map(c => cdEl(c)).join('') : '<span class="cd-cap">فاضية</span>'}</div>`;
+    let hand = '';
+    if (!S.over) {
+      hand = `<div class="cd-cap">${two ? 'كروت لاعب ' + (S.turn + 1) : 'كروتك'} • مكسوبك: ${S.cap[me].length}${S.bas[me] ? ' • بصرة ×' + S.bas[me] : ''}</div><div class="cd-row">${S.hands[me].map((c, i) => cdEl(c, `data-fa="bs-play" data-i="${i}"`, S.turn === me ? 'ok' : 'no')).join('')}</div>`;
+      if (S.pend) hand = `<div class="cd-cap">اختار تاخد إيه بـ ${cdLbl(S.hands[S.turn][S.pend.hi])}:</div><div class="cd-opts">${S.pend.opts.map((o, k) => `<button type="button" data-fa="bs-pick" data-i="${k}">${o.map(i => cdLbl(S.table[i])).join(' + ')}</button>`).join('')}<button type="button" data-fa="bs-cancel">إلغاء</button></div>`;
+    }
+    let fin = '';
+    if (S.over) { const w = S.sc[0] === S.sc[1] ? '🤝 تعادل' : (two ? (S.sc[0] > S.sc[1] ? '🎉 لاعب 1 كسب' : '🎉 لاعب 2 كسب') : (S.sc[0] > S.sc[1] ? '🎉 كسبت!' : '😅 الكمبيوتر كسب')); fin = `<p class="fg-msg">${w}</p><p class="fh-hint">${two ? 'لاعب 1' : 'إنت'}: ${S.sc[0]} نقطة (كروت ${S.cap[0].length}) — ${two ? 'لاعب 2' : 'الكمبيوتر'}: ${S.sc[1]} نقطة (كروت ${S.cap[1].length})</p>`; }
+    return `${this.gSetup('basra', false)}${this.decoPanel('cards')}${rules}<div class="fg-felt" style="${st}">${opp}${table}${hand}<p class="fg-msg">${S.over ? '' : S.msg}</p>${fin}</div><p class="fh-hint">${score}</p><button type="button" class="fh-btn" data-fa="bs-reset">↻ لعبة جديدة</button>`;
+  },
+
+  /* ---------- 🎴 الثمانية المجنونة ---------- */
+  c8: null, c8T: { w: 0, l: 0 }, c8T2: { a: 0, b: 0 },
+  c8New() {
+    const d = cdDeck(); let first = d.pop(); while (first.r === 8) { d.unshift(first); first = d.pop(); }
+    this.c8 = { deck: d, disc: [first], hands: [d.splice(0, 7), d.splice(0, 7)], turn: 0, suit: first.s, over: -1, msg: 'ابدأ — العب كارت بنفس الشكل أو الرقم (والـ 8 تنفع دايماً)', cover: false, wild: false, t: null };
+  },
+  c8Can(S, c) { return c.r === 8 || c.s === S.suit || c.r === S.disc[S.disc.length - 1].r; },
+  c8Click(k, a, i) {
+    const S = this.c8; if (!S) return;
+    if (k === 'c8-reset') { clearTimeout(S.t); this.c8New(); this.sub(this.c8Html()); }
+    else if (k === 'c8-ready') { S.cover = false; this.sub(this.c8Html()); }
+    else if (k === 'c8-play') this.c8Play(i);
+    else if (k === 'c8-draw') this.c8Draw();
+    else if (k === 'c8-suit') { if (!S.wild) return; S.suit = a.dataset.s; S.wild = false; S.msg += ' → الشكل المطلوب ' + CD_SYM[S.suit]; this.c8After(); }
+  },
+  c8Human() { return this.gMode('crazy') === 'two' || this.c8.turn === 0; },
+  c8Name(p) { return this.gMode('crazy') === 'two' ? 'لاعب ' + (p + 1) : (p === 0 ? 'إنت' : 'الكمبيوتر'); },
+  c8Play(hi) {
+    const S = this.c8; if (!S || S.over >= 0 || S.cover || S.wild || !this.c8Human()) return;
+    const c = S.hands[S.turn][hi]; if (!c || !this.c8Can(S, c)) return;
+    S.hands[S.turn].splice(hi, 1); S.disc.push(c); S.suit = c.s; S.msg = `${this.c8Name(S.turn)} لعب ${cdLbl(c)}`;
+    if (c.r === 8 && S.hands[S.turn].length) { S.wild = true; this.sub(this.c8Html()); return; }
+    this.c8After();
+  },
+  c8Refill(S) {
+    if (!S.deck.length && S.disc.length > 1) { const top = S.disc.pop(); S.deck = S.disc; S.disc = [top]; for (let i = S.deck.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [S.deck[i], S.deck[j]] = [S.deck[j], S.deck[i]]; } }
+    return S.deck.length > 0;
+  },
+  c8Draw() {
+    const S = this.c8; if (!S || S.over >= 0 || S.cover || S.wild || !this.c8Human()) return;
+    const h = S.hands[S.turn]; if (h.some(c => this.c8Can(S, c))) return;
+    if (!this.c8Refill(S)) { S.msg = `${this.c8Name(S.turn)} مفيش كروت يسحبها — عدّى الدور`; S.turn ^= 1; this.c8Next(); return; }
+    h.push(S.deck.pop()); S.msg = `${this.c8Name(S.turn)} سحب كارت`; this.sub(this.c8Html());
+  },
+  c8After() {
+    const S = this.c8;
+    if (!S.hands[S.turn].length) {
+      S.over = S.turn; S.cover = false; const two = this.gMode('crazy') === 'two';
+      if (two) { this.c8T2[S.turn ? 'b' : 'a']++; this.cele(); } else if (S.turn === 0) { this.c8T.w++; this.awardCapped('crazy', this.cfg().xpGame, 5, 'كسبت الثمانية المجنونة'); this.cele(); } else this.c8T.l++;
+      this.sub(this.c8Html()); return;
+    }
+    S.turn ^= 1; this.c8Next();
+  },
+  c8Next() {
+    const S = this.c8, two = this.gMode('crazy') === 'two';
+    if (two) S.cover = true;
+    this.sub(this.c8Html());
+    if (!two && S.turn === 1) S.t = setTimeout(() => { if (this.c8 !== S || this.tab !== 'games' || this.gsub !== 'crazy') return; this.c8Cpu(); }, 850);
+  },
+  c8Cpu() {
+    const S = this.c8, h = S.hands[1], lvl = this.gLvl(); let drew = 0;
+    while (!h.some(c => this.c8Can(S, c)) && this.c8Refill(S)) { h.push(S.deck.pop()); drew++; }
+    const ok = h.map((c, i) => ({ c, i })).filter(x => this.c8Can(S, x.c));
+    if (!ok.length) { S.msg = `الكمبيوتر سحب ${drew} وماقدرش يلعب — عدّى الدور`; S.turn = 0; this.c8Next(); return; }
+    const cnt = s => h.filter(x => x.s === s).length, non8 = ok.filter(x => x.c.r !== 8);
+    let pick;
+    if (lvl === 'easy') pick = ok[Math.random() * ok.length | 0];
+    else if (non8.length) pick = non8.sort((a, b) => (cnt(b.c.s) * 2 + b.c.r / 13) - (cnt(a.c.s) * 2 + a.c.r / 13))[0]; else pick = ok[0];
+    const c = h.splice(pick.i, 1)[0]; S.disc.push(c); S.suit = c.s;
+    let note = drew ? ` (بعد ما سحب ${drew})` : '';
+    if (c.r === 8) { const best = ['S', 'H', 'D', 'C'].sort((a, b) => cnt(b) - cnt(a))[0]; S.suit = h.length ? best : c.s; note += ' → الشكل المطلوب ' + CD_SYM[S.suit]; }
+    S.msg = `الكمبيوتر لعب ${cdLbl(c)}${note}`; this.c8After();
+  },
+  c8Html() {
+    if (!this.c8) this.c8New();
+    const S = this.c8, two = this.gMode('crazy') === 'two', me = two ? S.turn : 0, st = this.cdFelt();
+    const score = two ? `لاعب 1: ${this.c8T2.a} • لاعب 2: ${this.c8T2.b}` : `كسبت ${this.c8T.w} • خسرت ${this.c8T.l}`;
+    if (S.cover && S.over < 0) return `${this.gSetup('crazy', false)}${this.decoPanel('cards')}${this.cdCover(S.turn + 1, 'c8-ready')}<p class="fh-hint">${score}</p>`;
+    const top = S.disc[S.disc.length - 1], canDraw = S.over < 0 && !S.wild && !S.hands[me].some(c => this.c8Can(S, c)), mine = S.hands[me];
+    const opp = two ? `<div class="cd-cap">لاعب ${2 - me} (${S.hands[1 - me].length} كروت)</div><div class="cd-row">${cdBack(Math.min(S.hands[1 - me].length, 12), 'sm')}</div>` : `<div class="cd-cap">الكمبيوتر (${S.hands[1].length} كروت)</div><div class="cd-row">${cdBack(Math.min(S.hands[1].length, 12), 'sm')}</div>`;
+    const mid = `<div class="cd-row">${S.deck.length ? `<button type="button" class="pc back ${canDraw ? 'ok' : 'no'}" data-fa="c8-draw" aria-label="اسحب كارت"></button>` : '<span class="cd-cap">الكومة خلصت</span>'}${cdEl(top)}<div class="cd-cap">الشكل المطلوب<br><b style="font-size:26px">${CD_SYM[S.suit]}\uFE0E</b></div></div><div class="cd-cap">${S.deck.length ? `الكومة: ${S.deck.length} كارت${canDraw ? ' — مفيش كارت يتلعب، اسحب!' : ''}` : ''}</div>`;
+    let hand = '';
+    if (S.over < 0) {
+      hand = S.wild ? `<div class="cd-cap">اختار الشكل الجديد:</div><div class="cd-suits">${['S', 'H', 'D', 'C'].map(x => `<button type="button" data-fa="c8-suit" data-s="${x}" style="color:${x === 'H' || x === 'D' ? '#dc2626' : '#111'}">${CD_SYM[x]}\uFE0E</button>`).join('')}</div>`
+        : `<div class="cd-cap">${two ? 'كروت لاعب ' + (S.turn + 1) : 'كروتك'}</div><div class="cd-row">${mine.map((c, i) => cdEl(c, `data-fa="c8-play" data-i="${i}"`, this.c8Can(S, c) && S.turn === me ? 'ok' : 'no')).join('')}</div>`;
+    }
+    const fin = S.over >= 0 ? `<p class="fg-msg">${two ? '🎉 لاعب ' + (S.over + 1) + ' كسب!' : (S.over === 0 ? '🎉 كسبت!' : '😅 الكمبيوتر كسب')}</p>` : '';
+    return `${this.gSetup('crazy', false)}${this.decoPanel('cards')}<details class="fg-deco"><summary>📖 القواعد</summary><p class="fh-hint" style="line-height:1.9">كل لاعب 7 كروت. العب كارت بنفس <b>الشكل</b> أو نفس <b>الرقم</b> زي الكارت اللي على الأرض. الـ <b>8</b> بتنفع في أي وقت وبتغيّر الشكل. مفيش كارت يتلعب؟ اسحب من الكومة. أول واحد يخلّص كروته يكسب.</p></details>
+      <div class="fg-felt" style="${st}">${opp}${mid}${hand}<p class="fg-msg">${S.over >= 0 ? '' : S.msg}</p>${fin}</div><p class="fh-hint">${score}</p><button type="button" class="fh-btn" data-fa="c8-reset">↻ لعبة جديدة</button>`;
+  }
+});
+
+/* ===== تحكم في كروت الستريك والعدّاد: شكل / حجم / لون / مكان ===== */
+Object.assign(Fun, {
+  CU_D: { pos: 'top', scale: 100, side: false, mini: false, shape: 'wide', cw: 150, cwAuto: true, gap: 12, radius: 18, look: 'solid', hideNote: false, hideXp: false, swap: false, shadow: true, streak: { bg: '', ac: '', ink: '' }, exam: { bg: '', ac: '', ink: '' } },
+  cui() {
+    const s = this._cuPrev || this.cfg().cardUi || {}, D = this.CU_D, num = (x, lo, hi, d) => { x = +x; return isFinite(x) && x !== 0 ? Math.min(hi, Math.max(lo, x)) : d; };
+    const bool = (k) => s[k] === undefined ? D[k] : !!s[k];
+    return { pos: ['top', 'hero', 'end'].includes(s.pos) ? s.pos : 'top', scale: num(s.scale, 60, 120, 100), side: !!s.side, mini: !!s.mini,
+      shape: s.shape === 'square' ? 'square' : 'wide', cw: num(s.cw, 90, 220, 150), cwAuto: bool('cwAuto'), gap: s.gap === 0 ? 0 : num(s.gap, 0, 24, 12), radius: s.radius === 0 ? 0 : num(s.radius, 0, 32, 18),
+      look: ['solid', 'glass', 'outline', 'gradient'].includes(s.look) ? s.look : 'solid', hideNote: !!s.hideNote, hideXp: !!s.hideXp, swap: !!s.swap, shadow: bool('shadow'),
+      streak: Object.assign({}, D.streak, s.streak || {}), exam: Object.assign({}, D.exam, s.exam || {}) };
+  },
+  cuAttr(k) {
+    const c = this.cui()[k], st = []; let cls = '';
+    const ok = v => /^#[0-9a-fA-F]{3,8}$/.test(v || '');
+    if (ok(c.bg)) st.push('background:' + c.bg); if (ok(c.ac)) { st.push('--fc-ac:' + c.ac); cls += ' fc-ac'; } if (ok(c.ink)) { st.push('--fc-ink:' + c.ink, 'color:' + c.ink); cls += ' fc-ink'; }
+    return { cls, style: st.length ? ` style="${st.join(';')}"` : '' };
+  },
+  cuPlace(box, pos) {
+    const hero = document.querySelector('main .hero'), secs = document.getElementById('sections'); if (!box || !hero) return;
+    if (pos === 'hero') { if (box.previousElementSibling !== hero) hero.insertAdjacentElement('afterend', box); }
+    else if (pos === 'end') { if (secs && box.previousElementSibling !== secs) secs.insertAdjacentElement('afterend', box); }
+    else if (box.nextElementSibling !== hero) hero.insertAdjacentElement('beforebegin', box);
+  },
+  cuHtml() {
+    const u = this.cui();
+    const col = (id, label, val, def) => `<div class="cu-c"><label for="${id}">${label}</label><input type="color" id="${id}" value="${val || def}" data-def="${def}" ${val ? '' : 'data-off="1"'}><button type="button" class="btn sm ghost" data-cu-reset="${id}">افتراضي</button></div>`;
+    const rng = (id, label, val, lo, hi, st, unit) => `<div class="field fs-num"><label for="${id}">${label}: <b id="${id}-v">${val}${unit}</b></label><input type="range" id="${id}" min="${lo}" max="${hi}" step="${st}" value="${val}" data-unit="${unit}"></div>`;
+    const sel = (id, label, opts, cur) => `<div class="field fs-num"><label for="${id}">${label}</label><select id="${id}">${opts.map(o => `<option value="${o[0]}" ${cur === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div>`;
+    const ck = (id, label, on) => `<label class="fs-chk"><input type="checkbox" id="${id}" ${on ? 'checked' : ''}> ${label}</label>`;
+    return `<hr class="sep"><h4>🧩 شكل كروت الصفحة الرئيسية (الستريك + عدّاد الامتحان)</h4>
+      <p class="hint">أي تغيير بتشوفه على الصفحة فوراً قبل ما تحفظ. جرّب الأشكال الجاهزة الأول وبعدين عدّل زي ما تحب 👇</p>
+      <div class="cu-presets"><button type="button" data-cu-preset="squares">🟦 مربعات جنب بعض</button><button type="button" data-cu-preset="compact">📱 مصغّرة جنب بعض</button><button type="button" data-cu-preset="glass">🫧 زجاجي</button><button type="button" data-cu-preset="default">↺ الشكل الأصلي</button></div>
+      <div class="fs-row">${sel('cu-shape', 'شكل الكارت', [['wide', '▬ عريض (الأصلي)'], ['square', '⬛ مربع']], u.shape)}${sel('cu-look', 'الستايل', [['solid', 'سادة'], ['gradient', 'تدرّج خفيف'], ['glass', 'زجاجي شفاف'], ['outline', 'إطار ملوّن']], u.look)}</div>
+      ${ck('cu-wa', '↔️ المربعات تتقسم بالتساوي على العرض (اتنين جنب بعض)', u.cwAuto)}
+      <div class="fs-row">${rng('cu-cw', 'حجم المربع (لو مش تلقائي)', u.cw, 90, 220, 5, 'px')}${rng('cu-sc', 'حجم الكلام جوه الكارت', u.scale, 60, 120, 5, '%')}</div>
+      <div class="fs-row">${rng('cu-gap', 'المسافة بين الكروت', u.gap, 0, 24, 2, 'px')}${rng('cu-rad', 'استدارة الزوايا', u.radius, 0, 32, 2, 'px')}</div>
+      <div class="fs-row">${sel('cu-pos', 'مكان الكروت', [['top', '⬆️ فوق (قبل العنوان)'], ['hero', '⬇️ تحت العنوان'], ['end', '🔚 آخر الصفحة (بعد الأقسام)']], u.pos)}</div>
+      ${ck('cu-side', '↔️ (للشكل العريض) الكروت جنب بعض في صف واحد', u.side)}
+      ${ck('cu-mini', '📱 (للشكل العريض) نسخة مصغّرة ومضغوطة', u.mini)}
+      ${ck('cu-swap', '🔀 اعكس الترتيب (العدّاد الأول)', u.swap)}
+      ${ck('cu-hn', '🙈 إخفاء سطر الملاحظة (باقي كذا يوم…)', u.hideNote)}
+      ${ck('cu-hx', '🙈 إخفاء النقاط والمستوى (XP)', u.hideXp)}
+      ${ck('cu-sh', '🌫️ ظل تحت الكروت', u.shadow)}
+      <div class="cu-card"><h5>🔥 كارت الستريك</h5>${col('cu-s-bg', 'لون الخلفية', u.streak.bg, '#ffffff')}${col('cu-s-ac', 'لون التمييز (العناوين والشريط)', u.streak.ac, '#0e7490')}${col('cu-s-ink', 'لون الكلام', u.streak.ink, '#475569')}</div>
+      <div class="cu-card"><h5>⏳ كارت العدّاد</h5>${col('cu-e-bg', 'لون الخلفية', u.exam.bg, '#ffffff')}${col('cu-e-ac', 'لون التمييز (الرقم والعنوان)', u.exam.ac, '#0e7490')}${col('cu-e-ink', 'لون الكلام', u.exam.ink, '#475569')}</div>`;
+  },
+  cuRead() {
+    const g = id => document.getElementById(id), col = id => { const e = g(id); return e && e.dataset.off !== '1' ? e.value : ''; };
+    if (!g('cu-pos')) return null;
+    return { pos: g('cu-pos').value, scale: +g('cu-sc').value || 100, side: g('cu-side').checked, mini: g('cu-mini').checked,
+      shape: g('cu-shape').value, look: g('cu-look').value, cwAuto: g('cu-wa').checked, cw: +g('cu-cw').value || 150, gap: +g('cu-gap').value, radius: +g('cu-rad').value,
+      swap: g('cu-swap').checked, hideNote: g('cu-hn').checked, hideXp: g('cu-hx').checked, shadow: g('cu-sh').checked,
+      streak: { bg: col('cu-s-bg'), ac: col('cu-s-ac'), ink: col('cu-s-ink') }, exam: { bg: col('cu-e-bg'), ac: col('cu-e-ac'), ink: col('cu-e-ink') } };
+  },
+  cuSet(o) {
+    const g = id => document.getElementById(id), set = (id, v) => { const e = g(id); if (!e) return; if (e.type === 'checkbox') e.checked = !!v; else e.value = v; if (e.type === 'range') { const l = g(id + '-v'); if (l) l.textContent = v + (e.dataset.unit || ''); } };
+    const m = { 'cu-shape': o.shape, 'cu-look': o.look, 'cu-wa': o.cwAuto, 'cu-cw': o.cw, 'cu-sc': o.scale, 'cu-gap': o.gap, 'cu-rad': o.radius, 'cu-pos': o.pos, 'cu-side': o.side, 'cu-mini': o.mini, 'cu-swap': o.swap, 'cu-hn': o.hideNote, 'cu-hx': o.hideXp, 'cu-sh': o.shadow };
+    Object.keys(m).forEach(k => { if (m[k] !== undefined) set(k, m[k]); });
+  },
+  CU_PRESETS: {
+    squares: { shape: 'square', cwAuto: true, gap: 10, radius: 22, scale: 90, look: 'gradient', side: false, mini: false, hideNote: false, hideXp: false, shadow: true },
+    compact: { shape: 'wide', side: true, mini: true, scale: 85, gap: 8, radius: 16, look: 'solid', hideNote: false, hideXp: false, shadow: true },
+    glass: { look: 'glass', radius: 24, shadow: false },
+    default: { shape: 'wide', side: false, mini: false, scale: 100, gap: 12, radius: 18, look: 'solid', cwAuto: true, cw: 150, hideNote: false, hideXp: false, swap: false, shadow: true }
+  },
+  cuPreview() { const r = this.cuRead(); if (!r) return; this._cuPrev = r; this._cuDirty = true; this.renderBox(); },
+  cuCancel() { if (this._cuPrev || this._cuDirty) { this._cuPrev = null; this._cuDirty = false; this.renderBox(); } }
+});
+document.addEventListener('input', e => {
+  const t = e.target; if (!t || !t.id || t.id.indexOf('cu-') !== 0) return;
+  if (t.type === 'color') t.dataset.off = '';
+  if (t.type === 'range') { const o = document.getElementById(t.id + '-v'); if (o) o.textContent = t.value + (t.dataset.unit || ''); }
+  Fun.cuPreview();
+});
+document.addEventListener('change', e => { const t = e.target; if (t && t.id && t.id.indexOf('cu-') === 0) Fun.cuPreview(); });
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-cu-reset]'); if (b) { const i = document.getElementById(b.dataset.cuReset); if (i) { i.value = i.dataset.def; i.dataset.off = '1'; Fun.cuPreview(); } return; }
+  const p = e.target.closest('[data-cu-preset]'); if (p) { Fun.cuSet(Fun.CU_PRESETS[p.dataset.cuPreset] || {}); Fun.cuPreview(); }
+});
 </script>
 <script>
   if ('serviceWorker' in navigator) {
