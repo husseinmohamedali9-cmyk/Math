@@ -7224,8 +7224,8 @@ const Fun = {
       <div class="field"><label for="fs-lv">ألقاب المستويات (مفصولة بفاصلة)</label><input id="fs-lv" value="${v(c.levels)}"></div>
       <hr class="sep"><h4>🎉 الكونفتي</h4>
       <div class="fs-row">${num('fs-ca', 'كمية الورق', c.confettiAmount, 20, 400)}</div>${chk('fs-cb', 'عند إنهاء كل مربعات بلوك', c.confettiBoxes !== false)}${chk('fs-cs', 'عند إنهاء قسم', c.confettiSec !== false)}
-      <hr class="sep"><h4>⏳ مواعيد الامتحانات (سطر لكل امتحان: الاسم | التاريخ بأي شكل — 2026-12-20 أو 20-12-2026 أو 7/11/2026)</h4>
-      ${['math1', 'math2', 'math3'].map(k => `<div class="field"><label for="fs-ex-${k}">${trackLabel(k)}</label><textarea id="fs-ex-${k}" style="min-height:56px" dir="rtl" placeholder="الميدترم | 2026-12-20">${v((c.exams || {})[k])}</textarea></div>`).join('')}
+      <hr class="sep"><h4>⏳ مواعيد الامتحانات (سطر لكل امتحان: الاسم | التاريخ بأي شكل — 2026-12-20 أو 20-12-2026 أو 7/11/2026 — اكتب كل امتحان في سطر جديد وكلهم هيظهروا تحت بعض في الكارت)</h4>
+      ${['math1', 'math2', 'math3'].map(k => `<div class="field"><label for="fs-ex-${k}">${trackLabel(k)}</label><textarea id="fs-ex-${k}" style="min-height:96px" dir="rtl" placeholder="الميدترم | 2026-12-20&#10;الفاينل | 2027-01-15">${v((c.exams || {})[k])}</textarea></div>`).join('')}
       <hr class="sep"><h4>😄 نكت ومعلومات</h4>
       <div class="field"><label for="fs-jk">إضافاتك (سطر لكل واحدة)</label><textarea id="fs-jk" style="min-height:80px" dir="rtl">${v(c.jokes)}</textarea></div>${chk('fs-jb', 'استخدم المجموعة الجاهزة كمان', c.jokesBuiltin !== false)}
       <hr class="sep"><h4>🎧 الأصوات</h4>
@@ -8540,6 +8540,349 @@ const Plus = {
   setTimeout(()=>{ try{buildDock(); Plus.applyPreset(); Plus.checkBadges();}catch(e){} },900);
 })();
 </script>
+<style id="sxtCss">
+.sxt-panel{background:color-mix(in srgb,#f5c542 14%,var(--surface));border:1px dashed color-mix(in srgb,#d4a017 55%,var(--line));border-radius:16px;padding:14px 16px;margin:0 0 16px}
+.sxt-ph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sxt-ph>span{flex:1;min-width:120px;color:var(--ink-soft)}
+.sxt-chip{font-style:normal;font-size:12.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:999px;padding:3px 12px}
+.sxt-x{border:0;background:transparent;color:var(--ink-soft);font-size:20px;line-height:1;cursor:pointer;padding:2px 6px}
+.sxt-ta{width:100%;min-height:120px;resize:vertical;border:2px solid var(--ink);border-radius:14px;padding:12px 14px;background:var(--surface);color:var(--ink);font:inherit;line-height:1.7}
+.sxt-ta:focus{outline:none;border-color:var(--accent)}
+.sxt-pf{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px}
+.sxt-pf small{color:var(--ink-soft)}
+.sxt-st{color:var(--accent);font-weight:700}
+.sxt-b{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:6px 14px;font:600 14px var(--font-body);cursor:pointer}
+.sxt-b:hover{border-color:var(--accent);color:var(--accent)}
+.sxt-b.dn{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 45%,var(--line))}
+#sxtBox{position:fixed;inset:0;z-index:118;background:rgba(5,10,18,.6);display:flex;align-items:flex-start;justify-content:center;padding:calc(18px + env(safe-area-inset-top,0px)) 14px 14px;opacity:0;visibility:hidden;transition:opacity .2s}
+#sxtBox.on{opacity:1;visibility:visible}
+.sxt-pan .sb-row b{flex:1}
+.sxt-body{padding:14px;overflow:auto}
+.sxt-m{color:var(--ink-soft);text-align:center;margin:8px 0}
+.sxt-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.sxt-item{border:1px solid var(--line);background:var(--surface-2);border-radius:14px;padding:10px 12px;margin-bottom:10px}
+.sxt-it{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sxt-item pre{white-space:pre-wrap;word-break:break-word;font:inherit;margin:8px 0 0;color:var(--ink)}
+.sxt-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sxt-t{min-height:64px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:12px;padding:8px;font:inherit;font-size:.9rem;line-height:1.4;cursor:pointer;word-break:break-word}
+.sxt-t.qq{border-color:var(--accent);border-width:2px}
+.sxt-t.sel{outline:3px solid var(--accent)}
+.sxt-t.ok{opacity:.35;pointer-events:none;background:var(--accent-soft)}
+.sxt-t.bad{background:color-mix(in srgb,var(--danger) 20%,var(--surface));border-color:var(--danger)}
+@media(max-width:480px){.sxt-g{grid-template-columns:repeat(2,1fr)}}
+@media print{#sxtBox{display:none!important}}
+</style>
+<script id="sxtJs">
+/* ===== إضافة: أدوات كل قسم (ملاحظاتي • اختبار القسم • كروت القسم • لعبة المطابقة • كل ملاحظاتي) — كلها بتتحكم فيها من «🧩 ميزات الموقع» ===== */
+FEATURES.push(['sec_notes','📝 زرار «ملاحظاتي» في كل قسم (محفوظة على جهاز الطالب) + أيقونة «كل ملاحظاتي»',true],
+              ['sec_quiz','📝 زرار «اختبار القسم» (محتاج «المراجعة الذكية» شغّالة)',true],
+              ['sec_cards','🃏 زرار «كروت القسم» (محتاج «المراجعة الذكية» شغّالة)',true],
+              ['sec_match','🧩 زرار «لعبة المطابقة» في القسم (يطابق السؤال بإجابته)',true]);
+const SecTools = {
+  open: new Set(), g: null,
+  on(k){ try{ return feat(k); }catch(e){ return false; } },
+  notes(){ return lsGet('sec_notes', {}); },
+  clean(t){ return String(t||'').replace(/\*\*|==|`/g,'').replace(/\s+/g,' ').trim(); },
+  find(id){ const r = flatSecs().find(x=>x.s.id===id); return r && r.s; },
+  H(force){ const n = Date.now(); if(force || !this._h || n-this._t > 150){ this._h = Plus.harvest(); this._t = n; } return this._h; },
+  /* كروت وأسئلة القسم (ومعاه الأقسام الفرعية): فلاش كاردز + اظهر الحل + أسئلة وأجوبة + كويز، والأسئلة بتتولّد كمان من الكروت */
+  data(s, force){
+    const ids = new Set(), acc = [];
+    flatSecs([s], [], []).forEach(({s:x})=>{ ids.add(x.id); (x.blocks||[]).forEach(b=>{ if(b.type==='accordion') String(b.text||'').split('\n').forEach(r=>{
+      const i = r.indexOf('::'); if(i>0){ const q = this.clean(r.slice(0,i)), a = this.clean(r.slice(i+2)); if(q && a) acc.push({k:'c', q, a, sec:x.id, t:x.title}); } }); }); });
+    const H = this.H(force), seen = new Set(), cards = [];
+    H.cards.filter(c=>ids.has(c.sec)).concat(acc).forEach(c=>{ if(seen.has(c.q)) return; seen.add(c.q); cards.push(c); });
+    const qs = H.qs.filter(q=>ids.has(q.sec)), have = new Set(qs.map(q=>q.q)), auto = [];
+    const pool = [...new Set(cards.concat(H.cards).map(c=>c.a))].filter(a=>a.length<=90);
+    cards.forEach(c=>{
+      if(c.a.length>90 || have.has(c.q)) return;
+      const d = Plus.shuffle(pool.filter(a=>a!==c.a)).slice(0,3); if(d.length<2) return;
+      auto.push({k:'q', q:c.q, o:[{t:c.a, ok:true}].concat(d.map(t=>({t, ok:false}))), x:'', sec:c.sec, t:c.t});
+    });
+    return {cards, qs: qs.concat(auto)};
+  },
+  short(c){ return c.q.length<=70 && c.a.length<=70; },
+  btns(s){
+    const d = this.data(s), study = this.on('plus_study'), id = esc(s.id); let h = '';
+    if(this.on('sec_quiz') && study && d.qs.length) h += `<button type="button" class="sx-btn" data-sxt="quiz" data-id="${id}">📝 اختبار القسم</button>`;
+    if(this.on('sec_cards') && study && d.cards.length) h += `<button type="button" class="sx-btn" data-sxt="cards" data-id="${id}">🃏 كروت القسم</button>`;
+    if(this.on('sec_match') && d.cards.filter(c=>this.short(c)).length >= 3) h += `<button type="button" class="sx-btn" data-sxt="match" data-id="${id}">🧩 لعبة المطابقة</button>`;
+    if(this.on('sec_notes')){ const has = (this.notes()[s.id]||{}).t, op = this.open.has(s.id);
+      h += `<button type="button" class="sx-btn${op?' on':''}" data-sxt="note" data-id="${id}">📝 ملاحظاتي${has?' (محفوظة)':''}</button>`; }
+    return h;
+  },
+  panelHtml(s){
+    if(!this.on('sec_notes') || !this.open.has(s.id)) return '';
+    const t = (this.notes()[s.id]||{}).t || '', id = esc(s.id);
+    return `<div class="sxt-panel" data-sxp="${id}"><div class="sxt-ph"><b>📝 ملاحظاتي الخاصة على:</b><span>${esc(s.title)}</span><i class="sxt-chip">💾 محفوظة على جهازك</i><button type="button" class="sxt-x" data-sxt="note" data-id="${id}" aria-label="إغلاق">✕</button></div>
+      <textarea class="sxt-ta" data-sxt-ta="${id}" placeholder="اكتب ملاحظاتك هنا…">\n${esc(t)}</textarea>
+      <div class="sxt-pf"><small>الملاحظات بتتحفظ تلقائياً على جهازك أثناء الكتابة <span class="sxt-st"></span></small><span style="display:flex;gap:8px"><button type="button" class="sxt-b" data-sxt="copy">📋 نسخ</button><button type="button" class="sxt-b dn" data-sxt="clear" data-id="${id}">🗑 مسح</button></span></div></div>`;
+  },
+  syncBtn(id, has){ document.querySelectorAll('.sx-btn[data-sxt="note"]').forEach(b=>{ if(b.dataset.id===id) b.textContent = '📝 ملاحظاتي' + (has?' (محفوظة)':''); }); },
+  toggleNote(id){
+    const s = this.find(id), sec = document.getElementById('sec-'+id); if(!s || !sec) return;
+    const row = sec.querySelector('.sec-actions'), op = !this.open.has(id); op ? this.open.add(id) : this.open.delete(id);
+    sec.querySelectorAll('[data-sxp]').forEach(p=>{ if(p.dataset.sxp===id) p.remove(); });
+    document.querySelectorAll('.sx-btn[data-sxt="note"]').forEach(b=>{ if(b.dataset.id===id) b.classList.toggle('on', op); });
+    if(op && row){ row.insertAdjacentHTML('afterend', this.panelHtml(s)); const ta = sec.querySelector('.sxt-ta'); if(ta) ta.focus({preventScroll:true}); }
+  },
+  save(t){
+    clearTimeout(this._w);
+    this._w = setTimeout(()=>{
+      const id = t.dataset.sxtTa, N = this.notes(), v = t.value;
+      if(v.trim()) N[id] = {t:v, u:Date.now()}; else delete N[id];
+      lsSet('sec_notes', N); this.syncBtn(id, !!v.trim());
+      const p = t.closest('.sxt-panel'), st = p && p.querySelector('.sxt-st'); if(st){ st.textContent = '✓ اتحفظ'; setTimeout(()=>{ st.textContent = ''; }, 1200); }
+    }, 250);
+  },
+  copy(t){
+    if(!String(t).trim()) return toast('مفيش حاجة تتنسخ');
+    const fb = ()=>{ const x = document.createElement('textarea'); x.value = t; document.body.appendChild(x); x.select(); try{ document.execCommand('copy'); toast('📋 اتنسخت'); }catch(e){ toast('انسخها يدوي'); } x.remove(); };
+    try{ navigator.clipboard.writeText(t).then(()=>toast('📋 اتنسخت'), fb); }catch(e){ fb(); }
+  },
+  /* ---- اختبار القسم / كروت القسم: بيشتغلوا على نظام «المذاكرة الذكية» (نقاط XP + أغلاطي + شارات) ---- */
+  quiz(s){
+    const d = this.data(s, true); if(!d.qs.length) return toast('مفيش أسئلة في القسم ده'); if(!Plus.tabs().length) return toast('المذاكرة الذكية مقفولة دلوقتي');
+    Plus.open('quiz');
+    Plus.run = {m:'quiz', sec:s.id, items:Plus.shuffle(d.qs).slice(0,10).map(x=>Object.assign({}, x, {o2:Plus.shuffle(x.o)})), i:0, ok:0, n:0, pick:-1}; Plus.paint();
+  },
+  cards(s){
+    const d = this.data(s, true); if(!d.cards.length) return toast('مفيش كروت في القسم ده'); if(!Plus.tabs().length) return toast('المذاكرة الذكية مقفولة دلوقتي');
+    Plus.open('rev');
+    Plus.run = {m:'rev', items:Plus.shuffle(d.cards).slice(0,30).map(x=>Object.assign({}, x)), i:0, ok:0, n:0, show:false}; Plus.paint();
+  },
+  /* ---- نافذة عامة (للعبة وكل ملاحظاتي) ---- */
+  box(title, body){
+    let b = document.getElementById('sxtBox');
+    if(!b){ b = document.createElement('div'); b.id = 'sxtBox'; document.body.appendChild(b); b.addEventListener('click', e=>{ if(e.target===b) this.close(); }); }
+    b.innerHTML = '<div class="sb-panel sxt-pan" role="dialog" aria-modal="true"><div class="sb-row"><b>'+title+'</b><button type="button" data-sxt="close" aria-label="إغلاق">✕</button></div><div class="sxt-body" id="sxtBody">'+body+'</div></div>';
+    b.classList.add('on');
+  },
+  close(){ clearInterval(this._iv); this.g = null; const b = document.getElementById('sxtBox'); if(b) b.classList.remove('on'); },
+  /* ---- لعبة المطابقة بكروت القسم ---- */
+  match(s){
+    const P = Plus.shuffle(this.data(s, true).cards.filter(c=>this.short(c))).slice(0,6);
+    if(P.length < 3) return toast('محتاج 3 كروت قصيرة على الأقل');
+    this.g = {sec:s.id, tiles:Plus.shuffle(P.flatMap((c,i)=>[{p:i, t:c.q, q:1}, {p:i, t:c.a, q:0}])), sel:-1, done:new Set(), moves:0, t0:Date.now(), lock:false, bad:null};
+    this.box('🧩 مطابقة — ' + esc(s.title), ''); this.paintG();
+    clearInterval(this._iv); this._iv = setInterval(()=>{ const c = document.getElementById('sxtClk'); if(c && this.g) c.textContent = this.clk(); }, 500);
+  },
+  clk(){ const s = Math.floor((Date.now()-this.g.t0)/1000); return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); },
+  paintG(){
+    const g = this.g, el = document.getElementById('sxtBody'); if(!g || !el) return;
+    el.innerHTML = '<div class="sxt-m">⏱ <span id="sxtClk">'+this.clk()+'</span> • محاولات: '+g.moves+' • '+(g.done.size/2)+' / '+(g.tiles.length/2)+'</div><div class="sxt-g">'
+      + g.tiles.map((t,i)=>'<button type="button" class="sxt-t'+(t.q?' qq':'')+(g.done.has(i)?' ok':'')+(g.sel===i?' sel':'')+((g.bad && g.bad.includes(i))?' bad':'')+'" data-sxt="tile" data-i="'+i+'">'+esc(t.t)+'</button>').join('')
+      + '</div><p class="sxt-m">طابق كل سؤال (الإطار الملوّن) بإجابته.</p>';
+  },
+  tile(i){
+    const g = this.g; if(!g || g.lock || g.done.has(i) || g.sel===i) return;
+    if(g.sel < 0){ g.sel = i; return this.paintG(); }
+    g.moves++; const a = g.tiles[g.sel], b = g.tiles[i];
+    if(a.p===b.p && a.q!==b.q){ g.done.add(g.sel); g.done.add(i); g.sel = -1; if(g.done.size===g.tiles.length) return this.win(); return this.paintG(); }
+    g.bad = [g.sel, i]; g.sel = -1; g.lock = true; this.paintG();
+    setTimeout(()=>{ if(this.g!==g) return; g.bad = null; g.lock = false; this.paintG(); }, 650);
+  },
+  win(){
+    clearInterval(this._iv); const g = this.g, s = Math.round((Date.now()-g.t0)/1000);
+    try{ Fun.award('sxm:'+g.sec+':'+Plus.day(), (Fun.cfg().xpGame||5), 'لعبة مطابقة'); Fun.confetti(100); }catch(e){}
+    document.getElementById('sxtBody').innerHTML = '<div class="sxt-m" style="font-size:1.3rem">🎉<br><b>خلّصت في '+s+' ثانية</b><br>و '+g.moves+' محاولة</div><div class="sxt-row" style="justify-content:center"><button type="button" class="sxt-b" data-sxt="match" data-id="'+esc(g.sec)+'">🔁 العب تاني</button><button type="button" class="sxt-b" data-sxt="close">إغلاق</button></div>';
+  },
+  /* ---- كل ملاحظاتي ---- */
+  rows(){ const N = this.notes(); return flatSecs().filter(x=>N[x.s.id] && String(N[x.s.id].t).trim()).map(x=>({s:x.s, t:N[x.s.id].t})); },
+  allText(){ return this.rows().map(r=>r.s.title + '\n' + r.t).join('\n\n————————\n\n'); },
+  hub(){
+    const R = this.rows();
+    this.box('📓 كل ملاحظاتي', R.length
+      ? '<div class="sxt-row"><button type="button" class="sxt-b" data-sxt="copyall">📋 نسخ الكل</button><button type="button" class="sxt-b" data-sxt="dl">⬇ تحميل ملف نصي</button></div>'
+        + R.map(r=>'<div class="sxt-item"><div class="sxt-it"><b>'+esc(r.s.title)+'</b><button type="button" class="sxt-b" data-sxt="go" data-id="'+esc(r.s.id)+'">فتح القسم</button></div><pre>'+esc(r.t)+'</pre></div>').join('')
+      : '<p class="sxt-m">لسه مكتبتش أي ملاحظة. افتح أي قسم واضغط «📝 ملاحظاتي».</p>');
+  },
+  download(){
+    const txt = this.allText(); if(!txt) return;
+    const u = URL.createObjectURL(new Blob(['\ufeff'+txt], {type:'text/plain;charset=utf-8'})), a = document.createElement('a');
+    a.href = u; a.download = 'ملاحظاتي.txt'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u), 2000);
+  },
+  dock(){
+    const rt = document.getElementById('readTools'), L = rt && rt.querySelector('.rt-list');
+    if(!L || !this.on('sec_notes') || L.querySelector('[data-sxt="hub"]')) return;
+    L.insertAdjacentHTML('beforeend', '<button type="button" data-sxt="hub" aria-label="كل ملاحظاتي" title="كل ملاحظاتي">📓</button>'); rt.hidden = false;
+  },
+  click(e){
+    const a = e.target.closest('[data-sxt]'); if(!a) return;
+    const k = a.dataset.sxt, id = a.dataset.id, s = id ? this.find(id) : null;
+    if(k==='note') this.toggleNote(id);
+    else if(k==='copy'){ const ta = a.closest('.sxt-panel').querySelector('textarea'); this.copy(ta.value); }
+    else if(k==='clear'){ if(!confirm('تمسح ملاحظاتك على القسم ده؟')) return; const ta = a.closest('.sxt-panel').querySelector('textarea'), N = this.notes(); ta.value = ''; delete N[id]; lsSet('sec_notes', N); this.syncBtn(id, false); toast('اتمسحت'); }
+    else if(k==='quiz' && s) this.quiz(s);
+    else if(k==='cards' && s) this.cards(s);
+    else if(k==='match' && s) this.match(s);
+    else if(k==='tile') this.tile(+a.dataset.i);
+    else if(k==='hub') this.hub();
+    else if(k==='copyall') this.copy(this.allText());
+    else if(k==='dl') this.download();
+    else if(k==='go'){ this.close(); menuGoto(id, ''); setTimeout(()=>{ if(!this.open.has(id)) this.toggleNote(id); }, 450); }
+    else if(k==='close') this.close();
+  }
+};
+(function(){
+  document.addEventListener('click', e=>SecTools.click(e));
+  document.addEventListener('input', e=>{ const t = e.target; if(t && t.matches && t.matches('[data-sxt-ta]')) SecTools.save(t); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') SecTools.close(); });
+  const _sa = secActionsHtml;
+  secActionsHtml = function(s){
+    let h = _sa.apply(this, arguments); if(!(s.blocks||[]).length) return h;
+    let add = ''; try{ add = SecTools.btns(s); }catch(e){}
+    if(!add) return h;
+    h = h ? h.replace(/<\/div>\s*$/, add + '</div>') : '<div class="sec-actions">' + add + '</div>';
+    try{ h += SecTools.panelHtml(s); }catch(e){}
+    return h;
+  };
+  const _bd = buildDock; buildDock = function(){ const r = _bd.apply(this, arguments); try{ SecTools.dock(); }catch(e){} return r; };
+  setTimeout(()=>{ try{ buildDock(); if(document.querySelector('.sec-actions') && !document.querySelector('[data-sxt]')){ const y = scrollY; render(); scrollTo(0, y); } }catch(e){} }, 1000);
+})();
+</script>
+
+<style id="uiFixCss">
+/* لون شريط التمرير يتبع ثيم الموقع (مش ثيم الويندوز) + شريط رفيع شيك بدل الشكل الكبير القديم */
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
+*{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink-soft) 45%,transparent) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-button{display:none;width:0;height:0}
+::-webkit-scrollbar-track,::-webkit-scrollbar-corner{background:transparent}
+::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--ink-soft) 40%,transparent);border-radius:10px;border:2px solid transparent;background-clip:padding-box}
+#plusBox .pc{overflow-x:hidden;overflow-wrap:anywhere;min-height:200px}
+#plusBox .pp{min-height:min(420px,92vh)}
+/* كارت مواعيد الامتحانات المتعددة */
+.fx-card.fx-multi{text-align:start}
+.fx-card.fx-multi>b{display:block;text-align:center}
+.fx-list{display:flex;flex-direction:column;gap:8px;margin-top:10px;width:100%}
+.fx-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);border-inline-start:4px solid var(--accent)}
+.fx-row.warm{border-inline-start-color:#f59e0b}
+.fx-row.hot{border-inline-start-color:var(--danger)}
+.fx-row.first{background:var(--accent-soft)}
+.fx-nm{display:flex;flex-direction:column;min-width:0}
+.fx-nm b{font-size:14px;color:var(--ink);overflow-wrap:anywhere}
+.fx-nm small{font-size:12px;color:var(--ink-soft)}
+.fx-dd{white-space:nowrap;font-size:13px;color:var(--ink-soft);text-align:center}
+.fx-dd em{font-style:normal;font-weight:800;font-size:22px;color:var(--accent);margin-inline-end:3px}
+.fx-row.warm .fx-dd em{color:#f59e0b}
+.fx-row.hot .fx-dd em{color:var(--danger)}
+.fx-row.first .fx-dd em{font-size:28px}
+.fx-rest{display:block;margin-top:6px;color:var(--ink-faint);text-align:center}
+</style>
+<script id="uiFixJs">
+/* ===== عدّاد امتحانات متعدد: كل الامتحانات تحت بعض (الأقرب فوق) ===== */
+(function(){
+  const _ex = Fun.examCard;
+  Fun.examCard = function(){
+    const c = this.cfg(), tk = this.tk(), ex = c.exams || {}, today = this.dn(this.today()), list = [];
+    (tk ? [tk] : ['math1','math2','math3']).forEach(k => String(ex[k] || '').split('\n').forEach(l => {
+      const a = l.split('|').map(x => x.trim()); const nd = a.length >= 2 ? normDate(a[1]) : null; if(!nd) return;
+      const d = this.dn(nd) - today; if(d >= 0) list.push({name:a[0], d, nd, tag: tk ? '' : trackShort(k)});
+    }));
+    if(list.length < 2) return _ex.apply(this, arguments);
+    list.sort((a,b) => a.d - b.d);
+    const f = list[0], lv = d => d <= 3 ? 'hot' : (d <= 14 ? 'warm' : ''), cls = lv(f.d), ca = this.cuAttr('exam');
+    const dd = d => d === 0 ? '<em>النهاردة</em>' : (d === 1 ? '<em>بكرة</em>' : '<em>'+d+'</em> يوم');
+    const fd = nd => { try{ return new Date(nd+'T00:00:00Z').toLocaleDateString('ar-EG', {weekday:'long', day:'numeric', month:'long', timeZone:'UTC'}); }catch(e){ return nd; } };
+    const rows = list.slice(0,8).map((x,i) => `<div class="fx-row ${lv(x.d)}${i===0?' first':''}"><div class="fx-nm"><b>${esc(x.tag ? x.tag+' · ' : '')}${esc(x.name)}</b><small>${esc(fd(x.nd))}</small></div><div class="fx-dd">${dd(x.d)}</div></div>`).join('');
+    const rest = list.length > 8 ? `<small class="fx-rest">+ ${list.length-8} امتحانات تانية</small>` : '';
+    const msg = f.d === 0 ? 'بالتوفيق يا بطل 💪' : (f.d <= 3 ? 'مراجعة أخيرة وتركيز 🔥' : (f.d <= 14 ? 'وقت الشغل الجاد 📚' : 'لسه فيه وقت — نظّم مذاكرتك ✨'));
+    return `<div class="fun-card fx-card fx-multi ${cls}${ca.cls}"${ca.style}><b>⏳ مواعيد الامتحانات</b><div class="fx-list">${rows}</div>${rest}<div class="fp-note">${msg}</div></div>`;
+  };
+  setTimeout(()=>{ try{ Fun.render(); }catch(e){} }, 1100);
+})();
+</script>
+
+<style id="cardFixCss">
+/* إصلاح نافذة المذاكرة الذكية: كلاس .pc كان متسجّل للكروت اللعب (44×64) فكان بيضغط المحتوى */
+#plusBox .pp .pc{display:block;width:auto;height:auto;flex:1 1 auto;min-height:200px;border:0;border-radius:0;background:transparent;color:inherit;box-shadow:none;padding:14px;font:inherit;line-height:1.8;text-align:start;overflow-y:auto;overflow-x:hidden}
+#plusBox .pc span{font-size:inherit;line-height:inherit}
+/* شكل وحجم كل كارت لوحده */
+#funBox .fun-card.cs-z{zoom:calc(var(--fcs,1)*var(--cz,1))}
+#funBox .fun-card.cs-square{zoom:calc(var(--fcs,1)*var(--cz,1));flex:none;box-sizing:border-box;width:calc(200px/(var(--fcs,1)*var(--cz,1)));aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:8px;margin-inline:auto}
+.cs-square .fp-note,.cs-square .fx-more,.cs-square .fp-info small{display:none}
+.cs-square .fp-top{flex-direction:column;gap:4px;align-items:center}
+.cs-square .fp-bar,.cs-square .fp-xp{width:100%}
+.cs-square .fx-n em{font-size:32px}
+#funBox .fun-grid:not(.sq) .fj-card{grid-column:1/-1}
+/* قايمة الامتحانات جوه المربع: مضغوطة وتتمرّر لو كترت */
+.fun-grid.sq .fx-multi,.cs-square.fx-multi{justify-content:flex-start;overflow-y:auto}
+.fun-grid.sq .fx-multi .fx-nm small,.cs-square.fx-multi .fx-nm small,.fun-grid.sq .fx-multi .fp-note{display:none}
+.fun-grid.sq .fx-multi .fx-list,.cs-square.fx-multi .fx-list{gap:5px;margin-top:6px}
+.fun-grid.sq .fx-multi .fx-row,.cs-square.fx-multi .fx-row{padding:5px 8px}
+.fun-grid.sq .fx-multi .fx-dd em,.cs-square.fx-multi .fx-dd em{font-size:18px}
+/* تصاميم إضافية */
+#funBox .fun-card.cl-solid{background:var(--surface);border:1px solid var(--line)}
+#funBox .fun-card.cl-gradient{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 16%,var(--surface)),var(--surface) 72%)}
+#funBox .fun-card.cl-glass{background:color-mix(in srgb,var(--surface) 55%,transparent);-webkit-backdrop-filter:blur(10px) saturate(1.3);backdrop-filter:blur(10px) saturate(1.3)}
+#funBox .fun-card.cl-outline{background:transparent;border:2px solid var(--fc-ac,var(--accent));box-shadow:none}
+#funBox .fun-card.cl-neon{border:2px solid var(--fc-ac,var(--accent));box-shadow:0 0 0 1px color-mix(in srgb,var(--fc-ac,var(--accent)) 40%,transparent),0 0 22px color-mix(in srgb,var(--fc-ac,var(--accent)) 55%,transparent)}
+#funBox .fun-card.cl-soft{background:color-mix(in srgb,var(--fc-ac,var(--accent)) 14%,var(--surface));border-color:transparent}
+#funBox .fun-card.cl-stripe{border-top:6px solid var(--fc-ac,var(--accent))}
+#funBox .fun-card.cl-dark{background:#111827;border-color:#111827}
+.cl-dark .fp-info b,.cl-dark .fp-xp-top b,.cl-dark .fx-nm b{color:#fff}
+.cl-dark .fx-n,.cl-dark .fp-note,.cl-dark .fp-info small,.cl-dark .fp-xp-top span,.cl-dark .fx-nm small,.cl-dark .fx-dd,.cl-dark .fx-more{color:#cbd5e1}
+.cl-dark .fx-row{background:#1f2937;border-color:#374151}
+.cl-dark .fp-bar{background:#374151}
+</style>
+<script id="cardFixJs">
+/* ===== تحكم لكل كارت (ستريك / عدّاد): الشكل + الحجم + التصميم + نص عنوان العدّاد ===== */
+(function(){
+  const LOOKS = ['solid','gradient','glass','outline','neon','soft','stripe','dark'];
+  Fun.cuAttr = function(k){
+    const c = this.cui()[k], st = []; let cls = '';
+    const ok = v => /^#[0-9a-fA-F]{3,8}$/.test(v || '');
+    if(ok(c.bg)) st.push('background:' + c.bg);
+    if(ok(c.ac)){ st.push('--fc-ac:' + c.ac); cls += ' fc-ac'; }
+    if(ok(c.ink)){ st.push('--fc-ink:' + c.ink, 'color:' + c.ink); cls += ' fc-ink'; }
+    if(c.shape === 'square' || c.shape === 'wide') cls += ' cs-' + c.shape;
+    if(LOOKS.includes(c.look)) cls += ' cl-' + c.look;
+    const z = Math.min(160, Math.max(50, +c.size || 100)); if(z !== 100){ st.push('--cz:' + (z/100)); cls += ' cs-z'; }
+    return {cls, style: st.length ? ` style="${st.join(';')}"` : ''};
+  };
+  const _rb = Fun.renderBox;
+  Fun.renderBox = function(){
+    _rb.apply(this, arguments);
+    try{
+      const g = document.querySelector('#funBox .fun-grid'); if(!g) return;
+      if(g.querySelector('.fun-card.cs-square,.fun-card.cs-wide') && g.classList.contains('sq')){
+        g.classList.remove('sq','cwa');
+        g.querySelectorAll('.fun-card:not(.cs-square):not(.cs-wide):not(.fj-card)').forEach(c=>c.classList.add('cs-square'));
+      }
+    }catch(e){}
+  };
+  const _h = Fun.cuHtml;
+  Fun.cuHtml = function(){
+    let h = _h.apply(this, arguments); const u = this.cui();
+    const sel = (id,l,opts,cur) => `<div class="field fs-num"><label for="${id}">${l}</label><select id="${id}">${opts.map(o=>`<option value="${o[0]}"${cur===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select></div>`;
+    const ctl = (p, o, exam) => `<div class="fs-row">${sel('cu-'+p+'-shape','📐 شكل الكارت ده',[['','حسب الإعداد العام فوق'],['wide','▬ مستطيل'],['square','⬛ مربع']],o.shape||'')}${sel('cu-'+p+'-look','🎨 تصميم الكارت ده',[['','حسب الإعداد العام فوق'],['solid','سادة'],['gradient','تدرّج خفيف'],['glass','زجاجي'],['outline','إطار ملوّن'],['neon','نيون مضيء'],['soft','ملوّن ناعم'],['stripe','شريط علوي'],['dark','داكن']],o.look||'')}</div>
+      <div class="field fs-num"><label for="cu-${p}-size">📏 حجم الكارت ده: <b id="cu-${p}-size-v">${Math.min(160,Math.max(50,+o.size||100))}%</b></label><input type="range" id="cu-${p}-size" min="50" max="160" step="5" value="${Math.min(160,Math.max(50,+o.size||100))}" data-unit="%"></div>`
+      + (exam ? `<div class="field"><label for="cu-e-title">✏️ عنوان الكارت (لما يكون فيه أكتر من امتحان)</label><input id="cu-e-title" maxlength="40" value="${esc(o.title||'')}" placeholder="⏳ مواعيد الامتحانات"></div><label class="fs-chk"><input type="checkbox" id="cu-e-ht" ${o.hideTitle?'checked':''}> 🙈 إخفاء العنوان</label>` : '');
+    h = h.replace(/(<h5>🔥[^<]*<\/h5>)/, '$1' + ctl('s', u.streak));
+    h = h.replace(/(<h5>⏳[^<]*<\/h5>)/, '$1' + ctl('e', u.exam, true));
+    return h;
+  };
+  const _r = Fun.cuRead;
+  Fun.cuRead = function(){
+    const r = _r.apply(this, arguments); if(!r) return r;
+    const g = id => document.getElementById(id), v = id => g(id) ? g(id).value : '';
+    [['streak','s'],['exam','e']].forEach(([k,p])=>{ Object.assign(r[k], {shape:v('cu-'+p+'-shape'), look:v('cu-'+p+'-look'), size:+v('cu-'+p+'-size') || 100}); });
+    r.exam.title = v('cu-e-title').trim().slice(0,40); r.exam.hideTitle = !!(g('cu-e-ht') && g('cu-e-ht').checked);
+    return r;
+  };
+  /* عنوان قايمة الامتحانات (مع التحكم فيه) */
+  const _ec = Fun.examCard;
+  Fun.examCard = function(){
+    const h = _ec.apply(this, arguments); if(!h || h.indexOf('fx-multi') < 0) return h;
+    const o = this.cui().exam, t = String(o.title || '').trim();
+    return h.replace(/<b>⏳ مواعيد الامتحانات<\/b>/, o.hideTitle ? '' : `<b>${t ? esc(t) : '⏳ مواعيد الامتحانات'}</b>`);
+  };
+  setTimeout(()=>{ try{ Fun.render(); }catch(e){} }, 1200);
+})();
+</script>
+
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js');
