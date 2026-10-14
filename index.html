@@ -8257,6 +8257,289 @@ document.addEventListener('click', e => {
   const p = e.target.closest('[data-cu-preset]'); if (p) { Fun.cuSet(Fun.CU_PRESETS[p.dataset.cuPreset] || {}); Fun.cuPreview(); }
 });
 </script>
+<style id="plusCss">
+#plusBox{position:fixed;inset:0;z-index:9500;display:none;align-items:center;justify-content:center;background:rgba(10,16,24,.55);padding:12px}
+#plusBox.on{display:flex}
+#plusBox .pp{background:var(--surface);color:var(--ink);width:min(680px,100%);max-height:92vh;border-radius:var(--radius,14px);box-shadow:0 20px 60px rgba(0,0,0,.35);display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line)}
+#plusBox .ph{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+#plusBox .ph b{flex:1;font-size:1.05rem}
+#plusBox .pt{display:flex;gap:6px;overflow-x:auto;padding:8px 10px;border-bottom:1px solid var(--line);scrollbar-width:none}
+#plusBox .pt button,#plusBox .pb,.pl-btn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:999px;padding:7px 14px;white-space:nowrap}
+#plusBox .pt button.on,#plusBox .pb.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+#plusBox .pc{padding:14px;overflow:auto;line-height:1.8}
+#plusBox .pcard{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:18px;min-height:110px;font-size:1.1rem;text-align:center}
+#plusBox .pa{margin-top:10px;color:var(--accent);font-weight:600}
+#plusBox .prow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;justify-content:center}
+#plusBox .po{display:block;width:100%;text-align:right;margin:6px 0;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;cursor:pointer}
+#plusBox .po.ok{background:#16a34a;color:#fff;border-color:#16a34a}
+#plusBox .po.bad{background:#dc2626;color:#fff;border-color:#dc2626}
+#plusBox .pbar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+#plusBox .pbar i{display:block;height:100%;background:var(--accent)}
+#plusBox .pstat{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+#plusBox .pstat span{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;text-align:center}
+#plusBox .pbg{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+#plusBox .pbd{border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;background:var(--surface-2)}
+#plusBox .pbd.off{opacity:.4;filter:grayscale(1)}
+#plusBox .pbd em{display:block;font-size:1.8rem;font-style:normal}
+#plusBox .pbd small{display:block;color:var(--ink-soft)}
+#plusBox table{width:100%;border-collapse:collapse}
+#plusBox td,#plusBox th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:right}
+#plusBox tr.me{background:var(--accent-soft)}
+#plusBox input[type=text]{font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink)}
+#plusBox pre{direction:ltr;text-align:left;white-space:pre-wrap;background:var(--surface-2);padding:10px;border-radius:10px;font-size:.8rem}
+#plusBox .pmut{color:var(--ink-soft);font-size:.9rem}
+.pl-sw{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px;margin:6px 0;background:var(--surface-2);cursor:pointer;width:100%;font:inherit;color:var(--ink)}
+.pl-sw i{display:flex;gap:3px}.pl-sw i s{width:18px;height:18px;border-radius:50%;border:1px solid rgba(0,0,0,.2)}
+.pl-sw.on{outline:2px solid var(--accent)}
+html.plus-paper body{background-image:repeating-linear-gradient(transparent 0 31px,rgba(181,69,43,.13) 31px 32px)!important}
+html.plus-math body{background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px)!important;background-size:34px 34px!important}
+html.plus-neon .topbar,html.plus-neon .section{box-shadow:0 0 18px rgba(34,245,211,.18)}
+html.plus-sea body{background-image:linear-gradient(180deg,rgba(11,134,168,.10),transparent 60%)!important}
+</style>
+<script id="plusJs">
+/* ===== إضافة: مذاكرة ذكية + شارات + متصدرين + ثيمات جاهزة (كلها بتتحكم فيها من «🧠 مذاكرة وتحفيز+» ومن «🧩 ميزات الموقع») ===== */
+FEATURES.push(['plus_study','🧠 المراجعة الذكية: فلاش كاردز بتكرار متباعد + اختبار + «أغلاطي»',true],
+              ['plus_badges','🏅 شارات الإنجازات والبروفايل',true],
+              ['plus_board','🏆 لوحة المتصدرين (محتاج جدول Supabase — الـ SQL في إعدادات الإضافة)',false],
+              ['plus_themes','🎨 ثيمات جاهزة بضغطة (ليل نيون • ورق دفتر • بحر • رياضيات)',true]);
+const Plus = {
+  D:{xpCard:2, xpQ:3, xpBonus:10, xpPerfect:20, srs:'0,1,3,7,14,30', maxSession:20, extra:'', off:{}, goals:{}, presetsOff:{}},
+  BADGES:[
+    ['streak','🔥','أسبوع من غير غياب','أيام متتالية',7,()=>{const s=lsGet('fun_streak',{});return Math.max(s.best||0,s.n||0)}],
+    ['q50','🧩','حليت 50 سؤال','سؤال اتحلّ',50,()=>Plus.st().qAns||0],
+    ['c100','🃏','راجعت 100 كارت','كارت اتراجع',100,()=>Plus.st().cards||0],
+    ['perf','💯','اختبار كامل','اختبار بدرجة 100%',1,()=>Plus.st().perfect||0],
+    ['sec5','✅','خلّصت 5 أقسام','قسم متعلّم خلصان',5,()=>Object.keys(lsGet('site_done',{})).length],
+    ['fix10','🛠️','صلّحت أغلاطك','غلطة اتصلّحت',10,()=>Plus.st().fixed||0],
+    ['xp500','⭐','500 نقطة XP','نقطة XP',500,()=>{try{return Fun.lv().t}catch(e){return 0}}]
+  ],
+  PRESETS:{
+    neon:{n:'ليل النيون',m:'dark',c:{bg:'#0b0620',surface:'#150b35',surface2:'#1d1048',ink:'#f1eaff',inkSoft:'#b9a9e6',line:'#3a2a78',accent:'#22f5d3',gold:'#ff4fd8'}},
+    paper:{n:'ورق دفتر',m:'light',c:{bg:'#f6efd8',surface:'#fffdf3',surface2:'#fbf4dc',ink:'#2b2a26',inkSoft:'#5d5846',line:'#e0d5ae',accent:'#b5452b',gold:'#9a6b12'}},
+    sea:{n:'بحر',m:'light',c:{bg:'#e3f4f8',surface:'#ffffff',surface2:'#eef9fb',ink:'#0b2f3f',inkSoft:'#41707f',line:'#bfe3ea',accent:'#0b86a8',gold:'#e0a526'}},
+    math:{n:'رياضيات (سبّورة)',m:'dark',c:{bg:'#12342b',surface:'#184238',surface2:'#1d4d41',ink:'#f4f7ef',inkSoft:'#b9d3c6',line:'#2f6656',accent:'#f6d365',gold:'#ffb86b'}}
+  },
+  SQL:"create table if not exists public.plus_scores (\n  id text primary key, name text not null,\n  xp int default 0, streak int default 0, best int default 0, badges int default 0,\n  wk text, wk_xp int default 0, mo text, mo_xp int default 0,\n  updated_at timestamptz default now()\n);\nalter table public.plus_scores enable row level security;\ndrop policy if exists \"ps all\" on public.plus_scores;\ncreate policy \"ps all\" on public.plus_scores for all using (true) with check (true);",
+  tab:'', run:null, lb:{m:'xp',p:'all'},
+  cfg(){ const c=Object.assign({},this.D,(site&&site.meta&&site.meta.plus)||{}); return c; },
+  on(k){ try{return feat(k)}catch(e){return false} },
+  h(s){ let x=5381; s=String(s); for(let i=0;i<s.length;i++) x=((x<<5)+x+s.charCodeAt(i))|0; return 'k'+(x>>>0).toString(36); },
+  day(){ return new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10); },
+  st(){ return lsGet('plus_stats',{}); },
+  bump(o){ const s=this.st(); for(const k in o) s[k]=(s[k]||0)+o[k]; lsSet('plus_stats',s); this.checkBadges(); this.syncSoon(); },
+  shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; },
+  tex(el){ try{ if(!feat('math')||!/\$|\\\(/.test(el.textContent)) return; loadKatex().then(()=>window.renderMathInElement&&renderMathInElement(el,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false})).catch(()=>{}); }catch(e){} },
+
+  /* ---------- جمع المحتوى من الموقع ---------- */
+  harvest(){
+    const cards=[], qs=[];
+    flatSecs().forEach(({s})=>(s.blocks||[]).forEach(b=>{
+      const t=String(b.text||'');
+      if(b.style==='flash') t.split('\n').map(l=>l.split('::')).filter(a=>a.length>=2).forEach(a=>cards.push({k:'c',q:a[0].trim(),a:a.slice(1).join('::').trim(),sec:s.id,t:s.title}));
+      else if(b.style==='reveal'){ const p=t.split(/\n-{3,}\s*\n/); if(p.length>1) cards.push({k:'c',q:p[0].trim(),a:p.slice(1).join('\n').trim(),sec:s.id,t:s.title}); }
+      else if(b.style==='quiz'){
+        let q=[],o=[],x=[]; t.split('\n').map(l=>l.trim()).filter(Boolean).forEach(l=>{
+          if(/^(شرح|=>)\s*[:：]?/.test(l)) x.push(l.replace(/^(شرح|=>)\s*[:：]?\s*/,''));
+          else if(/^[-•]\s*/.test(l)){ const u=l.replace(/^[-•]\s*/,''); o.push({t:u.replace(/^\*\s*/,''),ok:/^\*/.test(u)}); }
+          else q.push(l.replace(/^س\s*[:：]\s*/,'')); });
+        if(q.length&&o.length>1&&o.some(z=>z.ok)) qs.push({k:'q',q:q.join(' '),o,x:x.join(' '),sec:s.id,t:s.title});
+      }
+    }));
+    String(this.cfg().extra||'').split('\n').map(l=>l.split('::')).filter(a=>a.length>=2).forEach(a=>cards.push({k:'c',q:a[0].trim(),a:a.slice(1).join('::').trim(),sec:'',t:'كروت إضافية'}));
+    return {cards,qs};
+  },
+
+  /* ---------- التكرار المتباعد ---------- */
+  queue(all){
+    const S=lsGet('plus_srs',{}), now=Date.now(), c=this.harvest().cards;
+    let q=all?c:c.filter(x=>{const r=S[this.h(x.q)];return !r||r.d<=now});
+    q.sort((a,b)=>((S[this.h(a.q)]||{b:1.5}).b)-((S[this.h(b.q)]||{b:1.5}).b));
+    return q.slice(0,Math.max(5,+this.cfg().maxSession||20));
+  },
+  grade(g){
+    const r=this.run, it=r.items[r.i], S=lsGet('plus_srs',{}), key=this.h(it.q), cur=S[key]||{b:0}, iv=String(this.cfg().srs).split(',').map(Number), DAY=86400000;
+    if(g===0){ S[key]={b:1,d:Date.now()}; this.addWrong(it); const at=Math.min(r.items.length,r.i+4); r.items.splice(at,0,it); }
+    else if(g===1){ S[key]={b:Math.max(1,cur.b),d:Date.now()+DAY}; }
+    else { const b=Math.min(5,cur.b+1); S[key]={b,d:Date.now()+(iv[b]||1)*DAY}; if(r.m==='wrong') this.delWrong(it); }
+    lsSet('plus_srs',S);
+    if(g>0) try{ Fun.award('plc:'+key+':'+this.day(),this.cfg().xpCard,'مراجعة كارت'); }catch(e){}
+    this.bump({cards:1}); r.n++; if(g>0) r.ok++; r.i++; r.show=false; this.paint();
+  },
+
+  /* ---------- أغلاطي ---------- */
+  addWrong(it){ const W=lsGet('plus_wrong',{}); W[this.h(it.q)]={k:it.k,q:it.q,a:it.a,o:it.o,x:it.x,t:it.t,sec:it.sec}; lsSet('plus_wrong',W); },
+  delWrong(it){ const W=lsGet('plus_wrong',{}), k=this.h(it.q); if(W[k]){ delete W[k]; lsSet('plus_wrong',W); this.bump({fixed:1}); } },
+
+  /* ---------- شارات ---------- */
+  goal(b){ const g=+(this.cfg().goals||{})[b[0]]; return g>0?g:b[4]; },
+  checkBadges(){
+    if(!this.on('plus_badges')) return;
+    const got=lsGet('plus_badges',{}), c=this.cfg();
+    this.BADGES.forEach(b=>{ if(c.off[b[0]]||got[b[0]]) return; let v=0; try{v=b[5]()}catch(e){} if(v>=this.goal(b)){ got[b[0]]=Date.now(); lsSet('plus_badges',got); toast('🏅 شارة جديدة: '+b[2]); try{Fun.confetti(140)}catch(e){} } });
+  },
+
+  /* ---------- لوحة المتصدرين ---------- */
+  wkKey(){ const d=new Date(); d.setDate(d.getDate()-((d.getDay()+1)%7)); return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,10); },
+  per(){ let p=lsGet('plus_per',{}); const w=this.wkKey(), m=this.day().slice(0,7); if(p.wk!==w){p.wk=w;p.wkXp=0} if(p.mo!==m){p.mo=m;p.moXp=0} return p; },
+  addXp(n){ const p=this.per(); p.wkXp=(p.wkXp||0)+n; p.moXp=(p.moXp||0)+n; lsSet('plus_per',p); this.checkBadges(); this.syncSoon(); },
+  syncSoon(){ clearTimeout(this._s); this._s=setTimeout(()=>this.sync(),4000); },
+  async sync(){
+    const nm=lsGet('plus_name',''); if(!this.on('plus_board')||!nm) return;
+    const sb=await QA.ensureClient(); if(!sb) return;
+    let l={t:0}; try{l=Fun.lv()}catch(e){} const s=lsGet('fun_streak',{}), p=this.per();
+    const r=await sb.from('plus_scores').upsert({id:Fun.voter(),name:nm,xp:l.t,streak:s.n||0,best:Math.max(s.best||0,s.n||0),badges:Object.keys(lsGet('plus_badges',{})).length,wk:p.wk,wk_xp:p.wkXp||0,mo:p.mo,mo_xp:p.moXp||0,updated_at:new Date().toISOString()});
+    this.dbErr=r.error?r.error.message:'';
+  },
+  async loadBoard(){
+    const el=document.getElementById('plusLb'); if(!el) return;
+    const sb=await QA.ensureClient(); if(!sb){ el.innerHTML='<p class="pmut">الاتصال بـ Supabase مش متاح.</p>'; return; }
+    const m=this.lb.m, p=this.lb.p, col=m==='best'?'best':(p==='wk'?'wk_xp':p==='mo'?'mo_xp':'xp');
+    let q=sb.from('plus_scores').select('*'); if(m==='xp'&&p==='wk') q=q.eq('wk',this.wkKey()); if(m==='xp'&&p==='mo') q=q.eq('mo',this.day().slice(0,7));
+    const r=await q.order(col,{ascending:false}).limit(20);
+    if(r.error){ el.innerHTML='<p class="pmut">الجدول لسه مش متعمل. الأدمن يشغّل الـ SQL من «🧠 مذاكرة وتحفيز+».<br><small>'+esc(r.error.message)+'</small></p>'; return; }
+    const me=Fun.voter(), rows=(r.data||[]).filter(x=>(x[col]||0)>0);
+    el.innerHTML=rows.length?'<table><tr><th>#</th><th>الاسم</th><th>'+(m==='best'?'أطول ستريك':'XP')+'</th><th>🏅</th>'+(isAdmin?'<th></th>':'')+'</tr>'+rows.map((x,i)=>`<tr class="${x.id===me?'me':''}"><td>${['🥇','🥈','🥉'][i]||i+1}</td><td>${esc(x.name)}</td><td><b>${x[col]||0}</b></td><td>${x.badges||0}</td>${isAdmin?`<td><button class="pb" data-plus="lbdel" data-id="${esc(x.id)}">🗑</button></td>`:''}</tr>`).join('')+'</table>':'<p class="pmut">لسه مفيش حد على اللوحة. كون أول واحد! 🚀</p>';
+  },
+
+  /* ---------- ثيمات جاهزة ---------- */
+  applyPreset(){
+    const r=document.documentElement, id=lsGet('plus_preset',''), P=this.PRESETS[id], keys={bg:'--bg',surface:'--surface',surface2:'--surface-2',ink:'--ink',inkSoft:'--ink-soft',line:'--line',accent:'--accent',gold:'--gold'};
+    Object.keys(this.PRESETS).forEach(k=>r.classList.remove('plus-'+k));
+    if(!P||!this.on('plus_themes')||this.cfg().presetsOff[id]) return;
+    r.setAttribute('data-theme',P.m); r.classList.add('plus-'+id);
+    for(const k in keys) r.style.setProperty(keys[k],P.c[k]);
+    r.style.setProperty('--accent-soft','color-mix(in srgb,'+P.c.accent+' 16%,transparent)');
+  },
+  setPreset(id){ lsSet('plus_preset',id||''); if(!id){ try{applyTheme(site.theme)}catch(e){} } this.applyPreset(); this.paint(); },
+
+  /* ---------- الواجهة ---------- */
+  tabs(){ const t=[]; if(this.on('plus_study')) t.push(['rev','🃏 مراجعة'],['quiz','📝 اختبار'],['wrong','❌ أغلاطي']); if(this.on('plus_badges')) t.push(['me','🏅 بروفايلي']); if(this.on('plus_board')) t.push(['lb','🏆 المتصدرين']); if(this.on('plus_themes')) t.push(['th','🎨 ثيمات']); return t; },
+  dock(){
+    const rt=document.getElementById('readTools'), L=rt&&rt.querySelector('.rt-list'); if(!L||!this.tabs().length||L.querySelector('[data-plus="open"]')) return;
+    L.insertAdjacentHTML('beforeend','<button type="button" data-plus="open" aria-label="المذاكرة الذكية" title="مراجعة • اختبار • شارات">🧠</button>'); rt.hidden=false;
+  },
+  open(t){ const T=this.tabs(); if(!T.length){ toast('الميزة مقفولة دلوقتي'); return; } let b=document.getElementById('plusBox'); if(!b){ b=document.createElement('div'); b.id='plusBox'; document.body.appendChild(b); b.addEventListener('click',e=>{ if(e.target===b) b.classList.remove('on'); }); }
+    this.tab=T.some(x=>x[0]===t)?t:T[0][0]; this.run=null; b.classList.add('on'); this.paint(); this.checkBadges(); },
+  paint(){
+    const b=document.getElementById('plusBox'); if(!b) return;
+    const T=this.tabs(); if(!T.some(x=>x[0]===this.tab)) this.tab=T.length?T[0][0]:'';
+    b.innerHTML=`<div class="pp" role="dialog" aria-modal="true"><div class="ph"><b>🧠 المذاكرة الذكية</b><button class="pb" data-plus="close" aria-label="إغلاق">✕</button></div><div class="pt">${T.map(x=>`<button type="button" data-plus="tab" data-t="${x[0]}" class="${x[0]===this.tab?'on':''}">${x[1]}</button>`).join('')}</div><div class="pc" id="plusBody">${this['v_'+this.tab]?this['v_'+this.tab]():''}</div></div>`;
+    const c=document.getElementById('plusBody'); this.tex(c); if(this.tab==='lb') this.loadBoard();
+  },
+  v_rev(){
+    const r=this.run; if(r&&r.m==='rev') return this.step();
+    const all=this.harvest().cards, due=this.queue(false).length, S=lsGet('plus_srs',{}), learned=all.filter(c=>S[this.h(c.q)]&&S[this.h(c.q)].b>=4).length;
+    if(!all.length) return '<p class="pmut">مفيش كروت لسه. الأدمن يضيف بلوك «فلاش كاردز» (سطر: سؤال::إجابة) أو كروت إضافية من إعدادات الإضافة.</p>';
+    return `<div class="pstat"><span><b>${all.length}</b><br>كارت</span><span><b>${due}</b><br>مستحق النهاردة</span><span><b>${learned}</b><br>اتحفظ</span></div><p class="pmut" style="text-align:center">الكارت اللي بتغلط فيه بيرجع لك أكتر، واللي بتعرفه بيتباعد.</p><div class="prow"><button class="pb pri" data-plus="rstart" ${due?'':'disabled'}>▶ ابدأ مراجعة النهاردة</button><button class="pb" data-plus="rall">راجع كله</button></div>${due?'':'<p style="text-align:center">🎉 خلّصت مراجعة النهاردة!</p>'}`;
+  },
+  step(){
+    const r=this.run; if(r.i>=r.items.length) return this.done();
+    const it=r.items[r.i], pct=Math.round(r.i/r.items.length*100), bar=`<div class="pbar"><i style="width:${pct}%"></i></div><div class="pmut">${r.i+1} / ${r.items.length}${it.t?' • '+esc(it.t):''}</div>`;
+    if(it.k==='c') return bar+`<div class="pcard">${esc(it.q)}${r.show?`<div class="pa">${esc(it.a)}</div>`:''}</div><div class="prow">${r.show?'<button class="pb" data-plus="g" data-g="0">❌ غلطت</button><button class="pb" data-plus="g" data-g="1">🤔 بصعوبة</button><button class="pb pri" data-plus="g" data-g="2">✅ عرفتها</button>':'<button class="pb pri" data-plus="show">اعرض الإجابة</button>'}</div>`;
+    return bar+`<div class="pcard" style="text-align:right">${esc(it.q)}</div>`+it.o2.map((o,i)=>{ const c=r.pick>=0?(o.ok?' ok':(i===r.pick?' bad':'')):''; return `<button class="po${c}" data-plus="ans" data-i="${i}" ${r.pick>=0?'disabled':''}>${esc(o.t)}</button>`; }).join('')+(r.pick>=0?`${it.x?`<p class="pa">💡 ${esc(it.x)}</p>`:''}<div class="prow"><button class="pb pri" data-plus="next">التالي ⬅</button></div>`:'');
+  },
+  done(){
+    const r=this.run, c=this.cfg(), pc=r.n?Math.round(r.ok/r.n*100):0; let xp=0;
+    if(r.m==='quiz'){ xp=r.ok*c.xpQ+(r.ok?c.xpBonus:0)+(pc===100?c.xpPerfect:0); try{ Fun.award('plq:'+(r.sec||'all')+':'+this.day(),xp,'اختبار'); }catch(e){} if(pc===100) this.bump({perfect:1}); }
+    return `<div class="pcard">${pc>=80?'🎉':pc>=50?'👍':'💪'}<br><b style="font-size:1.6rem">${r.ok} / ${r.n}</b> (${pc}%)${xp?`<br><small>+${xp} XP (مرة في اليوم لكل قسم)</small>`:''}</div><div class="prow"><button class="pb pri" data-plus="again">رجوع</button></div>`;
+  },
+  v_quiz(){
+    const r=this.run; if(r&&r.m==='quiz') return this.step();
+    const qs=this.harvest().qs; if(!qs.length) return '<p class="pmut">مفيش أسئلة اختيار من متعدد لسه. الأدمن يضيف بلوك «كويز» في أي قسم.</p>';
+    const g={}; qs.forEach(q=>{ (g[q.sec]=g[q.sec]||{t:q.t,n:0}).n++; });
+    return `<p class="pmut">اختار قسم — درجة وتصحيح فوري ونقاط XP.</p>`+Object.keys(g).map(s=>`<button class="po" data-plus="qstart" data-s="${esc(s)}">📝 ${esc(g[s].t)} <small class="pmut">(${g[s].n} سؤال)</small></button>`).join('')+`<button class="po" data-plus="qstart" data-s="">🎯 اختبار شامل (${Math.min(qs.length,10)} أسئلة عشوائية)</button>`;
+  },
+  v_wrong(){
+    const r=this.run; if(r&&r.m==='wrong') return this.step();
+    const W=Object.values(lsGet('plus_wrong',{}));
+    if(!W.length) return '<p style="text-align:center">✨ مفيش أغلاط متسجّلة. كمّل مراجعة واختبارات!</p>';
+    return `<div class="pstat"><span><b>${W.length}</b><br>سؤال غلطت فيه</span></div><div class="prow"><button class="pb pri" data-plus="wstart">▶ راجع أغلاطي</button><button class="pb" data-plus="wclear">🗑 امسح الكل</button></div>`+W.slice(0,30).map(x=>`<div class="pmut" style="border-bottom:1px solid var(--line);padding:6px 0">${esc(x.q)}</div>`).join('');
+  },
+  v_me(){
+    const got=lsGet('plus_badges',{}), c=this.cfg(); let l={t:0,L:1,name:''}, s={n:0}; try{l=Fun.lv(); s=lsGet('fun_streak',{n:0});}catch(e){}
+    const B=this.BADGES.filter(b=>!c.off[b[0]]);
+    return `<div class="prow" style="margin-top:0"><input type="text" id="plusNm" maxlength="20" placeholder="اسمك على لوحة المتصدرين" value="${esc(lsGet('plus_name',''))}"><button class="pb" data-plus="nick">حفظ الاسم</button></div>
+    <div class="pstat"><span><b>${l.L||1}</b><br>مستوى ${esc(l.name||'')}</span><span><b>${l.t||0}</b><br>XP</span><span><b>${s.n||0}</b><br>🔥 ستريك</span><span><b>${Object.keys(got).length}/${B.length}</b><br>شارات</span></div>
+    <div class="pbg">${B.map(b=>`<div class="pbd ${got[b[0]]?'':'off'}"><em>${b[1]}</em><b>${b[2]}</b><small>${this.goal(b)} ${b[3]}</small></div>`).join('')}</div>
+    <div class="prow"><button class="pb" data-plus="reset">↺ مسح بيانات المذاكرة بتاعتي</button></div>`;
+  },
+  v_lb(){
+    const m=this.lb.m, p=this.lb.p, B=(k,v,t,cur)=>`<button class="pb ${cur===v?'pri':''}" data-plus="${k}" data-v="${v}">${t}</button>`;
+    return `<div class="prow" style="margin-top:0">${B('lbm','xp','أعلى XP',m)}${B('lbm','best','أطول ستريك',m)}</div>${m==='xp'?`<div class="prow">${B('lbp','all','كل الوقت',p)}${B('lbp','wk','الأسبوع',p)}${B('lbp','mo','الشهر',p)}</div>`:''}${lsGet('plus_name','')?'':'<p class="pmut" style="text-align:center">اكتب اسمك من تاب «بروفايلي» عشان تظهر هنا.</p>'}<div id="plusLb" style="margin-top:10px"><p class="pmut">بحمّل…</p></div>`;
+  },
+  v_th(){
+    const cur=lsGet('plus_preset',''), c=this.cfg();
+    const sw=(id,n,cols)=>`<button class="pl-sw ${cur===id?'on':''}" data-plus="preset" data-id="${id}"><i>${cols.map(x=>`<s style="background:${x}"></s>`).join('')}</i><b>${n}</b></button>`;
+    return `<p class="pmut">بضغطة واحدة يتغيّر شكل الموقع كله على جهازك.</p>`+sw('','الافتراضي (ثيم الموقع)',['#1F6F6B','#B8862F','#EDF1F3'])+Object.keys(this.PRESETS).filter(k=>!c.presetsOff[k]).map(k=>{const P=this.PRESETS[k];return sw(k,P.n,[P.c.bg,P.c.surface,P.c.accent,P.c.gold])}).join('');
+  },
+
+  /* ---------- لوحة تحكم الأدمن ---------- */
+  admin(){
+    const c=this.cfg(), B=this.BADGES;
+    openModal('🧠 مذاكرة وتحفيز+ (تحكم كامل)',`
+      <p class="hint">تشغيل / قفل كل ميزة من «🧩 ميزات الموقع». هنا تظبط التفاصيل.</p>
+      <div class="field"><label>⭐ نقاط XP</label><div style="display:flex;gap:8px;flex-wrap:wrap">
+        <label>كارت اتراجع <input type="number" id="pl-xc" min="0" value="${c.xpCard}" style="width:70px"></label>
+        <label>إجابة صح في اختبار <input type="number" id="pl-xq" min="0" value="${c.xpQ}" style="width:70px"></label>
+        <label>بونص إنهاء اختبار <input type="number" id="pl-xb" min="0" value="${c.xpBonus}" style="width:70px"></label>
+        <label>بونص 100% <input type="number" id="pl-xp" min="0" value="${c.xpPerfect}" style="width:70px"></label></div></div>
+      <div class="field"><label>🔁 فواصل التكرار المتباعد (بالأيام للصناديق 1→5، بينهم فاصلة)</label><input id="pl-srs" value="${esc(c.srs)}" placeholder="0,1,3,7,14,30"></div>
+      <div class="field"><label>🃏 أقصى عدد كروت في الجلسة</label><input type="number" id="pl-ms" min="5" value="${c.maxSession}" style="width:90px"></div>
+      <div class="field"><label>➕ كروت إضافية للمراجعة (سطر لكل كارت: سؤال::إجابة)</label><textarea id="pl-ex" style="min-height:90px">${esc(c.extra)}</textarea></div>
+      <div class="field"><label>🏅 الشارات (شغّل/اقفل + الهدف)</label>${B.map(b=>`<div style="display:flex;gap:8px;align-items:center;margin:4px 0"><label style="flex:1;font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" data-pb="${b[0]}" ${c.off[b[0]]?'':'checked'} style="width:auto"> ${b[1]} ${b[2]}</label><input type="number" min="1" data-pg="${b[0]}" value="${this.goal(b)}" style="width:80px"> <small>${b[3]}</small></div>`).join('')}</div>
+      <div class="field"><label>🎨 الثيمات المتاحة للطلبة</label>${Object.keys(this.PRESETS).map(k=>`<label style="display:flex;gap:6px;align-items:center;font-weight:400"><input type="checkbox" data-pt="${k}" ${c.presetsOff[k]?'':'checked'} style="width:auto"> ${this.PRESETS[k].n}</label>`).join('')}</div>
+      <div class="field"><label>🏆 جدول المتصدرين — شغّل الـ SQL ده مرة واحدة في Supabase (مشروع الأسئلة والأجوبة)</label><pre id="pl-sql">${esc(this.SQL)}</pre><button class="btn sm" data-plus="sql" type="button">📋 نسخ الـ SQL</button></div>`,
+      footSave(),()=>{
+        const m=site.meta; const n=id=>Math.max(0,+$(id).value||0);
+        const p={xpCard:n('#pl-xc'),xpQ:n('#pl-xq'),xpBonus:n('#pl-xb'),xpPerfect:n('#pl-xp'),srs:($('#pl-srs').value||this.D.srs).replace(/[^\d.,]/g,''),maxSession:Math.max(5,n('#pl-ms')),extra:$('#pl-ex').value,off:{},goals:{},presetsOff:{}};
+        document.querySelectorAll('[data-pb]').forEach(e=>{ if(!e.checked) p.off[e.dataset.pb]=1; });
+        document.querySelectorAll('[data-pg]').forEach(e=>{ p.goals[e.dataset.pg]=Math.max(1,+e.value||1); });
+        document.querySelectorAll('[data-pt]').forEach(e=>{ if(!e.checked) p.presetsOff[e.dataset.pt]=1; });
+        m.plus=p; commit(); this.applyPreset(); try{buildDock()}catch(e){}
+      });
+  },
+  reset(){ ['plus_srs','plus_wrong','plus_stats','plus_badges','plus_per'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}}); toast('اتمسحت بيانات المذاكرة'); this.paint(); },
+
+  /* ---------- الأحداث ---------- */
+  click(e){
+    const a=e.target.closest('[data-plus]'); if(!a) return; const k=a.dataset.plus, r=this.run;
+    switch(k){
+      case 'open': this.open(); break;
+      case 'close': document.getElementById('plusBox').classList.remove('on'); break;
+      case 'tab': this.tab=a.dataset.t; this.run=null; this.paint(); break;
+      case 'admin': this.admin(); break;
+      case 'rstart': case 'rall': { const q=this.queue(k==='rall'); this.run={m:'rev',items:q.map(x=>Object.assign({},x)),i:0,ok:0,n:0,show:false}; this.paint(); break; }
+      case 'show': r.show=true; this.paint(); break;
+      case 'g': this.grade(+a.dataset.g); break;
+      case 'qstart': { let qs=this.harvest().qs; const s=a.dataset.s; qs=s?qs.filter(x=>x.sec===s):this.shuffle(qs).slice(0,10);
+        this.run={m:'quiz',sec:s,items:this.shuffle(qs).map(x=>Object.assign({},x,{o2:this.shuffle(x.o)})),i:0,ok:0,n:0,pick:-1}; this.paint(); break; }
+      case 'wstart': { const W=Object.values(lsGet('plus_wrong',{})); this.run={m:'wrong',items:this.shuffle(W).map(x=>Object.assign({},x,{o2:x.o?this.shuffle(x.o):null})),i:0,ok:0,n:0,pick:-1,show:false}; this.paint(); break; }
+      case 'wclear': if(confirm('تمسح كل الأغلاط؟')){ lsSet('plus_wrong',{}); this.paint(); } break;
+      case 'ans': { const it=r.items[r.i], i=+a.dataset.i, ok=it.o2[i].ok; r.pick=i; r.n++; this.bump({qAns:1});
+        if(ok){ r.ok++; if(r.m==='wrong') this.delWrong(it); } else this.addWrong(it); this.paint(); break; }
+      case 'next': r.i++; r.pick=-1; this.paint(); break;
+      case 'again': this.run=null; this.paint(); break;
+      case 'nick': { const v=($('#plusNm').value||'').trim().slice(0,20); lsSet('plus_name',v); toast(v?'اتحفظ الاسم ✅':'اتمسح الاسم'); this.sync(); break; }
+      case 'lbm': this.lb.m=a.dataset.v; this.paint(); break;
+      case 'lbp': this.lb.p=a.dataset.v; this.paint(); break;
+      case 'lbdel': if(isAdmin&&confirm('تشيل اللاعب ده من اللوحة؟')) QA.ensureClient().then(sb=>sb.from('plus_scores').delete().eq('id',a.dataset.id)).then(()=>this.loadBoard()); break;
+      case 'preset': this.setPreset(a.dataset.id); break;
+      case 'reset': if(confirm('تمسح تقدّمك وشاراتك؟')) this.reset(); break;
+      case 'sql': try{ navigator.clipboard.writeText(this.SQL); toast('اتنسخ ✅'); }catch(_){ toast('انسخه يدوي'); } break;
+    }
+  }
+};
+/* مرحلة الربط مع الموقع الأصلي */
+(function(){
+  document.addEventListener('click',e=>Plus.click(e));
+  const _bd=buildDock; buildDock=function(){ _bd.apply(this,arguments); try{Plus.dock()}catch(e){} };
+  const _at=applyTheme; applyTheme=function(){ const r=_at.apply(this,arguments); try{Plus.applyPreset()}catch(e){} return r; };
+  try{ const _aw=Fun.award; Fun.award=function(key,pts,label){ let b=0; try{b=Fun.lv().t}catch(e){} const r=_aw.apply(this,arguments); try{ const d=Fun.lv().t-b; if(d>0) Plus.addXp(d); }catch(e){} return r; }; }catch(e){}
+  function adminBtn(){ const ab=document.getElementById('adminbarIn'); if(ab&&!ab.querySelector('[data-plus="admin"]')){ const b=document.createElement('button'); b.className='btn'; b.type='button'; b.dataset.plus='admin'; b.textContent='🧠 مذاكرة وتحفيز+'; const f=ab.querySelector('[data-act="features"]'); f?f.after(b):ab.appendChild(b); } }
+  adminBtn(); Plus.applyPreset();
+  setTimeout(()=>{ try{buildDock(); Plus.applyPreset(); Plus.checkBadges();}catch(e){} },900);
+})();
+</script>
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js');
