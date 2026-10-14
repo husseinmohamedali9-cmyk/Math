@@ -1975,6 +1975,23 @@ html.tb-compact .poster-btn{left:92px}
 .dl-timer.urgent .dl-v .dl-d{background:#ef4444}
 .dl-timer.done .dl-v .dl-d{background:var(--ink-faint)}
 .dl-v .dl-hms{direction:ltr;unicode-bidi:isolate}
+/* ===== تايمر الكارت: جنب اسم المادة بشكل متناسق ===== */
+.ck-t .ck-top{flex-wrap:nowrap;justify-content:space-between;align-items:center;gap:10px}
+.ck-t .ck-top .ck-title{flex:1 1 0;min-width:0}
+.sec-inner [style*="text-align:center"] .ck-t .ck-top{justify-content:center}
+.sec-inner [style*="text-align:center"] .ck-t .ck-top .ck-title{flex:0 1 auto}
+.ck-t .ck-top .dl-timer{flex:none;display:inline-flex;align-items:stretch;gap:0;padding:0;margin:0 !important;overflow:hidden;border-radius:12px;font-size:.78em;line-height:1;background:var(--surface);color:var(--accent);border:1.5px solid color-mix(in srgb,var(--accent) 50%,transparent);box-shadow:0 3px 10px -6px var(--accent);animation:none}
+.ck-t .ck-top .dl-timer .dl-ico{display:none}
+.ck-t .ck-top .dl-timer .dl-v{display:inline-flex;align-items:stretch;gap:0}
+.ck-t .ck-top .dl-timer .dl-v:not(:has(*)){padding:7px 12px;align-items:center}
+.ck-t .ck-top .dl-timer .dl-v .dl-d{display:inline-flex;align-items:center;border-radius:0;padding:7px 10px;background:var(--accent);color:#fff;font-weight:800;line-height:1.2}
+.ck-t .ck-top .dl-timer .dl-v .dl-hms{display:inline-flex;align-items:center;padding:7px 11px;font:700 1em/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.03em;color:var(--accent);direction:ltr}
+.ck-t .ck-top .dl-timer.urgent{background:color-mix(in srgb,#ef4444 8%,var(--surface));border-color:rgba(239,68,68,.55);box-shadow:0 3px 10px -6px #ef4444}
+.ck-t .ck-top .dl-timer.urgent .dl-v .dl-d{background:#ef4444}
+.ck-t .ck-top .dl-timer.urgent .dl-v .dl-hms{color:#ef4444}
+.ck-t .ck-top .dl-timer.done{background:var(--surface-2);border-color:var(--line);box-shadow:none;color:var(--ink-faint);text-decoration:none}
+.ck-t .ck-top .dl-timer.done .dl-v .dl-d{background:var(--ink-faint)}
+@media (max-width:430px){.ck-t .ck-top{gap:8px}.ck-t .ck-top .dl-timer{font-size:.72em}.ck-t .ck-top .dl-timer .dl-v .dl-d{padding:6px 8px}.ck-t .ck-top .dl-timer .dl-v .dl-hms{padding:6px 8px}}
 
 /* ===== ألعاب جديدة ===== */
 .rps-vs{display:flex;align-items:center;justify-content:center;gap:18px;font-size:46px;margin:10px 0;min-height:60px}
@@ -2018,8 +2035,45 @@ html.tb-compact .poster-btn{left:92px}
 .toss-res{min-height:96px;display:grid;place-items:center;font-size:54px;font-weight:800;margin:10px 0;text-align:center;line-height:1.2}
 .toss-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 </style>
+<style>
+/* ===== ✨ الديكورات والخلفيات ===== */
+#decorBg{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden;display:none}
+#decorBg.on{display:block}
+#decorBg .dxb{position:absolute;inset:calc(var(--bn,0) * -2px);background-position:center;background-size:var(--fit,cover);background-repeat:var(--rep,no-repeat);filter:blur(var(--blur,0px));opacity:0;transition:opacity 1.2s ease}
+#decorBg .dxb.show{opacity:1}
+#decorBg .dxo{position:absolute;inset:0;background:color-mix(in srgb,var(--bg) var(--dim,0%),transparent)}
+#decorFx{position:fixed;inset:0;z-index:55;pointer-events:none;overflow:hidden}
+#decorFx.top{z-index:9000}
+#decorFx .dx-p{position:absolute;line-height:1;white-space:nowrap;user-select:none;pointer-events:none;will-change:transform;top:0;left:0}
+#decorFx .dx-conf{display:block}
+#decorTap{position:fixed;inset-inline-start:16px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:49;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow);font-size:18px;cursor:pointer}
+#decorTap:hover{border-color:var(--accent)}
+@media print{#decorFx,#decorBg,#decorTap{display:none !important}}
+.dx-card{border:1px solid var(--line);border-radius:14px;background:var(--surface-2);margin:8px 0;overflow:hidden}
+.dx-card>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:11px 14px;font-weight:700}
+.dx-card>summary::-webkit-details-marker{display:none}
+.dx-card>summary::after{content:'＋';margin-inline-start:auto;color:var(--accent);font-weight:800}
+.dx-card[open]>summary::after{content:'－'}
+.dx-ic{font-size:22px;line-height:1}
+.dx-sub{font-weight:400;font-size:12.5px;color:var(--ink-faint)}
+.dx-off{opacity:.55}
+.dx-body{padding:4px 14px 14px;border-top:1px dashed var(--line)}
+.dx-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.dx-chips{display:flex;flex-wrap:wrap;gap:8px}
+.dx-chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 13px;font:600 14px var(--font-body);cursor:pointer}
+.dx-chip:hover{border-color:var(--accent);color:var(--accent)}
+.dx-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin:8px 0}
+.dx-th{position:relative;border:2px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;background:var(--surface-2);aspect-ratio:4/3}
+.dx-th.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+.dx-th img{width:100%;height:100%;object-fit:cover;display:block}
+.dx-th button{position:absolute;top:4px;inset-inline-end:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:13px;cursor:pointer}
+.dx-th span{position:absolute;bottom:0;inset-inline:0;padding:2px 6px;font-size:11px;background:rgba(0,0,0,.55);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dx-th.sel::after{content:'✓';position:absolute;top:4px;inset-inline-start:4px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:13px}
+.dx-urlrow{display:flex;gap:8px}.dx-urlrow input{flex:1}
+</style>
 </head>
 <body>
+<div id="decorBg" aria-hidden="true"></div><div id="decorFx" aria-hidden="true"></div>
 
 <!-- ===== خلفية رياضية متحركة هادئة (ثابتة خلف كل شيء) ===== -->
 <div class="math-bg" aria-hidden="true">
@@ -2180,6 +2234,7 @@ html.tb-compact .poster-btn{left:92px}
     <button class="btn" data-act="folders">📁 مجلدات القائمة</button>
     <button class="btn" data-act="subject-settings">🎓 إعدادات المادة</button>
     <button class="btn" data-act="theme">🎨 المظهر والألوان</button>
+    <button class="btn" data-act="decor">✨ الديكورات والخلفيات</button>
     <button class="btn" data-act="notif-admin">🔔 إدارة الإشعارات</button>
     <button class="btn" data-act="push-admin">📲 إشعارات الأجهزة</button>
     <button class="btn" data-act="qa-manage">💬 إدارة الأسئلة</button>
@@ -2782,7 +2837,7 @@ function renderExtra(b){
     return '<div class="b-tasks"><div class="tk-head"><b>'+esc(b.caption||'المهام والمواعيد')+'</b><span>'+done+' / '+items.length+' خلصت</span></div>'
       + '<div class="tk-bar"><i style="width:'+pct+'%"></i></div><ul>'
       + items.map(o=>{ const isDone = /^(تم|خلص|done)$/i.test(o.st);
-          const timer = o.date ? dlHtml(o.date, o.date.slice(0,10), (o.date.match(/(\d{1,2}:\d{2})$/)||[])[1]) : '';
+          const timer = o.date ? (()=>{ const pp = dlParse(o.date); return pp ? dlHtml(o.date, pp.d, pp.t) : ''; })() : '';
           return '<li class="tk-row'+(isDone?' is-done':'')+'">'+(o.st ? stHtml('', o.st.toLowerCase()) : '<span class="st-box st-wip" style="opacity:.35">·</span>')
             +'<span class="tk-text">'+miniFmt(o.text)+'</span>'+timer+'</li>'; }).join('')
       + '</ul></div>';
@@ -2838,11 +2893,26 @@ function stHtml(m, k){
   return '<span class="st-box st-' + kind + '" role="img" aria-label="' + tip + '" title="' + tip + '">' + ico + '</span>';
 }
 /* ⏱ تايمر ديدلاين جنب أي نص: اكتب {{تايمر 2026-12-20}} أو {{تايمر 2026-12-20 18:30}} */
-const DL_RE = /\{\{\s*(?:تايمر|timer)\s*[:：]?\s*(\d{4}-\d{2}-\d{2})(?:[ T]+(\d{1,2}:\d{2}))?\s*\}\}/g;
+/* يقبل أي شكل تاريخ: 2026-11-7 أو 7-11-2026 أو 7/11/2026 أو 2026.11.07 (وأرقام عربي) */
+function normDigits(x){ return String(x == null ? '' : x).replace(/[٠-٩]/g, c=>c.charCodeAt(0) - 1632).replace(/[۰-۹]/g, c=>c.charCodeAt(0) - 1776); }
+function normDate(str){
+  const m = normDigits(str).trim().match(/^(\d{1,4})\s*[-\/.]\s*(\d{1,2})\s*[-\/.]\s*(\d{1,4})$/); if(!m) return null;
+  let y, mo, d;
+  if(m[1].length === 4){ y = +m[1]; mo = +m[2]; d = +m[3]; } else if(m[3].length === 4){ d = +m[1]; mo = +m[2]; y = +m[3]; } else return null;
+  if(mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  const dt = new Date(y, mo - 1, d); if(dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) return null;
+  return y + '-' + String(mo).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+}
+function dlParse(str){
+  const m = normDigits(str).match(/(\d{1,4}\s*[-\/.]\s*\d{1,2}\s*[-\/.]\s*\d{1,4})(?:[ T]+(\d{1,2}:\d{2}))?/); if(!m) return null;
+  const d = normDate(m[1]); return d ? { d, t: m[2] || '' } : null;
+}
+const DL_RE = /\{\{\s*(?:تايمر|timer)\s*[:：]?\s*([0-9٠-٩۰-۹]{1,4}\s*[-\/.]\s*[0-9٠-٩۰-۹]{1,2}\s*[-\/.]\s*[0-9٠-٩۰-۹]{1,4})(?:[ T]+([0-9٠-٩۰-۹]{1,2}:[0-9٠-٩۰-۹]{2}))?\s*\}\}/g;
 function dlHtml(m, d, t){
-  const ts = new Date(d + 'T' + (t ? t.padStart(5,'0') + ':00' : '23:59:59')).getTime();
+  const nd = normDate(d); if(!nd) return m; t = t ? normDigits(t) : t;
+  const ts = new Date(nd + 'T' + (t ? t.padStart(5,'0') + ':00' : '23:59:59')).getTime();
   if(isNaN(ts)) return m;
-  return '<span class="dl-timer" data-t="' + ts + '" title="الديدلاين: ' + d + (t ? ' ' + t : '') + '"><span class="dl-ico">⏱</span><b class="dl-v"></b></span>';
+  return '<span class="dl-timer" data-t="' + ts + '" title="الديدلاين: ' + nd + (t ? ' ' + t : '') + '"><span class="dl-ico">⏱</span><b class="dl-v"></b></span>';
 }
 function dlTick(){
   const now = Date.now(), pd = x=>String(x).padStart(2,'0');
@@ -3839,7 +3909,7 @@ function purgeMath1(){
 let __cdTimer = null, __cdRot = null, __cdList = [], __cdIdx = 0, __cdTarget = 0;
 function cdParse(m){
   const out = [];
-  const add = (l, d)=>{ const t = new Date(String(d).trim() + 'T00:00:00').getTime(); if(l && l.trim() && !isNaN(t) && Date.now() < t + 86400000) out.push({l:l.trim(), t}); };
+  const add = (l, d)=>{ const nd = normDate(d), t = nd ? new Date(nd + 'T00:00:00').getTime() : NaN; if(l && l.trim() && !isNaN(t) && Date.now() < t + 86400000) out.push({l:l.trim(), t}); };
   add(m.cdLabel, m.cdDate);
   String(m.cdMore||'').split('\n').forEach(x=>{ const a = x.split('|'); if(a.length >= 2) add(a[0], a[1]); });
   return out.sort((a,b)=>a.t-b.t);
@@ -4210,6 +4280,7 @@ function renderExtras(){
     html += `<div class="ann ann-${esc(m.annKind||'info')} ann-${m.annMode==='bar'?'bar':'pill'}${m.annMarquee?' ann-mq':''}" role="status"><span class="ann-t">📢 ${esc(m.annText)}</span>${u?`<a href="${esc(u)}" target="_blank" rel="noopener">فتح ↗</a>`:''}<button type="button" data-ann-x aria-label="إغلاق الإعلان">✕</button></div>`;
   }
   setupCountdown(m);
+  try{ Decor.apply(); }catch(e){}
   if(box){ box.innerHTML = html; box.dataset.al = m.annAlign || 'center'; }
   const fl = document.getElementById('footLinks');
   if(fl) fl.innerHTML = String(m.footLinks||'').split('\n').map(l=>l.split('|')).filter(a=>a.length>=2 && safeUrl(a.slice(1).join('|')))
@@ -4527,6 +4598,7 @@ function openModal(title, bodyHTML, footHTML, handler){
 function closeModal(){
   { const ov=$('#overlay'); if(ov && ov.classList.contains('open')){ ov.classList.add('closing'); clearTimeout(window.__ovT); window.__ovT=setTimeout(()=>ov.classList.remove('open','closing'),200); } }
   onSaveModal=null;
+  try{ if(Decor.ed){ Decor.ed=null; Decor.apply(true); } }catch(e){}
   document.documentElement.classList.remove('th-clear'); themeOverridesDirty = false;
   if(themeBackup){ site.theme = themeBackup; themeBackup = null; applyTheme(site.theme); render(); }
 }
@@ -5308,6 +5380,7 @@ document.addEventListener('click', async e=>{
     case 'blk-up':   move(findSec(secId).blocks,id,-1); commit(); break;
     case 'blk-down': move(findSec(secId).blocks,id, 1); commit(); break;
     case 'settings': settingsModal(); break;
+    case 'decor': Decor.editor(); break;
     case 'features': featuresModal(); break;
     case 'subject-settings': subjectSettingsModal(); break;
     case 'notif-admin': notifAdminModal(); break;
@@ -5877,7 +5950,7 @@ const Fun = {
     sounds: ['rain', 'wind', 'white', 'library', 'calm'], soundVol: 40,
     speedSecs: 60, speedLevel: 2, speedOps: ['add', 'sub', 'mul', 'div', 'sq', 'der'],
     xoLevel: 'medium', arcadeAfterPomo: true,
-    place: { games: { top: true, bag: true, menu: false }, lect: { top: true, bag: true, menu: true } },
+    place: { games: { top: true, bag: true, menu: false, home: true }, lect: { top: true, bag: true, menu: true } },
     pollQ: '', pollOpts: '',
     wallApprove: true, wallMax: 10, wallMaxLen: 120, wallBad: ''
   },
@@ -5893,7 +5966,7 @@ const Fun = {
   pl(what, where) { const p = (this.cfg().place || {})[what] || {}, d = this.D.place[what]; return where in p ? !!p[where] : !!d[where]; },
   showGames(where) { try { return this.on('arcade') && this.gamesOn().length > 0 && this.pl('games', where); } catch (e) { return false; } },
   placeHtml(chk) {
-    const row = (w, label) => `<div class="field"><label>${label}</label><div class="fs-feats">${chk('pl-' + w + '-top', '⬆️ فوق جنب بوستر الافتتاح', this.pl(w, 'top'))}${chk('pl-' + w + '-bag', '🧰 شنطة الأدوات', this.pl(w, 'bag'))}${chk('pl-' + w + '-menu', '☰ قائمة الثلاث شرط', this.pl(w, 'menu'))}</div></div>`;
+    const row = (w, label) => `<div class="field"><label>${label}</label><div class="fs-feats">${w === 'games' ? chk('pl-games-home', '🏠 الصفحة الرئيسية (زرار «الألعاب» الأخضر تحت الكروت)', this.pl('games', 'home')) : ''}${chk('pl-' + w + '-top', '⬆️ فوق جنب بوستر الافتتاح', this.pl(w, 'top'))}${chk('pl-' + w + '-bag', '🧰 شنطة الأدوات', this.pl(w, 'bag'))}${chk('pl-' + w + '-menu', '☰ قائمة الثلاث شرط', this.pl(w, 'menu'))}</div></div>`;
     return `<hr class="sep"><h4>📍 أماكن ظهور الأيقونات</h4><p class="hint">علّم على الأماكن اللي عايز الأيقونة تظهر فيها — ولو شلت كلهم هتختفي خالص.</p>${row('games', '🎮 الألعاب')}${row('lect', '📚 متابعة المحاضرات')}`;
   },
 
@@ -6012,8 +6085,8 @@ const Fun = {
   examCard() {
     const c = this.cfg(), tk = this.tk(), ex = c.exams || {}, today = this.dn(this.today()), list = [];
     (tk ? [tk] : ['math1', 'math2', 'math3']).forEach(k => String(ex[k] || '').split('\n').forEach(l => {
-      const a = l.split('|').map(x => x.trim()); if (a.length < 2 || !/^\d{4}-\d{2}-\d{2}$/.test(a[1])) return;
-      const d = this.dn(a[1]) - today; if (d >= 0) list.push({ name: a[0], d, tag: tk ? '' : trackShort(k) });
+      const a = l.split('|').map(x => x.trim()); const nd = a.length >= 2 ? normDate(a[1]) : null; if (!nd) return;
+      const d = this.dn(nd) - today; if (d >= 0) list.push({ name: a[0], d, tag: tk ? '' : trackShort(k) });
     }));
     if (!list.length) return '';
     list.sort((a, b) => a.d - b.d);
@@ -6039,7 +6112,7 @@ const Fun = {
     if (this.on('cdexam')) parts.push(this.examCard());
     if (this.on('jokeday')) parts.push(this.jokeCard());
     const cards = parts.filter(Boolean).join('');
-    const hub = this.hubTabs().length ? `<div class="fun-hubrow"><button type="button" class="fh-btn" data-tool="fun">🎮 الألعاب</button></div>` : '';
+    const hub = (this.hubTabs().length && this.pl('games', 'home')) ? `<div class="fun-hubrow"><button type="button" class="fh-btn" data-tool="fun">🎮 الألعاب</button></div>` : '';
     box.innerHTML = (cards ? `<div class="fun-grid">${cards}</div>` : '') + hub;
   },
   render() { this.renderBox(); try { this.maybeEvolve(); } catch (e) { console.warn('fun', e); } },
@@ -7044,7 +7117,7 @@ const Fun = {
       <div class="field"><label for="fs-lv">ألقاب المستويات (مفصولة بفاصلة)</label><input id="fs-lv" value="${v(c.levels)}"></div>
       <hr class="sep"><h4>🎉 الكونفتي</h4>
       <div class="fs-row">${num('fs-ca', 'كمية الورق', c.confettiAmount, 20, 400)}</div>${chk('fs-cb', 'عند إنهاء كل مربعات بلوك', c.confettiBoxes !== false)}${chk('fs-cs', 'عند إنهاء قسم', c.confettiSec !== false)}
-      <hr class="sep"><h4>⏳ مواعيد الامتحانات (سطر لكل امتحان: الاسم | yyyy-mm-dd)</h4>
+      <hr class="sep"><h4>⏳ مواعيد الامتحانات (سطر لكل امتحان: الاسم | التاريخ بأي شكل — 2026-12-20 أو 20-12-2026 أو 7/11/2026)</h4>
       ${['math1', 'math2', 'math3'].map(k => `<div class="field"><label for="fs-ex-${k}">${trackLabel(k)}</label><textarea id="fs-ex-${k}" style="min-height:56px" dir="rtl" placeholder="الميدترم | 2026-12-20">${v((c.exams || {})[k])}</textarea></div>`).join('')}
       <hr class="sep"><h4>😄 نكت ومعلومات</h4>
       <div class="field"><label for="fs-jk">إضافاتك (سطر لكل واحدة)</label><textarea id="fs-jk" style="min-height:80px" dir="rtl">${v(c.jokes)}</textarea></div>${chk('fs-jb', 'استخدم المجموعة الجاهزة كمان', c.jokesBuiltin !== false)}
@@ -7079,7 +7152,7 @@ const Fun = {
           sounds: this.SND.map(s => s[0]).filter(k => g('fs-sn-' + k).checked), soundVol: n('fs-sv', 40, 0, 100),
           speedSecs: n('fs-ss', 60, 10, 300), speedLevel: +g('fs-sl').value, speedOps: ops.map(o => o[0]).filter(k => g('fs-op-' + k).checked),
           xoLevel: g('fs-xl').value, arcadeAfterPomo: g('fs-ap').checked,
-          place: { games: { top: g('pl-games-top').checked, bag: g('pl-games-bag').checked, menu: g('pl-games-menu').checked }, lect: { top: g('pl-lect-top').checked, bag: g('pl-lect-bag').checked, menu: g('pl-lect-menu').checked } },
+          place: { games: { home: g('pl-games-home').checked, top: g('pl-games-top').checked, bag: g('pl-games-bag').checked, menu: g('pl-games-menu').checked }, lect: { top: g('pl-lect-top').checked, bag: g('pl-lect-bag').checked, menu: g('pl-lect-menu').checked } },
           pollQ: g('fs-pq').value.trim(), pollOpts: g('fs-po').value.trim(),
           wallApprove: g('fs-wa').checked, wallMax: n('fs-wm', 10, 1, 50), wallMaxLen: n('fs-wl', 120, 20, 300), wallBad: g('fs-wb').value.trim()
         };
@@ -7268,6 +7341,334 @@ document.addEventListener('keydown', e => {
   document.addEventListener('keydown', e => { if (!on()) return; const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; if (['ArrowLeft', 'ArrowRight', 'a', 'd'].indexOf(k) >= 0) { e.preventDefault(); Fun.pgKeys[k] = true; } });
   document.addEventListener('keyup', e => { const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; if (Fun.pgKeys) Fun.pgKeys[k] = false; });
 })();
+</script>
+<script>
+/* =======================================================================
+   ✨ الديكورات والخلفيات: حاجات بتنزل/بتطلع/بتعدّي/بتطلّ من جنب الشاشة + خلفيات صور من المعرض
+   الإعدادات بتتحفظ في site.meta.decor وتظهر لكل الزوار
+   ======================================================================= */
+const Decor = {
+  /* [المفتاح، الاسم، الأيقونة، الطريقة، الرموز، إعدادات افتراضية] */
+  PRESETS: [
+    ['snow', 'ثلج', '❄️', 'fall', '❄️ ❅ ❆', { size: 24, speed: 4, density: 6, duration: 15 }],
+    ['leaves', 'ورق خريف', '🍂', 'fall', '🍂 🍁 🍃', { size: 28, speed: 4, density: 4, duration: 12 }],
+    ['petals', 'بتلات ورد', '🌸', 'fall', '🌸 🌺 💮 🌼', { size: 24, speed: 3, density: 5, duration: 12 }],
+    ['stars', 'نجوم', '⭐', 'fall', '⭐ 🌟 ✨ 💫', { size: 22, speed: 5, density: 5, duration: 10 }],
+    ['math', 'رموز رياضية', '∑', 'fall', 'π ∑ ∫ √ ∞ θ Δ ≈ ± ÷', { size: 30, speed: 3, density: 4, duration: 0, opacity: 35 }],
+    ['rain', 'مطر', '💧', 'fall', '💧', { size: 16, speed: 10, density: 9, duration: 12, opacity: 60 }],
+    ['hearts', 'قلوب', '❤️', 'fall', '❤️ 💙 💜 💚 🧡', { size: 24, speed: 4, density: 4, duration: 8 }],
+    ['confetti', 'كونفتي', '🎉', 'fall', 'CONFETTI', { size: 28, speed: 6, density: 9, duration: 6 }],
+    ['sparkle', 'بريق', '✨', 'fall', '✨ 💫', { size: 20, speed: 3, density: 6, duration: 0, opacity: 60 }],
+    ['books', 'أدوات مذاكرة', '📚', 'fall', '📚 ✏️ 📐 📏 🧮 📖', { size: 28, speed: 4, density: 3, duration: 10 }],
+    ['balloons', 'بالونات', '🎈', 'rise', '🎈', { size: 44, speed: 3, density: 3, duration: 12 }],
+    ['bubbles', 'فقاعات', '🫧', 'rise', '🫧', { size: 30, speed: 3, density: 5, duration: 0, opacity: 60 }],
+    ['plane', 'طيارة', '✈️', 'fly', '✈️', { size: 44, speed: 4, density: 1, when: 'interval', every: 45, delay: 5 }],
+    ['rocket', 'صاروخ', '🚀', 'fly', '🚀', { size: 44, speed: 6, density: 1, when: 'interval', every: 60, delay: 8 }],
+    ['butterfly', 'فراشات', '🦋', 'fly', '🦋', { size: 34, speed: 3, density: 4, when: 'interval', every: 40, delay: 4 }],
+    ['birds', 'عصافير', '🐦', 'fly', '🐦 🕊️', { size: 34, speed: 4, density: 4, when: 'interval', every: 50, delay: 6 }],
+    ['clouds', 'سحاب', '☁️', 'fly', '☁️ ⛅', { size: 60, speed: 1, density: 4, opacity: 70, when: 'interval', every: 90, delay: 3 }],
+    ['ufo', 'طبق طائر', '🛸', 'fly', '🛸', { size: 44, speed: 5, density: 1, when: 'interval', every: 75, delay: 10 }],
+    ['cat', 'قطة بتطلّ', '🐱', 'peek', '🐱', { size: 64, speed: 5, density: 3, when: 'interval', every: 45, delay: 6 }],
+    ['wave', 'إيد بتسلّم', '👋', 'peek', '👋', { size: 56, speed: 5, density: 3, when: 'interval', every: 60, delay: 5 }],
+    ['owl', 'بومة', '🦉', 'peek', '🦉', { size: 64, speed: 5, density: 3, when: 'interval', every: 60, delay: 8 }],
+    ['robot', 'روبوت', '🤖', 'peek', '🤖', { size: 60, speed: 5, density: 3, when: 'interval', every: 60, delay: 8 }],
+    ['custom', 'من تصميمك', '✏️', 'fall', '🎓 📘', { size: 28, speed: 4, density: 4, duration: 10 }]
+  ],
+  MODES: [['fall', '🔽 بينزل من فوق'], ['rise', '🔼 بيطلع من تحت'], ['fly', '↔️ بيعدّي من جنب لجنب'], ['peek', '👀 بيطلّ من جنب الشاشة']],
+  WHEN: [['open', '🚪 أول ما الصفحة تفتح'], ['interval', '🔁 يتكرر كل فترة'], ['tap', '✨ لما الطالب يدوس زر ✨ عايم']],
+  FREQ: [['always', 'كل مرة يفتح'], ['session', 'مرة في كل جلسة'], ['day', 'مرة في اليوم'], ['once', 'مرة واحدة بس في العمر']],
+  sig: '', timers: [], live: 0, bgT: null, ed: null,
+  P(k) { return this.PRESETS.find(p => p[0] === k) || this.PRESETS[this.PRESETS.length - 1]; },
+  newFx(k) {
+    const p = this.P(k);
+    return Object.assign({ id: uid(), on: true, preset: p[0], mode: p[3], items: p[4], density: 5, size: 28, speed: 5, opacity: 90, side: 'both', when: 'open', delay: 0, every: 60, duration: 10, freq: 'always', device: 'all' }, p[5] || {});
+  },
+  cfg() {
+    const d = ((site && site.meta) || {}).decor || {};
+    return { on: d.on !== false, fx: Array.isArray(d.fx) ? d.fx : [], bg: Object.assign({ on: false, imgs: [], active: '', fit: 'cover', blur: 0, dim: 25, slide: false, every: 10 }, d.bg || {}) };
+  },
+  tokens(s) { return String(s || '').replace(/[,،]/g, ' ').split(/\s+/).filter(Boolean); },
+  noMotion() { const r = document.documentElement; return r.dataset.motion === 'off' || (r.classList.contains('respect-rm') && matchMedia('(prefers-reduced-motion: reduce)').matches); },
+  deviceOk(f) { const mob = matchMedia('(max-width:700px)').matches; return f.device === 'mobile' ? mob : f.device === 'desktop' ? !mob : true; },
+  day() { return new Date().toISOString().slice(0, 10); },
+  seenOk(f) {
+    if (isAdmin) return true; const k = 'dx_seen_' + f.id;
+    try { if (f.freq === 'session') return !sessionStorage.getItem(k); if (f.freq === 'day') return localStorage.getItem(k) !== this.day(); if (f.freq === 'once') return !localStorage.getItem(k); } catch (e) { }
+    return true;
+  },
+  mark(f) {
+    const k = 'dx_seen_' + f.id;
+    try { if (f.freq === 'session') sessionStorage.setItem(k, '1'); else if (f.freq === 'day') localStorage.setItem(k, this.day()); else if (f.freq === 'once') localStorage.setItem(k, '1'); } catch (e) { }
+  },
+  host() { return document.getElementById('decorFx'); },
+
+  /* ---------- التشغيل ---------- */
+  apply(force) {
+    const d = this.cfg(), sig = JSON.stringify(d);
+    if (!force && sig === this.sig) return; this.sig = sig;
+    this.stop(); this.applyBg(d); this.tapBtn(d);
+    if (!d.on) return;
+    d.fx.forEach(f => { if (f.on === false || f.when === 'tap' || !this.deviceOk(f) || !this.seenOk(f)) return; this.schedule(f); });
+  },
+  stop() {
+    this.timers.forEach(t => { clearTimeout(t); clearInterval(t); }); this.timers = []; this.live = 0;
+    const h = this.host(); if (h) { h.innerHTML = ''; h.classList.remove('top'); }
+  },
+  whenReady(cb) {
+    let n = 0;
+    const chk = () => {
+      const sp = document.getElementById('trackSplash'), it = document.getElementById('introSplash');
+      const blocked = (sp && !sp.classList.contains('hide')) || (it && !it.classList.contains('hide'));
+      if (!blocked || n++ > 75) { cb(); return; }
+      this.timers.push(setTimeout(chk, 400));
+    };
+    chk();
+  },
+  schedule(f) {
+    this.whenReady(() => {
+      const start = () => {
+        this.mark(f); this.burst(f);
+        if (f.when === 'interval') this.timers.push(setInterval(() => this.burst(f), Math.max(5, +f.every || 60) * 1000));
+      };
+      const dl = Math.max(0, +f.delay || 0) * 1000;
+      if (dl) this.timers.push(setTimeout(start, dl)); else start();
+    });
+  },
+  burst(f) {
+    if (this.noMotion() || !this.host()) return;
+    let dens = Math.max(1, Math.min(10, +f.density || 5)); if (document.documentElement.dataset.motion === 'calm') dens = Math.max(1, Math.round(dens / 2));
+    if (f.mode === 'fall' || f.mode === 'rise') {
+      let dur = (+f.duration || 0) * 1000; if (!dur && f.when === 'interval') dur = 8000;
+      const gap = Math.max(70, 1500 / dens), t0 = Date.now();
+      for (let i = 0; i < Math.min(8, dens + 2); i++) this.timers.push(setTimeout(() => this.spawn(f), i * 130));
+      const iv = setInterval(() => { if (dur && Date.now() - t0 > dur) { clearInterval(iv); return; } this.spawn(f); }, gap);
+      this.timers.push(iv);
+    } else {
+      const peek = f.mode === 'peek', n = peek ? Math.max(1, Math.round(dens / 3)) : Math.max(1, Math.round(dens / 2));
+      const spread = (+f.duration || 0) * 1000 || n * (peek ? 5000 : 3500);
+      for (let i = 0; i < n; i++) this.timers.push(setTimeout(() => this.spawn(f), n === 1 ? 0 : i * (spread / n) + Math.random() * 600));
+    }
+  },
+  spawn(f) {
+    const cap = innerWidth < 700 ? 70 : 140;
+    if (document.hidden || this.live >= cap) return;
+    const host = this.host(); if (!host) return;
+    const list = this.tokens(f.items); if (!list.length) return;
+    const tok = list[Math.floor(Math.random() * list.length)];
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const size = Math.max(10, Math.min(120, +f.size || 28)), sp = Math.max(1, Math.min(10, +f.speed || 5));
+    const op = Math.max(.1, Math.min(1, (+f.opacity || 90) / 100)), vw = innerWidth, vh = innerHeight;
+    const el = document.createElement('span'); el.className = 'dx-p'; el.style.opacity = op;
+    if (tok === 'CONFETTI') {
+      const cols = ['#f97316', '#eab308', '#22c55e', '#06b6d4', '#6366f1', '#ec4899', '#ef4444'];
+      el.classList.add('dx-conf'); el.style.background = cols[Math.random() * cols.length | 0];
+      el.style.width = rnd(6, 11) * size / 28 + 'px'; el.style.height = rnd(10, 16) * size / 28 + 'px'; el.style.borderRadius = '2px';
+    } else {
+      el.textContent = tok; el.style.fontSize = size * rnd(.7, 1.25) + 'px';
+      let pic = true; try { pic = /\p{Extended_Pictographic}/u.test(tok); } catch (e) { }
+      if (!pic) el.style.color = 'var(--accent)';
+    }
+    let kf, dur, easing = 'linear';
+    if (f.mode === 'fall' || f.mode === 'rise') {
+      const fall = f.mode === 'fall', y0 = fall ? -.12 * vh : 1.05 * vh, y1 = fall ? 1.1 * vh : -.15 * vh;
+      const sway = rnd(-12, 12), rot = fall ? rnd(-120, 120) * (tok === 'CONFETTI' ? 3 : 1) : rnd(-25, 25);
+      el.style.left = rnd(-2, 100) + 'vw';
+      dur = 55000 / sp * rnd(.8, 1.3); if (tok === '💧') dur /= 3;
+      kf = [{ transform: `translate3d(0,${y0}px,0) rotate(0deg)` }, { transform: `translate3d(${sway}vw,${(y0 + y1) / 2}px,0) rotate(${rot / 2}deg)`, offset: .5 }, { transform: `translate3d(${sway * 1.6}vw,${y1}px,0) rotate(${rot}deg)` }];
+    } else if (f.mode === 'fly') {
+      const toRight = f.side === 'left' ? true : f.side === 'right' ? false : Math.random() < .5;
+      const x0 = toRight ? -.2 * vw : 1.1 * vw, x1 = toRight ? 1.15 * vw : -.25 * vw, wob = rnd(20, 60), fl = toRight ? 1 : -1;
+      el.style.top = rnd(6, 72) * vh / 100 + 'px'; el.style.fontSize = size * rnd(.9, 1.3) + 'px';
+      dur = 60000 / sp * rnd(.85, 1.2);
+      kf = [{ transform: `translate3d(${x0}px,0,0) scaleX(${fl})` }, { transform: `translate3d(${(x0 + x1) / 2}px,${-wob}px,0) scaleX(${fl})`, offset: .5 }, { transform: `translate3d(${x1}px,${wob * .4}px,0) scaleX(${fl})` }];
+    } else {
+      const right = f.side === 'left' ? false : f.side === 'right' ? true : Math.random() < .5, s = right ? 1 : -1;
+      const hide = right ? '120%' : '-120%', peek = right ? '30%' : '-30%';
+      el.style.top = rnd(18, 78) + 'vh'; el.style.left = 'auto'; el.style[right ? 'right' : 'left'] = '0'; el.style.fontSize = size + 'px';
+      dur = 24000 / (sp + 1);
+      const fr = (t, r, o) => ({ transform: `translateX(${t}) rotate(${r}deg)`, offset: o, easing: 'ease-in-out' });
+      kf = [fr(hide, 0, 0), fr(peek, s * 10, .16), fr(peek, -s * 6, .34), fr(peek, s * 10, .52), fr(peek, -s * 4, .70), fr(peek, 0, .82), fr(hide, 0, 1)];
+    }
+    host.appendChild(el); this.live++;
+    try {
+      const a = el.animate(kf, { duration: dur, easing, fill: 'forwards' });
+      a.onfinish = () => { el.remove(); this.live = Math.max(0, this.live - 1); };
+    } catch (e) { el.remove(); this.live = Math.max(0, this.live - 1); }
+  },
+  tapBtn(d) {
+    let b = document.getElementById('decorTap');
+    const has = d.on && d.fx.some(f => f.on !== false && f.when === 'tap' && this.deviceOk(f));
+    if (!has) { if (b) b.remove(); return; }
+    if (b) return;
+    b = document.createElement('button'); b.id = 'decorTap'; b.type = 'button'; b.textContent = '✨'; b.title = 'ديكور'; b.setAttribute('aria-label', 'شغّل الديكور');
+    b.addEventListener('click', () => { this.cfg().fx.filter(f => f.on !== false && f.when === 'tap').forEach(f => this.burst(f)); });
+    document.body.appendChild(b);
+  },
+
+  /* ---------- خلفية الصور ---------- */
+  applyBg(d) {
+    const el = document.getElementById('decorBg'); if (!el) return;
+    clearInterval(this.bgT);
+    const b = d.bg || {}, imgs = (b.imgs || []).filter(x => x && x.src);
+    if (!b.on || !imgs.length) { el.className = ''; el.innerHTML = ''; return; }
+    const blur = Math.max(0, Math.min(30, +b.blur || 0));
+    el.style.setProperty('--fit', b.fit === 'repeat' ? 'auto' : (b.fit === 'contain' ? 'contain' : 'cover'));
+    el.style.setProperty('--rep', b.fit === 'repeat' ? 'repeat' : 'no-repeat');
+    el.style.setProperty('--blur', blur + 'px'); el.style.setProperty('--bn', blur);
+    el.style.setProperty('--dim', Math.max(0, Math.min(90, +b.dim || 0)) + '%');
+    el.innerHTML = '<i class="dxb"></i><i class="dxb"></i><i class="dxo"></i>'; el.className = 'on';
+    const L = el.querySelectorAll('.dxb'); let cur = 0, idx = 0;
+    const show = i => {
+      const nxt = L[cur ^ 1], src = imgs[i].src, im = new Image();
+      im.onload = () => { nxt.style.backgroundImage = 'url("' + String(src).replace(/"/g, '%22') + '")'; nxt.classList.add('show'); L[cur].classList.remove('show'); cur ^= 1; };
+      im.src = src;
+    };
+    if (b.slide) idx = 0; else { const f = imgs.findIndex(x => x.id === b.active); idx = f >= 0 ? f : 0; }
+    show(idx);
+    if (b.slide && imgs.length > 1) this.bgT = setInterval(() => { idx = (idx + 1) % imgs.length; show(idx); }, Math.max(4, +b.every || 10) * 1000);
+  },
+  compress(file) {
+    return new Promise((res, rej) => {
+      const url = URL.createObjectURL(file), img = new Image();
+      img.onload = () => {
+        const max = 1600, target = 260 * 1024;
+        let w = img.naturalWidth, h = img.naturalHeight; const sc = Math.min(1, max / Math.max(w, h)); w = Math.round(w * sc); h = Math.round(h * sc);
+        const c = document.createElement('canvas'), x = c.getContext('2d');
+        const draw = () => { c.width = w; c.height = h; x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); x.drawImage(img, 0, 0, w, h); };
+        draw(); let q = .82, out = c.toDataURL('image/jpeg', q);
+        while (out.length * .75 > target && q > .45) { q -= .07; out = c.toDataURL('image/jpeg', q); }
+        let g = 0; while (out.length * .75 > target * 1.4 && g++ < 5) { w = Math.round(w * .82); h = Math.round(h * .82); draw(); out = c.toDataURL('image/jpeg', .6); }
+        URL.revokeObjectURL(url); res(out);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('bad')); };
+      img.src = url;
+    });
+  },
+  async addFiles(files) {
+    const b = this.ed.bg; let added = 0;
+    for (const f of Array.from(files || [])) {
+      if (b.imgs.length >= 8) { toast('أقصى حد 8 صور — امسح واحدة الأول'); break; }
+      if (!/^image\//.test(f.type)) { toast('«' + f.name + '» مش صورة'); continue; }
+      try { const src = await this.compress(f); b.imgs.push({ id: uid(), name: (f.name || 'صورة').replace(/\.[^.]+$/, '').slice(0, 24), src }); added++; }
+      catch (e) { toast('الصورة «' + f.name + '» مش مدعومة — جرّب JPG أو PNG'); }
+    }
+    if (added) { if (!b.active || !b.imgs.some(x => x.id === b.active)) b.active = b.imgs[0].id; b.on = true; toast('اتضافت ' + added + ' صورة ✅'); }
+    this.edPaint();
+  },
+
+  /* ---------- شاشة الأدمن ---------- */
+  editor() {
+    if (!isAdmin) return;
+    this.ed = JSON.parse(JSON.stringify(this.cfg()));
+    openModal('✨ الديكورات والخلفيات', this.html(), footSave(), () => {
+      this.collect();
+      const m = (site.meta = site.meta || {}), d = this.ed;
+      d.fx.forEach(f => { delete f._open; });
+      m.decor = { on: d.on, fx: d.fx, bg: d.bg };
+      this.ed = null; this.sig = ''; commit(); toast('اتحفظ ✅');
+    });
+  },
+  html() {
+    const d = this.ed, v = esc, b = d.bg;
+    const sel = (attr, opts, cur) => `<select ${attr}>${opts.map(o => `<option value="${o[0]}" ${cur === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>`;
+    const num = (attr, label, val, min, max) => `<div class="field fs-num"><label>${label}</label><input type="number" ${attr} value="${v(val)}" min="${min}" max="${max}"></div>`;
+    const mLab = Object.fromEntries(this.MODES), wLab = Object.fromEntries(this.WHEN);
+    const card = (f, i) => {
+      const p = this.P(f.preset);
+      return `<details class="dx-card${f.on === false ? ' dx-off' : ''}" data-i="${i}" ${f._open ? 'open' : ''}>
+        <summary><span class="dx-ic">${p[2]}</span><span>${v(p[1])}</span><span class="dx-sub">${mLab[f.mode] || ''} · ${wLab[f.when] || ''}${f.on === false ? ' · ⏸ موقوف' : ''}</span></summary>
+        <div class="dx-body">
+          <label class="fs-chk" style="margin:10px 0"><input type="checkbox" data-k="on" ${f.on !== false ? 'checked' : ''}> ✅ شغّال (ظاهر للزوار)</label>
+          <div class="fs-row"><div class="field fs-num"><label>النوع الجاهز</label>${sel('data-dx="preset"', this.PRESETS.map(x => [x[0], x[2] + ' ' + x[1]]), f.preset)}</div>
+          <div class="field fs-num"><label>طريقة الظهور</label>${sel('data-k="mode"', this.MODES, f.mode)}</div></div>
+          <div class="field"><label>الرموز / الإيموجي (افصل بينهم بمسافة — اكتب أي إيموجي أو حرف أو رمز رياضي من عندك)</label><textarea data-k="items" dir="rtl" style="min-height:56px">${v(f.items)}</textarea><p class="hint">كلمة <b>CONFETTI</b> بتعمل ورق ملوّن. وكل ما تحط رموز أكتر بتتنوع الأشكال.</p></div>
+          <div class="fs-row">${num('data-k="density"', 'الكثافة (1–10)', f.density, 1, 10)}${num('data-k="size"', 'الحجم (10–120)', f.size, 10, 120)}${num('data-k="speed"', 'السرعة (1–10)', f.speed, 1, 10)}${num('data-k="opacity"', 'الشفافية % (10–100)', f.opacity, 10, 100)}</div>
+          <div class="fs-row"><div class="field fs-num"><label>من أنهي جنب (للي بيعدّي وللي بيطلّ)</label>${sel('data-k="side"', [['both', 'الاتنين'], ['right', 'يمين'], ['left', 'شمال']], f.side)}</div>
+          <div class="field fs-num"><label>يظهر على</label>${sel('data-k="device"', [['all', 'كل الأجهزة'], ['mobile', 'الموبايل بس'], ['desktop', 'الكمبيوتر بس']], f.device)}</div></div>
+          <hr class="sep"><h4 style="margin:6px 0">⏱️ امتى يظهر؟</h4>
+          <div class="field"><label>التوقيت</label>${sel('data-k="when"', this.WHEN, f.when)}</div>
+          <div class="fs-row">${num('data-k="delay"', 'تأخير بعد ما الصفحة تفتح (ثانية)', f.delay, 0, 600)}${num('data-k="every"', 'يتكرر كل (ثانية)', f.every, 5, 3600)}${num('data-k="duration"', 'مدة الظهور (ثانية — 0 = مستمر)', f.duration, 0, 600)}</div>
+          <div class="field"><label>كام مرة للزائر؟</label>${sel('data-k="freq"', this.FREQ, f.freq)}<p class="hint">الأدمن (إنت) بتشوفه كل مرة عشان تجرّب. «مدة الظهور» للي بينزل ويطلع؛ والعابر والمطلّ بيطلعوا على دفعات.</p></div>
+          <div class="dx-acts"><button type="button" class="btn" data-dx="try" data-i="${i}">▶️ جرّب دلوقتي</button><button type="button" class="btn ghost" data-dx="del" data-i="${i}">🗑️ مسح</button></div>
+        </div></details>`;
+    };
+    const kb = Math.round(b.imgs.reduce((s, x) => s + String(x.src).length * .75, 0) / 1024);
+    const thumbs = b.imgs.map(x => `<div class="dx-th${b.active === x.id ? ' on sel' : ''}" data-dx="pick" data-id="${v(x.id)}" title="اضغط لاختيارها"><img src="${v(x.src)}" alt=""><button type="button" data-dx="rm" data-id="${v(x.id)}" aria-label="مسح">✕</button><span>${v(x.name)}</span></div>`).join('');
+    return `<p class="hint">ضيف ديكورات (حاجات بتنزل أو بتطلع أو بتعدّي أو بتطلّ من جنب الشاشة) وخلفيات صور من معرض الموبايل. كل حاجة بتتحكم فيها ومن هنا بتظهر للجميع بعد الحفظ.</p>
+      <label class="fs-chk"><input type="checkbox" data-dm="on" ${d.on ? 'checked' : ''}> ✨ تشغيل كل الديكورات (مفتاح عام — لو شلته كلها تختفي)</label>
+      <hr class="sep"><h4>➕ ضيف ديكور (اضغط على اللي عايزه)</h4>
+      <div class="dx-chips">${this.PRESETS.map(p => `<button type="button" class="dx-chip" data-dx="add" data-p="${p[0]}">${p[2]} ${v(p[1])}</button>`).join('')}</div>
+      <h4 style="margin-top:18px">🎛️ الديكورات المتضافة (${d.fx.length})</h4>
+      ${d.fx.length ? d.fx.map(card).join('') : '<p class="hint">لسه مضفتش حاجة — اضغط على أي نوع من فوق.</p>'}
+      <hr class="sep"><h4>🖼️ خلفية الموقع (صور)</h4>
+      <label class="fs-chk"><input type="checkbox" data-bk="on" ${b.on ? 'checked' : ''}> تشغيل خلفية الصور</label>
+      <div class="field" style="margin-top:10px"><label>ضيف صور من المعرض (تقدر تختار أكتر من صورة — بتتصغّر تلقائي عشان الموقع يفضل خفيف)</label><input type="file" id="dxFile" accept="image/*" multiple></div>
+      <div class="field"><label>أو حط رابط صورة مباشر</label><div class="dx-urlrow"><input id="dxUrl" type="url" dir="ltr" placeholder="https://..."><button type="button" class="btn" data-dx="url">إضافة</button></div></div>
+      ${b.imgs.length ? `<div class="dx-thumbs">${thumbs}</div><p class="hint">اضغط على الصورة لاختيارها كخلفية (✓). الحجم الحالي حوالي ${kb} كيلوبايت${kb > 1200 ? ' — كبير شوية، قلّل الصور عشان الموقع يفتح أسرع' : ''}.</p>` : '<p class="hint">لسه مفيش صور.</p>'}
+      <div class="fs-row"><div class="field fs-num"><label>طريقة العرض</label>${sel('data-bk="fit"', [['cover', 'تملا الشاشة (مقصوصة)'], ['contain', 'الصورة كاملة'], ['repeat', 'تتكرر (نقشة)']], b.fit)}</div>
+      ${num('data-bk="blur"', 'تغبيش (0–30)', b.blur, 0, 30)}${num('data-bk="dim"', 'تفتيح/تعتيم فوق الصورة % (0–90)', b.dim, 0, 90)}</div>
+      <label class="fs-chk"><input type="checkbox" data-bk="slide" ${b.slide ? 'checked' : ''}> 🔄 سلايد شو: الصور تتبدّل لوحدها</label>
+      <div class="fs-row">${num('data-bk="every"', 'كل كام ثانية تتغيّر', b.every, 4, 120)}</div>
+      <div class="dx-acts"><button type="button" class="btn" data-dx="prevbg">👁 جرّب الخلفية على الصفحة</button></div>
+      <p class="hint">«تفتيح/تعتيم» بتخلي الكلام أوضح فوق الصورة وبتتماشى مع الوضع الفاتح والليلي. الصور بتتحفظ مع محتوى الموقع.</p>`;
+  },
+  scrollEl() { const m = document.querySelector('#overlay .modal'); return m || document.getElementById('mBody'); },
+  edPaint() {
+    const body = document.getElementById('mBody'); if (!body || !this.ed) return;
+    const sc = this.scrollEl(), y = sc ? sc.scrollTop : 0;
+    body.innerHTML = this.html(); if (sc) sc.scrollTop = y;
+  },
+  collect() {
+    const body = document.getElementById('mBody'), d = this.ed; if (!body || !d) return;
+    const m = body.querySelector('[data-dm="on"]'); if (m) d.on = m.checked;
+    body.querySelectorAll('.dx-card').forEach(c => {
+      const f = d.fx[+c.dataset.i]; if (!f) return; f._open = c.open;
+      c.querySelectorAll('[data-k]').forEach(inp => {
+        const k = inp.dataset.k;
+        if (inp.type === 'checkbox') f[k] = inp.checked;
+        else if (inp.type === 'number') { const x = parseFloat(inp.value); if (isFinite(x)) f[k] = x; }
+        else f[k] = inp.value;
+      });
+    });
+    const b = d.bg;
+    body.querySelectorAll('[data-bk]').forEach(inp => {
+      const k = inp.dataset.bk;
+      if (inp.type === 'checkbox') b[k] = inp.checked; else if (inp.type === 'number') { const x = parseFloat(inp.value); if (isFinite(x)) b[k] = x; } else b[k] = inp.value;
+    });
+  },
+  act(t) {
+    const a = t.dataset.dx, d = this.ed; this.collect();
+    if (a === 'add') { const f = this.newFx(t.dataset.p); f._open = true; d.fx.push(f); this.edPaint(); toast('اتضاف ✅ — ظبّط إعداداته من تحت'); setTimeout(() => { const c = document.querySelector('.dx-card:last-of-type'); if (c) c.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 60); }
+    else if (a === 'del') { d.fx.splice(+t.dataset.i, 1); this.edPaint(); }
+    else if (a === 'try') {
+      const f = Object.assign({}, d.fx[+t.dataset.i]); f.duration = f.duration > 0 ? Math.min(f.duration, 15) : 8; f.when = 'open';
+      this.stop(); const h = this.host(); if (h) h.classList.add('top'); this.burst(f);
+      toast('▶️ معاينة — بتظهر فوق النافذة');
+    }
+    else if (a === 'pick') { d.bg.active = t.dataset.id; d.bg.slide = false; d.bg.on = true; this.edPaint(); }
+    else if (a === 'rm') { d.bg.imgs = d.bg.imgs.filter(x => x.id !== t.dataset.id); if (d.bg.active === t.dataset.id) d.bg.active = d.bg.imgs[0] ? d.bg.imgs[0].id : ''; if (!d.bg.imgs.length) d.bg.on = false; this.edPaint(); }
+    else if (a === 'url') {
+      const i = document.getElementById('dxUrl'), u = blkUrl(i && i.value);
+      if (!u || /^data:/i.test(u)) { toast('حط رابط صورة صحيح'); return; }
+      if (d.bg.imgs.length >= 8) { toast('أقصى حد 8 صور'); return; }
+      d.bg.imgs.push({ id: uid(), name: 'رابط', src: u }); if (!d.bg.active) d.bg.active = d.bg.imgs[0].id; d.bg.on = true; this.edPaint();
+    }
+    else if (a === 'prevbg') { this.applyBg(d); toast('👁 معاينة — اقفل النافذة تشوفها'); }
+  }
+};
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-dx]'); if (!t || !Decor.ed) return;
+  if (t.matches('select')) return;
+  e.preventDefault(); e.stopPropagation(); Decor.act(t);
+}, true);
+document.addEventListener('change', e => {
+  const t = e.target; if (!Decor.ed) return;
+  if (t.matches('select[data-dx="preset"]')) {
+    Decor.collect(); const c = t.closest('.dx-card'), f = Decor.ed.fx[+c.dataset.i], p = Decor.P(t.value);
+    const keep = { id: f.id, on: f.on }, nf = Decor.newFx(p[0]); Object.assign(f, nf, keep, { _open: true }); Decor.edPaint();
+  } else if (t.id === 'dxFile') { Decor.collect(); const fl = t.files; Decor.addFiles(fl); }
+});
+try { Decor.apply(); } catch (e) { }
 </script>
 <script>
   if ('serviceWorker' in navigator) {
