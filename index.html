@@ -7225,8 +7225,8 @@ const Fun = {
       <div class="field"><label for="fs-lv">ألقاب المستويات (مفصولة بفاصلة)</label><input id="fs-lv" value="${v(c.levels)}"></div>
       <hr class="sep"><h4>🎉 الكونفتي</h4>
       <div class="fs-row">${num('fs-ca', 'كمية الورق', c.confettiAmount, 20, 400)}</div>${chk('fs-cb', 'عند إنهاء كل مربعات بلوك', c.confettiBoxes !== false)}${chk('fs-cs', 'عند إنهاء قسم', c.confettiSec !== false)}
-      <hr class="sep"><h4>⏳ مواعيد الامتحانات (سطر لكل امتحان: الاسم | التاريخ بأي شكل — 2026-12-20 أو 20-12-2026 أو 7/11/2026 — اكتب كل امتحان في سطر جديد وكلهم هيظهروا تحت بعض في الكارت)</h4>
-      ${['math1', 'math2', 'math3'].map(k => `<div class="field"><label for="fs-ex-${k}">${trackLabel(k)}</label><textarea id="fs-ex-${k}" style="min-height:96px" dir="rtl" placeholder="الميدترم | 2026-12-20&#10;الفاينل | 2027-01-15">${v((c.exams || {})[k])}</textarea></div>`).join('')}
+      <hr class="sep"><h4>⏳ مواعيد الامتحانات (سطر لكل امتحان: الاسم | التاريخ بأي شكل — 2026-12-20 أو 20-12-2026 أو 7/11/2026 — اكتب كل امتحان في سطر جديد وكلهم هيظهروا تحت بعض. ولو عايز اسم صغير فوق ميعاد معين زوّد | وبعدها الاسم: الاسم | التاريخ | الاسم الصغير)</h4>
+      ${['math1', 'math2', 'math3'].map(k => `<div class="field"><label for="fs-ex-${k}">${trackLabel(k)}</label><textarea id="fs-ex-${k}" style="min-height:96px" dir="rtl" placeholder="الميدترم | 2026-12-20 | Math 2&#10;الفاينل | 2027-01-15">${v((c.exams || {})[k])}</textarea></div>`).join('')}
       <hr class="sep"><h4>😄 نكت ومعلومات</h4>
       <div class="field"><label for="fs-jk">إضافاتك (سطر لكل واحدة)</label><textarea id="fs-jk" style="min-height:80px" dir="rtl">${v(c.jokes)}</textarea></div>${chk('fs-jb', 'استخدم المجموعة الجاهزة كمان', c.jokesBuiltin !== false)}
       <hr class="sep"><h4>🎧 الأصوات</h4>
@@ -8605,8 +8605,8 @@ const SecTools = {
   short(c){ return c.q.length<=70 && c.a.length<=70; },
   btns(s){
     const d = this.data(s), id = esc(s.id); let h = '';
-    if(this.on('sec_quiz') && d.qs.length) h += `<button type="button" class="sx-btn${(this.pan[s.id]&&this.pan[s.id].t==='quiz')?' on':''}" data-sxt="quiz" data-id="${id}">📝 اختبار القسم</button>`;
-    if(this.on('sec_cards') && d.cards.length) h += `<button type="button" class="sx-btn${(this.pan[s.id]&&this.pan[s.id].t==='cards')?' on':''}" data-sxt="cards" data-id="${id}">🃏 كروت القسم</button>`;
+    if(this.on('sec_quiz') && d.qs.length) h += `<button type="button" class="sx-btn${(this.pan[s.id]&&this.pan[s.id].t==='quiz')?' on':''}" data-sxt="quiz" data-id="${id}">📝 اختبار</button>`;
+    if(this.on('sec_cards') && d.cards.length) h += `<button type="button" class="sx-btn${(this.pan[s.id]&&this.pan[s.id].t==='cards')?' on':''}" data-sxt="cards" data-id="${id}">🃏 فلاش كاردز</button>`;
     if(this.on('sec_match') && d.cards.filter(c=>this.short(c)).length >= 3) h += `<button type="button" class="sx-btn" data-sxt="match" data-id="${id}">🧩 لعبة المطابقة</button>`;
     if(this.on('sec_notes')){ const has = (this.notes()[s.id]||{}).t, op = this.open.has(s.id);
       h += `<button type="button" class="sx-btn${op?' on':''}" data-sxt="note" data-id="${id}">📝 ملاحظاتي${has?' (محفوظة)':''}</button>`; }
@@ -8780,14 +8780,15 @@ const SecTools = {
     const c = this.cfg(), tk = this.tk(), ex = c.exams || {}, today = this.dn(this.today()), list = [];
     (tk ? [tk] : ['math1','math2','math3']).forEach(k => String(ex[k] || '').split('\n').forEach(l => {
       const a = l.split('|').map(x => x.trim()); const nd = a.length >= 2 ? normDate(a[1]) : null; if(!nd) return;
-      const d = this.dn(nd) - today; if(d >= 0) list.push({name:a[0], d, nd, tag: tk ? '' : trackShort(k)});
+      const d = this.dn(nd) - today; if(d >= 0) list.push({name:a[0], d, nd, tag: tk ? '' : trackShort(k), tg:(a[2]||'').trim()});
     }));
-    if(list.length < 2) return _ex.apply(this, arguments);
+    if(list.length < 2){ this._tg = list[0] ? list[0].tg : ''; return _ex.apply(this, arguments); }
     list.sort((a,b) => a.d - b.d);
     const f = list[0], lv = d => d <= 3 ? 'hot' : (d <= 14 ? 'warm' : ''), cls = lv(f.d), ca = this.cuAttr('exam');
+    const sharedTag = String((this.cui().exam || {}).tag || '').trim();
     const dd = d => d === 0 ? '<em>النهاردة</em>' : (d === 1 ? '<em>بكرة</em>' : '<em>'+d+'</em> يوم');
     const fd = nd => { try{ return new Date(nd+'T00:00:00Z').toLocaleDateString('ar-EG', {weekday:'long', day:'numeric', month:'long', timeZone:'UTC'}); }catch(e){ return nd; } };
-    const rows = list.slice(0,8).map((x,i) => `<div class="fx-row ${lv(x.d)}${i===0?' first':''}"><div class="fx-nm"><b>${esc(x.tag ? x.tag+' · ' : '')}${esc(x.name)}</b><small>${esc(fd(x.nd))}</small></div><div class="fx-dd">${dd(x.d)}</div></div>`).join('');
+    const rows = list.slice(0,8).map((x,i) => `<div class="fx-row ${lv(x.d)}${i===0?' first':''}"><div class="fx-nm">${(x.tg || sharedTag) ? `<small class="fx-tag">${esc(x.tg || sharedTag)}</small>` : ''}<b>${esc(x.tag ? x.tag+' · ' : '')}${esc(x.name)}</b><small class="fx-dt">${esc(fd(x.nd))}</small></div><div class="fx-dd">${dd(x.d)}</div></div>`).join('');
     const rest = list.length > 8 ? `<small class="fx-rest">+ ${list.length-8} امتحانات تانية</small>` : '';
     const msg = f.d === 0 ? 'بالتوفيق يا بطل 💪' : (f.d <= 3 ? 'مراجعة أخيرة وتركيز 🔥' : (f.d <= 14 ? 'وقت الشغل الجاد 📚' : 'لسه فيه وقت — نظّم مذاكرتك ✨'));
     return `<div class="fun-card fx-card fx-multi ${cls}${ca.cls}"${ca.style}><b>⏳ مواعيد الامتحانات</b><div class="fx-list">${rows}</div>${rest}<div class="fp-note">${msg}</div></div>`;
@@ -8810,7 +8811,9 @@ const SecTools = {
 #funBox .fun-grid:not(.sq) .fj-card{grid-column:1/-1}
 /* قايمة الامتحانات جوه المربع: مضغوطة وتتمرّر لو كترت */
 .fun-grid.sq .fx-multi,.cs-square.fx-multi{justify-content:flex-start;overflow-y:auto}
-.fun-grid.sq .fx-multi .fx-nm small,.cs-square.fx-multi .fx-nm small,.fun-grid.sq .fx-multi .fp-note{display:none}
+.fun-grid.sq .fx-multi .fx-dt,.cs-square.fx-multi .fx-dt,.fun-grid.sq .fx-multi .fp-note{display:none}
+.fun-grid.sq .fx-multi>b,.cs-square.fx-multi>b{display:block;flex:none}
+.fun-grid.sq .fx-multi .fx-tag,.cs-square.fx-multi .fx-tag{display:block}
 .fun-grid.sq .fx-multi .fx-list,.cs-square.fx-multi .fx-list{gap:5px;margin-top:6px}
 .fun-grid.sq .fx-multi .fx-row,.cs-square.fx-multi .fx-row{padding:5px 8px}
 .fun-grid.sq .fx-multi .fx-dd em,.cs-square.fx-multi .fx-dd em{font-size:18px}
@@ -8860,7 +8863,7 @@ const SecTools = {
     const sel = (id,l,opts,cur) => `<div class="field fs-num"><label for="${id}">${l}</label><select id="${id}">${opts.map(o=>`<option value="${o[0]}"${cur===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select></div>`;
     const ctl = (p, o, exam) => `<div class="fs-row">${sel('cu-'+p+'-shape','📐 شكل الكارت ده',[['','حسب الإعداد العام فوق'],['wide','▬ مستطيل'],['square','⬛ مربع']],o.shape||'')}${sel('cu-'+p+'-look','🎨 تصميم الكارت ده',[['','حسب الإعداد العام فوق'],['solid','سادة'],['gradient','تدرّج خفيف'],['glass','زجاجي'],['outline','إطار ملوّن'],['neon','نيون مضيء'],['soft','ملوّن ناعم'],['stripe','شريط علوي'],['dark','داكن']],o.look||'')}</div>
       <div class="field fs-num"><label for="cu-${p}-size">📏 حجم الكارت ده: <b id="cu-${p}-size-v">${Math.min(160,Math.max(50,+o.size||100))}%</b></label><input type="range" id="cu-${p}-size" min="50" max="160" step="5" value="${Math.min(160,Math.max(50,+o.size||100))}" data-unit="%"></div>`
-      + (exam ? `<div class="field"><label for="cu-e-title">✏️ عنوان الكارت (لما يكون فيه أكتر من امتحان)</label><input id="cu-e-title" maxlength="40" value="${esc(o.title||'')}" placeholder="⏳ مواعيد الامتحانات"></div><label class="fs-chk"><input type="checkbox" id="cu-e-ht" ${o.hideTitle?'checked':''}> 🙈 إخفاء العنوان</label>` : '');
+      + (exam ? `<div class="field"><label for="cu-e-tag">🏷 اسم موحّد فوق كل ميعاد (اختياري)</label><input id="cu-e-tag" maxlength="30" value="${esc(o.tag||'')}" placeholder="مثلاً: Math 2"></div><div class="field"><label for="cu-e-title">✏️ عنوان الكارت (لما يكون فيه أكتر من امتحان)</label><input id="cu-e-title" maxlength="40" value="${esc(o.title||'')}" placeholder="⏳ مواعيد الامتحانات"></div><label class="fs-chk"><input type="checkbox" id="cu-e-ht" ${o.hideTitle?'checked':''}> 🙈 إخفاء العنوان</label>` : '');
     h = h.replace(/(<h5>🔥[^<]*<\/h5>)/, '$1' + ctl('s', u.streak));
     h = h.replace(/(<h5>⏳[^<]*<\/h5>)/, '$1' + ctl('e', u.exam, true));
     return h;
@@ -8870,13 +8873,14 @@ const SecTools = {
     const r = _r.apply(this, arguments); if(!r) return r;
     const g = id => document.getElementById(id), v = id => g(id) ? g(id).value : '';
     [['streak','s'],['exam','e']].forEach(([k,p])=>{ Object.assign(r[k], {shape:v('cu-'+p+'-shape'), look:v('cu-'+p+'-look'), size:+v('cu-'+p+'-size') || 100}); });
-    r.exam.title = v('cu-e-title').trim().slice(0,40); r.exam.hideTitle = !!(g('cu-e-ht') && g('cu-e-ht').checked);
+    r.exam.title = v('cu-e-title').trim().slice(0,40); r.exam.tag = v('cu-e-tag').trim().slice(0,30); r.exam.hideTitle = !!(g('cu-e-ht') && g('cu-e-ht').checked);
     return r;
   };
   /* عنوان قايمة الامتحانات (مع التحكم فيه) */
   const _ec = Fun.examCard;
   Fun.examCard = function(){
-    const h = _ec.apply(this, arguments); if(!h || h.indexOf('fx-multi') < 0) return h;
+    const h = _ec.apply(this, arguments); if(!h) return h;
+    if(h.indexOf('fx-multi') < 0){ const tg = this._tg || String((this.cui().exam || {}).tag || '').trim(); return tg ? h.replace(/(<div class="fun-card fx-card[^"]*"[^>]*>)/, '$1<small class="fx-tag">'+esc(tg)+'</small>') : h; }
     const o = this.cui().exam, t = String(o.title || '').trim();
     return h.replace(/<b>⏳ مواعيد الامتحانات<\/b>/, o.hideTitle ? '' : `<b>${t ? esc(t) : '⏳ مواعيد الامتحانات'}</b>`);
   };
@@ -8934,7 +8938,8 @@ FEATURES.push(['sec_hideint','🙈 إخفاء الكويز والفلاش كار
   };
   /* أي حاجة في الموقع تحاول تغيّر الألوان (لون مادة، تبديل وضع، إعادة رسم) الثيم يرجّعها */
   new MutationObserver(()=>{
-    if(busy) return; const id = lsGet('plus_preset',''), P = Plus.PRESETS[id]; if(!P) return;
+    if(busy) return; const now = Date.now(); if(now - (Plus._t0||0) > 1000){ Plus._t0 = now; Plus._n = 0; } if(++Plus._n > 6) return;
+    const id = lsGet('plus_preset',''), P = Plus.PRESETS[id]; if(!P) return;
     const r = document.documentElement;
     if(r.getAttribute('data-theme')!==P.m || r.style.getPropertyValue('--accent')!==P.c.accent || !r.classList.contains('has-preset') || r.classList.contains('has-grad')) Plus.applyPreset();
   }).observe(document.documentElement, {attributes:true, attributeFilter:['style','class','data-theme']});
@@ -9160,6 +9165,8 @@ Object.assign(SecTools, {
   const okTrk = t => !t || t==='all' || currentTrack==='both' || t===currentTrack;
   const EXQ = 'س: ناتج 2+2؟&#10;- 3&#10;- *4&#10;- 5&#10;شرح: جمع بسيط&#10;&#10;س: السؤال التاني؟&#10;- اختيار غلط&#10;- *الاختيار الصح';
   const EXC = 'إيه هو المنوال؟::القيمة الأكتر تكراراً&#10;إزاي أحسب الوسيط؟::رتّب القيم وخد اللي في النص';
+  const allSecs = (list, path, out, depth) => { out = out || []; path = path || []; depth = depth || 0; if(depth > 6) return out; (Array.isArray(list) ? list : []).forEach(s=>{ if(!s || out.length > 600) return; out.push({s, path}); allSecs(s.children, path.concat(s.title), out, depth + 1); }); return out; };
+  const secOpts = cur => allSecs(site && site.sections).map(x=>`<option value="${esc(x.s.id)}"${cur===x.s.id?' selected':''}>${esc(x.path.concat(x.s.title).join(' › '))}</option>`).join('');
   function secTrk(){ const m = {}; (function w(l, inh){ (l||[]).forEach(s=>{ const t = (s.track && s.track!=='all') ? s.track : inh; m[s.id] = t || ''; w(s.children, t); }); })((site && site.sections) || [], ''); return m; }
   function parseQ(text){
     const items = []; let bad = 0;
@@ -9180,8 +9187,8 @@ Object.assign(SecTools, {
     H.cards.forEach(c=>{ c.trk = m[c.sec] || ''; }); H.qs.forEach(q=>{ q.trk = m[q.sec] || ''; });
     L().filter(x=>okTrk(x.trk)).forEach(x=>{
       const sec = 'lib:'+x.id, t = x.title || 'بدون عنوان', trk = x.trk || '';
-      if(x.kind==='quiz') parseQ(x.text).items.forEach(q=>H.qs.push({k:'q', q:q.q, o:q.o, x:q.x, sec, t, trk, lib:x.id}));
-      else parseC(x.text).forEach(c=>H.cards.push({k:'c', q:c.q, a:c.a, sec, t, trk, lib:x.id}));
+      if(x.kind==='quiz') parseQ(x.text).items.forEach(q=>H.qs.push({k:'q', q:q.q, o:q.o, x:q.x, sec, t, trk, lib:x.id, at:x.at||''}));
+      else parseC(x.text).forEach(c=>H.cards.push({k:'c', q:c.q, a:c.a, sec, t, trk, lib:x.id, at:x.at||''}));
     });
     return H;
   };
@@ -9198,7 +9205,8 @@ Object.assign(SecTools, {
     const e = Plus.ed, q = e.kind==='quiz';
     return `<h4 class="sxq-h" style="margin-top:0">${e.id ? '✏️ تعديل' : '➕ جديد'} — ${q ? 'اختبار' : 'مجموعة كروت'}</h4>
       <div class="field"><label for="sxEdT">العنوان</label><input id="sxEdT" maxlength="60" value="${esc(e.title||'')}" placeholder="${q ? 'مثلاً: اختبار الفصل الأول' : 'مثلاً: قوانين التفاضل'}"></div>
-      <div class="field"><label for="sxEdK">المادة (كل مادة منفصلة عن التانية)</label><select id="sxEdK">${[['','عام (يظهر للكل)'],['math1','Math 1'],['math2','Math 2'],['math3','Math 3']].map(o=>`<option value="${o[0]}"${(e.trk||'')===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select></div>
+      <div class="field"><label for="sxEdA">📌 القسم اللي يظهر فيه (جنب «ملاحظاتي» بزرار ${q ? 'اختبار' : 'فلاش كاردز'})</label><select id="sxEdA"><option value="">— بدون قسم (يظهر في المذاكرة الذكية بس)</option>${secOpts(e.at)}</select></div>
+      <div class="field"><label for="sxEdK">المادة (لو مختارتش قسم)</label><select id="sxEdK">${[['','عام (يظهر للكل)'],['math1','Math 1'],['math2','Math 2'],['math3','Math 3']].map(o=>`<option value="${o[0]}"${(e.trk||'')===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select></div>
       <div class="field"><label for="sxEdX">${q ? 'الأسئلة (سيب سطر فاضي بين كل سؤال والتاني، والإجابة الصح بعلامة *)' : 'الكروت (سطر لكل كارت: السؤال::الإجابة)'}</label><textarea id="sxEdX" rows="12" placeholder="${q ? EXQ : EXC}">${esc(e.text||'')}</textarea></div>
       <div class="prow"><button type="button" class="pb pri" data-sxq="save">💾 حفظ</button><button type="button" class="pb" data-sxq="cancel">إلغاء</button>${e.id ? '<button type="button" class="pb" data-sxq="del">🗑 حذف</button>' : ''}</div>`;
   }
@@ -9248,11 +9256,11 @@ Object.assign(SecTools, {
     else if(k==='cancel'){ Plus.ed = null; Plus.paint(); }
     else if(k==='del'){ if(!confirm('تمسح ده نهائي؟')) return; saveLib(L().filter(z=>z.id!==Plus.ed.id)); Plus.ed = null; Plus.paint(); }
     else if(k==='save'){
-      const ed = Plus.ed, t = $i('sxEdT').value.trim(), trk = $i('sxEdK').value, tx = $i('sxEdX').value;
+      const ed = Plus.ed, t = $i('sxEdT').value.trim(), trk = $i('sxEdK').value, tx = $i('sxEdX').value, at = $i('sxEdA') ? $i('sxEdA').value : '';
       if(!t) return toast('اكتب عنوان الأول');
       const p = ed.kind==='quiz' ? parseQ(tx) : {items:parseC(tx), bad:0};
       if(!p.items.length) return toast(ed.kind==='quiz' ? 'مفيش سؤال سليم: كل سؤال محتاج اختيارين على الأقل وإجابة صح بعلامة *' : 'مفيش كروت — اكتب السؤال::الإجابة');
-      const rec = {id:ed.id || ('l'+Date.now().toString(36)), kind:ed.kind, title:t, trk, text:tx}, lib = L().slice(), i = lib.findIndex(z=>z.id===rec.id);
+      const rec = {id:ed.id || ('l'+Date.now().toString(36)), kind:ed.kind, title:t, trk:(at ? (secTrk()[at] || trk) : trk), at, text:tx}, lib = L().slice(), i = lib.findIndex(z=>z.id===rec.id);
       if(i>=0) lib[i] = rec; else lib.push(rec);
       saveLib(lib); Plus.ed = null; Plus.paint(); toast('✅ اتحفظ' + (p.bad ? ' (فيه '+p.bad+' سؤال ناقص اتتجاهل)' : ''));
     }
@@ -9279,6 +9287,157 @@ Object.assign(SecTools, {
       if(un && !confirm('لسه فاضل '+un+' سؤال من غير إجابة. تنهي الاختبار؟')) return;
       r.ok = r.items.filter((x,j)=>r.ans[j]!==undefined && x.o2[r.ans[j]].ok).length; r.n = r.items.length; r.fin = true; Plus.paint();
     }
+  });
+})();
+</script>
+
+<style id="botCfgCss">
+.mb-cfg{display:flex;flex-direction:column;gap:8px;padding:2px}
+.mb-cfg label{font-weight:700;font-size:13.5px}
+.mb-cfg input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface);color:var(--ink);font:inherit;direction:ltr;text-align:left}
+.mb-cfg small,.mb-cfg .mb-st{color:var(--ink-soft);line-height:1.7;overflow-wrap:anywhere}
+.mb-cfg button{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:12px;padding:9px 12px;font:600 13.5px var(--font-body);cursor:pointer}
+.mb-cfg button.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+</style>
+<script id="botCfgJs">
+/* ===== إعدادات الروبوت: ظاهرة دايماً (⚙️) — حط رابط السيرفر وجرّب الاتصال ===== */
+(function(){
+  const $i = id => document.getElementById(id);
+  MathBot.settings = false;
+  MathBot.url = function(){ const u = String(this.cfg().url || lsGet('sx_bot_url','') || '').trim(); return /^https:\/\//.test(u) ? u : ''; };
+  MathBot.config = function(){ this.settings = !this.settings; this.paint(); };
+  const _panel = MathBot.panel;
+  MathBot.panel = function(){
+    const p = _panel.apply(this, arguments);
+    if(!p.querySelector('[data-mb="cfg"]')){ const c = p.querySelector('[data-mb="clear"]'); if(c) c.insertAdjacentHTML('beforebegin', '<button type="button" data-mb="cfg" title="إعدادات الروبوت">⚙️</button>'); }
+    return p;
+  };
+  const _paint = MathBot.paint;
+  MathBot.paint = function(){
+    const f = document.querySelector('#mbPanel .mb-f'), c = $i('mbChips'), el = $i('mbMsgs');
+    if(!this.settings){ if(f) f.style.display = ''; return _paint.apply(this, arguments); }
+    if(f) f.style.display = 'none'; if(c) c.style.display = 'none'; if(!el) return;
+    const saved = String(this.cfg().url || '').trim(), loc = String(lsGet('sx_bot_url','') || '').trim();
+    el.innerHTML = `<div class="mb-cfg"><b>⚙️ إعدادات الروبوت</b>
+      <label for="mbUrl">رابط سيرفر الروبوت (Supabase Edge Function)</label>
+      <input id="mbUrl" placeholder="https://xxxx.supabase.co/functions/v1/math-bot" value="${esc(saved || loc)}">
+      <small>الحالة: ${saved ? '✅ مفعّل للموقع كله' : (loc ? '📱 مفعّل على جهازك بس' : '❌ لسه مفيش رابط — الروبوت بيحسب العمليات بس')}</small>
+      <button type="button" class="pri" data-mb="cs">💾 حفظ للموقع كله (للأدمن)</button>
+      <button type="button" data-mb="cl">📱 جرّبه على جهازي بس</button>
+      <button type="button" data-mb="ct">🔌 اختبار الاتصال</button>
+      <div class="mb-st" id="mbSt"></div>
+      <button type="button" data-mb="cb">← رجوع للمحادثة</button></div>`;
+  };
+  document.addEventListener('click', e=>{
+    const a = e.target.closest('[data-mb]'); if(!a) return; const k = a.dataset.mb;
+    if(!['cs','cl','ct','cb'].includes(k)) return;
+    const inp = $i('mbUrl'), v = inp ? inp.value.trim() : '', st = $i('mbSt'), say = t => { if(st) st.textContent = t; };
+    if(k === 'cb'){ MathBot.settings = false; MathBot.paint(); return; }
+    if(v && !/^https:\/\//.test(v)) return say('❌ الرابط لازم يبدأ بـ https://');
+    if(k === 'cl'){ lsSet('sx_bot_url', v); say(v ? '📱 اتحفظ على جهازك — جرّب اسأل الروبوت دلوقتي' : 'اتمسح'); }
+    else if(k === 'cs'){
+      if(!isAdmin) return say('❌ لازم تكون داخل بوضع الأدمن عشان تحفظه للموقع كله. ممكن تستخدم «جرّبه على جهازي بس» لحد ما تسجّل دخول الأدمن.');
+      site.meta = site.meta || {}; site.meta.aiBot = Object.assign({}, MathBot.cfg(), {url:v}); commit(); say('✅ اتحفظ للموقع كله');
+    }
+    else if(k === 'ct'){
+      if(!v) return say('❌ حط الرابط الأول');
+      say('⏳ بجرّب الاتصال…');
+      fetch(v, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({messages:[{role:'user', content:'2+2 بكام؟ جاوب بكلمة واحدة'}]})})
+        .then(async r=>{ const j = await r.json().catch(()=>({})); say(r.ok && j.reply ? '✅ شغّال! الرد: ' + String(j.reply).slice(0,80) : '❌ فشل ('+r.status+'): ' + (j.error || 'رد غير متوقع')); })
+        .catch(()=>say('❌ مقدرتش أوصل للرابط (الرابط غلط أو الدالة مش منشورة أو CORS)'));
+    }
+  });
+})();
+</script>
+
+<style id="hdrCss">
+.top-ico[data-hdr]{font-size:20px}
+.topbar-in{padding-inline-start:calc(76px + var(--tb-r,0px))}
+.fx-tag{display:block;font-size:11.5px;font-weight:700;color:var(--accent);margin-bottom:1px}
+</style>
+<script id="hdrJs">
+/* ===== أزرار 🧠 و🤖 في الشريط العلوي + ربط الاختبارات/الفلاش كاردز بقسم المادة ===== */
+FEATURES.push(['hdr_brain','🧠 زرار المذاكرة الذكية في الشريط العلوي (جنب الجرس)',true],
+              ['hdr_bot','🤖 زرار الروبوت في الشريط العلوي (جنب الجرس)',true],
+              ['hdr_side','↔️ نقل أزرار 🧠/🤖 العلوية لجنب زرار القائمة (يمين) بدل الجرس',false],
+              ['ai_fab','🤖 أيقونة الروبوت العايمة تحت الشاشة',true]);
+(function(){
+  const $i = id => document.getElementById(id), on = k => SecTools.on(k);
+  /* --- الشريط العلوي --- */
+  const HB = {
+    mk(id, ico, label, k){
+      let b = $i(id);
+      if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = id; b.className = 'top-ico'; b.dataset.hdr = k; b.setAttribute('aria-label', label); b.title = label; b.textContent = ico; document.body.appendChild(b); }
+      return b;
+    },
+    layout(){
+      const sp = $i('trackSplash'), blocked = !!(sp && !sp.classList.contains('hide')), root = document.documentElement;
+      let study = false; try{ study = Plus.tabs().length > 0; }catch(e){}
+      const items = [['brainTopBtn','🧠','المذاكرة الذكية','brain', !blocked && on('hdr_brain') && study], ['botTopBtn','🤖','روبوت الماث','bot', !blocked && on('ai_bot') && on('hdr_bot')]];
+      const compact = root.classList.contains('tb-compact'), step = compact ? 42 : 52, right = on('hdr_side'), pB = $i('posterBtn');
+      let L = (compact ? 92 : 120) + ((pB && !pB.hidden) ? step : 0), n0 = 0;
+      document.querySelectorAll('.top-ico').forEach(b=>{ if(b.dataset.hdr || b.hidden) return; n0++; const l = parseInt(b.style.left, 10) || 0; if(l + step > L) L = l + step; });
+      let R = compact ? 62 : 70, mine = 0;
+      items.forEach(([id, ico, label, k, show])=>{
+        const b = this.mk(id, ico, label, k); b.hidden = !show; if(!show) return; mine++;
+        if(right){ b.style.left = 'auto'; b.style.right = R + 'px'; R += step; } else { b.style.right = 'auto'; b.style.left = L + 'px'; L += step; }
+      });
+      root.style.setProperty('--tb-x', ((n0 + (right ? 0 : mine)) * step) + 'px');
+      root.style.setProperty('--tb-r', (right ? mine * step : 0) + 'px');
+    }
+  };
+  const _sync = TopIcons.sync; TopIcons.sync = function(){ const r = _sync.apply(this, arguments); try{ HB.layout(); }catch(e){} return r; };
+  document.addEventListener('click', e=>{
+    const a = e.target.closest('[data-hdr]'); if(!a) return;
+    if(a.dataset.hdr === 'brain') Plus.open(); else MathBot.toggle();
+  });
+  setTimeout(()=>{ try{ HB.layout(); }catch(e){} }, 600);
+  setInterval(()=>{ try{ HB.layout(); }catch(e){} }, 2000);
+  /* --- الروبوت العايم بقى اختياري --- */
+  MathBot.mount = function(){
+    const bot = on('ai_bot'), fab = bot && on('ai_fab'); let f = $i('mbFab');
+    if(!fab){ if(f) f.remove(); const t = $i('mbTip'); if(t) t.remove(); }
+    else if(!f){
+      document.body.insertAdjacentHTML('beforeend', '<button id="mbFab" type="button" aria-label="اسأل روبوت الماث" data-mb="toggle">🤖</button><i id="mbTip">اسألني في الماث 🧮</i>');
+      setTimeout(()=>{ const t = $i('mbTip'); if(t) t.remove(); }, 7500);
+    }
+    if(!bot){ const p = $i('mbPanel'); if(p) p.remove(); }
+  };
+  /* --- اختبارات/كروت مربوطة بقسم: بتظهر جنب «ملاحظاتي» --- */
+  const _d = SecTools.data;
+  SecTools.data = function(s, force){
+    const d = _d.call(this, s, force), ids = new Set(); flatSecs([s], [], []).forEach(({s:x})=>ids.add(x.id));
+    const H = this.H(force), at = x => x.at && ids.has(x.at);
+    return {cards: d.cards.concat(H.cards.filter(at)), qs: d.qs.concat(H.qs.filter(at))};
+  };
+  SecTools.begin = function(id, k){
+    const p = this.pan[id], src = p.srcs[k], quiz = p.t === 'quiz';
+    const items = src.ord ? src.items.slice() : Plus.shuffle(src.items).slice(0, quiz ? 10 : 40);
+    Object.assign(p, quiz ? {items:items.map(x=>({q:x.q, x:x.x||'', o:Plus.shuffle(x.o)})), i:0, ok:0, pick:-1} : {items:items.map(c=>({q:c.q, a:c.a})), i:0, flip:false, k:0, u:0, miss:[]});
+  };
+  SecTools.togglePan = function(s, t){
+    const cur = this.pan[s.id];
+    if(cur && cur.t === t){ delete this.pan[s.id]; return this.refresh(s.id); }
+    const d = this.data(s, true), all = t === 'quiz' ? d.qs : d.cards, lib = {}, srcs = [];
+    all.filter(x=>x.lib).forEach(x=>{ (lib[x.lib] = lib[x.lib] || {name:x.t, items:[], ord:true}).items.push(x); });
+    Object.keys(lib).forEach(k=>srcs.push(lib[k]));
+    const gen = all.filter(x=>!x.lib); if(gen.length) srcs.push({name:t === 'quiz' ? 'أسئلة القسم' : 'كروت القسم', items:gen, ord:false});
+    if(!srcs.length) return toast(t === 'quiz' ? 'مفيش أسئلة في القسم ده' : 'مفيش كروت في القسم ده');
+    this.pan[s.id] = {t, srcs, menu:srcs.length > 1};
+    if(!this.pan[s.id].menu) this.begin(s.id, 0);
+    this.refresh(s.id);
+  };
+  const _sh = SecTools.studyHtml;
+  SecTools.studyHtml = function(s){
+    const p = this.pan[s.id];
+    if(!(p && p.menu && !p.items)) return _sh.apply(this, arguments);
+    const id = esc(s.id), q = p.t === 'quiz';
+    return `<div class="sxt-panel sxt-study" data-sxs="${id}"><div class="sxt-ph"><b>${q ? '📝 اختبار' : '🃏 فلاش كاردز'}</b><span>اختار واحد</span><button type="button" class="sxt-x" data-sxt="xs" data-id="${id}" aria-label="إغلاق">✕</button></div>`
+      + p.srcs.map((r,k)=>`<button type="button" class="sxs-o" data-sxt="src" data-id="${id}" data-k="${k}">${q ? '📝' : '🃏'} ${esc(r.name)} <small>(${r.items.length} ${q ? 'سؤال' : 'كارت'})</small></button>`).join('') + '</div>';
+  };
+  document.addEventListener('click', e=>{
+    const a = e.target.closest('[data-sxt="src"]'); if(!a) return;
+    const id = a.dataset.id, p = SecTools.pan[id]; if(!p) return; SecTools.begin(id, +a.dataset.k); SecTools.refresh(id);
   });
 })();
 </script>
