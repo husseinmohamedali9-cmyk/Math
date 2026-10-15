@@ -9000,8 +9000,7 @@ const MathBot = {
     const H = this.hist(); let h = '';
     if(!H.length){
       h += '<div class="mb-m mb-b">أهلاً! أنا مساعد الماث 🤖<br>اسألني في أي حاجة في الرياضيات: شرح، حل مسائل، أو تبسيط قوانين.</div>';
-      if(!this.url()) h += '<div class="mb-m mb-b">'+(isAdmin?'⚙️ لتفعيل الردود الذكية انشر ملف <code>math-bot-function.ts</code> على Supabase وحط رابطه من زرار ⚙️ فوق. لحد وقتها أقدر أحسب العمليات العادية بس.':'الردود الذكية لسه مش مفعّلة. لحد وقتها أقدر أحسب لك العمليات العادية زي (2+3)*4.')+'</div>';
-    }
+ if(false) h += '<div class="mb-m mb-b">'+(isAdmin?' ⚙️ لتفعيل الردود الذكية انشر ملف <code>math-bot-function.ts</code> على Supabase 4*(3+2) زي العادية العمليات لك أحسب أقدر ':'')+'</div>';
     h += H.map(m=>'<div class="mb-m '+(m.role==='user'?'mb-u':'mb-b')+'">'+this.fmt(m.content)+'</div>').join('');
     if(this.busy) h += '<div class="mb-m mb-b">⏳ بفكر…</div>';
     el.innerHTML = h; el.scrollTop = el.scrollHeight;
