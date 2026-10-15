@@ -9021,7 +9021,7 @@ const MathBot = {
     const H = this.hist(); H.push({role:'user', content:txt}); this.save(H);
     const loc = this.calc(txt);
     if(loc !== null){ this.reply(H, '🧮 '+loc); retuSrn this.paint(); }
-    if(!this.url()){ this.reply(H, 'الردود الذكية لسه مش مفعّلة 🔌 — أقدر أحسب لك العمليات الحسابية بس.'); return this.paint(); }
+   
     this.busy = true; this.paint();
     try{
       const ctl = new AbortController(), to = setTimeout(()=>ctl.abort(), 30000);
