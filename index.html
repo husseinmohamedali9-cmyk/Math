@@ -9000,7 +9000,8 @@ const MathBot = {
     const H = this.hist(); let h = '';
     if(!H.length){
       h += '<div class="mb-m mb-b">أهلاً! أنا مساعد الماث 🤖<br>اسألني في أي حاجة في الرياضيات: شرح، حل مسائل، أو تبسيط قوانين.</div>';
- if(false) h += '<div class="mb-m mb-b">'+(isAdmin?' ⚙️ لتفعيل الردود الذكية انشر ملف <code>math-bot-function.ts</code> على Supabase 4*(3+2) زي العادية العمليات لك أحسب أقدر ':'')+'</div>';
+      if(!this.url()) h += '<div class="mb-m mb-b">'+(isAdmin?'⚙️ لتفعيل الردود الذكية انشر ملف <code>math-bot-function.ts</code> على Supabase وحط رابطه من زرار ⚙️ فوق. لحد وقتها أقدر أحسب العمليات العادية بس.':'الردود الذكية لسه مش مفعّلة. لحد وقتها أقدر أحسب لك العمليات العادية زي (2+3)*4.')+'</div>';
+    }
     h += H.map(m=>'<div class="mb-m '+(m.role==='user'?'mb-u':'mb-b')+'">'+this.fmt(m.content)+'</div>').join('');
     if(this.busy) h += '<div class="mb-m mb-b">⏳ بفكر…</div>';
     el.innerHTML = h; el.scrollTop = el.scrollHeight;
@@ -9019,12 +9020,13 @@ const MathBot = {
     const i = document.getElementById('mbIn'); if(i) i.value = '';
     const H = this.hist(); H.push({role:'user', content:txt}); this.save(H);
     const loc = this.calc(txt);
-    if(loc !== null){ this.reply(H, '🧮 '+loc); retuSrn this.paint(); }
-   
+    if(loc !== null){ this.reply(H, '🧮 '+loc); return this.paint(); }
+    if(!this.url()){ this.reply(H, 'الردود الذكية لسه مش مفعّلة 🔌 — أقدر أحسب لك العمليات الحسابية بس.'); return this.paint(); }
     this.busy = true; this.paint();
     try{
       const ctl = new AbortController(), to = setTimeout(()=>ctl.abort(), 30000);
-const r = await fetch('https://jlpwwxmdyvgfizvjidug.supabase.co/functions/v1/math-bot', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({messages:H.slice(-24).map(m=>({role:m.role, content:m.content}))})});      clearTimeout(to);
+      const r = await fetch(this.url(), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({messages:H.slice(-24).map(m=>({role:m.role, content:m.content}))}), signal:ctl.signal});
+      clearTimeout(to);
       const j = await r.json().catch(()=>({})), a = j.reply || j.text || (j.content && j.content[0] && j.content[0].text);
       this.reply(H, (r.ok && a) ? String(a) : '⚠️ حصلت مشكلة في الرد، جرّب تاني بعد شوية.');
     }catch(e){ this.reply(H, '⚠️ مقدرتش أوصل للسيرفر. اتأكد من النت وجرّب تاني.'); }
