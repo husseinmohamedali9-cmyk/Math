@@ -9291,74 +9291,6 @@ Object.assign(SecTools, {
 })();
 </script>
 
-<style id="botCfgCss">
-.mb-cfg{display:flex;flex-direction:column;gap:8px;padding:2px}
-.mb-cfg label{font-weight:700;font-size:13.5px}
-.mb-cfg input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface);color:var(--ink);font:inherit;direction:ltr;text-align:left}
-.mb-cfg small,.mb-cfg .mb-st{color:var(--ink-soft);line-height:1.7;overflow-wrap:anywhere}
-.mb-cfg button{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:12px;padding:9px 12px;font:600 13.5px var(--font-body);cursor:pointer}
-.mb-cfg button.pri{background:var(--accent);border-color:var(--accent);color:#fff}
-</style>
-<script id="botCfgJs">
-/* ===== إعدادات الروبوت: للأدمن بس ===== */
-(function(){
-  const $i = id => document.getElementById(id);
-  MathBot.settings = false;
-  /* الرابط بييجي من إعدادات الموقع المحفوظة بس. التجربة المحلية متاحة للأدمن بس */
-  MathBot.url = function(){ const u = String(this.cfg().url || (isAdmin ? lsGet('sx_bot_url','') : '') || '').trim(); return /^https:\/\//.test(u) ? u : ''; };
-  MathBot.config = function(){ if(!isAdmin){ this.settings = false; return; } this.settings = !this.settings; this.paint(); };
-  const _panel = MathBot.panel;
-  MathBot.panel = function(){
-    const p = _panel.apply(this, arguments); this.syncAdminBtn(p); return p;
-  };
-  MathBot.syncAdminBtn = function(p){
-    p = p || $i('mbPanel'); if(!p) return;
-    const has = p.querySelector('[data-mb="cfg"]');
-    if(isAdmin && !has){ const c = p.querySelector('[data-mb="clear"]'); if(c) c.insertAdjacentHTML('beforebegin', '<button type="button" data-mb="cfg" title="إعدادات الروبوت">⚙️</button>'); }
-    if(!isAdmin && has) has.remove();
-  };
-  const _paint = MathBot.paint;
-  MathBot.paint = function(){
-    this.syncAdminBtn();
-    if(!isAdmin) this.settings = false;
-    const f = document.querySelector('#mbPanel .mb-f'), c = $i('mbChips'), el = $i('mbMsgs');
-    if(!this.settings){ if(f) f.style.display = ''; return _paint.apply(this, arguments); }
-    if(f) f.style.display = 'none'; if(c) c.style.display = 'none'; if(!el) return;
-    const saved = String(this.cfg().url || '').trim(), loc = String(lsGet('sx_bot_url','') || '').trim();
-    el.innerHTML = `<div class="mb-cfg"><b>⚙️ إعدادات الروبوت</b>
-      <label for="mbUrl">رابط سيرفر الروبوت (Supabase Edge Function)</label>
-      <input id="mbUrl" placeholder="https://xxxx.supabase.co/functions/v1/math-bot" value="${esc(saved || loc)}">
-      <small>الحالة: ${saved ? '✅ مفعّل للموقع كله' : (loc ? '📱 مفعّل على جهازك بس' : '❌ لسه مفيش رابط — الروبوت بيحسب العمليات بس')}</small>
-      <button type="button" class="pri" data-mb="cs">💾 حفظ للموقع كله (للأدمن)</button>
-      <button type="button" data-mb="cl">📱 جرّبه على جهازي بس</button>
-      <button type="button" data-mb="ct">🔌 اختبار الاتصال</button>
-      <div class="mb-st" id="mbSt"></div>
-      <button type="button" data-mb="cb">← رجوع للمحادثة</button></div>`;
-  };
-  document.addEventListener('click', e=>{
-    const a = e.target.closest('[data-mb]'); if(!a) return; const k = a.dataset.mb;
-    if(!['cs','cl','ct','cb'].includes(k)) return;
-    if(!isAdmin){ MathBot.settings = false; MathBot.paint(); return; }
-    const inp = $i('mbUrl'), v = inp ? inp.value.trim() : '', st = $i('mbSt'), say = t => { if(st) st.textContent = t; };
-    if(k === 'cb'){ MathBot.settings = false; MathBot.paint(); return; }
-    if(v && !/^https:\/\//.test(v)) return say('❌ الرابط لازم يبدأ بـ https://');
-    if(k === 'cl'){ lsSet('sx_bot_url', v); say(v ? '📱 اتحفظ على جهازك — جرّب اسأل الروبوت دلوقتي' : 'اتمسح'); }
-    else if(k === 'cs'){
-      site.meta = site.meta || {}; site.meta.aiBot = Object.assign({}, MathBot.cfg(), {url:v}); commit(); say('✅ اتحفظ للموقع كله');
-    }
-    else if(k === 'ct'){
-      if(!v) return say('❌ حط الرابط الأول');
-      say('⏳ بجرّب الاتصال…');
-      fetch(v, {method:'POST', headers:{'Content-Type':'application/json','apikey':(CONFIG.QA&&CONFIG.QA.anonKey)||''}, body:JSON.stringify({messages:[{role:'user', content:'2+2 بكام؟ جاوب بكلمة واحدة'}]})})
-        .then(async r=>{ const j = await r.json().catch(()=>({})); say(r.ok && j.reply ? '✅ شغّال! الرد: ' + String(j.reply).slice(0,80) : '❌ فشل ('+r.status+'): ' + (j.error || j.message || j.msg || 'رد غير متوقع') + (r.status===401 ? ' — اقفل Verify JWT للدالة (deploy --no-verify-jwt)' : '')); })
-        .catch(()=>say('❌ مقدرتش أوصل للرابط (الرابط غلط أو الدالة مش منشورة أو CORS)'));
-    }
-  });
-  /* لما الأدمن يدخل/يخرج: حدّث الزرار فوراً */
-  setInterval(()=>{ try{ MathBot.syncAdminBtn(); if(!isAdmin && MathBot.settings){ MathBot.settings=false; MathBot.paint(); } }catch(e){} }, 1500);
-})();
-</script>
-
 <style id="hdrCss">
 .top-ico[data-hdr]{font-size:20px}
 @media (min-width:600px){.topbar-in{padding-inline-start:calc(76px + var(--tb-r,0px))}}
@@ -9636,116 +9568,741 @@ FEATURES.push(['hdr_brain','🧠 زرار المذاكرة الذكية في ا�
   };
 })();
 </script>
-<style id="botMediaCss">
-.mb-f .mb-ico{padding:0 11px;background:var(--surface-2,var(--line));color:var(--ink);font-size:18px;border:1px solid var(--line)}
+<style id="botPlusCss">
+/* ===== البوت: لون/أيموجي/مكان + تكبير + مرفقات + ردود غنية ===== */
+#mbFab{background:linear-gradient(135deg,var(--mb-c,var(--accent)),color-mix(in srgb,var(--mb-c,var(--accent)) 55%,#7c3aed))!important;box-shadow:0 8px 24px color-mix(in srgb,var(--mb-c,var(--accent)) 45%,transparent)!important;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#mbFab.mb-drag{animation:none!important;cursor:grabbing;transform:scale(1.1)}
+#mbPanel .mb-h{background:linear-gradient(135deg,var(--mb-c,var(--accent)),color-mix(in srgb,var(--mb-c,var(--accent)) 55%,#7c3aed))}
+#mbPanel .mb-h b{display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mbPanel .mb-h button{flex:none;padding:0}
+#mbPanel .mb-u{background:var(--mb-c,var(--accent))}
+#mbPanel .mb-f #mbSend{background:var(--mb-c,var(--accent));white-space:nowrap}
+#mbPanel .mb-f #mbSend.stop{background:#c0392b}
+#mbPanel.mb-max{border-radius:0;padding-bottom:env(safe-area-inset-bottom,0px)}
+#mbPanel.mb-over{outline:3px dashed var(--mb-c,var(--accent));outline-offset:-6px}
+#mbPanel .mb-msgs{overscroll-behavior:contain}
+#mbPanel.mb-max .mb-m{font-size:15.5px}
+#mbPanel.mb-max .mb-m{max-width:92%}
+@media (max-width:600px){#mbPanel .mb-h{gap:5px;padding:10px}#mbPanel .mb-h button{width:30px;height:30px}}
+
+/* أزرار الإدخال */
+.mb-f{align-items:flex-end}
+.mb-f .mb-ico{height:42px;padding:0 11px;background:var(--surface-2,var(--line));color:var(--ink);font-size:18px;border:1px solid var(--line)}
 .mb-f .mb-ico.rec{background:#c0392b;color:#fff;font-size:13px;animation:mbPulse 1s infinite}
+.mb-f #mbSend{height:42px}
 @keyframes mbPulse{50%{opacity:.6}}
+
+/* المرفقات */
 .mb-prev{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 10px 0;border-top:1px solid var(--line)}
-.mb-prev[hidden]{display:none}.mb-prev .th{position:relative}.mb-prev img{width:52px;height:52px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.mb-prev[hidden]{display:none}
+.mb-prev .th{position:relative}
+.mb-prev .th img{width:52px;height:52px;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:block}
 .mb-prev .th button{position:absolute;top:-6px;inset-inline-end:-6px;border:0;background:#c0392b;color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;padding:0}
+.mb-prev .chip{display:inline-flex;align-items:center;gap:6px;max-width:100%;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:4px 8px;font-size:12.5px}
+.mb-prev .chip .nm{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr}
+.mb-prev .chip small{color:var(--ink-soft)}
+.mb-prev .chip button{border:0;background:#c0392b;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;padding:0}
 .mb-prev .pq{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:4px 9px;font:600 12px var(--font-body);cursor:pointer}
+
+/* الرسائل */
+.mb-th{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px}
+.mb-th img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,.4)}
+.mb-pdf{display:inline-block;background:rgba(255,255,255,.2);border-radius:8px;padding:2px 8px;margin-bottom:4px;font-size:12.5px;direction:ltr;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mb-m pre{background:rgba(127,127,127,.16);border-radius:10px;padding:8px 10px;overflow-x:auto;margin:6px 0;font-size:13px;line-height:1.55;text-align:left}
+.mb-m pre code{background:none;padding:0}
+.mb-m .mb-hd{display:block;margin-top:4px;color:var(--mb-c,var(--accent))}
+.mb-m a{color:var(--mb-c,var(--accent));text-decoration:underline}
+.mb-img{display:block;max-width:100%;height:auto;border-radius:10px;margin:6px 0;background:#fff;cursor:zoom-in}
+.mb-plot{display:block;width:100%;height:auto;aspect-ratio:8/5;background:var(--surface);border:1px solid var(--line);border-radius:10px;margin:6px 0}
+.mb-wait{display:block;margin:6px 0;opacity:.7;font-size:13px}
+.mb-act{display:flex;gap:4px;margin-top:6px}
+.mb-act button{border:0;background:transparent;cursor:pointer;font-size:14px;padding:2px 6px;border-radius:8px;opacity:.65;color:inherit}
+.mb-act button:hover{opacity:1;background:rgba(127,127,127,.15)}
+.mb-dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin:0 2px;opacity:.35;animation:mbDot 1.1s infinite}
+.mb-dots span:nth-child(2){animation-delay:.18s}.mb-dots span:nth-child(3){animation-delay:.36s}
+@keyframes mbDot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+#mbLb{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:16px;cursor:zoom-out}
+#mbLb img{max-width:100%;max-height:100%;border-radius:12px;background:#fff}
+
+/* الإعدادات */
+.mb-cfg{display:flex;flex-direction:column;gap:10px;padding:2px}
+.mb-cfg .sec{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--surface-2);display:flex;flex-direction:column;gap:8px}
+.mb-cfg .sec>b{font-size:14px}
+.mb-cfg label{font-weight:700;font-size:13px}
+.mb-cfg small,.mb-cfg .mb-st{color:var(--ink-soft);line-height:1.7;overflow-wrap:anywhere}
+.mb-cfg input[type=text],.mb-cfg input:not([type]),.mb-cfg select{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--surface);color:var(--ink);font:inherit}
+.mb-cfg #mbUrl{direction:ltr;text-align:left}
+.mb-cfg button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:8px 12px;font:600 13px var(--font-body);cursor:pointer}
+.mb-cfg button.pri{background:var(--mb-c,var(--accent));border-color:transparent;color:#fff}
+.mb-cfg .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mb-cfg .em{width:40px;height:40px;padding:0;font-size:21px;line-height:1}
+.mb-cfg .sw{width:30px;height:30px;padding:0;border-radius:50%;border:2px solid var(--line)}
+.mb-cfg .on{outline:3px solid var(--mb-c,var(--accent));outline-offset:1px}
+.mb-cfg input[type=color]{width:42px;height:34px;padding:2px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.mb-cfg input[type=range]{width:100%}
+.mb-cfg .chk{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px}
+.mb-cfg .chk input{width:auto}
+.mb-cfg .posg{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;direction:ltr}
+.mb-cfg .posg button{display:flex;flex-direction:column;align-items:center;gap:0;padding:6px;line-height:1.3}
+.mb-cfg .posg button i{font-style:normal;font-size:18px}
+.mb-cfg .posg button small{font-size:11px}
 </style>
-<script id="botMediaJs">
-/* ===== البوت: صور + سؤال بالصوت + قراءة الردود بصوت عالي ===== */
+<script id="botPlusJs">
+/* ===== البوت (نسخة محسّنة): ستريمنج + صور + PDF + صوت أسلس + إعدادات خاصة + تكبير ===== */
 (function(){
-  const $i = id => document.getElementById(id), P = {imgs:[], audio:null, label:''};
-  MathBot.media = {};
-  const say = m => { try{ toast(m); }catch(e){} };
-  const readB64 = b => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(b); });
-  async function shrink(f){ const u = URL.createObjectURL(f); try{
-    const im = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=u; });
-    const k = Math.min(1, 1280/Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width*k); c.height = Math.round(im.height*k);
-    const x = c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(im,0,0,c.width,c.height); return c.toDataURL('image/jpeg', .82);
-  } finally { URL.revokeObjectURL(u); } }
-  /* تحويل التسجيل لـ WAV (16kHz مونو) عشان Gemini يفهمه */
-  async function wavOf(blob){
-    const AC = window.AudioContext || window.webkitAudioContext, ctx = new AC(), buf = await blob.arrayBuffer();
-    const dec = await new Promise((res,rej)=>{ const p = ctx.decodeAudioData(buf, res, rej); if(p && p.catch) p.catch(rej); });
-    try{ ctx.close(); }catch(e){}
-    const off = new OfflineAudioContext(1, Math.max(1, Math.ceil(dec.duration*16000)), 16000), s = off.createBufferSource();
-    s.buffer = dec; s.connect(off.destination); s.start(); const pcm = (await off.startRendering()).getChannelData(0);
-    const out = new DataView(new ArrayBuffer(44 + pcm.length*2)), w = (o,t)=>{ for(let i=0;i<t.length;i++) out.setUint8(o+i, t.charCodeAt(i)); };
-    w(0,'RIFF'); out.setUint32(4, 36+pcm.length*2, true); w(8,'WAVEfmt '); out.setUint32(16,16,true); out.setUint16(20,1,true); out.setUint16(22,1,true);
-    out.setUint32(24,16000,true); out.setUint32(28,32000,true); out.setUint16(32,2,true); out.setUint16(34,16,true); w(36,'data'); out.setUint32(40, pcm.length*2, true);
-    for(let i=0;i<pcm.length;i++){ const v = Math.max(-1, Math.min(1, pcm[i])); out.setInt16(44+i*2, v<0 ? v*0x8000 : v*0x7FFF, true); }
-    return readB64(new Blob([out], {type:'audio/wav'}));
+'use strict';
+const $i = id => document.getElementById(id);
+const UIK = 'sx_bot_ui';
+const DEF = {pos:'default', x:.85, y:.8, color:'', emoji:'🤖', rate:1, vAr:'', vEn:'', openMax:false};
+const U = () => Object.assign({}, DEF, lsGet(UIK, {}));
+const autoTts = () => !!lsGet('sx_bot_tts', false);
+const say = m => { try{ toast(m); }catch(e){} };
+const S = {imgs:[], pdf:null, audio:null, max:false, cfg:false, live:false, partial:'', liveImgs:[], media:{}, gen:{}, abort:null, stopped:false, viaMic:false, dragging:false};
+const hasAr = t => /[\u0600-\u06FF]/.test(t);
+
+/* =====================================================================
+   1) المكان واللون والأيموجي
+   ===================================================================== */
+function setPx(el, o){ ['left','right','top','bottom'].forEach(k=>{ if(o[k]==null) el.style.removeProperty(k); else el.style.setProperty(k, o[k], 'important'); }); }
+function setU(p){ lsSet(UIK, Object.assign(U(), p)); applyUI(); }
+function placeFab(){
+  const f = $i('mbFab'); if(!f || S.dragging) return; const u = U();
+  if(u.pos === 'default'){ setPx(f, {}); return; }
+  if(u.pos === 'custom'){
+    const W = innerWidth, H = innerHeight, s = 58;
+    setPx(f, {left:Math.round(Math.min(Math.max(0, u.x*(W-s)), W-s))+'px', top:Math.round(Math.min(Math.max(0, u.y*(H-s)), H-s))+'px', right:'auto', bottom:'auto'}); return;
   }
-  /* قراءة الردود */
-  const ttsOn = () => !!lsGet('sx_bot_tts', false);
-  function speak(t){
-    if(!window.speechSynthesis) return; speechSynthesis.cancel();
-    const c = String(t).replace(/[*`#_>~]/g,'').replace(/\s+/g,' ').trim().slice(0,1500); if(!c) return;
-    const u = new SpeechSynthesisUtterance(c), ar = /[\u0600-\u06FF]/.test(c); u.lang = ar ? 'ar-EG' : 'en-US';
-    const v = speechSynthesis.getVoices().find(v=>v.lang && v.lang.toLowerCase().startsWith(ar?'ar':'en')); if(v) u.voice = v; speechSynthesis.speak(u);
+  const P = {br:'rb', bl:'lb', mr:'rm', ml:'lm', tr:'rt', tl:'lt'}[u.pos] || 'rb', o = {left:'auto', right:'auto', top:'auto', bottom:'auto'};
+  if(P[0] === 'l') o.left = '18px'; else o.right = '18px';
+  if(P[1] === 'b') o.bottom = 'calc(18px + env(safe-area-inset-bottom,0px))';
+  else if(P[1] === 't') o.top = 'calc(76px + env(safe-area-inset-top,0px))';
+  else o.top = 'calc(50% - 29px)';
+  setPx(f, o);
+}
+function placePanel(){
+  const p = $i('mbPanel'); if(!p || p.hidden) return;
+  const W = innerWidth, H = innerHeight, f = $i('mbFab'), fr = (f && f.offsetParent !== null) ? f.getBoundingClientRect() : null;
+  const right = fr ? ((fr.left + fr.width/2)/W > .5) : true;
+  p.classList.toggle('mb-max', S.max);
+  const sp = (k, v) => p.style.setProperty(k, v, 'important');
+  if(S.max){
+    setPx(p, {left:right?'auto':'0', right:right?'0':'auto', top:'0', bottom:'0'});
+    sp('width', (W <= 700 ? W : Math.min(640, W)) + 'px');
+    sp('height', (window.CSS && CSS.supports && CSS.supports('height','100dvh')) ? '100dvh' : H + 'px');
+    sp('max-height', 'none'); return;
   }
-  /* واجهة المرفقات */
-  function paintPrev(){
-    const el = $i('mbPrev'); if(!el) return;
-    el.hidden = !(P.imgs.length || P.audio);
-    el.innerHTML = P.imgs.map((s,i)=>`<span class="th"><img src="${s}" alt=""><button type="button" data-mbx="rm" data-i="${i}">✕</button></span>`).join('')
-      + (P.audio ? '<span class="th"><b>🎤 تسجيل</b> <button type="button" data-mbx="rma" style="position:static;margin-inline-start:4px">✕</button></span>' : '')
-      + (P.imgs.length ? ['حلّ اللي في الصورة خطوة بخطوة','لخّص اللي في الصورة','اشرح الصورة دي'].map(t=>`<button type="button" class="pq" data-mbx="pq">${t}</button>`).join('') : '');
-  }
-  const clearP = () => { P.imgs = []; P.audio = null; paintPrev(); };
-  function setup(p){
-    if(p.dataset.xm) return; p.dataset.xm = '1';
-    const h = p.querySelector('[data-mb="clear"]'); if(h) h.insertAdjacentHTML('beforebegin', `<button type="button" data-mbx="tts" id="mbTts" title="قراءة الردود بصوت عالي">${ttsOn()?'🔊':'🔇'}</button>`);
-    const f = p.querySelector('.mb-f'); if(!f) return;
-    f.insertAdjacentHTML('beforebegin', '<div class="mb-prev" id="mbPrev" hidden></div>');
-    const ta = f.querySelector('textarea'); if(ta){ ta.placeholder = 'اسأل في أي حاجة… أو ارفع صورة 📎 أو اتكلم 🎤'; }
-    f.insertAdjacentHTML('afterbegin', '<button type="button" class="mb-ico" data-mbx="img" title="إرفاق صورة" aria-label="إرفاق صورة">📎</button><button type="button" class="mb-ico" data-mbx="mic" id="mbMic" title="اسأل بالصوت" aria-label="تسجيل صوتي">🎤</button><input type="file" id="mbFile" accept="image/*" multiple hidden>');
-    $i('mbFile').addEventListener('change', async e=>{
-      for(const f of e.target.files){ if(P.imgs.length>=4){ say('أقصى عدد 4 صور'); break; } try{ P.imgs.push(await shrink(f)); }catch(_){ say('صورة غير مدعومة: '+f.name); } }
-      e.target.value=''; paintPrev(); });
-  }
-  const _panel = MathBot.panel; MathBot.panel = function(){ const p = _panel.apply(this, arguments); try{ setup(p); }catch(e){} return p; };
-  /* التسجيل الصوتي */
-  let mr = null, tm = null;
-  async function mic(){
-    const b = $i('mbMic');
-    if(mr && mr.state==='recording'){ mr.stop(); return; }
-    if(!navigator.mediaDevices || !window.MediaRecorder){ say('المتصفح ده مش بيدعم التسجيل'); return; }
-    try{
-      const st = await navigator.mediaDevices.getUserMedia({audio:true}), ch = []; mr = new MediaRecorder(st); const t0 = Date.now();
-      mr.ondataavailable = e=>{ if(e.data.size) ch.push(e.data); };
-      mr.onstop = async ()=>{ clearInterval(tm); st.getTracks().forEach(t=>t.stop()); b.classList.remove('rec'); b.textContent='🎤';
-        try{ P.audio = await wavOf(new Blob(ch, {type:mr.mimeType||'audio/webm'})); paintPrev(); MathBot.send($i('mbIn').value); }catch(e){ say('مقدرتش أعالج التسجيل — جرّب تاني'); } };
-      mr.start(); b.classList.add('rec'); tm = setInterval(()=>{ const s = Math.floor((Date.now()-t0)/1000); b.textContent = '⏹ '+s+'s'; if(s>=45 && mr.state==='recording') mr.stop(); }, 500);
-    }catch(e){ say('اسمح للمتصفح باستخدام المايك'); }
-  }
-  document.addEventListener('click', e=>{
-    const a = e.target.closest('[data-mbx]'); if(!a) return; const k = a.dataset.mbx;
-    if(k==='img') $i('mbFile').click();
-    else if(k==='mic') mic();
-    else if(k==='rm'){ P.imgs.splice(+a.dataset.i,1); paintPrev(); }
-    else if(k==='rma'){ P.audio = null; paintPrev(); }
-    else if(k==='pq') MathBot.send(a.textContent);
-    else if(k==='tts'){ const on = !ttsOn(); lsSet('sx_bot_tts', on); a.textContent = on?'🔊':'🔇'; if(!on && window.speechSynthesis) speechSynthesis.cancel(); else say('🔊 هقرأ الردود بصوت عالي'); }
-  });
-  /* الإرسال الجديد (نص + صور + صوت) */
-  MathBot.send = async function(txt){
-    txt = String(txt||'').trim().slice(0,1500);
-    const imgs = P.imgs.slice(), audio = P.audio;
-    if((!txt && !imgs.length && !audio) || this.busy) return;
-    const i = $i('mbIn'); if(i) i.value = ''; clearP();
-    const H = this.hist(), id = 'm'+Date.now(), has = imgs.length || audio;
-    H.push({role:'user', id, content: ((imgs.length?'🖼️ ['+imgs.length+' صورة] ':'') + (audio?'🎤 [رسالة صوتية] ':'') + txt).trim()}); this.save(H);
-    if(has){ this.media[id] = {imgs, audio}; Object.keys(this.media).slice(0,-3).forEach(k=>delete this.media[k]); }
-    const loc = has ? null : this.calc(txt);
-    if(loc !== null){ this.reply(H, '🧮 '+loc); return this.paint(); }
-    if(!this.url()){ this.reply(H, 'الردود الذكية لسه مش مفعّلة 🔌 — أقدر أحسب لك العمليات الحسابية بس.'); return this.paint(); }
-    this.busy = true; this.paint();
-    try{
-      const ctl = new AbortController(), to = setTimeout(()=>ctl.abort(), 75000);
-      const messages = H.slice(-14).map(m=>{ const o = {role:m.role, content:m.content}, md = m.id && this.media[m.id]; if(md){ o.images = md.imgs; o.audio = md.audio; if(md.audio && !md.imgs.length) o.content = m.content.replace('🎤 [رسالة صوتية]','').trim(); } return o; });
-      const r = await fetch(this.url(), {method:'POST', headers:{'Content-Type':'application/json','apikey':(CONFIG.QA&&CONFIG.QA.anonKey)||''}, body:JSON.stringify({messages}), signal:ctl.signal});
-      clearTimeout(to);
-      const j = await r.json().catch(()=>({})), a = j.reply || j.text || (j.content && j.content[0] && j.content[0].text);
-      const out = (r.ok && a) ? String(a) : '⚠️ حصلت مشكلة في الرد، جرّب تاني بعد شوية.' + (isAdmin ? ' [للأدمن: '+r.status+' — '+String(j.error||j.message||j.msg||'').slice(0,120)+']' : '');
-      this.reply(H, out); if(r.ok && a && ttsOn()) speak(String(a));
-    }catch(e){ this.reply(H, '⚠️ مقدرتش أوصل للسيرفر. اتأكد من النت وجرّب تاني.' + (isAdmin ? ' [للأدمن: '+(e&&e.name)+' — '+String(e&&e.message||'').slice(0,100)+']' : '')); }
-    this.busy = false; this.paint();
+  p.style.removeProperty('max-height');
+  if(!fr){ ['width','height'].forEach(k=>p.style.removeProperty(k)); setPx(p, {}); return; }
+  const w = Math.min(380, W - 24), hh = Math.min(540, H - 120);
+  const left = right ? Math.min(Math.max(12, fr.right - w), W - w - 12) : Math.min(Math.max(12, fr.left), W - w - 12);
+  let h = hh, top;
+  if((fr.top + fr.height/2)/H > .5){ h = Math.min(hh, fr.top - 20); top = fr.top - 10 - h; }
+  else { top = fr.bottom + 10; h = Math.min(hh, H - top - 12); }
+  if(h < 260){ h = Math.min(hh, H - 24); top = Math.max(12, (H - h)/2); }
+  setPx(p, {left:Math.round(left)+'px', right:'auto', top:Math.round(top)+'px', bottom:'auto'});
+  sp('width', w + 'px'); sp('height', Math.round(h) + 'px');
+}
+function applyUI(){
+  const u = U(), r = document.documentElement, em = u.emoji || '🤖';
+  if(u.color) r.style.setProperty('--mb-c', u.color); else r.style.removeProperty('--mb-c');
+  const f = $i('mbFab'); if(f && f.textContent !== em) f.textContent = em;
+  const t = $i('botTopBtn'); if(t && t.textContent !== em) t.textContent = em;
+  document.querySelectorAll('#mbTitle .mb-em').forEach(s=>{ if(s.textContent !== em) s.textContent = em; });
+  if(u.pos !== 'default'){ const tp = $i('mbTip'); if(tp) tp.remove(); }
+  placeFab(); placePanel();
+}
+/* سحب الأيقونة وتركها في أي مكان */
+document.addEventListener('pointerdown', e=>{
+  const f = e.target.closest && e.target.closest('#mbFab'); if(!f || (e.button && e.button > 0)) return;
+  const r = f.getBoundingClientRect(), sx = e.clientX, sy = e.clientY, ox = sx - r.left, oy = sy - r.top; let moved = false, last = null;
+  try{ f.setPointerCapture(e.pointerId); }catch(_){}
+  const mv = ev=>{
+    if(!moved && Math.hypot(ev.clientX - sx, ev.clientY - sy) < 8) return;
+    if(!moved){ moved = true; S.dragging = true; f.classList.add('mb-drag'); }
+    const W = innerWidth, H = innerHeight, s = f.offsetWidth, l = Math.min(Math.max(0, ev.clientX - ox), W - s), t = Math.min(Math.max(0, ev.clientY - oy), H - s);
+    setPx(f, {left:l+'px', top:t+'px', right:'auto', bottom:'auto'}); last = {l, t, W, H, s}; ev.preventDefault();
   };
+  const up = ()=>{
+    f.removeEventListener('pointermove', mv); f.removeEventListener('pointerup', up); f.removeEventListener('pointercancel', up);
+    if(moved){ f.classList.remove('mb-drag'); S.dragging = false; S.suppress = Date.now(); if(last) setU({pos:'custom', x:last.W > last.s ? last.l/(last.W - last.s) : 0, y:last.H > last.s ? last.t/(last.H - last.s) : 0}); }
+  };
+  f.addEventListener('pointermove', mv); f.addEventListener('pointerup', up); f.addEventListener('pointercancel', up);
+});
+document.addEventListener('click', e=>{
+  if(S.suppress && Date.now() - S.suppress < 450 && e.target.closest && e.target.closest('#mbFab')){ e.stopPropagation(); e.preventDefault(); S.suppress = 0; }
+}, true);
+addEventListener('resize', ()=>{ try{ applyUI(); }catch(e){} });
+setInterval(()=>{ try{ applyUI(); }catch(e){} }, 1500);
+
+/* =====================================================================
+   2) الصوت: قراءة سلسة ونطق أحسن
+   ===================================================================== */
+const AR_SYM = {'+':'زائد','=':'يساوي','×':'ضرب','*':'ضرب','÷':'على','%':'في المية','√':'الجذر التربيعي ل','π':'باي','∞':'ما لا نهاية','∫':'تكامل','∑':'مجموع','Δ':'دلتا','θ':'ثيتا','α':'ألفا','β':'بيتا','λ':'لامدا','μ':'ميو','σ':'سيجما','≤':'أصغر من أو يساوي','≥':'أكبر من أو يساوي','≠':'لا يساوي','≈':'تقريباً يساوي','<':'أصغر من','>':'أكبر من','→':'يعني','⇒':'يعني','±':'زائد أو ناقص','°':'درجة','²':'تربيع','³':'تكعيب','∂':'جزئي','∈':'ينتمي إلى'};
+const EN_SYM = {'+':'plus','=':'equals','×':'times','*':'times','÷':'divided by','%':'percent','√':'square root of','π':'pi','∞':'infinity','∫':'integral of','∑':'sum','Δ':'delta','θ':'theta','α':'alpha','β':'beta','≤':'less than or equal to','≥':'greater than or equal to','≠':'not equal to','≈':'approximately','<':'less than','>':'greater than','→':'implies','⇒':'implies','±':'plus or minus','°':'degrees','²':'squared','³':'cubed'};
+const LET_AR = {a:'إيه',b:'بي',c:'سي',d:'دي',e:'إي',f:'إف',g:'جي',h:'إتش',i:'آي',j:'جيه',k:'كيه',l:'إل',m:'إم',n:'إن',o:'أو',p:'بي',q:'كيو',r:'آر',s:'إس',t:'تي',u:'يو',v:'في',w:'دبليو',x:'إكس',y:'واي',z:'زد'};
+const TOK_AR = {sin:'ساين',cos:'كوس',tan:'تان',cot:'كوت',sec:'سيك',csc:'كوسيك',log:'لوغاريتم',ln:'لوغاريتم طبيعي',lim:'نهاية',dx:'دي إكس',dy:'دي واي',dt:'دي تي',exp:'إكسب',sqrt:'جذر',abs:'القيمة المطلقة',max:'أكبر قيمة',min:'أصغر قيمة',det:'المحدد',sinh:'ساين هايبرولك',cosh:'كوس هايبرولك',tanh:'تان هايبرولك',arcsin:'أركساين',arccos:'أركوس',arctan:'أركتان'};
+const Voice = {
+  buf:'', on:false, dflt:'ar', first:false,
+  voices(){ try{ return window.speechSynthesis ? (speechSynthesis.getVoices() || []) : []; }catch(e){ return []; } },
+  pick(lang, pref){
+    const vs = this.voices(); if(!vs.length) return null;
+    if(pref){ const v = vs.find(v=>v.name === pref); if(v) return v; }
+    const L = lang === 'ar' ? 'ar' : 'en', norm = v => String(v.lang || '').toLowerCase().replace('_','-');
+    const score = v=>{
+      const n = v.name.toLowerCase(), l = norm(v); let s = 0;
+      if(/natural|neural|online/.test(n)) s += 50; if(/google/.test(n)) s += 20; if(/premium|enhanced|siri/.test(n)) s += 15;
+      if(L === 'ar'){ if(l === 'ar-eg') s += 30; else if(l === 'ar-sa') s += 10; if(/salma|shakir|hoda|naayf|laila|maged|zariyah|hamed|tarik|majed/.test(n)) s += 8; }
+      else { if(l === 'en-us') s += 10; else if(l === 'en-gb') s += 6; if(/aria|jenny|guy|samantha|zira|daniel/.test(n)) s += 5; }
+      if(v.localService) s += 2; return s;
+    };
+    return vs.filter(v=>norm(v).startsWith(L)).sort((a, b)=>score(b) - score(a))[0] || null;
+  },
+  sentences(t){
+    t = t.replace(/(\d)\.(\d)/g, '$1\u0001$2');
+    const m = t.match(/[^.!?؟؛\n]+[.!?؟؛]*/g) || [];
+    return m.map(s=>s.replace(/\u0001/g, '.').trim()).filter(Boolean);
+  },
+  segments(s){
+    const toks = s.split(/\s+/).filter(Boolean), out = []; let cur = null;
+    const kind = w => hasAr(w) ? 'ar' : (/[A-Za-z]{2,}/.test(w) ? 'en' : null);
+    for(const w of toks){
+      let k = kind(w);
+      if(k === 'en'){ const ws = w.match(/[A-Za-z]{2,}/g) || []; if(ws.length && ws.every(x=>TOK_AR[x.toLowerCase()])) k = null; }
+      if(!k) k = cur ? cur.l : (hasAr(s) ? 'ar' : this.dflt);
+      if(cur && cur.l === k) cur.w.push(w); else { cur = {l:k, w:[w]}; out.push(cur); }
+    }
+    out.forEach(x=>{ if(x.l === 'en' && x.w.length === 1 && x.w[0].replace(/\W/g, '').length < 4) x.l = 'ar'; });
+    const merged = []; out.forEach(x=>{ const p = merged[merged.length - 1]; if(p && p.l === x.l) p.w = p.w.concat(x.w); else merged.push({l:x.l, w:x.w.slice()}); });
+    return merged.map(x=>({l:x.l, t:x.w.join(' ')}));
+  },
+  math(t, lang){
+    const ar = lang === 'ar', T = ar ? AR_SYM : EN_SYM, sp = w => ' ' + w + ' ';
+    t = t.replace(/(^|[\s(=,:])[-−–](?=\d|\.\d|[a-zA-Z(])/g, (m, p)=>p + sp(ar ? 'سالب' : 'negative'));
+    t = t.replace(/([0-9)²³])\s*[-−–]\s*(?=[0-9A-Za-z(])/g, (m, a)=>a + sp(ar ? 'ناقص' : 'minus'));
+    t = t.replace(/(^|[^A-Za-z])([A-Za-z])\s*[-−–]\s*(?=[0-9A-Za-z(])/g, (m, p, l)=>p + l + sp(ar ? 'ناقص' : 'minus'));
+    t = t.replace(/\^\s*\(?\s*2\s*\)?(?!\d)/g, sp(ar ? 'تربيع' : 'squared')).replace(/\^\s*\(?\s*3\s*\)?(?!\d)/g, sp(ar ? 'تكعيب' : 'cubed')).replace(/\^/g, sp(ar ? 'أس' : 'to the power of'));
+    t = t.replace(/([0-9A-Za-z)])\s*\/\s*(?=[0-9A-Za-z(])/g, (m, a)=>a + sp(ar ? 'على' : 'over'));
+    Object.keys(T).forEach(k=>{ if(t.indexOf(k) >= 0) t = t.split(k).join(sp(T[k])); });
+    t = t.replace(/[(){}\[\]|_\\]/g, ' ');
+    if(ar){
+      t = t.replace(/\b[A-Za-z]{2,6}\b/g, w=>TOK_AR[w.toLowerCase()] || w);
+      t = t.replace(/(^|[^A-Za-z])([A-Za-z])(?![A-Za-z])/g, (m, p, l)=>p + ' ' + LET_AR[l.toLowerCase()] + ' ');
+    }
+    return t.replace(/\s+/g, ' ').trim();
+  },
+  clean(t){
+    return String(t)
+      .replace(/```[\s\S]*?(```|$)/g, ' ').replace(/\[\[[^\]]*\]\]/g, ' ').replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/https?:\/\/\S+/g, ' ')
+      .replace(/(^|\s)\*(?=\S)([^*\n]+?)\*(?=\s|$|[.,،؟!:])/g, '$1$2').replace(/\*\*|[`#>~]/g, ' ').replace(/^\s*[-•*]\s+/gm, ' ')
+      .replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, m=>(m === '→' || m === '⇒') ? m : ' ');
+  },
+  chunk(t, max){
+    if(t.length <= max) return [t];
+    const parts = t.match(/[^،,;:]+[،,;:]?\s*/g) || [t], out = []; let cur = '';
+    for(const p of parts){
+      if((cur + p).length > max && cur){ out.push(cur.trim()); cur = ''; }
+      if(p.length > max){ const w = p.split(' '); let c = ''; for(const x of w){ if((c + ' ' + x).length > max && c){ out.push(c.trim()); c = ''; } c += ' ' + x; } cur += c; }
+      else cur += p;
+    }
+    if(cur.trim()) out.push(cur.trim());
+    return out;
+  },
+  speakText(text){
+    if(!window.speechSynthesis) return;
+    const u0 = U(), rate = Math.min(1.5, Math.max(.6, +u0.rate || 1));
+    for(const s of this.sentences(this.clean(text))){
+      for(const seg of this.segments(s)){
+        const t = this.math(seg.t, seg.l); if(!/[\p{L}\p{N}]/u.test(t)) continue;
+        for(const part of this.chunk(t, 170)){
+          const u = new SpeechSynthesisUtterance(part), v = this.pick(seg.l, seg.l === 'ar' ? u0.vAr : u0.vEn);
+          if(v){ u.voice = v; u.lang = v.lang; } else u.lang = seg.l === 'ar' ? 'ar-EG' : 'en-US';
+          u.rate = rate; u.pitch = 1; speechSynthesis.speak(u);
+        }
+      }
+    }
+  },
+  say(text){ this.stop(); this.dflt = hasAr(text) ? 'ar' : 'en'; setTimeout(()=>this.speakText(text), 90); },
+  stop(){ this.buf = ''; this.on = false; try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){} },
+  unlock(){ try{ const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); }catch(e){} },
+  begin(dflt){ this.stop(); this.on = true; this.first = false; this.dflt = dflt || 'ar'; },
+  feed(d){
+    if(!this.on) return; this.buf += d;
+    let lim = this.buf.length;
+    if(((this.buf.match(/```/g) || []).length) % 2 === 1) lim = Math.min(lim, this.buf.lastIndexOf('```'));
+    const o = this.buf.lastIndexOf('[['); if(o >= 0 && this.buf.indexOf(']]', o) < 0) lim = Math.min(lim, o);
+    const part = this.buf.slice(0, lim), re = /[.!?؟؛]\s|\n/g; let end = 0, m;
+    while((m = re.exec(part))) end = m.index + m[0].length;
+    if(end === 0 && !this.first && part.length >= 60){ const k = Math.max(part.lastIndexOf('،'), part.lastIndexOf(','), part.lastIndexOf(' و')); if(k > 25) end = k + 1; }
+    if(end > 0){ const ready = this.buf.slice(0, end); this.buf = this.buf.slice(end); this.first = true; this.speakText(ready); }
+  },
+  end(){ if(!this.on) return; const r = this.buf; this.buf = ''; this.on = false; if(r.trim()) this.speakText(r); }
+};
+if(window.speechSynthesis){ try{ speechSynthesis.getVoices(); }catch(e){} }
+
+/* =====================================================================
+   3) تنسيق الردود: صور + رسومات SVG + منحنيات + كود
+   ===================================================================== */
+const FN = {sin:Math.sin, cos:Math.cos, tan:Math.tan, asin:Math.asin, acos:Math.acos, atan:Math.atan, sqrt:Math.sqrt, abs:Math.abs, ln:Math.log, log:Math.log10, exp:Math.exp, floor:Math.floor, ceil:Math.ceil, cbrt:Math.cbrt};
+function compile(src){
+  let s = String(src).toLowerCase().replace(/[٠-٩]/g, d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/×/g, '*').replace(/÷/g, '/').replace(/√\s*(\d*\.?\d+|[a-z])(?![a-z])/g, 'sqrt($1)').replace(/√/g, 'sqrt').replace(/π/g, 'pi').replace(/[−–]/g, '-').replace(/\*\*/g, '^').replace(/\s+/g, '').replace(/^(y|f\(x\))=/, '');
+  const tk = s.match(/\d*\.?\d+|[a-z]+|[-+*\/^(),]/g) || []; if(!tk.length || tk.join('') !== s) throw new Error('bad');
+  let i = 0; const peek = () => tk[i], nx = () => tk[i++], atomStart = t => t != null && (/^[\d.]/.test(t) || /^[a-z]/.test(t) || t === '(');
+  function expr(){ let a = term(); while(peek() === '+' || peek() === '-'){ const o = nx(), b = term(), l = a; a = o === '+' ? x=>l(x) + b(x) : x=>l(x) - b(x); } return a; }
+  function term(){
+    let a = unary();
+    for(;;){ const t = peek(), l = a;
+      if(t === '*' || t === '/'){ nx(); const b = unary(); a = t === '*' ? x=>l(x) * b(x) : x=>l(x) / b(x); }
+      else if(atomStart(t)){ const b = power(); a = x=>l(x) * b(x); } else break; }
+    return a;
+  }
+  function unary(){ if(peek() === '-'){ nx(); const a = unary(); return x=>-a(x); } if(peek() === '+'){ nx(); return unary(); } return power(); }
+  function power(){ const a = atom(); if(peek() === '^'){ nx(); const b = unary(); return x=>Math.pow(a(x), b(x)); } return a; }
+  function atom(){
+    const t = nx(); if(t == null) throw new Error('eof');
+    if(/^[\d.]/.test(t)){ const v = parseFloat(t); return ()=>v; }
+    if(t === '('){ const a = expr(); if(nx() !== ')') throw new Error(')'); return a; }
+    if(t === 'x') return x=>x; if(t === 'pi') return ()=>Math.PI; if(t === 'e') return ()=>Math.E;
+    if(FN[t]){ if(nx() !== '(') throw new Error('('); const a = expr(); if(nx() !== ')') throw new Error(')'); const f = FN[t]; return x=>f(a(x)); }
+    throw new Error('tok');
+  }
+  const f = expr(); if(i !== tk.length) throw new Error('extra'); return f;
+}
+function niceStep(r){ const e = Math.pow(10, Math.floor(Math.log10(r))), f = r/e; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * e; }
+function drawPlot(cv){
+  cv.dataset.d = '1';
+  try{
+    let spec = cv.dataset.p || '', range = '-10..10'; const bar = spec.indexOf('|'); if(bar >= 0){ range = spec.slice(bar + 1).trim(); spec = spec.slice(0, bar); }
+    const m = range.match(/(-?[\d.]+)\s*(?:\.\.|to|,|؛)\s*(-?[\d.]+)/); let a = -10, b = 10; if(m){ a = +m[1]; b = +m[2]; } if(!(b > a) || b - a > 1e4){ a = -10; b = 10; }
+    const srcs = spec.split(/[;؛]/).map(s=>s.trim()).filter(Boolean).slice(0, 3), fns = srcs.map(compile);
+    const W = cv.width, H = cv.height, ctx = cv.getContext('2d'), N = 500, xs = [], ys = fns.map(()=>[]), all = [];
+    for(let k = 0; k <= N; k++){ const x = a + (b - a)*k/N; xs.push(x); fns.forEach((f, j)=>{ let y = NaN; try{ y = f(x); }catch(e){} ys[j].push(y); if(isFinite(y)) all.push(y); }); }
+    if(!all.length) throw new Error('empty');
+    all.sort((p, q)=>p - q); let lo = all[Math.floor(all.length*.02)], hi = all[Math.min(all.length - 1, Math.ceil(all.length*.98) - 1)];
+    if(hi - lo < 1e-9){ lo -= 1; hi += 1; } const pad = (hi - lo)*.1; lo -= pad; hi += pad;
+    const X = x => (x - a)/(b - a)*W, Y = y => H - (y - lo)/(hi - lo)*H, ink = getComputedStyle(cv).color || '#222';
+    ctx.clearRect(0, 0, W, H); ctx.font = '20px sans-serif'; ctx.lineWidth = 1;
+    const sx = niceStep((b - a)/8), sy = niceStep((hi - lo)/6);
+    ctx.strokeStyle = ink; ctx.globalAlpha = .13;
+    for(let x = Math.ceil(a/sx)*sx; x <= b; x += sx){ ctx.beginPath(); ctx.moveTo(X(x), 0); ctx.lineTo(X(x), H); ctx.stroke(); }
+    for(let y = Math.ceil(lo/sy)*sy; y <= hi; y += sy){ ctx.beginPath(); ctx.moveTo(0, Y(y)); ctx.lineTo(W, Y(y)); ctx.stroke(); }
+    ctx.globalAlpha = .7; ctx.lineWidth = 2;
+    if(lo < 0 && hi > 0){ ctx.beginPath(); ctx.moveTo(0, Y(0)); ctx.lineTo(W, Y(0)); ctx.stroke(); }
+    if(a < 0 && b > 0){ ctx.beginPath(); ctx.moveTo(X(0), 0); ctx.lineTo(X(0), H); ctx.stroke(); }
+    ctx.globalAlpha = .75; ctx.fillStyle = ink; const fx = n => +n.toFixed(2) + '';
+    for(let x = Math.ceil(a/sx)*sx; x <= b; x += sx){ if(Math.abs(x) < sx/2) continue; ctx.fillText(fx(x), X(x) + 3, Math.min(H - 6, Math.max(18, (lo < 0 && hi > 0) ? Y(0) + 20 : H - 6))); }
+    for(let y = Math.ceil(lo/sy)*sy; y <= hi; y += sy){ if(Math.abs(y) < sy/2) continue; ctx.fillText(fx(y), Math.min(W - 40, Math.max(4, (a < 0 && b > 0) ? X(0) + 5 : 4)), Y(y) - 4); }
+    ctx.globalAlpha = 1; const cols = ['#2563eb', '#e11d48', '#16a34a'];
+    fns.forEach((f, j)=>{
+      ctx.strokeStyle = cols[j]; ctx.lineWidth = 3.2; ctx.beginPath(); let pen = false, py = 0;
+      for(let k = 0; k <= N; k++){ const y = ys[j][k]; if(!isFinite(y) || Math.abs(Y(y)) > H*4){ pen = false; continue; }
+        const px = X(xs[k]), yy = Y(y); if(!pen || Math.abs(yy - py) > H*.85){ ctx.moveTo(px, yy); pen = true; } else ctx.lineTo(px, yy); py = yy; }
+      ctx.stroke(); ctx.fillStyle = cols[j]; ctx.fillText('y = ' + srcs[j], 10, 24 + j*24);
+    });
+  }catch(e){ const d = document.createElement('span'); d.className = 'mb-wait'; d.textContent = '⚠️ مقدرتش أرسم المعادلة دي'; cv.replaceWith(d); }
+}
+function drawPlots(root){ (root || document).querySelectorAll('canvas.mb-plot:not([data-d])').forEach(drawPlot); }
+function svgOk(code){
+  let m = String(code).match(/<svg[\s\S]*<\/svg>/i); if(!m) return ''; let s = m[0];
+  if(s.length > 80000) return '';
+  s = s.replace(new RegExp('<scr' + 'ipt[\\s\\S]*?<\\/scr' + 'ipt>', 'gi'), '').replace(/<foreignObject[\s\S]*?<\/foreignObject>/gi, '').replace(/\son\w+\s*=\s*("[^"]*"|'[^']*')/gi, '');
+  if(!/xmlns\s*=/.test(s.slice(0, 300))) s = s.replace(/<svg/i, '<svg xmlns="http://www.w3.org/2000/svg"');
+  return s;
+}
+function fmt(t, live){
+  t = String(t == null ? '' : t); const st = [], keep = h => { st.push(h); return '\u0001' + (st.length - 1) + '\u0002'; };
+  t = t.replace(/```([\w-]*)[^\S\n]*\n?([\s\S]*?)(```|$)/g, (m, lang, code, close)=>{
+    lang = (lang || '').toLowerCase();
+    if(lang === 'svg' || /^\s*<svg[\s>]/i.test(code)){
+      if(!close || !/<\/svg>/i.test(code)) return keep('<span class="mb-wait">✏️ برسم الشكل…</span>');
+      const s = svgOk(code); if(s) return keep('<img class="mb-img" alt="رسم" src="data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s) + '">');
+    }
+    return keep('<pre dir="ltr"><code>' + esc(code.replace(/\n$/, '')) + '</code></pre>');
+  });
+  t = t.replace(/\[\[\s*plot\s*:\s*([^\]]+?)\s*\]\]/gi, (m, spec)=>live ? keep('<span class="mb-wait">📈 برسم المنحنى…</span>') : keep('<canvas class="mb-plot" data-p="' + esc(spec) + '" width="640" height="400"></canvas>'));
+  if(live) t = t.replace(/\[\[[^\]]*$/, '');
+  t = esc(t);
+  t = t.replace(/!\[([^\]]*)\]\((https:\/\/[^\s)]+|data:image\/(?:png|jpe?g|webp|gif);base64,[A-Za-z0-9+\/=]+)\)/g, (m, a, u)=>'<img class="mb-img" loading="lazy" referrerpolicy="no-referrer" alt="' + a + '" src="' + u + '">');
+  t = t.replace(/\[([^\]\n]+)\]\((https:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  t = t.replace(/^\s{0,3}#{1,4}\s*(.+)$/gm, '<b class="mb-hd">$1</b>').replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>').replace(/`([^`\n]+)`/g, '<code>$1</code>')
+       .replace(/^(\s*)[-•*]\s+/gm, '$1• ').replace(/\n/g, '<br>');
+  t = t.replace(/(<br>)*\u0001(\d+)\u0002(<br>)*/g, '\u0001$2\u0002').replace(/\u0001(\d+)\u0002/g, (m, i)=>st[+i]);
+  return t;
+}
+MathBot.fmt = fmt;
+
+/* =====================================================================
+   4) المرفقات: صور / PDF / صوت
+   ===================================================================== */
+const readB64 = b => new Promise((res, rej)=>{ const r = new FileReader(); r.onload = ()=>res(r.result); r.onerror = rej; r.readAsDataURL(b); });
+const loadImg = src => new Promise((res, rej)=>{ const i = new Image(); i.onload = ()=>res(i); i.onerror = rej; i.src = src; });
+async function shrink(f){
+  const u = URL.createObjectURL(f);
+  try{
+    const im = await loadImg(u), k = Math.min(1, 1024/Math.max(im.width, im.height)), c = document.createElement('canvas');
+    c.width = Math.round(im.width*k); c.height = Math.round(im.height*k);
+    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', .72);
+  } finally { URL.revokeObjectURL(u); }
+}
+async function thumb(src){
+  try{ const im = await loadImg(src), k = 72/Math.max(im.width, im.height), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(im.width*k)); c.height = Math.max(1, Math.round(im.height*k));
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', .6); }catch(e){ return null; }
+}
+async function wavOf(blob){
+  const AC = window.AudioContext || window.webkitAudioContext, ctx = new AC(), buf = await blob.arrayBuffer();
+  const dec = await new Promise((res, rej)=>{ const p = ctx.decodeAudioData(buf, res, rej); if(p && p.catch) p.catch(rej); });
+  try{ ctx.close(); }catch(e){}
+  const off = new OfflineAudioContext(1, Math.max(1, Math.ceil(dec.duration*16000)), 16000), s = off.createBufferSource();
+  s.buffer = dec; s.connect(off.destination); s.start(); const pcm = (await off.startRendering()).getChannelData(0);
+  const out = new DataView(new ArrayBuffer(44 + pcm.length*2)), w = (o, t)=>{ for(let i = 0; i < t.length; i++) out.setUint8(o + i, t.charCodeAt(i)); };
+  w(0, 'RIFF'); out.setUint32(4, 36 + pcm.length*2, true); w(8, 'WAVEfmt '); out.setUint32(16, 16, true); out.setUint16(20, 1, true); out.setUint16(22, 1, true);
+  out.setUint32(24, 16000, true); out.setUint32(28, 32000, true); out.setUint16(32, 2, true); out.setUint16(34, 16, true); w(36, 'data'); out.setUint32(40, pcm.length*2, true);
+  for(let i = 0; i < pcm.length; i++){ const v = Math.max(-1, Math.min(1, pcm[i])); out.setInt16(44 + i*2, v < 0 ? v*0x8000 : v*0x7FFF, true); }
+  return readB64(new Blob([out], {type:'audio/wav'}));
+}
+/* قراءة PDF محلياً (أسرع بكتير من رفع الملف) — والملفات الممسوحة ضوئياً بتتبعت للسيرفر */
+let pdfjsP = null;
+function loadPdfJs(){
+  if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  if(pdfjsP) return pdfjsP;
+  pdfjsP = new Promise((res, rej)=>{
+    const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload = ()=>{ try{ window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; res(window.pdfjsLib); }catch(e){ rej(e); } };
+    s.onerror = ()=>{ pdfjsP = null; rej(new Error('pdfjs')); }; document.head.appendChild(s);
+  });
+  return pdfjsP;
+}
+async function extractPdf(buf){
+  const lib = await loadPdfJs(), doc = await lib.getDocument({data:new Uint8Array(buf)}).promise, n = Math.min(doc.numPages, 250); let out = '', cut = n < doc.numPages;
+  for(let p = 1; p <= n; p++){
+    const pg = await doc.getPage(p), tc = await pg.getTextContent(); let line = '';
+    for(const it of tc.items){ line += it.str + (it.hasEOL ? '\n' : ' '); }
+    out += '\n[صفحة ' + p + ']\n' + line.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+    if(out.length > 120000){ cut = true; out = out.slice(0, 120000); break; }
+  }
+  return {text:out.trim(), pages:doc.numPages, cut};
+}
+async function addPdf(f){
+  if(f.size > 25*1024*1024){ say('الملف كبير (أقصى حجم 25MB)'); return; }
+  const pdf = {name:f.name, size:f.size, fresh:true}; S.pdf = pdf; paintPrev(); say('⏳ بقرا الملف…');
+  try{
+    const ex = await extractPdf(await f.arrayBuffer());
+    if(ex.text.replace(/\[صفحة \d+\]|\s/g, '').length < Math.min(300, ex.pages*60)) throw new Error('scanned');
+    Object.assign(pdf, {text:ex.text, pages:ex.pages, cut:ex.cut});
+  }catch(e){
+    if(f.size > 10*1024*1024){ if(S.pdf === pdf) S.pdf = null; paintPrev(); say('الملف ممسوح ضوئياً وكبير (أكتر من 10MB) — جرّب ملف أصغر'); return; }
+    try{ pdf.data = await readB64(f); pdf.raw = true; }catch(_){ if(S.pdf === pdf) S.pdf = null; paintPrev(); say('تعذّر قراءة الملف'); return; }
+  }
+  if(S.pdf !== pdf) return; paintPrev();
+  say('✅ الملف جاهز — اكتب سؤالك أو دوس «لخّصلي الملف»');
+}
+async function addFiles(files){
+  for(const f of files){
+    if(/pdf$/i.test(f.type) || /\.pdf$/i.test(f.name)){ await addPdf(f); continue; }
+    if(/^image\//.test(f.type)){ if(S.imgs.length >= 4){ say('أقصى عدد 4 صور'); break; } try{ S.imgs.push(await shrink(f)); }catch(_){ say('صورة غير مدعومة: ' + f.name); } continue; }
+    say('نوع الملف مش مدعوم: ' + f.name + ' (صور و PDF بس)');
+  }
+  paintPrev();
+}
+function paintPrev(){
+  const el = $i('mbPrev'); if(!el) return; const pdf = S.pdf;
+  el.hidden = !(S.imgs.length || S.audio || pdf);
+  let h = S.imgs.map((s, i)=>'<span class="th"><img src="' + s + '" alt=""><button type="button" data-mbx="rm" data-i="' + i + '">✕</button></span>').join('');
+  if(S.audio) h += '<span class="chip">🎤 تسجيل <button type="button" data-mbx="rma">✕</button></span>';
+  if(pdf){
+    const meta = pdf.text ? pdf.pages + ' صفحة' : (pdf.raw ? 'ملف ممسوح' : '⏳ بيتقرا…');
+    h += '<span class="chip" title="' + esc(pdf.name) + '">📄 <span class="nm">' + esc(pdf.name) + '</span> <small>' + meta + '</small> <button type="button" data-mbx="rmpdf" aria-label="شيل الملف">✕</button></span>';
+  }
+  const q = (pdf && pdf.fresh && (pdf.text || pdf.raw)) ? ['لخّصلي الملف ده', 'أهم النقاط في نقاط', 'اعملّي أسئلة مراجعة من الملف', 'اشرحه ببساطة'] : (S.imgs.length ? ['حلّ اللي في الصورة خطوة بخطوة', 'لخّص اللي في الصورة', 'اشرح الصورة دي'] : []);
+  h += q.map(t=>'<button type="button" class="pq" data-mbx="pq">' + t + '</button>').join('');
+  el.innerHTML = h;
+}
+let mr = null, tm = null;
+async function mic(){
+  const b = $i('mbMic'); if(!b) return;
+  if(mr && mr.state === 'recording'){ mr.stop(); return; }
+  if(!navigator.mediaDevices || !window.MediaRecorder){ say('المتصفح ده مش بيدعم التسجيل'); return; }
+  try{
+    const st = await navigator.mediaDevices.getUserMedia({audio:true}), ch = []; mr = new MediaRecorder(st); const t0 = Date.now();
+    mr.ondataavailable = e=>{ if(e.data.size) ch.push(e.data); };
+    mr.onstop = async ()=>{
+      clearInterval(tm); st.getTracks().forEach(t=>t.stop()); b.classList.remove('rec'); b.textContent = '🎤';
+      try{ S.audio = await wavOf(new Blob(ch, {type:mr.mimeType || 'audio/webm'})); S.viaMic = true; paintPrev(); MathBot.send(($i('mbIn') || {}).value); }catch(e){ say('مقدرتش أعالج التسجيل — جرّب تاني'); }
+    };
+    mr.start(); b.classList.add('rec'); tm = setInterval(()=>{ const s = Math.floor((Date.now() - t0)/1000); b.textContent = '⏹ ' + s + 's'; if(s >= 45 && mr.state === 'recording') mr.stop(); }, 500);
+  }catch(e){ say('اسمح للمتصفح باستخدام المايك'); }
+}
+
+/* =====================================================================
+   5) اللوحة والرسم
+   ===================================================================== */
+MathBot.settings = false;
+MathBot.panel = function(){
+  let p = $i('mbPanel'); if(p) return p;
+  document.body.insertAdjacentHTML('beforeend',
+  '<div id="mbPanel" hidden role="dialog" aria-label="مساعد الماث">' +
+    '<div class="mb-h"><b id="mbTitle"><span class="mb-em">🤖</span> <span>مساعد الماث</span></b>' +
+      '<button type="button" data-mbx="cfg" title="إعدادات الروبوت" aria-label="إعدادات">⚙️</button>' +
+      '<button type="button" data-mbx="tts" id="mbTts" title="قراءة الردود بصوت عالي" aria-label="قراءة الردود">🔇</button>' +
+      '<button type="button" data-mbx="clear" title="مسح المحادثة" aria-label="مسح">🗑</button>' +
+      '<button type="button" data-mbx="max" id="mbMax" title="تكبير" aria-label="تكبير">⛶</button>' +
+      '<button type="button" data-mb="toggle" aria-label="إغلاق">✕</button></div>' +
+    '<div class="mb-msgs" id="mbMsgs" aria-live="polite"></div>' +
+    '<div class="mb-chips" id="mbChips"><button type="button" data-mb="q">اشرح لي التفاضل ببساطة</button><button type="button" data-mb="q">حل: 2x + 6 = 14</button><button type="button" data-mb="q">إيه الفرق بين المنوال والوسيط؟</button><button type="button" data-mb="q">ارسم لي منحنى y = x² − 4</button></div>' +
+    '<div class="mb-prev" id="mbPrev" hidden></div>' +
+    '<div class="mb-f"><button type="button" class="mb-ico" data-mbx="attach" title="إرفاق صورة أو PDF" aria-label="إرفاق">📎</button><button type="button" class="mb-ico" data-mbx="mic" id="mbMic" title="اسأل بالصوت" aria-label="تسجيل صوتي">🎤</button>' +
+      '<textarea id="mbIn" rows="1" maxlength="1500" placeholder="اسأل في أي حاجة… أو ارفع صورة / PDF 📎 أو اتكلم 🎤"></textarea>' +
+      '<button type="button" id="mbSend" data-mb="send">إرسال</button>' +
+      '<input type="file" id="mbFile" accept="image/*,application/pdf,.pdf" multiple hidden></div>' +
+  '</div>');
+  p = $i('mbPanel');
+  const ta = p.querySelector('#mbIn');
+  ta.addEventListener('keydown', e=>{ if(e.key === 'Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); MathBot.send(ta.value); } });
+  ta.addEventListener('input', ()=>{ ta.style.height = 'auto'; ta.style.height = Math.min(110, ta.scrollHeight) + 'px'; });
+  ta.addEventListener('paste', e=>{ const fs = [...(e.clipboardData && e.clipboardData.files || [])]; if(fs.length){ e.preventDefault(); addFiles(fs); } });
+  $i('mbFile').addEventListener('change', async e=>{ const fs = [...e.target.files]; e.target.value = ''; await addFiles(fs); });
+  p.addEventListener('dragover', e=>{ if(e.dataTransfer && [...e.dataTransfer.types].includes('Files')){ e.preventDefault(); p.classList.add('mb-over'); } });
+  p.addEventListener('dragleave', e=>{ if(e.target === p) p.classList.remove('mb-over'); });
+  p.addEventListener('drop', e=>{ if(e.dataTransfer && e.dataTransfer.files.length){ e.preventDefault(); p.classList.remove('mb-over'); addFiles([...e.dataTransfer.files]); } });
+  return p;
+};
+function msgHtml(m, idx){
+  if(m.role === 'user'){
+    let h = ''; if(m.th && m.th.length) h += '<div class="mb-th">' + m.th.map(s=>'<img src="' + s + '" alt="">').join('') + '</div>';
+    if(m.pdf) h += '<div class="mb-pdf">📄 ' + esc(m.pdf) + '</div>';
+    return '<div class="mb-m mb-u">' + h + fmt(m.content) + '</div>';
+  }
+  const g = (S.gen[m.id] || []).map(s=>'<img class="mb-img" alt="صورة" src="' + s + '">').join('');
+  return '<div class="mb-m mb-b">' + fmt(m.content) + g + '<div class="mb-act"><button type="button" data-mbx="say" data-i="' + idx + '" title="اقرأها بصوت عالي">🔊</button><button type="button" data-mbx="copy" data-i="' + idx + '" title="نسخ">📋</button></div></div>';
+}
+const DOTS = '<span class="mb-dots"><span></span><span></span><span></span></span>';
+function liveInner(){
+  const g = S.liveImgs.map(s=>'<img class="mb-img" alt="صورة" src="' + s + '">').join('');
+  return (S.partial || g) ? fmt(S.partial, true) + g : DOTS;
+}
+MathBot.paint = function(){
+  const p = $i('mbPanel'); if(!p) return; const el = $i('mbMsgs'), f = p.querySelector('.mb-f'), c = $i('mbChips'), pv = $i('mbPrev');
+  const tt = $i('mbTts'); if(tt) tt.textContent = autoTts() ? '🔊' : '🔇';
+  const mx = $i('mbMax'); if(mx){ mx.textContent = S.max ? '🗗' : '⛶'; mx.title = S.max ? 'تصغير' : 'تكبير'; mx.setAttribute('aria-label', mx.title); }
+  const sb = $i('mbSend'); if(sb){ sb.textContent = this.busy ? '⏹ إيقاف' : 'إرسال'; sb.classList.toggle('stop', !!this.busy); sb.disabled = false; }
+  applyUI();
+  if(S.cfg){ f.style.display = 'none'; c.style.display = 'none'; pv.style.display = 'none'; el.innerHTML = cfgHtml(); return; }
+  f.style.display = ''; pv.style.display = '';
+  const H = this.hist(); let h = '';
+  if(!H.length){
+    h += '<div class="mb-m mb-b">أهلاً! أنا مساعد الماث 🤖<br>اسألني في أي حاجة في الرياضيات: شرح، حل مسائل، أو تبسيط قوانين.<br>📎 ارفع صورة مسألة أو ملف PDF وأنا أحلّها وألخّصهولك، أو 🎤 اتكلم معايا.</div>';
+    if(!this.url()) h += '<div class="mb-m mb-b">' + (isAdmin ? '⚙️ لتفعيل الردود الذكية انشر ملف <code>math-bot-function.ts</code> على Supabase وحط رابطه من زرار ⚙️ فوق. لحد وقتها أقدر أحسب العمليات العادية بس.' : 'الردود الذكية لسه مش مفعّلة. لحد وقتها أقدر أحسب لك العمليات العادية زي (2+3)*4.') + '</div>';
+  }
+  h += H.map(msgHtml).join('');
+  if(S.live) h += '<div class="mb-m mb-b" id="mbLive">' + liveInner() + '</div>';
+  el.innerHTML = h; el.scrollTop = el.scrollHeight; c.style.display = H.length ? 'none' : '';
+  drawPlots(el); paintPrev();
+};
+let raf = 0;
+function live(){
+  if(raf) return;
+  raf = requestAnimationFrame(()=>{ raf = 0; const e = $i('mbLive'), box = $i('mbMsgs'); if(!e || !box) return;
+    const near = box.scrollHeight - box.scrollTop - box.clientHeight < 90; e.innerHTML = liveInner(); if(near) box.scrollTop = box.scrollHeight; });
+}
+/* إعدادات الأدمن (رابط السيرفر) */
+const lsUrl = () => String(lsGet('sx_bot_url', '') || '').trim();
+MathBot.url = function(){ const u = String(this.cfg().url || (isAdmin ? lsUrl() : '') || '').trim(); return /^https:\/\//.test(u) ? u : ''; };
+const warmed = {};
+function warm(){ const u = MathBot.url(), n = Date.now(); if(u && n - (warmed[u] || 0) > 90000){ warmed[u] = n; try{ fetch(u, {method:'OPTIONS'}).catch(()=>{}); }catch(e){} } }
+document.addEventListener('pointerdown', e=>{ if(e.target.closest && e.target.closest('#mbFab,[data-hdr="bot"],#mbPanel')) warm(); }, true);
+document.addEventListener('input', e=>{ if(e.target && e.target.id === 'mbIn') warm(); });
+MathBot.config = function(){ S.cfg = !S.cfg; this.paint(); };
+MathBot.toggle = function(){
+  const p = this.panel(); p.hidden = !p.hidden;
+  if(!p.hidden){
+    if(U().openMax) S.max = true;
+    this.paint(); placePanel(); warm();
+    setTimeout(()=>{ const i = $i('mbIn'); if(i && !S.cfg) i.focus({preventScroll:true}); }, 60);
+  } else { Voice.stop(); }
+};
+
+/* =====================================================================
+   6) الإرسال (ستريمنج)
+   ===================================================================== */
+MathBot.reply = function(H, txt, extra){ const m = Object.assign({role:'assistant', id:'a' + Date.now(), content:txt}, extra || {}); H.push(m); this.save(H); return m; };
+MathBot.send = async function(txt){
+  if(this.busy){ S.stopped = true; if(S.abort) S.abort.abort(); return; }
+  txt = String(txt || '').trim().slice(0, 1500);
+  const imgs = S.imgs.slice(), audio = S.audio, pdf = S.pdf, fresh = !!(pdf && pdf.fresh);
+  if(pdf && !pdf.text && !pdf.raw){ say('استنى لحظة، لسه بقرا الملف…'); return; }
+  if(!txt && fresh) txt = 'لخّصلي الملف ده بشكل مرتب';
+  if(!txt && imgs.length && !audio) txt = 'اشرح اللي في الصورة، ولو فيها مسألة حلّها خطوة بخطوة';
+  if(!txt && !imgs.length && !audio) return;
+  const viaMic = S.viaMic; S.viaMic = false;
+  const inp = $i('mbIn'); if(inp){ inp.value = ''; inp.style.height = ''; }
+  S.imgs = []; S.audio = null; if(pdf) pdf.fresh = false; this.busy = true; Voice.stop();
+  const H = this.hist(), id = 'm' + Date.now(), speakIt = autoTts() || viaMic;
+  try{
+    const th = imgs.length ? (await Promise.all(imgs.map(thumb))).filter(Boolean) : [];
+    const um = {role:'user', id, content:((audio ? '🎤 [رسالة صوتية] ' : '') + txt).trim()}; if(th.length) um.th = th; if(fresh) um.pdf = pdf.name;
+    H.push(um); this.save(H);
+    if(imgs.length || audio){ S.media[id] = {imgs, audio}; Object.keys(S.media).slice(0, -3).forEach(k=>delete S.media[k]); }
+    const loc = (imgs.length || audio) ? null : this.calc(txt);
+    if(loc !== null){ this.reply(H, '🧮 ' + loc); return; }
+    if(!this.url()){ this.reply(H, 'الردود الذكية لسه مش مفعّلة 🔌 — أقدر أحسب لك العمليات الحسابية بس.'); return; }
+    S.live = true; S.partial = ''; S.liveImgs = []; S.stopped = false; this.paint();
+    if(speakIt){ Voice.begin(hasAr(txt) ? 'ar' : 'en'); Voice.unlock(); }
+    /* بناء الرسايل: آخر 10 بس، والميديا مع آخر رسالة بس */
+    const msgs = H.slice(-8).map(m=>{
+      const o = {role:m.role, content:m.content}, md = m.id && S.media[m.id];
+      if(md){ o.images = md.imgs; o.audio = md.audio; if(md.audio && !md.imgs.length) o.content = o.content.replace('🎤 [رسالة صوتية]', '').trim(); }
+      return o;
+    });
+    const cur = msgs[msgs.length - 1];
+    if(pdf){
+      if(pdf.text) cur.content = '📄 ملف PDF مرفق باسم «' + pdf.name + '» (' + pdf.pages + ' صفحة' + (pdf.cut ? '، اتقرا الجزء الأول بس' : '') + '):\n"""\n' + pdf.text + '\n"""\n\nطلبي: ' + cur.content;
+      else if(pdf.data && (fresh || pdf.size < 3e6)) cur.files = [{name:pdf.name, mime:'application/pdf', data:pdf.data}];
+    }
+    const ctl = new AbortController(); S.abort = ctl; let idle = null; const arm = ()=>{ clearTimeout(idle); idle = setTimeout(()=>ctl.abort(), 60000); }; arm();
+    let text = '', err = '', imgsOut = [], status = 0, errMsg = '';
+    try{
+      let r; for(let n = 0; n < 2; n++){
+        r = await fetch(this.url(), {method:'POST', headers:{'Content-Type':'application/json', 'apikey':(CONFIG.QA && CONFIG.QA.anonKey) || ''}, body:JSON.stringify({messages:msgs, stream:true}), signal:ctl.signal});
+        if(r.ok || ![429, 500, 502, 503, 504].includes(r.status) || ctl.signal.aborted) break;
+        await new Promise(x=>setTimeout(x, 500));
+      }
+      status = r.status; const ct = (r.headers.get('content-type') || '').toLowerCase();
+      if(r.ok && ct.indexOf('text/event-stream') >= 0 && r.body){
+        const rd = r.body.getReader(), dec = new TextDecoder(); let buf = '';
+        for(;;){
+          const {done, value} = await rd.read(); if(done) break; arm();
+          buf += dec.decode(value, {stream:true}).replace(/\r\n/g, '\n'); let k;
+          while((k = buf.indexOf('\n\n')) >= 0){
+            const ev = buf.slice(0, k); buf = buf.slice(k + 2);
+            for(const ln of ev.split('\n')){
+              if(ln.slice(0, 5) !== 'data:') continue; const raw = ln.slice(5).trim(); if(!raw || raw === '[DONE]') continue;
+              let j; try{ j = JSON.parse(raw); }catch(_){ continue; }
+              if(j.t){ text += j.t; S.partial = text; Voice.feed(j.t); live(); }
+              if(j.img && /^data:image\//.test(j.img)){ imgsOut.push(j.img); S.liveImgs = imgsOut.slice(); live(); }
+              if(j.err) err = String(j.err);
+            }
+          }
+        }
+      } else {
+        const j = await r.json().catch(()=>({})), a = j.reply || j.text || (j.content && j.content[0] && j.content[0].text);
+        if(r.ok && a){ text = String(a); if(Array.isArray(j.images)) imgsOut = j.images.filter(s=>/^data:image\//.test(s)); S.partial = text; S.liveImgs = imgsOut.slice(); Voice.feed(text); live(); }
+        else errMsg = String(j.error || j.message || j.msg || '');
+      }
+    }catch(e){ err = (e && e.name === 'AbortError') ? (S.stopped ? '' : 'timeout') : 'net'; errMsg = String(e && e.message || ''); }
+    clearTimeout(idle); if(S.stopped) Voice.stop(); else Voice.end();
+    let out = text.trim();
+    if(out){ if(err === 'timeout' || err === 'net') out += '\n\n⚠️ الرد اتقطع'; else if(S.stopped) out += ' ⏹'; }
+    else if(S.stopped) out = '⏹ اتوقّف.';
+    else if(err === 'net') out = '⚠️ مقدرتش أوصل للسيرفر. اتأكد من النت وجرّب تاني.' + (isAdmin ? ' [للأدمن: ' + errMsg.slice(0, 100) + ']' : '');
+    else if(err === 'timeout') out = '⚠️ السيرفر اتأخر أوي. جرّب تاني بعد شوية.';
+    else if(/high demand|overload|UNAVAILABLE|ضغط/i.test(err + ' ' + errMsg) || [429, 502, 503, 504].includes(status)) out = '⏳ السيرفر عليه ضغط دلوقتي (من عند Google)، جرّب تاني بعد ثواني.' + (isAdmin ? ' [للأدمن: ' + status + ' — ' + (err || errMsg).slice(0, 100) + ']' : '');
+    else out = '⚠️ حصلت مشكلة في الرد، جرّب تاني بعد شوية.' + (isAdmin ? ' [للأدمن: ' + status + ' — ' + (err || errMsg).slice(0, 120) + ']' : '');
+    const m = this.reply(H, out); if(imgsOut.length) S.gen[m.id] = imgsOut;
+  } finally { this.busy = false; S.live = false; S.abort = null; this.paint(); }
+};
+
+/* =====================================================================
+   7) الإعدادات (لكل مستخدم) + إعداد السيرفر (للأدمن)
+   ===================================================================== */
+const EMOJIS = ['🤖', '🧠', '🦉', '🐱', '🦊', '🐼', '🚀', '⭐', '🎓', '✨', '🧮', '📐', '💡', '🔮'];
+const COLORS = ['#2563eb', '#7c3aed', '#db2777', '#e11d48', '#ea580c', '#16a34a', '#0d9488', '#0891b2', '#111827', '#f59e0b'];
+const POSL = [['tl', '↖', 'فوق شمال'], ['tr', '↗', 'فوق يمين'], ['ml', '←', 'نص شمال'], ['mr', '→', 'نص يمين'], ['bl', '↙', 'تحت شمال'], ['br', '↘', 'تحت يمين']];
+function cfgHtml(){
+  const u = U(), vs = Voice.voices(), nm = v => esc(v.name + ' (' + v.lang + ')');
+  const ar = vs.filter(v=>/^ar/i.test(v.lang)), en = vs.filter(v=>/^en/i.test(v.lang));
+  const opt = (list, cur) => '<option value="">تلقائي (الأحسن المتاح)</option>' + list.map(v=>'<option value="' + esc(v.name) + '"' + (v.name === cur ? ' selected' : '') + '>' + nm(v) + '</option>').join('');
+  const saved = String(MathBot.cfg().url || '').trim(), loc = lsUrl();
+  let h = '<div class="mb-cfg"><b>⚙️ إعدادات الروبوت</b>';
+  h += '<div class="sec"><b>🎨 الشكل والمكان</b><label>الأيموجي</label><div class="row">' +
+    EMOJIS.map(e=>'<button type="button" class="em' + (u.emoji === e ? ' on' : '') + '" data-s="emoji" data-v="' + e + '">' + e + '</button>').join('') + '</div>' +
+    '<input type="text" id="mbEmoji" data-s="emojiin" maxlength="12" placeholder="أو اكتب أيموجي تاني…" value="' + (EMOJIS.includes(u.emoji) ? '' : esc(u.emoji)) + '">' +
+    '<label>اللون</label><div class="row"><button type="button" class="sw' + (!u.color ? ' on' : '') + '" data-s="color" data-v="" title="لون الموقع" style="background:var(--accent)"></button>' +
+    COLORS.map(c=>'<button type="button" class="sw' + (u.color === c ? ' on' : '') + '" data-s="color" data-v="' + c + '" style="background:' + c + '"></button>').join('') +
+    '<input type="color" id="mbColor" data-s="colorin" value="' + (u.color || '#2563eb') + '" title="لون مخصص"></div>' +
+    '<label>مكان الأيقونة</label><div class="posg">' + POSL.map(p=>'<button type="button" data-s="pos" data-v="' + p[0] + '" class="' + (u.pos === p[0] ? 'on' : '') + '"><i>' + p[1] + '</i><small>' + p[2] + '</small></button>').join('') + '</div>' +
+    '<div class="row"><button type="button" data-s="pos" data-v="default" class="' + (u.pos === 'default' ? 'on' : '') + '">المكان الأصلي</button>' + (u.pos === 'custom' ? '<small>📍 مكان حر (سحبته بإيدك)</small>' : '') + '</div>' +
+    '<small>💡 تقدر كمان تمسك الأيقونة وتسحبها لأي مكان على الشاشة.</small>' +
+    '<label class="chk"><input type="checkbox" data-s="openMax"' + (u.openMax ? ' checked' : '') + '> افتح الشات مكبّر (بطول الشاشة) دايماً</label></div>';
+  h += '<div class="sec"><b>🔊 الصوت</b><label class="chk"><input type="checkbox" data-s="auto"' + (autoTts() ? ' checked' : '') + '> اقرأ الردود بصوت عالي تلقائياً</label>' +
+    '<label>سرعة القراءة: <span id="mbRateV">' + (+u.rate).toFixed(2) + '×</span></label><input type="range" min="0.6" max="1.4" step="0.05" value="' + u.rate + '" data-s="rate">' +
+    '<label>الصوت العربي</label>' + (ar.length ? '<select data-s="vAr">' + opt(ar, u.vAr) + '</select>' : '<small>⚠️ جهازك مفيهوش صوت عربي. جرّب Microsoft Edge أو Chrome (فيهم أصوات طبيعية)، أو نزّل صوت عربي من إعدادات الجهاز.</small>') +
+    '<label>الصوت الإنجليزي (للمصطلحات)</label>' + (en.length ? '<select data-s="vEn">' + opt(en, u.vEn) + '</select>' : '<small>مفيش أصوات إنجليزي متاحة.</small>') +
+    '<div class="row"><button type="button" class="pri" data-s="test">🔊 جرّب الصوت</button><button type="button" data-s="stopv">⏹ وقّف</button></div>' +
+    '<small>لما تسأل بالصوت 🎤 الروبوت بيرد بالصوت تلقائياً.</small></div>';
+  if(isAdmin){
+    h += '<div class="sec"><b>🛠️ السيرفر (للأدمن)</b><label for="mbUrl">رابط سيرفر الروبوت (Supabase Edge Function)</label>' +
+      '<input id="mbUrl" placeholder="https://xxxx.supabase.co/functions/v1/math-bot" value="' + esc(saved || loc) + '">' +
+      '<small>الحالة: ' + (saved ? '✅ مفعّل للموقع كله' : (loc ? '📱 مفعّل على جهازك بس' : '❌ لسه مفيش رابط — الروبوت بيحسب العمليات بس')) + '</small>' +
+      '<button type="button" class="pri" data-s="cs">💾 حفظ للموقع كله</button><button type="button" data-s="cl">📱 جرّبه على جهازي بس</button><button type="button" data-s="ct">🔌 اختبار الاتصال</button><div class="mb-st" id="mbSt"></div></div>';
+  }
+  h += '<div class="row"><button type="button" class="pri" data-s="back">← رجوع للمحادثة</button><button type="button" data-s="reset">↺ رجّع الافتراضي</button></div></div>';
+  return h;
+}
+function repaintCfg(){ if(S.cfg){ const el = $i('mbMsgs'), y = el ? el.scrollTop : 0; MathBot.paint(); if(el) el.scrollTop = y; } }
+function onCfg(e){
+  const a = e.target.closest && e.target.closest('[data-s]'); if(!a || !$i('mbPanel') || !$i('mbPanel').contains(a)) return; const k = a.dataset.s, t = e.type;
+  if(t === 'click'){
+    if(k === 'emoji'){ setU({emoji:a.dataset.v}); repaintCfg(); }
+    else if(k === 'color'){ setU({color:a.dataset.v}); repaintCfg(); }
+    else if(k === 'pos'){ setU({pos:a.dataset.v}); repaintCfg(); }
+    else if(k === 'test'){ Voice.say('أهلاً! أنا مساعد الماث. لو x تربيع زائد 2 يساوي 6، يبقى x يساوي 2. And this is the English voice for terms like derivative and integral.'); }
+    else if(k === 'stopv') Voice.stop();
+    else if(k === 'back'){ S.cfg = false; MathBot.paint(); }
+    else if(k === 'reset'){ if(confirm('ترجّع كل إعدادات الروبوت للافتراضي؟')){ lsSet(UIK, {}); lsSet('sx_bot_tts', false); applyUI(); repaintCfg(); } }
+    else if(isAdmin && (k === 'cs' || k === 'cl' || k === 'ct')){
+      const inp = $i('mbUrl'), v = inp ? inp.value.trim() : '', st = $i('mbSt'), sy = m => { if(st) st.textContent = m; };
+      if(v && !/^https:\/\//.test(v)) return sy('❌ الرابط لازم يبدأ بـ https://');
+      if(k === 'cl'){ lsSet('sx_bot_url', v); sy(v ? '📱 اتحفظ على جهازك — جرّب اسأل الروبوت دلوقتي' : 'اتمسح'); }
+      else if(k === 'cs'){ site.meta = site.meta || {}; site.meta.aiBot = Object.assign({}, MathBot.cfg(), {url:v}); commit(); sy('✅ اتحفظ للموقع كله'); }
+      else {
+        if(!v) return sy('❌ حط الرابط الأول'); sy('⏳ بجرّب الاتصال…');
+        fetch(v, {method:'POST', headers:{'Content-Type':'application/json', 'apikey':(CONFIG.QA && CONFIG.QA.anonKey) || ''}, body:JSON.stringify({messages:[{role:'user', content:'2+2 بكام؟ جاوب بكلمة واحدة'}], stream:false})})
+          .then(async r=>{ const j = await r.json().catch(()=>({})); sy(r.ok && j.reply ? '✅ شغّال! الرد: ' + String(j.reply).slice(0, 80) : '❌ فشل (' + r.status + '): ' + (j.error || j.message || j.msg || 'رد غير متوقع') + (r.status === 401 ? ' — اقفل Verify JWT للدالة (deploy --no-verify-jwt)' : '')); })
+          .catch(()=>sy('❌ مقدرتش أوصل للرابط (الرابط غلط أو الدالة مش منشورة أو CORS)'));
+      }
+    }
+  } else if(t === 'input'){
+    if(k === 'emojiin'){ const v = [...a.value.trim()].slice(0, 6).join(''); if(v){ setU({emoji:v}); } }
+    else if(k === 'colorin') setU({color:a.value});
+    else if(k === 'rate'){ setU({rate:+a.value}); const l = $i('mbRateV'); if(l) l.textContent = (+a.value).toFixed(2) + '×'; }
+  } else if(t === 'change'){
+    if(k === 'auto'){ lsSet('sx_bot_tts', a.checked); const tt = $i('mbTts'); if(tt) tt.textContent = a.checked ? '🔊' : '🔇'; if(a.checked) Voice.unlock(); }
+    else if(k === 'openMax') setU({openMax:a.checked});
+    else if(k === 'vAr') setU({vAr:a.value});
+    else if(k === 'vEn') setU({vEn:a.value});
+    else if(k === 'colorin') setU({color:a.value});
+  }
+}
+document.addEventListener('click', onCfg); document.addEventListener('input', onCfg); document.addEventListener('change', onCfg);
+
+/* =====================================================================
+   8) أزرار الهيدر + باقي الأحداث
+   ===================================================================== */
+document.addEventListener('click', e=>{
+  const a = e.target.closest && e.target.closest('[data-mbx]'); if(!a) return; const k = a.dataset.mbx;
+  if(k === 'attach') $i('mbFile').click();
+  else if(k === 'mic') mic();
+  else if(k === 'cfg') MathBot.config();
+  else if(k === 'max'){ S.max = !S.max; MathBot.paint(); placePanel(); }
+  else if(k === 'rm'){ S.imgs.splice(+a.dataset.i, 1); paintPrev(); }
+  else if(k === 'rma'){ S.audio = null; paintPrev(); }
+  else if(k === 'rmpdf'){ S.pdf = null; paintPrev(); }
+  else if(k === 'pq') MathBot.send(a.textContent);
+  else if(k === 'clear'){ MathBot.save([]); S.media = {}; S.gen = {}; S.pdf = null; Voice.stop(); MathBot.paint(); }
+  else if(k === 'tts'){ const on = !autoTts(); lsSet('sx_bot_tts', on); a.textContent = on ? '🔊' : '🔇'; if(!on) Voice.stop(); else { Voice.unlock(); say('🔊 هقرأ الردود بصوت عالي'); } }
+  else if(k === 'say'){ const m = MathBot.hist()[+a.dataset.i]; if(m){ if(window.speechSynthesis && speechSynthesis.speaking){ Voice.stop(); } else Voice.say(m.content); } }
+  else if(k === 'copy'){ const m = MathBot.hist()[+a.dataset.i]; if(m){ try{ navigator.clipboard.writeText(m.content); say('✅ اتنسخ'); }catch(_){ say('تعذّر النسخ'); } } }
+});
+document.addEventListener('click', e=>{
+  const im = e.target.closest && e.target.closest('#mbPanel .mb-img'); if(!im) return;
+  const d = document.createElement('div'); d.id = 'mbLb'; d.innerHTML = '<img alt="" src="' + im.src + '">'; d.addEventListener('click', ()=>d.remove()); document.body.appendChild(d);
+});
+document.addEventListener('keydown', e=>{
+  if(e.key !== 'Escape') return; const lb = $i('mbLb'); if(lb){ lb.remove(); return; }
+  const p = $i('mbPanel'); if(p && !p.hidden){ Voice.stop(); }
+});
+setTimeout(()=>{ try{ applyUI(); }catch(e){} }, 1200);
 })();
 </script>
 </body>
