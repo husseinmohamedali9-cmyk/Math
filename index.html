@@ -9457,4 +9457,295 @@ FEATURES.push(['hdr_brain','🧠 زرار المذاكرة الذكية في ا�
     navigator.serviceWorker.register('./sw.js');
   }
 </script>
+<style id="xtCss">
+.x-box{margin:6px 0}.x-cap{font-size:13px;color:var(--ink-soft);margin-top:6px;text-align:center}
+.x-voice{display:flex;flex-direction:column;gap:6px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.x-voice audio,.x-vid video{width:100%;border-radius:12px}.x-vid video{max-height:70vh;background:#000}
+.x-spd{display:flex;gap:6px;justify-content:center}.x-spd button{border:1px solid var(--line);background:var(--surface-2,var(--surface));color:var(--ink);border-radius:10px;padding:3px 10px;cursor:pointer;font:inherit;font-size:12.5px}
+.x-file{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);text-decoration:none}
+.x-file b{display:block;overflow-wrap:anywhere}.x-file small{color:var(--ink-soft)}.x-file .ic{font-size:30px}.x-file .go{margin-inline-start:auto;background:var(--accent);color:#fff;border-radius:10px;padding:6px 12px;font-weight:700;white-space:nowrap}
+.x-cmp{position:relative;overflow:hidden;border-radius:16px;margin:0;direction:ltr;user-select:none;touch-action:pan-y}
+.x-cmp img{display:block;width:100%;height:auto}.x-cmp .x-top{position:absolute;inset:0;height:100%;object-fit:cover;clip-path:inset(0 calc(100% - var(--p,50%)) 0 0)}
+.x-cmp input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.x-cmp .x-hdl{position:absolute;top:0;bottom:0;left:var(--p,50%);width:3px;background:#fff;box-shadow:0 0 6px #0008;pointer-events:none}
+.x-cmp .x-hdl:after{content:"↔";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;color:#222;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:15px}
+.x-cmp .x-t{position:absolute;top:8px;background:#000a;color:#fff;font-size:12px;padding:2px 8px;border-radius:8px}
+.x-plot{border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:8px}.x-plot svg{width:100%;height:auto;display:block;direction:ltr}
+.x-leg{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:13px;direction:ltr;margin-top:4px}.x-leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-inline-end:5px;vertical-align:-1px}
+.x-call{border-radius:14px;padding:12px 16px;border-inline-start:6px solid var(--c);background:color-mix(in srgb,var(--c) 13%,var(--surface));line-height:1.9}.x-call b{display:block;margin-bottom:2px}
+.x-chart{border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:14px}.x-ct{font-weight:800;text-align:center;margin-bottom:10px}
+.x-bar{display:grid;grid-template-columns:minmax(70px,28%) 1fr auto;gap:8px;align-items:center;margin:7px 0;font-size:14px}.x-bar span.t{height:16px;border-radius:9px;background:var(--line);overflow:hidden}.x-bar span.t i{display:block;height:100%;border-radius:9px}
+.x-pie{width:200px;height:200px;border-radius:50%;margin:4px auto 10px}
+.x-tl{position:relative;margin:0;padding:0 22px 0 0;list-style:none}.x-tl:before{content:"";position:absolute;inset-block:6px;right:6px;width:3px;background:var(--line);border-radius:2px}
+.x-tl li{position:relative;margin:0 0 16px}.x-tl li:before{content:"";position:absolute;right:-22px;top:6px;width:15px;height:15px;border-radius:50%;background:var(--accent);border:3px solid var(--surface)}
+.x-tl em{font-style:normal;font-size:12.5px;color:var(--accent);font-weight:800;display:block}.x-tl small{display:block;color:var(--ink-soft);line-height:1.8}
+.x-ed .x-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}.x-ed .x-th{display:flex;flex-wrap:wrap;gap:8px}.x-ed .x-th div{position:relative}.x-ed .x-th img{width:74px;height:74px;object-fit:cover;border-radius:10px}.x-ed .x-th button{position:absolute;top:-6px;inset-inline-end:-6px;border:0;background:#c0392b;color:#fff;border-radius:50%;width:22px;height:22px;cursor:pointer}
+.x-rec{color:#c0392b;font-weight:800}
+</style>
+<script id="xtJs">
+/* ===== أنواع محتوى إضافية: فويس، فيديو، ملفات، صور بضغط تلقائي، قبل/بعد، رسم دوال، بوكسات، رسوم بيانية، خط زمني ===== */
+(function(){
+  const COL = ['#1F6F6B','#B8862F','#2A4D8F','#9B2C3F','#3FBF84','#B3402E','#6B4EA6'];
+  const CALL = {info:['💡','#2A7DE1','معلومة'],tip:['✨','#3FBF84','نصيحة'],warn:['⚠️','#E0A100','تنبيه'],danger:['⛔','#C0392B','خطر / ممنوع'],ok:['✅','#2E9E5B','صح'],ex:['📌','#6B4EA6','مثال']};
+  const T = {
+    voice:{ico:'🎙️',name:'تسجيل صوتي / فويس',f:[['rec'],['url','ملف صوتي (رابط أو ارفع من جهازك — حتى 2MB)','file','audio/*',2],['caption','عنوان (اختياري)','text']],need:['url']},
+    vfile:{ico:'🎬',name:'فيديو من الجهاز / mp4',f:[['url','رابط mp4 مباشر أو ارفع فيديو قصير (حتى 3MB)','file','video/*',3],['caption','عنوان (اختياري)','text']],need:['url']},
+    file:{ico:'📎',name:'ملف أي نوع (Word / PPT / Excel / ZIP…)',f:[['url','رابط الملف أو ارفعه (حتى 2MB)','file','*/*',2],['caption','الاسم الظاهر','text']],need:['url']},
+    photos:{ico:'📷',name:'صور من الجهاز / الكاميرا (بتتضغط)',custom:1},
+    compare:{ico:'↔️',name:'صورة قبل / بعد (سلايدر)',f:[['url','صورة «قبل»','file','image/*',1.5],['url2','صورة «بعد»','file','image/*',1.5],['caption','تعليق (اختياري)','text']],need:['url','url2']},
+    plot:{ico:'📈',name:'رسم دالة / منحنى',f:[['text','الدوال — سطر لكل دالة. مثال: sin(x)  أو  x^2-4  أو  sqrt(x)  (يدعم sin cos tan ln log exp abs pi e)','area'],['rng','مدى x (من,إلى)','text','-10,10'],['caption','عنوان (اختياري)','text']],need:['text']},
+    callout:{ico:'📌',name:'بوكس تنبيه ملوّن',f:[['variant','النوع','select',Object.entries(CALL).map(([k,v])=>[k,v[0]+' '+v[2]])],['caption','عنوان (اختياري)','text'],['text','النص','area']],need:['text']},
+    chart:{ico:'📊',name:'رسم بياني (أعمدة / دائرة)',f:[['variant','النوع','select',[['bar','أعمدة'],['pie','دائرة']]],['caption','عنوان','text'],['text','البيانات — سطر لكل عنصر:  الاسم: الرقم','area']],need:['text']},
+    timeline:{ico:'🕒',name:'خط زمني',f:[['caption','عنوان (اختياري)','text'],['text','سطر لكل حدث:  التاريخ | العنوان | وصف (اختياري)','area']],need:['text']}
+  };
+  const ok = u => /^(https?:|data:|blob:|\/)/i.test(String(u||'').trim());
+  const U = u => ok(u) ? esc(String(u).trim()) : '';
+  const lines = t => String(t||'').split('\n').map(x=>x.trim()).filter(Boolean);
+  /* ---------- رسم الدوال ---------- */
+  function mkF(s){
+    let t = String(s).toLowerCase().replace(/\s+/g,'').replace(/\^/g,'**');
+    if(!t || t.length>120) return null;
+    const rest = t.replace(/\b(sin|cos|tan|asin|acos|atan|sqrt|abs|exp|floor|ceil|log10|log2|ln|log|pi|e)\b/g,'').replace(/[0-9x+\-*/().,]/g,'');
+    if(rest) return null;
+    t = t.replace(/(\d|\))(x|\()/g,'$1*$2').replace(/(x)(\d|\()/g,'$1*$2').replace(/\b(sin|cos|tan|asin|acos|atan|sqrt|abs|exp|floor|ceil|log10|log2|ln|log|pi|e)\b/g,(m)=>'Math.'+({ln:'log',log:'log10',pi:'PI',e:'E'}[m]||m));
+    try{ return new Function('x','"use strict";return ('+t+')'); }catch(e){ return null; }
+  }
+  function plot(b){
+    const fs = lines(b.text).slice(0,5).map(l=>({s:l.replace(/^y\s*=\s*/i,''),f:mkF(l.replace(/^y\s*=\s*/i,''))}));
+    let [a,z] = String(b.rng||'-10,10').split(',').map(Number); if(!isFinite(a)||!isFinite(z)||a>=z){ a=-10; z=10; }
+    const W=600,H=360,N=400, pts = fs.map(o=>{ const p=[]; if(!o.f) return p; for(let i=0;i<=N;i++){ const x=a+(z-a)*i/N; let y; try{ y=o.f(x); }catch(e){ y=NaN; } p.push([x,(typeof y==='number'&&isFinite(y)&&Math.abs(y)<1e6)?y:NaN]); } return p; });
+    const ys = pts.flat().map(p=>p[1]).filter(isFinite).sort((p,q)=>p-q);
+    if(!ys.length) return '<div class="x-plot">⚠️ مقدرتش أرسم الدالة — اتأكد من الكتابة (مثال: x^2-4)</div>';
+    let lo = ys[Math.floor(ys.length*.02)], hi = ys[Math.ceil(ys.length*.98)-1]; if(hi-lo<1e-9){ lo-=1; hi+=1; } const pad=(hi-lo)*.1; lo-=pad; hi+=pad;
+    const sx=x=>(x-a)/(z-a)*W, sy=y=>H-(y-lo)/(hi-lo)*H;
+    const nice=r=>{ const m=Math.pow(10,Math.floor(Math.log10(r/5))), n=r/5/m; return (n<1.5?1:n<3.5?2:n<7.5?5:10)*m; };
+    let g=''; const gx=nice(z-a), gy=nice(hi-lo);
+    for(let x=Math.ceil(a/gx)*gx;x<=z;x+=gx) g+=`<line x1="${sx(x)}" x2="${sx(x)}" y1="0" y2="${H}" stroke="var(--line)" stroke-width="1"/><text x="${sx(x)+3}" y="${Math.min(H-4,Math.max(12,sy(0)+13))}" font-size="11" fill="var(--ink-soft)">${+x.toFixed(4)}</text>`;
+    for(let y=Math.ceil(lo/gy)*gy;y<=hi;y+=gy) g+=`<line y1="${sy(y)}" y2="${sy(y)}" x1="0" x2="${W}" stroke="var(--line)" stroke-width="1"/><text y="${sy(y)-3}" x="${Math.min(W-30,Math.max(3,sx(0)+4))}" font-size="11" fill="var(--ink-soft)">${+y.toFixed(4)}</text>`;
+    if(a<=0&&z>=0) g+=`<line x1="${sx(0)}" x2="${sx(0)}" y1="0" y2="${H}" stroke="var(--ink-soft)" stroke-width="2"/>`;
+    if(lo<=0&&hi>=0) g+=`<line y1="${sy(0)}" y2="${sy(0)}" x1="0" x2="${W}" stroke="var(--ink-soft)" stroke-width="2"/>`;
+    const paths = pts.map((p,k)=>{ let d='',pen=false,py=0; p.forEach(([x,y])=>{ if(!isFinite(y)||y<lo-(hi-lo)||y>hi+(hi-lo)){ pen=false; return; } if(pen&&Math.abs(y-py)>(hi-lo)*.8) pen=false; d+=(pen?'L':'M')+sx(x).toFixed(1)+' '+sy(y).toFixed(1); pen=true; py=y; }); return `<path d="${d}" fill="none" stroke="${COL[(k+2)%COL.length]}" stroke-width="2.6" stroke-linejoin="round"/>`; }).join('');
+    const leg = fs.map((o,k)=>`<span><i style="background:${COL[(k+2)%COL.length]}"></i>y = ${esc(o.s)}</span>`).join('');
+    return `<div class="x-plot"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(b.caption||'رسم دالة')}"><rect width="${W}" height="${H}" fill="none"/>${g}${paths}</svg><div class="x-leg">${leg}</div></div>`;
+  }
+  /* ---------- العرض ---------- */
+  const ext = n => (String(n||'').split('.').pop()||'').toLowerCase().slice(0,5);
+  const FI = {doc:'📘',docx:'📘',ppt:'📙',pptx:'📙',xls:'📗',xlsx:'📗',csv:'📗',zip:'🗜️',rar:'🗜️','7z':'🗜️',txt:'📃',apk:'📱',png:'🖼️',jpg:'🖼️',mp3:'🎵',mp4:'🎬'};
+  function render(b){
+    const cap = b.caption ? `<div class="x-cap">${esc(b.caption)}</div>` : '';
+    switch(b.type){
+      case 'voice': return `<div class="x-voice"><b>🎙️ ${esc(b.caption||'تسجيل صوتي')}</b><audio controls preload="metadata" src="${U(b.url)}"></audio><div class="x-spd">${[1,1.25,1.5,2].map(s=>`<button type="button" data-xspd="${s}">${s}x</button>`).join('')}</div></div>`;
+      case 'vfile': return `<div class="x-vid"><video controls playsinline preload="metadata" src="${U(b.url)}"></video>${cap}</div>`;
+      case 'file': { const n = b.fname || b.caption || 'ملف', e = ext(b.fname||''); const kb = /^data:/.test(b.url||'') ? Math.round((b.url.length*.75)/1024)+' KB' : 'رابط خارجي';
+        return `<a class="x-file" href="${U(b.url)}" download="${esc(b.fname||b.caption||'file')}" target="_blank" rel="noopener"><span class="ic">${FI[e]||'📎'}</span><span><b>${esc(b.caption||b.fname||'ملف')}</b><small>${e?e.toUpperCase()+' • ':''}${kb}</small></span><span class="go">⬇ تحميل</span></a>`; }
+      case 'compare': return `<figure class="x-cmp" style="--p:50%"><img src="${U(b.url2)}" alt="بعد"><img class="x-top" src="${U(b.url)}" alt="قبل"><span class="x-t" style="left:8px">قبل</span><span class="x-t" style="right:8px">بعد</span><i class="x-hdl"></i><input type="range" min="0" max="100" value="50" aria-label="مقارنة"></figure>${cap}`;
+      case 'plot': return plot(b)+cap;
+      case 'callout': { const c = CALL[b.variant]||CALL.info; return `<div class="x-call" style="--c:${c[1]}"><b>${c[0]} ${esc(b.caption||c[2])}</b>${fmt(b.text)}</div>`; }
+      case 'chart': { const rows = lines(b.text).map(l=>{ const m=l.match(/^(.*?)[:|=]\s*(-?[\d.,٠-٩]+)\s*%?$/); return m?{n:m[1].trim(),v:parseFloat(m[2].replace(',','.'))}:null; }).filter(r=>r&&isFinite(r.v)&&r.v>=0).slice(0,12);
+        if(!rows.length) return '<div class="x-chart">⚠️ اكتب البيانات هكذا:  الاسم: 25</div>';
+        const tot = rows.reduce((s,r)=>s+r.v,0)||1, mx = Math.max(...rows.map(r=>r.v))||1, tt = b.caption?`<div class="x-ct">${esc(b.caption)}</div>`:'';
+        if(b.variant==='pie'){ let acc=0; const g = rows.map((r,i)=>{ const s=acc/tot*100; acc+=r.v; return `${COL[i%COL.length]} ${s}% ${acc/tot*100}%`; }).join(',');
+          return `<div class="x-chart">${tt}<div class="x-pie" style="background:conic-gradient(${g})"></div><div class="x-leg">${rows.map((r,i)=>`<span><i style="background:${COL[i%COL.length]}"></i>${esc(r.n)} (${Math.round(r.v/tot*100)}%)</span>`).join('')}</div></div>`; }
+        return `<div class="x-chart">${tt}${rows.map((r,i)=>`<div class="x-bar"><span>${esc(r.n)}</span><span class="t"><i style="width:${r.v/mx*100}%;background:${COL[i%COL.length]}"></i></span><b>${r.v}</b></div>`).join('')}</div>`; }
+      case 'timeline': return (b.caption?`<div class="x-ct">${esc(b.caption)}</div>`:'')+`<ul class="x-tl">${lines(b.text).map(l=>{ const a=l.split('|').map(x=>x.trim()); return `<li>${a.length>1?`<em>${esc(a[0])}</em><b>${esc(a[1])}</b>${a[2]?`<small>${esc(a[2])}</small>`:''}`:`<b>${esc(a[0])}</b>`}</li>`; }).join('')}</ul>`;
+    }
+    return '';
+  }
+  const _rb = renderBlock;
+  renderBlock = function(b){ const h = _rb.apply(this, arguments); if(!b || !T[b.type] || T[b.type].custom&&b.type!=='photos') return h; try{ return h.replace(/<\/div>\s*$/, '<div class="x-box">'+render(b)+'</div></div>'); }catch(e){ return h; } };
+  document.addEventListener('input', e=>{ const r=e.target; if(r.matches && r.matches('.x-cmp input')) r.closest('.x-cmp').style.setProperty('--p', r.value+'%'); });
+  document.addEventListener('click', e=>{ const s=e.target.closest('[data-xspd]'); if(!s) return; const a=s.closest('.x-voice').querySelector('audio'); a.playbackRate=+s.dataset.xspd; });
+  /* ---------- شاشة اختيار النوع ---------- */
+  const _ct = chooseType;
+  chooseType = function(secId, at){ _ct.apply(this, arguments); const g = document.querySelector('#mBody .typegrid'); if(!g) return;
+    g.insertAdjacentHTML('beforeend', Object.entries(T).map(([k,v])=>`<button class="typecard" data-act="pick-type" data-type="${k}" data-sec="${secId}"><div>${v.ico}</div>${v.name}</button>`).join('')); };
+  /* ---------- أدوات الرفع والضغط ---------- */
+  const readF = f => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(f); });
+  async function img(f, max=1280, q=.78){ const url = URL.createObjectURL(f); try{ const im = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
+    const k = Math.min(1, max/Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width=Math.round(im.width*k); c.height=Math.round(im.height*k);
+    const x = c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(im,0,0,c.width,c.height); return c.toDataURL('image/jpeg', q); } finally { URL.revokeObjectURL(url); } }
+  const kb = s => Math.round(s.length*.75/1024);
+  /* ---------- نافذة التحرير ---------- */
+  const _bm = blockModal;
+  blockModal = function(secId, block, type){
+    const ty = block ? block.type : type, d = T[ty]; if(!d) return _bm.apply(this, arguments);
+    const sec = findSec(secId); if(!sec) return;
+    const isNew = !block, b = block || {id:uid(), type:ty, style:'paragraph', text:'', url:'', caption:'', items:[]};
+    let shots = [], body = '';
+    if(d.custom){
+      if(!isNew) return _bm.apply(this, arguments);
+      body = `<div class="x-ed"><div class="x-row"><label class="btn sm">🖼️ اختار صور من الجهاز<input type="file" id="x_pf" accept="image/*" multiple hidden></label><label class="btn sm">📸 صوّر بالكاميرا<input type="file" id="x_pc" accept="image/*" capture="environment" hidden></label></div>
+        <p class="hint">الصور بتتصغّر وتتضغط تلقائياً (حتى 1280px) فمتحتاجش تقلق من حجمها. صورة واحدة = بلوك صورة، أكتر من صورة = معرض.</p><div class="x-th" id="x_th"></div><p class="hint" id="x_sz"></p>
+        <div class="field"><label for="x_cap">تعليق / عنوان (اختياري)</label><input id="x_cap"></div></div>`;
+    } else {
+      body = '<div class="x-ed">'+d.f.map(([k,l,kind,a,mb])=>{
+        if(k==='rec') return `<div class="field"><label>🎙️ سجّل صوتك مباشرة</label><div class="x-row"><button type="button" class="btn sm" id="x_rb">⏺ ابدأ التسجيل</button><span class="x-rec" id="x_rt"></span></div><audio id="x_rp" controls hidden style="width:100%"></audio><p class="hint">أو ارفع ملف صوتي من الأسفل. أقصى مدة تسجيل 8 دقايق.</p></div>`;
+        const v = esc(b[k]||'');
+        if(kind==='area') return `<div class="field"><label for="x_${k}">${l}</label><textarea id="x_${k}" style="min-height:130px">${v}</textarea></div>`;
+        if(kind==='select') return `<div class="field"><label for="x_${k}">${l}</label><select id="x_${k}">${a.map(o=>`<option value="${o[0]}" ${(b[k]||a[0][0])===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>`;
+        if(kind==='file') return `<div class="field"><label for="x_${k}">${l}</label><input id="x_${k}" dir="ltr" value="${v}" placeholder="https://…"><input type="file" data-xf="${k}" data-mb="${mb}" accept="${a}" style="margin-top:6px"><p class="hint" data-xh="${k}"></p></div>`;
+        return `<div class="field"><label for="x_${k}">${l}</label><input id="x_${k}" value="${v}" placeholder="${esc(a||'')}"></div>`;
+      }).join('')+'</div>';
+    }
+    openModal((isNew?'إضافة: ':'تعديل: ')+d.name, body, footSave(), ()=>{
+      if(d.custom){
+        if(!shots.length){ toast('اختار صورة واحدة على الأقل'); return false; }
+        const cap = $('#x_cap').value.trim();
+        if(shots.length===1){ b.type='image'; b.url=shots[0]; b.caption=cap; } else { b.type='gallery'; b.text=shots.join('\n'); b.caption=cap; b.cols=shots.length===2?2:3; }
+      } else {
+        d.f.forEach(([k])=>{ if(k==='rec') return; const el=$('#x_'+k); if(el) b[k] = el.value.trim(); });
+        if(d.need.some(k=>!(b[k]||'').trim())){ toast('كمّل البيانات المطلوبة'); return false; }
+        if(d.need.some(k=>/^(url|url2)$/.test(k) && !ok(b[k]))){ toast('الرابط لازم يبدأ بـ https://'); return false; }
+        const fe = $('#x_url'); if(ty==='file' && fe && fe.dataset.fname) b.fname = fe.dataset.fname;
+      }
+      sec.updatedAt = Date.now();
+      if(isNew){ b.addedAt=Date.now(); const at=window.__insertAt; if(at!=null && at<=sec.blocks.length) sec.blocks.splice(at,0,b); else sec.blocks.push(b); window.__insertAt=null; }
+      commit();
+    });
+    const R = document.getElementById('mBody');
+    /* رفع الملفات */
+    R.querySelectorAll('[data-xf]').forEach(inp=>inp.addEventListener('change', async ()=>{
+      const f = inp.files[0]; if(!f) return; const mb = +inp.dataset.mb, h = R.querySelector(`[data-xh="${inp.dataset.xf}"]`);
+      try{ let u; if(/^image\//.test(f.type)){ u = await img(f, 1600, .8); } else { if(f.size > mb*1024*1024){ toast('الملف أكبر من '+mb+'MB — استخدم رابط (درايف مثلاً)'); inp.value=''; return; } u = await readF(f); }
+        const t = $('#x_'+inp.dataset.xf); t.value = u; t.dataset.fname = f.name; if(h) h.textContent = '✅ اتحمّل: '+f.name+' ('+kb(u)+' KB)';
+      }catch(e){ toast('تعذّر قراءة الملف'); } }));
+    /* الصور المتعددة */
+    if(d.custom){
+      const th = R.querySelector('#x_th'), sz = R.querySelector('#x_sz');
+      const paint = ()=>{ th.innerHTML = shots.map((s,i)=>`<div><img src="${s}" alt=""><button type="button" data-xrm="${i}">✕</button></div>`).join(''); const t = shots.reduce((a,s)=>a+kb(s),0); sz.textContent = shots.length ? shots.length+' صورة — حوالي '+t+' KB'+(t>1500?' ⚠️ كبير شوية، قلّل الصور':'') : ''; };
+      const add = async e=>{ for(const f of e.target.files){ try{ shots.push(await img(f)); }catch(_){ toast('صورة مش مدعومة: '+f.name); } } e.target.value=''; paint(); };
+      R.querySelector('#x_pf').addEventListener('change', add); R.querySelector('#x_pc').addEventListener('change', add);
+      th.addEventListener('click', e=>{ const x=e.target.closest('[data-xrm]'); if(x){ shots.splice(+x.dataset.xrm,1); paint(); } });
+    }
+    /* تسجيل الصوت */
+    const rb = R.querySelector('#x_rb');
+    if(rb){ let mr=null, ch=[], t0=0, tm=null; const rt=R.querySelector('#x_rt');
+      const stop = ()=>{ if(mr && mr.state!=='inactive') mr.stop(); };
+      rb.addEventListener('click', async ()=>{
+        if(mr && mr.state==='recording'){ stop(); return; }
+        if(!navigator.mediaDevices || !window.MediaRecorder){ toast('المتصفح ده مش بيدعم التسجيل — ارفع ملف صوتي'); return; }
+        try{ const st = await navigator.mediaDevices.getUserMedia({audio:true}); const mt = ['audio/webm;codecs=opus','audio/webm','audio/mp4'].find(m=>MediaRecorder.isTypeSupported(m)); ch=[];
+          mr = new MediaRecorder(st, Object.assign({audioBitsPerSecond:24000}, mt?{mimeType:mt}:{}));
+          mr.ondataavailable = e=>{ if(e.data.size) ch.push(e.data); };
+          mr.onstop = async ()=>{ clearInterval(tm); st.getTracks().forEach(t=>t.stop()); rb.textContent='⏺ سجّل تاني'; rt.textContent='';
+            const blob = new Blob(ch,{type:mr.mimeType||'audio/webm'}); if(blob.size>2.5*1024*1024){ toast('التسجيل كبير — اختصره'); return; }
+            const u = await readF(blob); $('#x_url').value = u; const p = R.querySelector('#x_rp'); p.src = u; p.hidden = false; toast('✅ التسجيل جاهز — دوس حفظ'); };
+          mr.start(); t0=Date.now(); rb.textContent='⏹ إيقاف'; tm=setInterval(()=>{ const s=Math.floor((Date.now()-t0)/1000); rt.textContent='● '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); if(s>=480) stop(); },500);
+        }catch(e){ toast('مقدرتش أفتح المايك — اسمح للمتصفح باستخدامه'); } });
+    }
+  };
+})();
+</script>
+<style id="botMediaCss">
+.mb-f .mb-ico{padding:0 11px;background:var(--surface-2,var(--line));color:var(--ink);font-size:18px;border:1px solid var(--line)}
+.mb-f .mb-ico.rec{background:#c0392b;color:#fff;font-size:13px;animation:mbPulse 1s infinite}
+@keyframes mbPulse{50%{opacity:.6}}
+.mb-prev{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 10px 0;border-top:1px solid var(--line)}
+.mb-prev[hidden]{display:none}.mb-prev .th{position:relative}.mb-prev img{width:52px;height:52px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.mb-prev .th button{position:absolute;top:-6px;inset-inline-end:-6px;border:0;background:#c0392b;color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;padding:0}
+.mb-prev .pq{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:4px 9px;font:600 12px var(--font-body);cursor:pointer}
+</style>
+<script id="botMediaJs">
+/* ===== البوت: صور + سؤال بالصوت + قراءة الردود بصوت عالي ===== */
+(function(){
+  const $i = id => document.getElementById(id), P = {imgs:[], audio:null, label:''};
+  MathBot.media = {};
+  const say = m => { try{ toast(m); }catch(e){} };
+  const readB64 = b => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(b); });
+  async function shrink(f){ const u = URL.createObjectURL(f); try{
+    const im = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=u; });
+    const k = Math.min(1, 1280/Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width*k); c.height = Math.round(im.height*k);
+    const x = c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(im,0,0,c.width,c.height); return c.toDataURL('image/jpeg', .82);
+  } finally { URL.revokeObjectURL(u); } }
+  /* تحويل التسجيل لـ WAV (16kHz مونو) عشان Gemini يفهمه */
+  async function wavOf(blob){
+    const AC = window.AudioContext || window.webkitAudioContext, ctx = new AC(), buf = await blob.arrayBuffer();
+    const dec = await new Promise((res,rej)=>{ const p = ctx.decodeAudioData(buf, res, rej); if(p && p.catch) p.catch(rej); });
+    try{ ctx.close(); }catch(e){}
+    const off = new OfflineAudioContext(1, Math.max(1, Math.ceil(dec.duration*16000)), 16000), s = off.createBufferSource();
+    s.buffer = dec; s.connect(off.destination); s.start(); const pcm = (await off.startRendering()).getChannelData(0);
+    const out = new DataView(new ArrayBuffer(44 + pcm.length*2)), w = (o,t)=>{ for(let i=0;i<t.length;i++) out.setUint8(o+i, t.charCodeAt(i)); };
+    w(0,'RIFF'); out.setUint32(4, 36+pcm.length*2, true); w(8,'WAVEfmt '); out.setUint32(16,16,true); out.setUint16(20,1,true); out.setUint16(22,1,true);
+    out.setUint32(24,16000,true); out.setUint32(28,32000,true); out.setUint16(32,2,true); out.setUint16(34,16,true); w(36,'data'); out.setUint32(40, pcm.length*2, true);
+    for(let i=0;i<pcm.length;i++){ const v = Math.max(-1, Math.min(1, pcm[i])); out.setInt16(44+i*2, v<0 ? v*0x8000 : v*0x7FFF, true); }
+    return readB64(new Blob([out], {type:'audio/wav'}));
+  }
+  /* قراءة الردود */
+  const ttsOn = () => !!lsGet('sx_bot_tts', false);
+  function speak(t){
+    if(!window.speechSynthesis) return; speechSynthesis.cancel();
+    const c = String(t).replace(/[*`#_>~]/g,'').replace(/\s+/g,' ').trim().slice(0,1500); if(!c) return;
+    const u = new SpeechSynthesisUtterance(c), ar = /[\u0600-\u06FF]/.test(c); u.lang = ar ? 'ar-EG' : 'en-US';
+    const v = speechSynthesis.getVoices().find(v=>v.lang && v.lang.toLowerCase().startsWith(ar?'ar':'en')); if(v) u.voice = v; speechSynthesis.speak(u);
+  }
+  /* واجهة المرفقات */
+  function paintPrev(){
+    const el = $i('mbPrev'); if(!el) return;
+    el.hidden = !(P.imgs.length || P.audio);
+    el.innerHTML = P.imgs.map((s,i)=>`<span class="th"><img src="${s}" alt=""><button type="button" data-mbx="rm" data-i="${i}">✕</button></span>`).join('')
+      + (P.audio ? '<span class="th"><b>🎤 تسجيل</b> <button type="button" data-mbx="rma" style="position:static;margin-inline-start:4px">✕</button></span>' : '')
+      + (P.imgs.length ? ['حلّ اللي في الصورة خطوة بخطوة','لخّص اللي في الصورة','اشرح الصورة دي'].map(t=>`<button type="button" class="pq" data-mbx="pq">${t}</button>`).join('') : '');
+  }
+  const clearP = () => { P.imgs = []; P.audio = null; paintPrev(); };
+  function setup(p){
+    if(p.dataset.xm) return; p.dataset.xm = '1';
+    const h = p.querySelector('[data-mb="clear"]'); if(h) h.insertAdjacentHTML('beforebegin', `<button type="button" data-mbx="tts" id="mbTts" title="قراءة الردود بصوت عالي">${ttsOn()?'🔊':'🔇'}</button>`);
+    const f = p.querySelector('.mb-f'); if(!f) return;
+    f.insertAdjacentHTML('beforebegin', '<div class="mb-prev" id="mbPrev" hidden></div>');
+    const ta = f.querySelector('textarea'); if(ta){ ta.placeholder = 'اسأل في أي حاجة… أو ارفع صورة 📎 أو اتكلم 🎤'; }
+    f.insertAdjacentHTML('afterbegin', '<button type="button" class="mb-ico" data-mbx="img" title="إرفاق صورة" aria-label="إرفاق صورة">📎</button><button type="button" class="mb-ico" data-mbx="mic" id="mbMic" title="اسأل بالصوت" aria-label="تسجيل صوتي">🎤</button><input type="file" id="mbFile" accept="image/*" multiple hidden>');
+    $i('mbFile').addEventListener('change', async e=>{
+      for(const f of e.target.files){ if(P.imgs.length>=4){ say('أقصى عدد 4 صور'); break; } try{ P.imgs.push(await shrink(f)); }catch(_){ say('صورة غير مدعومة: '+f.name); } }
+      e.target.value=''; paintPrev(); });
+  }
+  const _panel = MathBot.panel; MathBot.panel = function(){ const p = _panel.apply(this, arguments); try{ setup(p); }catch(e){} return p; };
+  /* التسجيل الصوتي */
+  let mr = null, tm = null;
+  async function mic(){
+    const b = $i('mbMic');
+    if(mr && mr.state==='recording'){ mr.stop(); return; }
+    if(!navigator.mediaDevices || !window.MediaRecorder){ say('المتصفح ده مش بيدعم التسجيل'); return; }
+    try{
+      const st = await navigator.mediaDevices.getUserMedia({audio:true}), ch = []; mr = new MediaRecorder(st); const t0 = Date.now();
+      mr.ondataavailable = e=>{ if(e.data.size) ch.push(e.data); };
+      mr.onstop = async ()=>{ clearInterval(tm); st.getTracks().forEach(t=>t.stop()); b.classList.remove('rec'); b.textContent='🎤';
+        try{ P.audio = await wavOf(new Blob(ch, {type:mr.mimeType||'audio/webm'})); paintPrev(); MathBot.send($i('mbIn').value); }catch(e){ say('مقدرتش أعالج التسجيل — جرّب تاني'); } };
+      mr.start(); b.classList.add('rec'); tm = setInterval(()=>{ const s = Math.floor((Date.now()-t0)/1000); b.textContent = '⏹ '+s+'s'; if(s>=45 && mr.state==='recording') mr.stop(); }, 500);
+    }catch(e){ say('اسمح للمتصفح باستخدام المايك'); }
+  }
+  document.addEventListener('click', e=>{
+    const a = e.target.closest('[data-mbx]'); if(!a) return; const k = a.dataset.mbx;
+    if(k==='img') $i('mbFile').click();
+    else if(k==='mic') mic();
+    else if(k==='rm'){ P.imgs.splice(+a.dataset.i,1); paintPrev(); }
+    else if(k==='rma'){ P.audio = null; paintPrev(); }
+    else if(k==='pq') MathBot.send(a.textContent);
+    else if(k==='tts'){ const on = !ttsOn(); lsSet('sx_bot_tts', on); a.textContent = on?'🔊':'🔇'; if(!on && window.speechSynthesis) speechSynthesis.cancel(); else say('🔊 هقرأ الردود بصوت عالي'); }
+  });
+  /* الإرسال الجديد (نص + صور + صوت) */
+  MathBot.send = async function(txt){
+    txt = String(txt||'').trim().slice(0,1500);
+    const imgs = P.imgs.slice(), audio = P.audio;
+    if((!txt && !imgs.length && !audio) || this.busy) return;
+    const i = $i('mbIn'); if(i) i.value = ''; clearP();
+    const H = this.hist(), id = 'm'+Date.now(), has = imgs.length || audio;
+    H.push({role:'user', id, content: ((imgs.length?'🖼️ ['+imgs.length+' صورة] ':'') + (audio?'🎤 [رسالة صوتية] ':'') + txt).trim()}); this.save(H);
+    if(has){ this.media[id] = {imgs, audio}; Object.keys(this.media).slice(0,-3).forEach(k=>delete this.media[k]); }
+    const loc = has ? null : this.calc(txt);
+    if(loc !== null){ this.reply(H, '🧮 '+loc); return this.paint(); }
+    if(!this.url()){ this.reply(H, 'الردود الذكية لسه مش مفعّلة 🔌 — أقدر أحسب لك العمليات الحسابية بس.'); return this.paint(); }
+    this.busy = true; this.paint();
+    try{
+      const ctl = new AbortController(), to = setTimeout(()=>ctl.abort(), 75000);
+      const messages = H.slice(-14).map(m=>{ const o = {role:m.role, content:m.content}, md = m.id && this.media[m.id]; if(md){ o.images = md.imgs; o.audio = md.audio; if(md.audio && !md.imgs.length) o.content = m.content.replace('🎤 [رسالة صوتية]','').trim(); } return o; });
+      const r = await fetch(this.url(), {method:'POST', headers:{'Content-Type':'application/json','apikey':(CONFIG.QA&&CONFIG.QA.anonKey)||''}, body:JSON.stringify({messages}), signal:ctl.signal});
+      clearTimeout(to);
+      const j = await r.json().catch(()=>({})), a = j.reply || j.text || (j.content && j.content[0] && j.content[0].text);
+      const out = (r.ok && a) ? String(a) : '⚠️ حصلت مشكلة في الرد، جرّب تاني بعد شوية.' + (isAdmin ? ' [للأدمن: '+r.status+' — '+String(j.error||j.message||j.msg||'').slice(0,120)+']' : '');
+      this.reply(H, out); if(r.ok && a && ttsOn()) speak(String(a));
+    }catch(e){ this.reply(H, '⚠️ مقدرتش أوصل للسيرفر. اتأكد من النت وجرّب تاني.' + (isAdmin ? ' [للأدمن: '+(e&&e.name)+' — '+String(e&&e.message||'').slice(0,100)+']' : '')); }
+    this.busy = false; this.paint();
+  };
+})();
+</script>
 </body>
