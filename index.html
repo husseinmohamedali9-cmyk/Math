@@ -9030,10 +9030,10 @@ const MathBot = {
     this.busy = true; this.paint();
     try{
       const ctl = new AbortController(), to = setTimeout(()=>ctl.abort(), 30000);
-      const r = await fetch(this.url(), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({messages:H.slice(-24).map(m=>({role:m.role, content:m.content}))}), signal:ctl.signal});
+      const r = await fetch(this.url(), {method:'POST', headers:{'Content-Type':'application/json','apikey':(CONFIG.QA&&CONFIG.QA.anonKey)||''}, body:JSON.stringify({messages:H.slice(-24).map(m=>({role:m.role, content:m.content}))}), signal:ctl.signal});
       clearTimeout(to);
       const j = await r.json().catch(()=>({})), a = j.reply || j.text || (j.content && j.content[0] && j.content[0].text);
-      this.reply(H, (r.ok && a) ? String(a) : '⚠️ حصلت مشكلة في الرد، جرّب تاني بعد شوية.');
+      this.reply(H, (r.ok && a) ? String(a) : '⚠️ حصلت مشكلة في الرد، جرّب تاني بعد شوية.' + (isAdmin ? ' [للأدمن: '+r.status+' — '+String(j.error||j.message||j.msg||'').slice(0,120)+']' : ''));
     }catch(e){ this.reply(H, '⚠️ مقدرتش أوصل للسيرفر. اتأكد من النت وجرّب تاني.'); }
     this.busy = false; this.paint();
   },
@@ -9300,20 +9300,27 @@ Object.assign(SecTools, {
 .mb-cfg button.pri{background:var(--accent);border-color:var(--accent);color:#fff}
 </style>
 <script id="botCfgJs">
-/* ===== إعدادات الروبوت: ظاهرة دايماً (⚙️) — حط رابط السيرفر وجرّب الاتصال ===== */
+/* ===== إعدادات الروبوت: للأدمن بس ===== */
 (function(){
   const $i = id => document.getElementById(id);
   MathBot.settings = false;
-  MathBot.url = function(){ const u = String(this.cfg().url || lsGet('sx_bot_url','') || '').trim(); return /^https:\/\//.test(u) ? u : ''; };
-  MathBot.config = function(){ this.settings = !this.settings; this.paint(); };
+  /* الرابط بييجي من إعدادات الموقع المحفوظة بس. التجربة المحلية متاحة للأدمن بس */
+  MathBot.url = function(){ const u = String(this.cfg().url || (isAdmin ? lsGet('sx_bot_url','') : '') || '').trim(); return /^https:\/\//.test(u) ? u : ''; };
+  MathBot.config = function(){ if(!isAdmin){ this.settings = false; return; } this.settings = !this.settings; this.paint(); };
   const _panel = MathBot.panel;
   MathBot.panel = function(){
-    const p = _panel.apply(this, arguments);
-    if(!p.querySelector('[data-mb="cfg"]')){ const c = p.querySelector('[data-mb="clear"]'); if(c) c.insertAdjacentHTML('beforebegin', '<button type="button" data-mb="cfg" title="إعدادات الروبوت">⚙️</button>'); }
-    return p;
+    const p = _panel.apply(this, arguments); this.syncAdminBtn(p); return p;
+  };
+  MathBot.syncAdminBtn = function(p){
+    p = p || $i('mbPanel'); if(!p) return;
+    const has = p.querySelector('[data-mb="cfg"]');
+    if(isAdmin && !has){ const c = p.querySelector('[data-mb="clear"]'); if(c) c.insertAdjacentHTML('beforebegin', '<button type="button" data-mb="cfg" title="إعدادات الروبوت">⚙️</button>'); }
+    if(!isAdmin && has) has.remove();
   };
   const _paint = MathBot.paint;
   MathBot.paint = function(){
+    this.syncAdminBtn();
+    if(!isAdmin) this.settings = false;
     const f = document.querySelector('#mbPanel .mb-f'), c = $i('mbChips'), el = $i('mbMsgs');
     if(!this.settings){ if(f) f.style.display = ''; return _paint.apply(this, arguments); }
     if(f) f.style.display = 'none'; if(c) c.style.display = 'none'; if(!el) return;
@@ -9331,28 +9338,31 @@ Object.assign(SecTools, {
   document.addEventListener('click', e=>{
     const a = e.target.closest('[data-mb]'); if(!a) return; const k = a.dataset.mb;
     if(!['cs','cl','ct','cb'].includes(k)) return;
+    if(!isAdmin){ MathBot.settings = false; MathBot.paint(); return; }
     const inp = $i('mbUrl'), v = inp ? inp.value.trim() : '', st = $i('mbSt'), say = t => { if(st) st.textContent = t; };
     if(k === 'cb'){ MathBot.settings = false; MathBot.paint(); return; }
     if(v && !/^https:\/\//.test(v)) return say('❌ الرابط لازم يبدأ بـ https://');
     if(k === 'cl'){ lsSet('sx_bot_url', v); say(v ? '📱 اتحفظ على جهازك — جرّب اسأل الروبوت دلوقتي' : 'اتمسح'); }
     else if(k === 'cs'){
-      if(!isAdmin) return say('❌ لازم تكون داخل بوضع الأدمن عشان تحفظه للموقع كله. ممكن تستخدم «جرّبه على جهازي بس» لحد ما تسجّل دخول الأدمن.');
       site.meta = site.meta || {}; site.meta.aiBot = Object.assign({}, MathBot.cfg(), {url:v}); commit(); say('✅ اتحفظ للموقع كله');
     }
     else if(k === 'ct'){
       if(!v) return say('❌ حط الرابط الأول');
       say('⏳ بجرّب الاتصال…');
-      fetch(v, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({messages:[{role:'user', content:'2+2 بكام؟ جاوب بكلمة واحدة'}]})})
-        .then(async r=>{ const j = await r.json().catch(()=>({})); say(r.ok && j.reply ? '✅ شغّال! الرد: ' + String(j.reply).slice(0,80) : '❌ فشل ('+r.status+'): ' + (j.error || 'رد غير متوقع')); })
+      fetch(v, {method:'POST', headers:{'Content-Type':'application/json','apikey':(CONFIG.QA&&CONFIG.QA.anonKey)||''}, body:JSON.stringify({messages:[{role:'user', content:'2+2 بكام؟ جاوب بكلمة واحدة'}]})})
+        .then(async r=>{ const j = await r.json().catch(()=>({})); say(r.ok && j.reply ? '✅ شغّال! الرد: ' + String(j.reply).slice(0,80) : '❌ فشل ('+r.status+'): ' + (j.error || j.message || j.msg || 'رد غير متوقع') + (r.status===401 ? ' — اقفل Verify JWT للدالة (deploy --no-verify-jwt)' : '')); })
         .catch(()=>say('❌ مقدرتش أوصل للرابط (الرابط غلط أو الدالة مش منشورة أو CORS)'));
     }
   });
+  /* لما الأدمن يدخل/يخرج: حدّث الزرار فوراً */
+  setInterval(()=>{ try{ MathBot.syncAdminBtn(); if(!isAdmin && MathBot.settings){ MathBot.settings=false; MathBot.paint(); } }catch(e){} }, 1500);
 })();
 </script>
 
 <style id="hdrCss">
 .top-ico[data-hdr]{font-size:20px}
-.topbar-in{padding-inline-start:calc(76px + var(--tb-r,0px))}
+@media (min-width:600px){.topbar-in{padding-inline-start:calc(76px + var(--tb-r,0px))}}
+@media (max-width:599px){.topbar-in{padding-inline-start:calc(12px + var(--tb-r,0px))}}
 .fx-tag{display:block;font-size:11.5px;font-weight:700;color:var(--accent);margin-bottom:1px}
 </style>
 <script id="hdrJs">
