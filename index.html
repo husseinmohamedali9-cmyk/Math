@@ -9929,7 +9929,7 @@ function fmt(t, live){
   t = t.replace(/(<br>)*\u0001(\d+)\u0002(<br>)*/g, '\u0001$2\u0002').replace(/\u0001(\d+)\u0002/g, (m, i)=>st[+i]);
   return t;
 }
-MathBot.fmt = fmt;
+MathBot.fmt = fmt; MathBot.extractPdf = extractPdf; MathBot.Voice = Voice;
 
 /* =====================================================================
    4) المرفقات: صور / PDF / صوت
@@ -10049,7 +10049,7 @@ MathBot.panel = function(){
       '<button type="button" data-mbx="max" id="mbMax" title="تكبير" aria-label="تكبير">⛶</button>' +
       '<button type="button" data-mb="toggle" aria-label="إغلاق">✕</button></div>' +
     '<div class="mb-msgs" id="mbMsgs" aria-live="polite"></div>' +
-    '<div class="mb-chips" id="mbChips"><button type="button" data-mb="q">اشرح لي التفاضل ببساطة</button><button type="button" data-mb="q">حل: 2x + 6 = 14</button><button type="button" data-mb="q">إيه الفرق بين المنوال والوسيط؟</button><button type="button" data-mb="q">ارسم لي منحنى y = x² − 4</button></div>' +
+    '<div class="mb-chips" id="mbChips"><button type="button" data-mb="q">اشرح لي التفاضل ببساطة</button><button type="button" data-mb="q">حل: 2x + 6 = 14</button><button type="button" data-mb="q">إيه الفرق بين المنوال والوسيط؟</button><button type="button" data-mb="q">ارسم لي منحنى y = x² − 4</button><button type="button" data-sxai="simple">🧒 بسّط القسم اللي قدامي</button><button type="button" data-sxai="quiz">🧪 كويز من القسم اللي قدامي</button><button type="button" data-sxai="fix">✍️ صحّح حلّي (صوّر الورقة)</button></div>' +
     '<div class="mb-prev" id="mbPrev" hidden></div>' +
     '<div class="mb-f"><button type="button" class="mb-ico" data-mbx="attach" title="إرفاق صورة أو PDF" aria-label="إرفاق">📎</button><button type="button" class="mb-ico" data-mbx="mic" id="mbMic" title="اسأل بالصوت" aria-label="تسجيل صوتي">🎤</button>' +
       '<textarea id="mbIn" rows="1" maxlength="1500" placeholder="اسأل في أي حاجة… أو ارفع صورة / PDF 📎 أو اتكلم 🎤"></textarea>' +
@@ -10132,7 +10132,7 @@ MathBot.send = async function(txt){
   const imgs = S.imgs.slice(), audio = S.audio, pdf = S.pdf, fresh = !!(pdf && pdf.fresh);
   if(pdf && !pdf.text && !pdf.raw){ say('استنى لحظة، لسه بقرا الملف…'); return; }
   if(!txt && fresh) txt = 'لخّصلي الملف ده بشكل مرتب';
-  if(!txt && imgs.length && !audio) txt = 'اشرح اللي في الصورة، ولو فيها مسألة حلّها خطوة بخطوة';
+  if(!txt && imgs.length && !audio) txt = this.fixMode ? 'ده حلّي بخط إيدي. صحّحه خطوة بخطوة: قولي في أنهي سطر الغلطة (لو فيه) واشرح ليه، وبعدين اكتب الحل الصح.' : 'اشرح اللي في الصورة، ولو فيها مسألة حلّها خطوة بخطوة'; this.fixMode = false;
   if(!txt && !imgs.length && !audio) return;
   const viaMic = S.viaMic; S.viaMic = false;
   const inp = $i('mbIn'); if(inp){ inp.value = ''; inp.style.height = ''; }
@@ -10303,6 +10303,1655 @@ document.addEventListener('keydown', e=>{
   const p = $i('mbPanel'); if(p && !p.hidden){ Voice.stop(); }
 });
 setTimeout(()=>{ try{ applyUI(); }catch(e){} }, 1200);
+})();
+</script>
+<style id="sxPlusCss">
+/* ===== مركز التحدّي + الألعاب + البلياردو + أدوات المذاكرة ===== */
+html.sx-lock{overflow:hidden}
+#sxHub{position:fixed;inset:0;z-index:210;background:var(--bg,#f4f6fb);color:var(--ink,#1c2430);display:flex;flex-direction:column;font-family:var(--font-body,inherit);direction:rtl}
+#sxHub[hidden],#sxHub [hidden]{display:none!important}
+#sxHub button{font-family:inherit}
+.sxh-top{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface,#fff);border-bottom:1px solid var(--line,#dde3ee)}
+.sxh-t{font-size:17px;flex:1;white-space:nowrap}
+.sxh-nm{font-size:12.5px;display:flex;align-items:center;gap:6px;color:var(--ink-soft,#5b6677)}
+.sxh-nm input{width:104px;border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:var(--ink,#1c2430);border-radius:10px;padding:5px 8px;font:inherit}
+.sxh-x{border:0;background:var(--surface-2,#eef1f7);color:inherit;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:15px}
+.sxh-tabs{display:flex;gap:6px;padding:8px 12px;background:var(--surface,#fff);overflow-x:auto}
+.sxh-tabs button{border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:999px;padding:7px 14px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+.sxh-tabs button.on{background:var(--accent,#2563eb);border-color:transparent;color:#fff}
+.sxh-body{flex:1;overflow:auto;padding:14px;-webkit-overflow-scrolling:touch}
+.sxh-sub{margin:0 0 12px;color:var(--ink-soft,#5b6677);font-size:13.5px;line-height:1.8}
+.sxh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
+.sxh-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:right;border:1px solid var(--line,#dde3ee);background:var(--surface,#fff);color:inherit;border-radius:16px;padding:12px;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.sxh-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.1)}
+.sxh-card i{font-style:normal;font-size:30px;line-height:1}
+.sxh-card b{font-size:14.5px}
+.sxh-card small{color:var(--ink-soft,#5b6677);font-size:11.8px;line-height:1.6}
+.sxh-badges{display:flex;gap:4px;margin-top:auto;flex-wrap:wrap}
+.sxh-badges em{font-style:normal;font-size:10.5px;background:var(--surface-2,#eef1f7);border-radius:8px;padding:2px 6px}
+
+/* مودال */
+#sxModal{position:absolute;inset:0;z-index:40;background:rgba(10,14,24,.6);display:flex;align-items:flex-start;justify-content:center;padding:14px;overflow:auto}
+.sxm-in{position:relative;width:min(560px,100%);background:var(--surface,#fff);border-radius:20px;padding:16px;margin:auto;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.sxm-big .sxm-in{width:min(680px,100%)}
+.sxm-x{position:absolute;top:10px;inset-inline-start:10px;border:0;background:var(--surface-2,#eef1f7);color:inherit;width:30px;height:30px;border-radius:50%;cursor:pointer;z-index:2}
+.sxm-pro .sxm-in{width:min(320px,100%);text-align:center}
+
+/* الصالة */
+.sxl-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sxl-h>i{font-style:normal;font-size:34px}
+.sxl-h b{display:block;font-size:16px}
+.sxl-h small{color:var(--ink-soft,#5b6677);font-size:12px;line-height:1.6}
+.sxl-opt{margin:8px 0}
+.sxl-opt>label,.st-opts label,.st-l{display:block;font-weight:700;font-size:12.5px;margin-bottom:5px;color:var(--ink-soft,#5b6677)}
+.sxl-ch,.st-ch{display:flex;gap:6px;flex-wrap:wrap}
+.sxl-ch button,.st-ch button{border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:10px;padding:7px 12px;font-size:12.8px;cursor:pointer}
+.sxl-ch button.on,.st-ch button.on{background:var(--accent,#2563eb);color:#fff;border-color:transparent}
+.sxl-modes{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.sxl-m{border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:14px;padding:12px;font-weight:700;font-size:14px;cursor:pointer}
+.sxl-m.on{background:var(--accent,#2563eb);color:#fff;border-color:transparent}
+.sxl-join{display:flex;gap:8px}
+.sxl-join input{flex:1;min-width:0;border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:14px;padding:10px;font:800 18px/1 monospace;text-align:center;letter-spacing:6px;text-transform:uppercase}
+.sxl-st{margin-top:10px;font-size:13.5px;line-height:1.8}
+.sxl-room{text-align:center}
+.sxl-code{font:900 44px/1.2 monospace;letter-spacing:10px;background:var(--surface-2,#eef1f7);border-radius:16px;padding:8px;margin:6px 0;direction:ltr}
+.sxl-share{display:flex;gap:8px;justify-content:center;margin:8px 0;flex-wrap:wrap}
+.sxl-share a,.sxl-share button{border:0;background:#25d366;color:#fff;border-radius:12px;padding:9px 14px;font-weight:700;font-size:13px;text-decoration:none;cursor:pointer}
+.sxl-share button{background:var(--accent,#2563eb)}
+.sxl-roster{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.sxl-roster span{background:var(--surface-2,#eef1f7);border-radius:999px;padding:5px 12px;font-size:13px}
+.sxl-roster .wait{opacity:.6;animation:sxp 1.2s infinite}
+@keyframes sxp{50%{opacity:.25}}
+
+/* المسرح */
+#sxStage{position:absolute;inset:0;z-index:30;background:var(--bg,#f4f6fb);display:flex;flex-direction:column}
+.sxs-top{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface,#fff);border-bottom:1px solid var(--line,#dde3ee)}
+.sxs-top b{flex:0 0 auto}.sxs-st{flex:1}
+.sxs-top button{border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:10px;padding:6px 11px;cursor:pointer;font-size:13px}
+.sxs-emo{display:flex;gap:6px;padding:6px 12px;justify-content:center;background:var(--surface,#fff)}
+.sxs-emo button{border:0;background:var(--surface-2,#f4f6fb);border-radius:50%;width:38px;height:38px;font-size:20px;cursor:pointer}
+.sxs-banner{background:#fff3cd;color:#664d03;padding:8px 12px;text-align:center;font-size:13px}
+.sxs-banner button{margin-inline-start:8px;border:0;background:#664d03;color:#fff;border-radius:8px;padding:4px 10px;cursor:pointer}
+.sxs-box{position:relative;flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column}
+.sxs-float{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.sxs-float span{position:absolute;bottom:-30px;font-size:34px;animation:sxf 2.1s ease-out forwards}
+@keyframes sxf{to{transform:translateY(-70vh);opacity:0}}
+.sxs-end{position:absolute;inset:0;background:rgba(10,14,24,.6);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.sxs-card{background:var(--surface,#fff);border-radius:22px;padding:22px;text-align:center;width:min(380px,100%);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.sxs-card h3{margin:0 0 6px;font-size:22px}
+.sxs-card p{margin:0 0 10px;color:var(--ink-soft,#5b6677)}
+.sxs-eb{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.sxs-eb button{border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer}
+.sxs-eb .rm{background:var(--accent,#2563eb);color:#fff;border-color:transparent}
+
+/* ألعاب لوحية */
+.g-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px;margin:auto;width:100%;max-width:520px}
+.g-st{min-height:24px;font-weight:700;font-size:14px;text-align:center}
+.xo-b{display:grid;gap:8px;width:min(100%,420px);aspect-ratio:1}
+.xo-c{border:0;border-radius:14px;background:var(--surface,#fff);box-shadow:inset 0 0 0 2px var(--line,#dde3ee);font-size:clamp(28px,9vw,54px);font-weight:900;cursor:pointer;line-height:1;color:inherit}
+.xo-c.x{color:#2563eb}.xo-c.o{color:#e11d48}.xo-c.w{background:#fff3b0;box-shadow:inset 0 0 0 3px #f5b400}
+.c4-b{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;background:#1e40af;padding:8px;border-radius:16px;width:min(100%,460px)}
+.c4-c{border:0;background:transparent;padding:0;aspect-ratio:1;cursor:pointer}
+.c4-c i{display:block;width:100%;height:100%;border-radius:50%;background:#e8eefc;box-shadow:inset 0 3px 6px rgba(0,0,0,.35)}
+.c4-c i.p0{background:radial-gradient(circle at 35% 30%,#ff8a8a,#d62828)}.c4-c i.p1{background:radial-gradient(circle at 35% 30%,#ffe98a,#e0a800)}
+.c4-c i.w{box-shadow:0 0 0 3px #fff,0 0 14px 4px #fff}
+.ch-b{display:grid;grid-template-columns:repeat(8,1fr);width:min(100%,520px,calc(100vh - 230px));aspect-ratio:1;border:4px solid #5b3a1e;border-radius:6px;overflow:hidden}
+.ch-s{border:0;padding:0;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:clamp(22px,8vw,46px);line-height:1}
+.ch-s.l{background:#f0d9b5}.ch-s.d{background:#b58863}
+.ch-s.sel{background:#f6f669!important}.ch-s.lm{box-shadow:inset 0 0 0 100px rgba(255,235,59,.35)}.ch-s.chk{background:radial-gradient(circle,#ff5252,transparent 75%)!important}
+.ch-s .pc.w{color:#fff;text-shadow:0 0 2px #000,0 0 2px #000,0 0 3px #000}.ch-s .pc.b{color:#1a1a1a}
+.ch-s .dot{position:absolute;width:30%;height:30%;border-radius:50%;background:rgba(20,80,20,.45)}
+.ch-s .cap{position:absolute;inset:6%;border-radius:50%;border:4px solid rgba(200,30,30,.55)}
+.ch-act button{border:1px solid var(--line,#dde3ee);background:var(--surface,#fff);color:inherit;border-radius:10px;padding:7px 14px;cursor:pointer}
+.ch-pr b{display:block;margin-bottom:10px}.ch-pr div{display:flex;gap:8px;justify-content:center}.ch-pr button{font-size:34px;width:56px;height:56px;border-radius:12px;border:1px solid var(--line,#dde3ee);background:#f0d9b5;color:#111;cursor:pointer}
+.mm-sc{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.mm-sc span{background:var(--surface,#fff);border:2px solid var(--line,#dde3ee);border-radius:12px;padding:5px 12px;font-size:13px}.mm-sc span.on{border-color:var(--accent,#2563eb)}
+.mm-b{display:grid;gap:8px;width:min(100%,460px)}
+.mm-c{aspect-ratio:1;border:0;border-radius:12px;background:var(--accent,#2563eb);font-size:clamp(24px,8vw,40px);cursor:pointer;color:#fff;transition:transform .2s}
+.mm-c.up{background:var(--surface,#fff);color:inherit;box-shadow:inset 0 0 0 2px var(--accent,#2563eb)}.mm-c.ok{background:#d4f5dd;color:inherit;opacity:.75}
+
+/* تحدي الحساب */
+.du-sc{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.du-sc span{background:var(--surface,#fff);border:2px solid var(--line,#dde3ee);border-radius:12px;padding:5px 10px;font-size:13px;display:flex;gap:6px;align-items:center}.du-sc span.me{border-color:var(--accent,#2563eb)}.du-sc small{color:var(--ink-soft,#5b6677)}
+.du-q{width:100%;text-align:center;background:var(--surface,#fff);border-radius:18px;padding:20px 12px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.du-q small{display:block;color:var(--ink-soft,#5b6677);margin-bottom:6px}.du-q>div{font-size:clamp(20px,6vw,30px);font-weight:800;line-height:1.7}
+.du-w{font-size:17px;font-weight:700}
+.du-bar{width:100%;height:8px;background:var(--surface-2,#e5e9f2);border-radius:99px;overflow:hidden}.du-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#e53935,#fdd835,#43a047);transform-origin:right}
+.du-in{display:flex;gap:8px;width:100%}.du-in input{flex:1;min-width:0;border:2px solid var(--line,#dde3ee);background:var(--surface,#fff);color:inherit;border-radius:14px;padding:12px;font:800 22px/1 monospace;text-align:center;direction:ltr}
+.du-in button{border:0;background:var(--accent,#2563eb);color:#fff;border-radius:14px;padding:0 20px;font-weight:700;font-size:15px;cursor:pointer}
+.du-fb{min-height:26px;font-weight:700}.du-fb.ok{color:#16a34a}.du-fb.no{color:#dc2626}
+.du-rank{list-style:none;padding:0;margin:10px 0;text-align:right}.du-rank li{padding:6px 10px;border-radius:10px;background:var(--surface-2,#f1f4fa);margin:4px 0;display:flex;gap:8px;align-items:center}.du-rank li.me{outline:2px solid var(--accent,#2563eb)}.du-rank small{margin-inline-start:auto;color:var(--ink-soft,#5b6677)}
+.du-sh{display:inline-block;margin-top:6px;background:#25d366;color:#fff;border-radius:12px;padding:8px 14px;text-decoration:none;font-weight:700}
+
+/* بينج بونج + 2048 */
+.pg{max-width:480px;height:100%;padding:8px}.pg-sc{display:flex;gap:14px;justify-content:center;font-size:14px;align-items:center}.pg-sc span.me{color:var(--accent,#2563eb)}.pg-sc i{opacity:.5;font-style:normal}
+.pg-cv{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}.pg-cv canvas{border-radius:14px;background:#0b2a1d;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.g48-h{display:flex;justify-content:space-between;gap:10px;width:min(100%,420px);font-size:14px;flex-wrap:wrap}
+.g48-b{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:min(100%,420px);aspect-ratio:1;background:#bbada0;padding:8px;border-radius:14px;user-select:none}
+.g48-b div{background:rgba(238,228,218,.35);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(18px,7vw,34px);color:#776e65}
+.g48-b .t2{background:#eee4da}.g48-b .t4{background:#ede0c8}.g48-b .t8{background:#f2b179;color:#fff}.g48-b .t16{background:#f59563;color:#fff}.g48-b .t32{background:#f67c5f;color:#fff}.g48-b .t64{background:#f65e3b;color:#fff}
+.g48-b .t128{background:#edcf72;color:#fff;font-size:clamp(16px,6vw,28px)}.g48-b .t256{background:#edcc61;color:#fff}.g48-b .t512{background:#edc850;color:#fff}.g48-b .t1024{background:#edc53f;color:#fff;font-size:clamp(14px,5vw,24px)}.g48-b .t2048{background:#edc22e;color:#fff;font-size:clamp(14px,5vw,24px)}.g48-b [class*=t4096],.g48-b [class*=t8192]{background:#3c3a32;color:#fff}
+
+/* بلياردو */
+.pl-wrap{display:flex;flex-direction:column;height:100%;min-height:0;width:100%;background:#0e1a14}
+.pl-hud{display:flex;align-items:stretch;gap:6px;padding:6px 8px;background:#101c16;color:#fff}
+.pl-p{flex:1;min-width:0;border-radius:12px;padding:5px 8px;background:rgba(255,255,255,.07);border:2px solid transparent;display:flex;flex-direction:column;gap:1px;font-size:12px}
+.pl-p.on{border-color:#ffd23f;background:rgba(255,210,63,.14)}
+.pl-p b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}.pl-g{opacity:.75;font-size:11px}
+.pl-d{display:flex;gap:2px;flex-wrap:wrap;min-height:14px}.pl-d i{width:13px;height:13px;border-radius:50%;display:inline-block;font-style:normal;font-size:8px;color:#fff;text-align:center;line-height:13px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.35)}.pl-d i.off{opacity:.18}
+.pl-msg{flex:1.3;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;line-height:1.5;color:#e9f3ec;padding:0 4px}
+.pl-cv{flex:1;min-height:0;position:relative}.pl-cv canvas{display:block;position:absolute;inset:0;touch-action:none}
+.pl-fine{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:#101c16;color:#fff;font-size:12px}
+.pl-fine button{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:10px;padding:8px 14px;font-weight:700;touch-action:none;user-select:none}
+.pl-gd{display:flex;gap:5px;align-items:center}
+
+/* أدوات المذاكرة */
+.st-h{margin:2px 34px 10px 0}.st-h b{display:block;font-size:16px}.st-h small{color:var(--ink-soft,#5b6677);font-size:12px}
+.st-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}.st-tabs button{border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:10px;padding:7px 12px;font-size:12.8px;cursor:pointer}.st-tabs button.on{background:var(--accent,#2563eb);color:#fff;border-color:transparent}
+.st-pane select,.st-pane textarea,.st-pane input[type=file],.st-l input,#mlS,.st-b2{width:100%;box-sizing:border-box;border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:12px;padding:10px;font:inherit}
+.st-pane small{display:block;margin-top:6px;color:var(--ink-soft,#5b6677);font-size:12px}
+.st-opts{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.st-go{display:block;width:100%;margin-top:12px;border:0;background:var(--accent,#2563eb);color:#fff;border-radius:14px;padding:12px;font-weight:800;font-size:15px;cursor:pointer}
+.st-b2{margin-top:8px;cursor:pointer;font-weight:700;text-align:center}
+.st-chk{max-height:210px;overflow:auto;border:1px solid var(--line,#dde3ee);border-radius:12px;padding:6px 10px;margin:6px 0}.st-chk label{display:block;padding:5px 0;font-size:13px}
+.st-busy{text-align:center;padding:30px 10px}.st-spin{width:44px;height:44px;border:4px solid var(--line,#dde3ee);border-top-color:var(--accent,#2563eb);border-radius:50%;margin:0 auto 12px;animation:sxsp .9s linear infinite}@keyframes sxsp{to{transform:rotate(360deg)}}
+.st-err{color:#c0392b;font-weight:700;line-height:1.8}.st-note{color:var(--ink-soft,#5b6677)}
+.qz-top{display:flex;align-items:center;gap:8px;margin:2px 34px 8px 0}.qz-top b{flex:1;font-size:14px}.qz-n{font-size:12.5px;background:var(--surface-2,#eef1f7);border-radius:99px;padding:2px 10px}.qz-t{font-weight:800;color:#16a34a}.qz-t.warn{color:#dc2626;animation:sxp 1s infinite}
+.qz-bar{height:6px;background:var(--surface-2,#e5e9f2);border-radius:99px;overflow:hidden;margin-bottom:12px}.qz-bar i{display:block;height:100%;background:var(--accent,#2563eb);transition:width .3s}
+.qz-q{font-size:16px;font-weight:700;line-height:1.9;margin-bottom:10px}
+.qz-o{display:flex;flex-direction:column;gap:8px}.qz-o button{text-align:right;border:2px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:14px;padding:11px 12px;font-size:14.5px;cursor:pointer;line-height:1.7}
+.qz-o button.sel{border-color:var(--accent,#2563eb);background:rgba(37,99,235,.1)}.qz-o button.ok{border-color:#16a34a;background:rgba(22,163,74,.14)}.qz-o button.no{border-color:#dc2626;background:rgba(220,38,38,.12)}.qz-o button.gone{opacity:.2}
+.qz-x{margin-top:10px;border-radius:12px;padding:10px;font-size:13.5px;line-height:1.8}.qz-x.ok{background:rgba(22,163,74,.1)}.qz-x.no{background:rgba(220,38,38,.09)}
+.qz-nav{display:flex;justify-content:space-between;gap:8px;margin-top:12px}.qz-nav button,.qz-end button{border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer}
+.qz-nav .pri,.qz-end .pri{background:var(--accent,#2563eb);color:#fff;border-color:transparent}.qz-nav button:disabled{opacity:.4}
+.qz-res{text-align:center}.qz-score{width:110px;height:110px;border-radius:50%;margin:6px auto;display:flex;flex-direction:column;align-items:center;justify-content:center;border:6px solid}.qz-score b{font-size:34px;line-height:1}.qz-score.g{border-color:#16a34a;color:#16a34a}.qz-score.m{border-color:#f59e0b;color:#d97706}.qz-score.b{border-color:#dc2626;color:#dc2626}
+.qz-wr{text-align:right;margin:10px 0}.qz-wi{background:var(--surface-2,#f4f6fb);border-radius:12px;padding:9px 11px;margin:6px 0;font-size:13.5px;line-height:1.8}.qz-wi small{display:block;font-size:12.5px}.qz-wi .g{color:#16a34a}.qz-wi .r{color:#dc2626}
+.qz-end{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.fc-card{min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;border-radius:20px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;cursor:pointer;font-size:18px;line-height:1.9;gap:8px}.fc-card.back{background:linear-gradient(135deg,#059669,#0d9488)}.fc-card small{opacity:.8;font-size:12px}
+.dk{display:flex;gap:6px;margin:6px 0}.dk-o{flex:1;text-align:right;border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:12px;padding:10px;cursor:pointer;display:flex;flex-direction:column}.dk-o small{color:var(--ink-soft,#5b6677)}.dk-d{border:0;background:transparent;font-size:16px;cursor:pointer}
+.wk{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:13px}.wk>span{width:36%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wk-b{flex:1;height:10px;background:var(--surface-2,#e5e9f2);border-radius:99px;overflow:hidden}.wk-b i{display:block;height:100%;border-radius:99px}.wk-b i.g{background:#16a34a}.wk-b i.m{background:#f59e0b}.wk-b i.b{background:#dc2626}.wk small{color:var(--ink-soft,#5b6677);width:34px}
+.pn-d{border:1px solid var(--line,#dde3ee);border-radius:14px;padding:8px 10px;margin:8px 0}.pn-d.today{border-color:var(--accent,#2563eb);background:rgba(37,99,235,.07)}.pn-d.past{opacity:.6}.pn-d>b{display:block;margin-bottom:4px;font-size:13.5px}.pn-t{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13.5px}.pn-t.dn{text-decoration:line-through;opacity:.55}.pn-t small{margin-inline-start:auto;color:var(--ink-soft,#5b6677)}
+.sh-doc{background:#fff;color:#111;border-radius:12px;padding:12px 14px;line-height:1.9;font-size:14px;border:1px solid var(--line,#dde3ee);max-height:55vh;overflow:auto}
+.gp-r{display:grid;grid-template-columns:2fr 1fr 1fr .8fr 28px;gap:6px;align-items:center;margin:5px 0}.gp-r input{min-width:0;border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:10px;padding:8px;font:inherit;width:100%;box-sizing:border-box}.gp-hd{font-size:11.5px;color:var(--ink-soft,#5b6677);font-weight:700}.gp-r button{border:0;background:transparent;cursor:pointer;color:#dc2626}
+.gp-res{display:flex;gap:8px;margin:12px 0}.gp-res div{flex:1;text-align:center;background:var(--surface-2,#eef1f7);border-radius:14px;padding:10px}.gp-res small{display:block;color:var(--ink-soft,#5b6677);font-size:11.5px}.gp-res b{font-size:24px}
+.gp-det{margin-top:8px}.gp-det summary{cursor:pointer;font-weight:700;font-size:13px}.gp-sc{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;font-size:12.5px}.gp-sc input{width:54px;border:1px solid var(--line,#dde3ee);border-radius:8px;padding:3px;background:var(--surface-2,#f4f6fb);color:inherit}
+.ml{display:flex;gap:10px}.ml-l{display:flex;flex-direction:column;font-size:11px;gap:2px;min-width:92px}.ml-l span{padding:2px 6px;border-radius:6px;background:var(--surface-2,#eef1f7)}.ml-l .cur{background:#f59e0b;color:#fff;font-weight:800}.ml-l .dn{opacity:.4}.ml-l .sf{outline:1px solid #f59e0b}
+.ml-m{flex:1;min-width:0}.ml-lf{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}.ml-lf button{border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer}.ml-lf button:disabled{opacity:.35}
+.me-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.me-c{background:var(--surface,#fff);border:1px solid var(--line,#dde3ee);border-radius:16px;padding:12px}.me-c.wide{grid-column:1/-1}.me-c>b{display:block;margin-bottom:6px}.me-r{display:flex;justify-content:space-between;gap:8px;padding:5px 0;font-size:13px;border-bottom:1px dashed var(--line,#dde3ee)}
+
+/* زرار الأعلى + تثبيت التطبيق + أزرار البوت */
+#sxTopBtn{font-size:19px}
+#mbChips button[data-sxai]{background:var(--surface-2,#eef1f7)}
+.sx-install{position:fixed;inset-inline:12px;bottom:12px;z-index:150;background:var(--surface,#fff);border:1px solid var(--line,#dde3ee);border-radius:16px;padding:12px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.2);font-size:13.5px}.sx-install b{flex:1}.sx-install button{border:0;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}.sx-install .go{background:var(--accent,#2563eb);color:#fff}.sx-install .no{background:transparent;color:var(--ink-soft,#5b6677)}
+@media (max-width:520px){.sxh-nm span{display:none}.ml{flex-direction:column}.ml-l{flex-direction:row;overflow-x:auto;min-width:0}.ml-l span{white-space:nowrap}}
+</style>
+<script id="sxPlus2">
+(function(){
+'use strict';
+const SX = window.SX = {games:{}};
+/* ===== محرّك بلياردو 8-Ball: فيزيا + قوانين + ذكاء اصطناعي (بدون واجهة) ===== */
+const Pool = (function(){
+'use strict';
+const W = 1000, H = 500, R = 11.5, HEAD = 250, FOOT = [750, 250];
+const PM = 38, SM = 30, TIP = 3;                       // فتحة جيب الركن / الجيب الجانبي / نصف قطر طرف الحيط
+const POCKETS = [[-3, -3, 27], [W/2, -9, 25], [W + 3, -3, 27], [-3, H + 3, 27], [W/2, H + 9, 25], [W + 3, H + 3, 27]];
+const TIPS = [[PM, 0], [0, PM], [W - PM, 0], [W, PM], [0, H - PM], [PM, H], [W, H - PM], [W - PM, H], [W/2 - SM, 0], [W/2 + SM, 0], [W/2 - SM, H], [W/2 + SM, H]];
+const E_WALL = .78, E_BALL = .95, FR_A = 62, FR_B = .32, STOP = 7, VMAX = 2700, DT = 1/480;
+
+function mulberry(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function shuffle(arr, rnd){ for(let i = arr.length - 1; i > 0; i--){ const j = Math.floor(rnd()*(i + 1)); const t = arr[i]; arr[i] = arr[j]; arr[j] = t; } return arr; }
+const isSolid = n => n >= 1 && n <= 7, isStripe = n => n >= 9 && n <= 15;
+const grpOf = n => isSolid(n) ? 's' : isStripe(n) ? 't' : null;
+
+function newGame(seed, first){
+  const rnd = mulberry(seed >>> 0), dx = Math.sqrt(3)*R + .3, dy = R + .15, pos = [];
+  for(let r = 0; r < 5; r++) for(let c = 0; c <= r; c++) pos.push([FOOT[0] + r*dx, FOOT[1] + (c - r/2)*2*dy]);
+  const solids = shuffle([1, 2, 3, 4, 5, 6, 7], rnd), stripes = shuffle([9, 10, 11, 12, 13, 14, 15], rnd), slot = new Array(15);
+  slot[4] = 8; const cs = rnd() < .5 ? [solids.pop(), stripes.pop()] : [stripes.pop(), solids.pop()]; slot[10] = cs[0]; slot[14] = cs[1];
+  const rest = shuffle(solids.concat(stripes), rnd); for(let i = 0; i < 15; i++) if(slot[i] == null) slot[i] = rest.pop();
+  const balls = []; balls[0] = {n:0, x:HEAD - 30, y:H/2, vx:0, vy:0, in:0, vs:0, ss:0};
+  slot.forEach((n, i) => { balls[n] = {n, x:pos[i][0], y:pos[i][1], vx:0, vy:0, in:0, vs:0, ss:0}; });
+  return {balls, turn:first || 0, grp:[null, null], open:true, bih:true, kitchen:true, brk:true, over:null, shot:null, ev:[], call:null, shots:0, seed};
+}
+
+function moving(S){ for(const b of S.balls) if(!b.in && (b.vx || b.vy)) return true; return false; }
+
+function shoot(S, o){
+  const c = S.balls[0], me = S.turn, own = ownLeft(S, me);
+  c.vx = o.vx; c.vy = o.vy; c.vs = (o.sy || 0); c.ss = (o.sx || 0);
+  S.shot = {first:null, pk:[], rail:false, cue:false, spun:false, ownClearedBefore:own.cleared, call:S.call, brk:S.brk};
+  S.ev = []; S.shots++; S.bih = false; S.msg = '';
+}
+function ownLeft(S, who){
+  const g = S.grp[who]; if(!g) return {cleared:false, list:[]};
+  const list = S.balls.filter(b => b.n !== 0 && b.n !== 8 && !b.in && grpOf(b.n) === g);
+  return {cleared:list.length === 0, list};
+}
+function legalTargets(S, who){
+  const g = S.grp[who], on = S.balls.filter(b => b.n !== 0 && !b.in);
+  if(!g) return on.filter(b => b.n !== 8);
+  const mine = on.filter(b => grpOf(b.n) === g); return mine.length ? mine : on.filter(b => b.n === 8);
+}
+
+function cushion(S, b){
+  const sp = Math.hypot(b.vx, b.vy); let hit = false, vn = 0;
+  const gapX = x => x < PM || x > W - PM || Math.abs(x - W/2) < SM, gapY = y => y < PM || y > H - PM;
+  const spin = b.n === 0 ? b.ss : 0;
+  if(b.x < R && !gapY(b.y)){ b.x = R; vn = -b.vx; b.vx = vn*E_WALL; b.vy += spin*.22*vn; hit = true; }
+  else if(b.x > W - R && !gapY(b.y)){ b.x = W - R; vn = b.vx; b.vx = -vn*E_WALL; b.vy -= spin*.22*vn; hit = true; }
+  if(b.y < R && !gapX(b.x)){ b.y = R; vn = -b.vy; b.vy = vn*E_WALL; b.vx -= spin*.22*vn; hit = true; }
+  else if(b.y > H - R && !gapX(b.x)){ b.y = H - R; vn = b.vy; b.vy = -vn*E_WALL; b.vx += spin*.22*vn; hit = true; }
+  if(hit){ if(b.n === 0) b.ss *= .55; if(S.shot && S.shot.first !== null) S.shot.rail = true; S.ev.push({k:'rail', v:Math.min(1, Math.abs(vn)/1200)}); }
+  for(const t of TIPS){
+    const dx = b.x - t[0], dy = b.y - t[1], d2 = dx*dx + dy*dy, m = R + TIP;
+    if(d2 < m*m){ const d = Math.sqrt(d2) || .001, nx = dx/d, ny = dy/d, v = b.vx*nx + b.vy*ny;
+      b.x = t[0] + nx*m; b.y = t[1] + ny*m; if(v < 0){ b.vx -= (1 + E_WALL)*v*nx; b.vy -= (1 + E_WALL)*v*ny; S.ev.push({k:'rail', v:Math.min(1, -v/1200)}); } }
+  }
+}
+
+function step(S, dt){
+  dt = dt || DT; const B = S.balls;
+  for(const b of B){
+    if(b.in) continue;
+    b.x += b.vx*dt; b.y += b.vy*dt;
+    const sp = Math.hypot(b.vx, b.vy);
+    if(sp > 0){ let ns = sp - (FR_A + FR_B*sp)*dt; if(ns < STOP) ns = 0; const k = ns/sp; b.vx *= k; b.vy *= k; }
+    if(b.n === 0){ b.vs *= Math.exp(-.7*dt); b.ss *= Math.exp(-.45*dt); }
+  }
+  for(const b of B){ if(!b.in) cushion(S, b); }
+  for(let i = 0; i < B.length; i++){
+    const a = B[i]; if(a.in) continue;
+    for(let j = i + 1; j < B.length; j++){
+      const c = B[j]; if(c.in) continue;
+      const dx = c.x - a.x, dy = c.y - a.y, d2 = dx*dx + dy*dy;
+      if(d2 < 4*R*R){
+        const d = Math.sqrt(d2) || .001, nx = dx/d, ny = dy/d, ov = (2*R - d)/2;
+        a.x -= nx*ov; a.y -= ny*ov; c.x += nx*ov; c.y += ny*ov;
+        const pa = {x:a.vx, y:a.vy}, pc = {x:c.vx, y:c.vy}, vn = (a.vx - c.vx)*nx + (a.vy - c.vy)*ny;
+        if(vn > 0){
+          const j2 = (1 + E_BALL)*.5*vn; a.vx -= j2*nx; a.vy -= j2*ny; c.vx += j2*nx; c.vy += j2*ny;
+          S.ev.push({k:'hit', v:Math.min(1, vn/1500)});
+          const sh = S.shot;
+          if(sh){
+            if(sh.first === null && (a.n === 0 || c.n === 0)) sh.first = a.n === 0 ? c.n : a.n;
+            const cue = a.n === 0 ? a : (c.n === 0 ? c : null);
+            if(cue && !sh.spun){
+              sh.spun = true; const pre = cue === a ? pa : pc, ps = Math.hypot(pre.x, pre.y) || 1;
+              const f = cue.vs*.5*vn; cue.vx += pre.x/ps*f; cue.vy += pre.y/ps*f; cue.vs *= .2;
+            }
+          }
+        }
+      }
+    }
+  }
+  for(const b of B){
+    if(b.in) continue;
+    for(let k = 0; k < 6; k++){
+      const p = POCKETS[k], dx = b.x - p[0], dy = b.y - p[1];
+      if(dx*dx + dy*dy < p[2]*p[2]){ b.in = k + 1; b.vx = b.vy = 0; S.ev.push({k:'pot', n:b.n, p:k}); if(S.shot){ if(b.n === 0) S.shot.cue = true; else S.shot.pk.push(b.n); } break; }
+    }
+  }
+}
+
+/* تقييم الضربة بعد ما كل الكور تقف */
+function finish(S){
+  const sh = S.shot, me = S.turn, opp = 1 - me; let foul = false, msg = '', win = null, keep = false;
+  const cueIn = S.balls[0].in;
+  const pk = sh.pk.slice(), eight = pk.indexOf(8) >= 0, others = pk.filter(n => n !== 8);
+  if(cueIn){ foul = true; msg = 'فاول: الكرة البيضا دخلت الجيب'; }
+  else if(sh.first === null){ foul = true; msg = 'فاول: الكرة البيضا ما لمست أي كرة'; }
+  else {
+    const g = S.grp[me];
+    if(!sh.brk){
+      if(!g){ if(sh.first === 8){ foul = true; msg = 'فاول: لمست الكرة السودا الأول'; } }
+      else if(sh.ownClearedBefore){ if(sh.first !== 8){ foul = true; msg = 'فاول: لازم تضرب الكرة السودا'; } }
+      else if(grpOf(sh.first) !== g){ foul = true; msg = 'فاول: ضربت كرة مش من مجموعتك'; }
+    }
+  }
+  if(!foul && !pk.length && !sh.rail){ foul = true; msg = 'فاول: ولا كرة لمست الحيط'; }
+  /* الكرة السودا */
+  let respot8 = false;
+  if(eight){
+    if(sh.brk && !cueIn){ respot8 = true; }
+    else {
+      const callOk = sh.call == null || S.balls[8].in - 1 === sh.call;
+      if(S.grp[me] && sh.ownClearedBefore && !foul && callOk){ win = me; msg = 'دخّل الكرة السودا — فوز!'; }
+      else { win = opp; msg = sh.ownClearedBefore || !S.grp[me] ? (callOk ? 'خسر: ' + (msg || 'فاول مع الكرة السودا') : 'خسر: الكرة السودا دخلت جيب غير اللي اختاره') : 'خسر: دخّل الكرة السودا بدري'; }
+    }
+  }
+  if(respot8){ const b8 = S.balls[8]; b8.in = 0; b8.vx = b8.vy = 0; let x = FOOT[0]; while(S.balls.some(o => o !== b8 && !o.in && Math.hypot(o.x - x, o.y - FOOT[1]) < 2*R + 1)) x += 2*R; b8.x = x; b8.y = FOOT[1]; msg = (msg ? msg + ' — ' : '') + 'الكرة السودا اتحطت تاني'; }
+  /* تحديد المجموعات */
+  if(!foul && S.open && !sh.brk && others.length && win == null){
+    const g = grpOf(others[0]); S.grp[me] = g; S.grp[opp] = g === 's' ? 't' : 's'; S.open = false;
+    msg = 'اتحددت المجموعات: ' + (g === 's' ? 'الملوّنة (1–7)' : 'المقلّمة (9–15)') + ' للاعب الحالي';
+  }
+  /* هل يكمّل؟ */
+  if(win == null){
+    if(!foul){
+      if(sh.brk) keep = pk.some(n => n !== 8);
+      else if(S.open) keep = others.length > 0;
+      else { const g = S.grp[me]; keep = others.some(n => grpOf(n) === g) || (sh.ownClearedBefore && eight); }
+    }
+    if(foul){ S.turn = opp; S.bih = true; S.kitchen = false; }
+    else if(!keep){ S.turn = opp; S.bih = false; if(!msg) msg = 'ما دخلش كرة — الدور للخصم'; }
+    else { S.bih = false; if(!msg) msg = 'دخلت كرة — كمّل'; }
+  } else { S.over = win; }
+  if(cueIn){ const c = S.balls[0]; c.in = 0; c.vx = c.vy = 0; c.x = HEAD - 30; c.y = H/2; }
+  S.brk = false; S.call = null; S.msg = msg; const res = {foul, msg, win, keep, potted:pk.slice(), turn:S.turn};
+  S.shot = null; return res;
+}
+
+function canPlace(S, x, y){
+  if(x < R || x > W - R || y < R || y > H - R) return false;
+  if(S.kitchen && x > HEAD) return false;
+  for(const b of S.balls) if(b.n !== 0 && !b.in && Math.hypot(b.x - x, b.y - y) < 2*R + .5) return false;
+  return true;
+}
+function place(S, x, y){ const c = S.balls[0]; c.x = x; c.y = y; c.vx = c.vy = 0; c.in = 0; }
+
+/* أول ضربة: خط الهدف من البيضا (للمساعدة البصرية) */
+function trace(S, ang){
+  const c = S.balls[0], dx = Math.cos(ang), dy = Math.sin(ang); let best = {t:1e9, kind:null, ball:null};
+  for(const b of S.balls){
+    if(b.n === 0 || b.in) continue;
+    const fx = b.x - c.x, fy = b.y - c.y, pr = fx*dx + fy*dy; if(pr <= 0) continue;
+    const perp2 = fx*fx + fy*fy - pr*pr, m = 2*R; if(perp2 > m*m) continue;
+    const t = pr - Math.sqrt(m*m - perp2); if(t < best.t){ best = {t, kind:'ball', ball:b}; }
+  }
+  let tw = 1e9;
+  if(dx > 0) tw = Math.min(tw, (W - R - c.x)/dx); else if(dx < 0) tw = Math.min(tw, (R - c.x)/dx);
+  if(dy > 0) tw = Math.min(tw, (H - R - c.y)/dy); else if(dy < 0) tw = Math.min(tw, (R - c.y)/dy);
+  if(tw < best.t) best = {t:tw, kind:'wall', ball:null};
+  const t = Math.max(0, best.t), gx = c.x + dx*t, gy = c.y + dy*t; let ox = 0, oy = 0;
+  if(best.ball){ const nx = best.ball.x - gx, ny = best.ball.y - gy, d = Math.hypot(nx, ny) || 1; ox = nx/d; oy = ny/d; }
+  return {t, gx, gy, ball:best.ball, kind:best.kind, ox, oy};
+}
+
+/* ---------------- الكمبيوتر ---------------- */
+function segDist(px, py, ax, ay, bx, by){
+  const vx = bx - ax, vy = by - ay, l2 = vx*vx + vy*vy; let t = l2 ? ((px - ax)*vx + (py - ay)*vy)/l2 : 0; t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px - (ax + vx*t), py - (ay + vy*t));
+}
+function bestShot(S, cx, cy, who){
+  const targets = legalTargets(S, who), only8 = targets.length === 1 && targets[0].n === 8; let best = null;
+  const solid = S.balls.filter(b => !b.in && b.n !== 0);
+  for(const t of targets){
+    for(let k = 0; k < 6; k++){
+      const p = POCKETS[k], tx = p[0] < 0 ? 4 : p[0] > W ? W - 4 : p[0], ty = p[1] < 0 ? 4 : p[1] > H ? H - 4 : p[1];
+      let gx = tx - t.x, gy = ty - t.y; const gl = Math.hypot(gx, gy) || 1; gx /= gl; gy /= gl;
+      const Gx = t.x - gx*2*R, Gy = t.y - gy*2*R;
+      if(Gx < R || Gx > W - R || Gy < R || Gy > H - R) continue;
+      let ux = Gx - cx, uy = Gy - cy; const d1 = Math.hypot(ux, uy); if(d1 < 1) continue; ux /= d1; uy /= d1;
+      const cosT = ux*gx + uy*gy; if(cosT < .22) continue;
+      let blocked = false;
+      for(const o of solid){ if(o === t) continue;
+        if(segDist(o.x, o.y, cx, cy, Gx, Gy) < 2*R - 1.5 || segDist(o.x, o.y, t.x, t.y, tx, ty) < 2*R - 1.5){ blocked = true; break; } }
+      if(blocked) continue;
+      const score = cosT*100 - (d1 + gl)*.035 + (k === 1 || k === 4 ? -6 : 3) - (gl < 60 ? 0 : 0);
+      if(!best || score > best.score) best = {t, k, G:[Gx, Gy], u:[ux, uy], cos:cosT, d1, d2:gl, score, only8};
+    }
+  }
+  return best;
+}
+function aiPlan(S, level, rnd){
+  rnd = rnd || Math.random; const me = S.turn, c = S.balls[0], out = {sx:0, sy:0};
+  const sigma = level === 'hard' ? .0045 : level === 'medium' ? .014 : .034, gauss = () => (rnd() + rnd() + rnd() - 1.5)*1.6;
+  if(S.bih){
+    let bestPos = null, bestScore = -1e9;
+    const tries = S.kitchen ? 18 : 40;
+    for(let i = 0; i < tries; i++){
+      const x = S.kitchen ? R + rnd()*(HEAD - 2*R) : R + rnd()*(W - 2*R), y = R + rnd()*(H - 2*R);
+      if(!canPlace(S, x, y)) continue;
+      const bs = S.brk ? {score:rnd()} : bestShot(S, x, y, me); const sc = bs ? bs.score : -50;
+      if(sc > bestScore){ bestScore = sc; bestPos = [x, y]; }
+    }
+    if(!bestPos) bestPos = [HEAD - 30, H/2];
+    out.cx = bestPos[0]; out.cy = bestPos[1]; c.x = out.cx; c.y = out.cy;
+  }
+  let ang, power, call = null;
+  if(S.brk){ ang = Math.atan2(FOOT[1] - c.y + (rnd() - .5)*10, FOOT[0] - c.x); power = .93; }
+  else {
+    const bs = bestShot(S, c.x, c.y, me);
+    if(bs){ ang = Math.atan2(bs.u[1], bs.u[0]); power = Math.max(.24, Math.min(.88, .3 + (bs.d1 + bs.d2)/1900 + (1 - bs.cos)*.14)); if(bs.only8) call = bs.k;
+      if(level === 'hard' && bs.cos > .8 && bs.d2 > 200) out.sy = .25; }
+    else {
+      const tg = legalTargets(S, me).sort((a, b) => Math.hypot(a.x - c.x, a.y - c.y) - Math.hypot(b.x - c.x, b.y - c.y))[0];
+      ang = Math.atan2(tg.y - c.y, tg.x - c.x); power = .42 + rnd()*.15;
+      if(tg.n === 8) call = Math.floor(rnd()*6);
+    }
+    ang += gauss()*sigma; power *= 1 + gauss()*(level === 'easy' ? .22 : .08);
+  }
+  const v = VMAX*(.03 + .97*Math.pow(Math.max(.05, Math.min(1, power)), 1.6));
+  out.vx = Math.cos(ang)*v; out.vy = Math.sin(ang)*v; out.ang = ang; out.power = power; out.call = call; return out;
+}
+
+const snap = S => ({b:S.balls.map(b => [b.n, +b.x.toFixed(2), +b.y.toFixed(2), b.in]), turn:S.turn, grp:S.grp, open:S.open, bih:S.bih, kitchen:S.kitchen, brk:S.brk, over:S.over, msg:S.msg});
+function apply(S, s){ s.b.forEach(r => { const b = S.balls[r[0]]; b.x = r[1]; b.y = r[2]; b.in = r[3]; b.vx = b.vy = 0; }); S.turn = s.turn; S.grp = s.grp; S.open = s.open; S.bih = s.bih; S.kitchen = s.kitchen; S.brk = s.brk; S.over = s.over; S.msg = s.msg; S.shot = null; }
+
+return {W, H, R, HEAD, FOOT, POCKETS, VMAX, DT, newGame, step, shoot, moving, finish, canPlace, place, trace, legalTargets, ownLeft, aiPlan, bestShot, snap, apply, grpOf, mulberry, E_BALL};
+})();
+
+
+SX.Pool = Pool;
+/* ===== مركز التحدّي: غرف أونلاين (Supabase Realtime) + الصالة + المسرح ===== */
+const $q = (s, r) => (r || document).querySelector(s), $qa = (s, r) => [...(r || document).querySelectorAll(s)];
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const E = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
+const rid = () => Math.random().toString(36).slice(2, 10);
+SX.E = E; SX.sleep = sleep; SX.$q = $q; SX.$qa = $qa;
+const ME = SX.me = {id:lsGet('sx_pid', null) || (()=>{ const v = rid(); lsSet('sx_pid', v); return v; })(), name:lsGet('sx_pname', '') || ''};
+if(!ME.name){ ME.name = 'لاعب ' + (10 + Math.floor(Math.random()*89)); }
+const setName = v => { ME.name = (String(v).trim() || ME.name).slice(0, 14); lsSet('sx_pname', ME.name); };
+const say = m => { try{ toast(m); }catch(e){} };
+SX.say = say;
+const CODE_CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const newCode = () => Array.from({length:4}, () => CODE_CH[Math.floor(Math.random()*CODE_CH.length)]).join('');
+const shareLink = (code, gid) => location.origin + location.pathname + '?sx=' + code + '&g=' + gid;
+
+/* ---------------- غرفة أونلاين ---------------- */
+class Room {
+  constructor(code, host){ this.code = code; this.host = host; this.h = {}; this.peers = {}; this.closed = false; }
+  async open(){
+    if(typeof QA === 'undefined' || !QA.ensureClient) throw new Error('no-client');
+    const sb = await QA.ensureClient(); if(!sb || !sb.channel) throw new Error('no-client');
+    this.sb = sb; this.ch = sb.channel('sx-room-' + this.code, {config:{broadcast:{self:false, ack:false}}});
+    this.ch.on('broadcast', {event:'m'}, ({payload}) => this._in(payload));
+    await new Promise((res, rej) => { const to = setTimeout(() => rej(new Error('timeout')), 9000); this.ch.subscribe(st => { if(st === 'SUBSCRIBED'){ clearTimeout(to); res(); } else if(st === 'CHANNEL_ERROR' || st === 'TIMED_OUT'){ clearTimeout(to); rej(new Error(st)); } }); });
+    this._hb = setInterval(() => this.send('hb', {}), 2500); this.send('hb', {});
+  }
+  on(t, fn){ this.h[t] = fn; }
+  send(t, d){ if(this.closed || !this.ch) return; try{ this.ch.send({type:'broadcast', event:'m', payload:{t, d, f:ME.id, n:ME.name, ts:Date.now()}}); }catch(e){} }
+  _in(p){
+    if(!p || p.f === ME.id) return; const pe = this.peers[p.f] = Object.assign(this.peers[p.f] || {}, {id:p.f, name:p.n, last:Date.now()});
+    if(p.t !== 'hb' && this.h[p.t]) { try{ this.h[p.t](p.d, pe); }catch(e){ console.error(e); } }
+    if(p.t === 'hb' && this.h.hb) this.h.hb(p.d, pe);
+  }
+  alive(id){ const p = this.peers[id]; return !!p && Date.now() - p.last < 9000; }
+  close(){ this.closed = true; clearInterval(this._hb); try{ this.send('bye', {}); }catch(e){} try{ this.sb.removeChannel(this.ch); }catch(e){} }
+}
+SX.Room = Room;
+
+/* ---------------- الواجهة ---------------- */
+let hub = null, stage = null, cur = null;      // cur = {g, cfg, room, inst, ...}
+const GAME_ORDER = ['pool', 'chess', 'xo', 'c4', 'pong', 'duel', 'mem', 'g48'];
+SX.tools = [];   // أدوات المذاكرة تتسجّل من الملف التاني
+
+function hubHtml(){
+  return `<div class="sxh-top"><b class="sxh-t">🎯 مركز التحدّي</b>
+    <label class="sxh-nm">اسمك: <input id="sxName" maxlength="14" value="${E(ME.name)}"></label>
+    <button type="button" class="sxh-x" data-sxh="close" aria-label="إغلاق">✕</button></div>
+    <div class="sxh-tabs"><button type="button" data-sxh="tab" data-tab="games" class="on">🎮 ألعاب (أونلاين)</button><button type="button" data-sxh="tab" data-tab="study">📚 مذاكرة ذكية</button><button type="button" data-sxh="tab" data-tab="me">📊 تقدّمي</button></div>
+    <div class="sxh-body" id="sxBody"></div>`;
+}
+function ensureHub(){
+  if(hub) return hub;
+  hub = document.createElement('div'); hub.id = 'sxHub'; hub.hidden = true; hub.innerHTML = hubHtml(); document.body.appendChild(hub);
+  hub.addEventListener('click', hubClick); hub.addEventListener('input', e => { if(e.target.id === 'sxName') setName(e.target.value); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && hub && !hub.hidden){ if(cur) leaveGame(); else if($q('#sxModal')) closeModal(); else closeHub(); } });
+  return hub;
+}
+function openHub(tab){ ensureHub(); hub.hidden = false; document.documentElement.classList.add('sx-lock'); showTab(tab || 'games'); }
+function closeHub(){ if(!hub) return; leaveGame(true); closeModal(); hub.hidden = true; document.documentElement.classList.remove('sx-lock'); }
+SX.openHub = openHub;
+function showTab(t){
+  $qa('.sxh-tabs button', hub).forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  const body = $q('#sxBody'); hub.dataset.tab = t;
+  if(t === 'games'){
+    body.innerHTML = '<p class="sxh-sub">العب ضد الكمبيوتر، أو على نفس الموبايل، أو <b>أونلاين مع صاحبك من موبايلين مختلفين</b> (بكود غرفة أو لينك).</p><div class="sxh-grid">' +
+      GAME_ORDER.filter(k => SX.games[k]).map(k => { const g = SX.games[k]; return `<button type="button" class="sxh-card" data-sxh="game" data-g="${k}"><i>${g.icon}</i><b>${E(g.name)}</b><small>${E(g.desc)}</small><span class="sxh-badges">${g.online ? '<em>🌐 أونلاين</em>' : ''}${g.cpu ? '<em>🤖</em>' : ''}${g.local ? '<em>👥</em>' : ''}</span></button>`; }).join('') + '</div>';
+  } else if(t === 'study'){
+    body.innerHTML = '<p class="sxh-sub">أدوات بالذكاء الاصطناعي: كويزات وأسئلة وفلاش كاردز من أي قسم أو ملف PDF، وامتحان تجريبي وخطة مذاكرة.</p><div class="sxh-grid">' +
+      SX.tools.map(x => `<button type="button" class="sxh-card" data-sxh="tool" data-id="${x.id}"><i>${x.icon}</i><b>${E(x.name)}</b><small>${E(x.desc)}</small></button>`).join('') + '</div>';
+  } else if(t === 'me' && SX.renderMe){ SX.renderMe(body); }
+}
+function hubClick(e){
+  const a = e.target.closest('[data-sxh]'); if(!a) return; const k = a.dataset.sxh;
+  if(k === 'close') closeHub();
+  else if(k === 'tab') showTab(a.dataset.tab);
+  else if(k === 'game') openLobby(a.dataset.g);
+  else if(k === 'tool'){ const t = SX.tools.find(x => x.id === a.dataset.id); if(t) t.open(); }
+}
+
+/* ---------------- نافذة (مودال) عامة ---------------- */
+function modal(html, cls){ closeModal(); const m = document.createElement('div'); m.id = 'sxModal'; m.className = cls || ''; m.innerHTML = '<div class="sxm-in">' + html + '</div>'; hub.appendChild(m); m.addEventListener('click', e => { if(e.target === m && !m.classList.contains('lock')) closeModal(); }); return m; }
+function closeModal(){ const m = $q('#sxModal'); if(m) m.remove(); if(SX._pending && !cur){ try{ SX._pending.close(); }catch(e){} SX._pending = null; } }
+SX.modal = modal; SX.closeModal = closeModal;
+
+/* ---------------- الصالة (اختيار الوضع) ---------------- */
+function optsHtml(g){ return (g.opts || []).map(o => `<div class="sxl-opt"><label>${E(o.label)}</label><div class="sxl-ch" data-k="${o.k}">${o.choices.map((c, i) => `<button type="button" data-v="${E(c[0])}" class="${(o.def == null ? i === 0 : String(o.def) === String(c[0])) ? 'on' : ''}">${E(c[1])}</button>`).join('')}</div></div>`).join(''); }
+function readOpts(root, g){ const o = {}; (g.opts || []).forEach(d => { const b = $q(`.sxl-ch[data-k="${d.k}"] .on`, root); const raw = b ? b.dataset.v : String(d.choices[0][0]); o[d.k] = isNaN(raw) || raw === '' ? raw : +raw; }); return o; }
+function openLobby(gid, joinCode){
+  const g = SX.games[gid]; if(!g) return;
+  const lv = g.levels ? `<div class="sxl-opt"><label>مستوى الكمبيوتر</label><div class="sxl-ch" data-k="__lv"><button type="button" data-v="easy">سهل</button><button type="button" data-v="medium" class="on">متوسط</button><button type="button" data-v="hard">صعب</button></div></div>` : '';
+  const m = modal(`<div class="sxl"><div class="sxl-h"><i>${g.icon}</i><div><b>${E(g.name)}</b><small>${E(g.desc)}</small></div><button type="button" class="sxm-x" data-l="x">✕</button></div>
+    ${optsHtml(g)}${lv}
+    <div class="sxl-modes">
+      ${g.cpu ? `<button type="button" class="sxl-m" data-l="cpu">${g.soloLabel ? '🧍 ' + g.soloLabel : '🤖 ضد الكمبيوتر'}</button>` : ''}
+      ${g.local ? '<button type="button" class="sxl-m" data-l="local">👥 على نفس الموبايل</button>' : ''}
+      ${g.online ? '<button type="button" class="sxl-m on" data-l="host">🌐 أونلاين: أنشئ غرفة</button><div class="sxl-join"><input id="sxCode" maxlength="4" placeholder="كود الغرفة" autocapitalize="characters" value="' + E(joinCode || '') + '"><button type="button" class="sxl-m" data-l="join">🔑 ادخل</button></div>' : ''}
+    </div><div class="sxl-st" id="sxLs"></div></div>`, 'sxm-lobby');
+  m.addEventListener('click', e => {
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.parentElement.classList.contains('sxl-ch')){ $qa('button', b.parentElement).forEach(x => x.classList.toggle('on', x === b)); return; }
+    const k = b.dataset.l; if(!k) return;
+    const opts = readOpts(m, g), lvl = (($q('.sxl-ch[data-k="__lv"] .on', m) || {}).dataset || {}).v || 'medium';
+    if(k === 'x') return closeModal();
+    if(k === 'cpu') return startLocal(g, 'cpu', opts, lvl);
+    if(k === 'local') return startLocal(g, 'local', opts, lvl);
+    if(k === 'host') return hostRoom(g, opts, m);
+    if(k === 'join') return joinRoom(g, ($q('#sxCode', m).value || '').trim().toUpperCase(), m);
+  });
+  if(joinCode) setTimeout(() => joinRoom(g, joinCode.toUpperCase(), m), 80);
+}
+SX.openLobby = openLobby;
+
+/* ---------------- بدء لعبة ---------------- */
+function startLocal(g, mode, opts, level){
+  closeModal(); const seed = (Math.random()*4e9) >>> 0;
+  const cpuName = 'الكمبيوتر', names = mode === 'cpu' ? [ME.name, cpuName] : [ME.name, 'اللاعب 2'];
+  launch(g, {mode, seat:0, names, seed, first:0, opts, level, n:2});
+}
+async function hostRoom(g, opts, m){
+  const st = $q('#sxLs', m); st.innerHTML = '⏳ بجهّز الغرفة…';
+  const code = newCode(), room = new Room(code, true);
+  try{ await room.open(); }catch(e){ st.innerHTML = '❌ مقدرتش أفتح غرفة أونلاين. اتأكد من النت أو إن Supabase شغّال.'; return; }
+  const roster = [{id:ME.id, name:ME.name}], max = g.max || 2;
+  const link = shareLink(code, g.id), txt = encodeURIComponent('تعالى العب ' + g.name + ' معايا على موقع المذاكرة 🎯\nالكود: ' + code + '\n' + link);
+  const render = () => { st.innerHTML = `<div class="sxl-room"><div class="sxl-code">${code}</div><small>ابعت الكود أو اللينك لصاحبك — لازم يفتح الموقع من موبايله</small>
+    <div class="sxl-share"><a target="_blank" rel="noopener" href="https://wa.me/?text=${txt}">📲 واتساب</a><button type="button" data-l="copy">📋 نسخ اللينك</button></div>
+    <div class="sxl-roster">${roster.map(p => '<span>' + (p.id === ME.id ? '👑 ' : '👤 ') + E(p.name) + '</span>').join('')}<span class="wait">⏳ في انتظار ${roster.length < max ? 'اللاعبين…' : ''}</span></div>
+    ${max > 2 && roster.length >= 2 ? '<button type="button" class="sxl-m on" data-l="go">▶ ابدأ دلوقتي (' + roster.length + ' لاعبين)</button>' : ''}<button type="button" class="sxl-m" data-l="cancel">إلغاء</button></div>`; };
+  render();
+  const startNow = () => { const seed = (Math.random()*4e9) >>> 0, names = roster.map(p => p.name), cfg = {mode:'online', names, seed, first:0, opts, n:roster.length, ids:roster.map(p => p.id)};
+    room.send('start', {gid:g.id, seed, names, opts, ids:cfg.ids, first:0}); SX._pending = null; closeModal(); launch(g, Object.assign(cfg, {seat:0, room})); };
+  room.on('join', (d, p) => { if(cur) return; if(!roster.find(r => r.id === p.id) && roster.length < max) roster.push({id:p.id, name:p.name}); room.send('roster', {r:roster, gid:g.id}); render(); if(roster.length >= max && max === 2) startNow(); });
+  room.on('hb', (d, p) => { if(!cur && !roster.find(r => r.id === p.id)){ /* حد لسه جاي */ } });
+  st.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.l === 'copy'){ try{ navigator.clipboard.writeText(link); say('✅ اتنسخ اللينك'); }catch(_){ say(link); } }
+    else if(b.dataset.l === 'go') startNow();
+    else if(b.dataset.l === 'cancel'){ room.close(); closeModal(); } });
+  cur = null; SX._pending = room;
+}
+async function joinRoom(g, code, m){
+  const st = $q('#sxLs', m); if(!/^[A-Z2-9]{4}$/.test(code)){ st.innerHTML = '❌ الكود لازم يكون 4 حروف/أرقام'; return; }
+  st.innerHTML = '⏳ بدخل الغرفة…'; const room = new Room(code, false);
+  try{ await room.open(); }catch(e){ st.innerHTML = '❌ مقدرتش أدخل. اتأكد من النت.'; return; }
+  SX._pending = room; let got = false;
+  room.on('roster', d => { got = true; st.innerHTML = '✅ دخلت الغرفة — مستني ' + E((room.peers[d.r[0].id] || {}).name || 'صاحبك') + ' يبدأ اللعبة…<br><button type="button" class="sxl-m" data-l="cancel">خروج</button>'; });
+  room.on('start', d => { if(cur) return; got = true; const g2 = SX.games[d.gid] || g; const seat = d.ids.indexOf(ME.id); if(seat < 0){ st.innerHTML = '❌ الغرفة اتملت'; return; } SX._pending = null; closeModal();
+    launch(g2, {mode:'online', seat, names:d.names, seed:d.seed, first:d.first || 0, opts:d.opts, n:d.names.length, ids:d.ids, room}); });
+  st.addEventListener('click', e => { if(e.target.dataset.l === 'cancel'){ room.close(); closeModal(); } });
+  const tryJoin = () => room.send('join', {}); tryJoin(); let n = 0; const iv = setInterval(() => { if(got || cur || !$q('#sxLs')){ clearInterval(iv); return; } if(++n > 5){ clearInterval(iv); st.innerHTML = '❌ الغرفة دي مش موجودة أو صاحبك قفلها. اتأكد من الكود.'; room.close(); return; } tryJoin(); }, 1500);
+}
+
+/* ---------------- المسرح ---------------- */
+function launch(g, cfg){
+  closeModal(); if(cur) leaveGame(true);
+  const room = cfg.room || null, st = document.createElement('div'); st.id = 'sxStage';
+  st.innerHTML = `<div class="sxs-top"><b>${g.icon} ${E(g.name)}</b><span class="sxs-st"></span><button type="button" data-sxs="emo" title="تفاعل">😀</button><button type="button" data-sxs="exit">🚪 خروج</button></div>
+    <div class="sxs-emo" hidden>${['👏', '😂', '😮', '🔥', '😎', '🤝', '😭', '👀'].map(e => `<button type="button" data-sxs="send" data-e="${e}">${e}</button>`).join('')}</div>
+    <div class="sxs-banner" hidden></div><div class="sxs-box"></div><div class="sxs-float"></div>`;
+  hub.appendChild(st); stage = st;
+  const hs = {}, rm = {me:false, others:{}}; let inst = null, ended = false;
+  const env = {
+    box:$q('.sxs-box', st), mode:cfg.mode, seat:cfg.seat, names:cfg.names, seed:cfg.seed, first:cfg.first, opts:cfg.opts || {}, level:cfg.level || 'medium', n:cfg.n || 2, ids:cfg.ids || [],
+    send:(t, d) => { if(room) room.send('g:' + t, d); }, on:(t, fn) => { hs[t] = fn; },
+    end:(win, text, extra, title) => { if(ended) return; ended = true; showEnd(win, text, extra, title); }, toast:say, esc:E, room
+  };
+  cur = {g, cfg, room, st, env, destroy(){ try{ inst && inst.destroy && inst.destroy(); }catch(e){} }};
+  if(room){
+    room.h = {}; SX._pending = null;
+    room.on('hb', () => {});
+    room.on('bye', (d, p) => { banner('🚪 ' + E(p.name || 'اللاعب') + ' خرج من الغرفة'); if(g.onBye) g.onBye(inst, p); });
+    room.on('emo', d => floatEmo(d.e));
+    room.on('rm', (d, p) => { rm.others[p.id] = true; endBtns(); if(cfg.seat === 0 && allRm()) restart(); });
+    room.on('start', d => { if(cfg.seat !== 0 && d.rematch){ restartWith(d); } });
+    const orig = room._in.bind(room);
+    room._in = p => { if(p && typeof p.t === 'string' && p.t.indexOf('g:') === 0){ if(p.f === ME.id) return; const pe = room.peers[p.f] = Object.assign(room.peers[p.f] || {}, {id:p.f, name:p.n, last:Date.now()}); const h = hs[p.t.slice(2)]; if(h){ try{ h(p.d, pe); }catch(e){ console.error(e); } } return; } orig(p); };
+    cur.watch = setInterval(() => { if(ended) return; const gone = cfg.ids.filter(id => id !== ME.id && !room.alive(id)); if(gone.length && Date.now() - cur.t0 > 15000){ banner('⚠️ الاتصال مع الخصم ضعيف أو اتقطع…<br><button type="button" data-sxs="win">اعتبرني فايز</button>'); } else banner(''); }, 3000);
+  }
+  cur.t0 = Date.now();
+  function allRm(){ return rm.me && cfg.ids.filter(id => id !== ME.id).every(id => rm.others[id]); }
+  function banner(h){ const b = $q('.sxs-banner', st); if(!b) return; b.hidden = !h; b.innerHTML = h || ''; }
+  function floatEmo(e){ const f = $q('.sxs-float', st); if(!f) return; const s = document.createElement('span'); s.textContent = e; s.style.left = (20 + Math.random()*60) + '%'; f.appendChild(s); setTimeout(() => s.remove(), 2200); }
+  function endBtns(){ const b = $q('.sxs-end .rm', st); if(b){ b.textContent = rm.me ? '⏳ مستني الخصم يوافق…' : (Object.keys(rm.others).length ? '🔁 صاحبك عايز يعيد — وافق' : '🔁 العب تاني'); } }
+  function showEnd(win, text, extra, ttl){
+    const solo = cfg.mode !== 'online', iWin = win != null && (cfg.mode === 'online' ? win === cfg.seat : (cfg.mode === 'cpu' ? win === 0 : true));
+    const title = win == null ? '🤝 تعادل' : (cfg.mode === 'online' ? (iWin ? '🏆 كسبت!' : '😅 الخصم كسب') : (cfg.mode === 'cpu' ? (iWin ? '🎉 كسبت!' : '😅 الكمبيوتر كسب') : '🏆 ' + E(cfg.names[win]) + ' كسب!'));
+    if(iWin && (cfg.mode !== 'local')){ try{ if(typeof Fun !== 'undefined' && Fun.award) Fun.award('sx_' + g.id, 15, g.name); }catch(e){} }
+    try{ SX.stat('game', g.id, win == null ? 'd' : (iWin ? 'w' : 'l')); }catch(e){}
+    const ov = document.createElement('div'); ov.className = 'sxs-end'; ov.innerHTML = `<div class="sxs-card"><h3>${ttl || title}</h3>${text ? '<p>' + E(text) + '</p>' : ''}${extra || ''}<div class="sxs-eb"><button type="button" class="rm" data-sxs="rematch">🔁 العب تاني</button><button type="button" data-sxs="exit">🏠 رجوع</button></div></div>`;
+    $q('.sxs-box', st).appendChild(ov);
+  }
+  function restartWith(d){ rm.me = false; rm.others = {}; ended = false; const o = $q('.sxs-end', st); if(o) o.remove(); cfg.seed = d.seed; if(inst && inst.reset) inst.reset(d.seed, d.first); }
+  function restart(){ const first = ((cfg.first = 1 - (cfg.first || 0)) | 0), seed = (Math.random()*4e9) >>> 0; if(room) room.send('start', {rematch:true, seed, first, gid:g.id}); restartWith({seed, first}); }
+  st.addEventListener('click', e => {
+    const b = e.target.closest('[data-sxs]'); if(!b) return; const k = b.dataset.sxs;
+    if(k === 'exit') leaveGame();
+    else if(k === 'emo'){ const p = $q('.sxs-emo', st); p.hidden = !p.hidden; }
+    else if(k === 'send'){ if(room) room.send('emo', {e:b.dataset.e}); floatEmo(b.dataset.e); $q('.sxs-emo', st).hidden = true; }
+    else if(k === 'win'){ ended = false; env.end(cfg.seat, 'الخصم انقطع'); }
+    else if(k === 'rematch'){
+      if(cfg.mode !== 'online'){ const o = $q('.sxs-end', st); if(o) o.remove(); ended = false; cfg.first = 1 - (cfg.first || 0); cfg.seed = (Math.random()*4e9) >>> 0; if(inst && inst.reset) inst.reset(cfg.seed, cfg.first); }
+      else { rm.me = true; room.send('rm', {}); endBtns(); if(cfg.seat === 0 && allRm()) restart(); }
+    }
+  });
+  try{ inst = g.make(env); cur.inst = inst; }catch(err){ console.error(err); say('حصلت مشكلة في تشغيل اللعبة'); leaveGame(true); }
+}
+function leaveGame(silent){
+  if(!cur) return; const c = cur; cur = null;
+  try{ clearInterval(c.watch); c.destroy(); if(c.room) c.room.close(); }catch(e){}
+  if(stage){ stage.remove(); stage = null; }
+  if(!silent && hub && !hub.hidden) showTab(hub.dataset.tab || 'games');
+}
+SX.leaveGame = leaveGame;
+
+/* ---------------- رابط دعوة (?sx=CODE&g=game) ---------------- */
+function checkInvite(){
+  try{
+    const q = new URLSearchParams(location.search), code = (q.get('sx') || '').toUpperCase(), gid = q.get('g');
+    if(code && gid && SX.games[gid]){ history.replaceState(null, '', location.pathname); setTimeout(() => { openHub('games'); openLobby(gid, code); }, 1200); }
+  }catch(e){}
+}
+SX.checkInvite = checkInvite;
+
+/* ---------------- إحصائيات محلية ---------------- */
+SX.stat = function(kind, key, val){ const S = lsGet('sx_stats2', {}); S[kind] = S[kind] || {}; const o = S[kind][key] = S[kind][key] || {}; o[val] = (o[val] || 0) + 1; lsSet('sx_stats2', S); };
+
+/* ===== واجهة البلياردو 8-Ball: رسم + تحكم باللمس + كمبيوتر + أونلاين ===== */
+(function(SX){
+'use strict';
+const P = SX.Pool, W = P.W, H = P.H, R = P.R, RAIL = 46, BAR = 46;
+const COL = {1:'#f2c200', 2:'#1e50d6', 3:'#d62a2a', 4:'#6d2aa8', 5:'#f07a00', 6:'#1b8c3d', 7:'#8a2020', 8:'#141414'};
+const colOf = n => COL[n > 8 ? n - 8 : n];
+
+class View {
+  constructor(cv, mk){ this.cv = cv; this.mk = mk || (() => document.createElement('canvas')); this.ctx = cv.getContext('2d'); this.dpr = 1; this.w = 300; this.h = 300; this.spr = {}; this.bg = null; }
+  resize(w, h, dpr){
+    this.w = w; this.h = h; this.dpr = dpr || 1; this.cv.width = Math.round(w*this.dpr); this.cv.height = Math.round(h*this.dpr);
+    this.portrait = h > w*1.02;
+    const availW = w - BAR, tw = (this.portrait ? H : W) + 2*RAIL, th = (this.portrait ? W : H) + 2*RAIL;
+    this.s = Math.min(availW/tw, h/th);
+    this.ox = BAR + (availW - tw*this.s)/2; this.oy = (h - th*this.s)/2;
+    this.spr = {}; this.bg = null;
+  }
+  /* منطقي → شاشة */
+  sx(x, y){ return this.portrait ? this.ox + (H - y + RAIL)*this.s : this.ox + (x + RAIL)*this.s; }
+  sy(x, y){ return this.portrait ? this.oy + (x + RAIL)*this.s : this.oy + (y + RAIL)*this.s; }
+  inv(px, py){ return this.portrait ? {x:(py - this.oy)/this.s - RAIL, y:H - ((px - this.ox)/this.s - RAIL)} : {x:(px - this.ox)/this.s - RAIL, y:(py - this.oy)/this.s - RAIL}; }
+  setT(ctx){ const d = this.dpr, s = this.s;
+    if(this.portrait) ctx.setTransform(0, s*d, -s*d, 0, (this.ox + (H + RAIL)*s)*d, (this.oy + RAIL*s)*d);
+    else ctx.setTransform(s*d, 0, 0, s*d, (this.ox + RAIL*s)*d, (this.oy + RAIL*s)*d); }
+  bars(){ const y0 = this.oy + RAIL*this.s*.6, y1 = this.h - 78; return {x:6, w:32, y0, y1:Math.max(y0 + 80, y1)}; }
+  spinPos(){ return {x:BAR/2 - 1, y:this.h - 36, r:19}; }
+
+  buildBg(){
+    const c = this.mk(); c.width = this.cv.width; c.height = this.cv.height; const x = c.getContext('2d'); this.setT(x);
+    const rr = (a, b, w, h, r) => { x.beginPath(); x.moveTo(a + r, b); x.arcTo(a + w, b, a + w, b + h, r); x.arcTo(a + w, b + h, a, b + h, r); x.arcTo(a, b + h, a, b, r); x.arcTo(a, b, a + w, b, r); x.closePath(); };
+    let g = x.createLinearGradient(-RAIL, -RAIL, W + RAIL, H + RAIL); g.addColorStop(0, '#6b3d1f'); g.addColorStop(.5, '#4a2810'); g.addColorStop(1, '#6b3d1f');
+    rr(-RAIL, -RAIL, W + 2*RAIL, H + 2*RAIL, 30); x.fillStyle = g; x.fill(); x.lineWidth = 3; x.strokeStyle = 'rgba(255,220,170,.25)'; x.stroke();
+    rr(-12, -12, W + 24, H + 24, 10); x.fillStyle = '#0d4d2b'; x.fill();               // بطانة الحيط
+    g = x.createRadialGradient(W/2, H/2, 60, W/2, H/2, W*.62); g.addColorStop(0, '#1f8f55'); g.addColorStop(1, '#0f6a3a');
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    x.fillStyle = 'rgba(0,0,0,.18)'; x.fillRect(-12, -12, W + 24, 12); x.fillRect(-12, H, W + 24, 12); x.fillRect(-12, 0, 12, H); x.fillRect(W, 0, 12, H);
+    x.strokeStyle = 'rgba(255,255,255,.22)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(P.HEAD, 0); x.lineTo(P.HEAD, H); x.stroke();
+    x.fillStyle = 'rgba(255,255,255,.35)'; x.beginPath(); x.arc(P.FOOT[0], P.FOOT[1], 3, 0, 7); x.fill(); x.beginPath(); x.arc(P.HEAD, H/2, 3, 0, 7); x.fill();
+    x.fillStyle = '#f0e1b8'; for(let i = 1; i < 8; i++){ if(i === 4) continue; const px = W*i/8; [-RAIL/2 - 3, H + RAIL/2 + 3].forEach(py => { x.beginPath(); x.arc(px, py, 3.2, 0, 7); x.fill(); }); }
+    for(let i = 1; i < 4; i++){ const py = H*i/4; [-RAIL/2 - 3, W + RAIL/2 + 3].forEach(px => { x.beginPath(); x.arc(px, py, 3.2, 0, 7); x.fill(); }); }
+    P.POCKETS.forEach((p, k) => { const pr = p[2] + 2; x.fillStyle = '#c9a04a'; x.beginPath(); x.arc(p[0], p[1], pr + 6, 0, 7); x.fill();
+      x.fillStyle = '#050505'; x.beginPath(); x.arc(p[0], p[1], pr, 0, 7); x.fill(); });
+    this.bg = c;
+  }
+  sprite(n){
+    if(this.spr[n]) return this.spr[n];
+    const rad = R*this.s, sz = Math.ceil((rad*2 + 6)*this.dpr), c = this.mk(); c.width = c.height = sz; const x = c.getContext('2d'), r = rad*this.dpr, m = sz/2;
+    x.translate(m, m);
+    x.fillStyle = 'rgba(0,0,0,.28)'; x.beginPath(); x.ellipse(r*.18, r*.28, r*1.02, r*.92, 0, 0, 7); x.fill();
+    x.save(); x.beginPath(); x.arc(0, 0, r, 0, 7); x.clip();
+    if(n === 0){ x.fillStyle = '#fafafa'; x.fillRect(-r, -r, 2*r, 2*r); x.fillStyle = '#d33'; x.beginPath(); x.arc(r*.0, r*.0, r*.13, 0, 7); x.fill(); }
+    else if(n > 8){ x.fillStyle = '#f7f7f7'; x.fillRect(-r, -r, 2*r, 2*r); x.fillStyle = colOf(n); x.fillRect(-r, -r*.55, 2*r, r*1.1); }
+    else { x.fillStyle = colOf(n); x.fillRect(-r, -r, 2*r, 2*r); }
+    if(n > 0){ x.fillStyle = '#fff'; x.beginPath(); x.arc(0, 0, r*.5, 0, 7); x.fill(); x.fillStyle = '#111'; x.font = '700 ' + Math.max(7, r*.7) + 'px Arial, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(String(n), 0, r*.04); }
+    const gl = x.createRadialGradient(-r*.38, -r*.4, r*.05, -r*.25, -r*.25, r*.95); gl.addColorStop(0, 'rgba(255,255,255,.85)'); gl.addColorStop(.25, 'rgba(255,255,255,.18)'); gl.addColorStop(1, 'rgba(0,0,0,.28)');
+    x.fillStyle = gl; x.fillRect(-r, -r, 2*r, 2*r); x.restore();
+    return this.spr[n] = c;
+  }
+  draw(S, u){
+    const ctx = this.ctx, d = this.dpr; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, this.cv.width, this.cv.height);
+    if(!this.bg) this.buildBg(); ctx.drawImage(this.bg, 0, 0);
+    /* جيوب مختارة للكرة السودا */
+    if(u.needCall){ this.setT(ctx); P.POCKETS.forEach((p, k) => { ctx.strokeStyle = u.call === k ? '#ffd23f' : 'rgba(255,255,255,.55)'; ctx.lineWidth = u.call === k ? 5 : 2.5; ctx.beginPath(); ctx.arc(p[0], p[1], p[2] + 9, 0, 7); ctx.stroke();
+      if(u.call === k){ ctx.fillStyle = 'rgba(255,210,63,.35)'; ctx.fill(); } }); }
+    /* خط أول ضربة لو بحط الكرة */
+    if(S.bih && u.mine){ this.setT(ctx); ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.setLineDash([8, 8]); ctx.lineWidth = 2;
+      if(S.kitchen){ ctx.fillStyle = 'rgba(255,255,255,.07)'; ctx.fillRect(0, 0, P.HEAD, H); } ctx.setLineDash([]); }
+    /* دليل التصويب */
+    const cue = S.balls[0];
+    const showAim = u.aimA != null && !u.moving && !cue.in && S.over == null;
+    if(showAim && u.mine && u.guide){
+      const tr = P.trace(S, u.aimA); this.setT(ctx);
+      ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 2; ctx.setLineDash([10, 7]); ctx.beginPath(); ctx.moveTo(cue.x, cue.y); ctx.lineTo(tr.gx, tr.gy); ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(tr.gx, tr.gy, R, 0, 7); ctx.stroke();
+      if(tr.ball){ ctx.strokeStyle = 'rgba(255,230,120,.95)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(tr.ball.x, tr.ball.y); ctx.lineTo(tr.ball.x + tr.ox*120, tr.ball.y + tr.oy*120); ctx.stroke();
+        const dx = Math.cos(u.aimA), dy = Math.sin(u.aimA), dot = dx*tr.ox + dy*tr.oy, tx = dx - tr.ox*dot, ty = dy - tr.oy*dot, tl = Math.hypot(tx, ty) || 1;
+        ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(tr.gx, tr.gy); ctx.lineTo(tr.gx + tx/tl*60, tr.gy + ty/tl*60); ctx.stroke(); }
+    }
+    /* الكور */
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    const list = S.balls.filter(b => !b.in || (u.potAnim && u.potAnim[b.n])).sort((a, b) => a.n - b.n);
+    for(const b of list){
+      let x = this.sx(b.x, b.y), y = this.sy(b.x, b.y), sc = 1;
+      if(b.in){ const a = u.potAnim[b.n], t = Math.min(1, (u.now - a.t)/260); if(t >= 1) continue; const pp = P.POCKETS[b.in - 1]; x += (this.sx(pp[0], pp[1]) - x)*t; y += (this.sy(pp[0], pp[1]) - y)*t; sc = 1 - t*.7; }
+      const sp = this.sprite(b.n), sz = sp.width/d*sc; ctx.drawImage(sp, x*d - sp.width*sc/2, y*d - sp.height*sc/2, sp.width*sc, sp.height*sc);
+    }
+    if(S.bih && u.mine){ const x = this.sx(cue.x, cue.y), y = this.sy(cue.x, cue.y); ctx.strokeStyle = u.badPlace ? '#ff5252' : '#ffd23f'; ctx.lineWidth = 3*d; ctx.beginPath(); ctx.arc(x*d, y*d, (R*this.s + 7)*d, 0, 7); ctx.stroke(); }
+    /* العصاية */
+    if(showAim && !cue.in){
+      this.setT(ctx); const a = u.aimA, dx = Math.cos(a), dy = Math.sin(a), nx = -dy, ny = dx, gap = R + 5 + (u.power || 0)*70, tipx = cue.x - dx*gap, tipy = cue.y - dy*gap, len = 360;
+      const bx = tipx - dx*len, by = tipy - dy*len, g = ctx.createLinearGradient(tipx, tipy, bx, by);
+      g.addColorStop(0, '#e8d3a8'); g.addColorStop(.06, '#f3ead6'); g.addColorStop(.07, '#2b78c8'); g.addColorStop(.1, '#e0b878'); g.addColorStop(.55, '#b9854a'); g.addColorStop(.56, '#2a1a0c'); g.addColorStop(1, '#3b2412');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(tipx + nx*2.2, tipy + ny*2.2); ctx.lineTo(bx + nx*5, by + ny*5); ctx.lineTo(bx - nx*5, by - ny*5); ctx.lineTo(tipx - nx*2.2, tipy - ny*2.2); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = .8; ctx.stroke();
+    }
+    /* شريط القوة + السبين */
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+    const bar = this.bars(), pw = u.power || 0;
+    ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bar.x - 3, bar.y0 - 3, bar.w + 6, bar.y1 - bar.y0 + 6, 12) : ctx.rect(bar.x - 3, bar.y0 - 3, bar.w + 6, bar.y1 - bar.y0 + 6); ctx.fill();
+    const gg = ctx.createLinearGradient(0, bar.y0, 0, bar.y1); gg.addColorStop(0, '#e53935'); gg.addColorStop(.5, '#fdd835'); gg.addColorStop(1, '#43a047');
+    ctx.globalAlpha = u.mine ? 1 : .35; ctx.fillStyle = gg; ctx.fillRect(bar.x, bar.y0, bar.w, bar.y1 - bar.y0);
+    ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(bar.x, bar.y0, bar.w, (bar.y1 - bar.y0)*(1 - pw));
+    const hy = bar.y1 - (bar.y1 - bar.y0)*pw; ctx.fillStyle = '#fff'; ctx.fillRect(bar.x - 3, hy - 4, bar.w + 6, 8); ctx.strokeStyle = '#222'; ctx.lineWidth = 1; ctx.strokeRect(bar.x - 3, hy - 4, bar.w + 6, 8);
+    ctx.fillStyle = '#fff'; ctx.font = '700 11px Arial'; ctx.textAlign = 'center'; ctx.fillText(Math.round(pw*100) + '%', bar.x + bar.w/2, bar.y0 - 8);
+    const sp = this.spinPos(); ctx.fillStyle = '#f5f5f5'; ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.r, 0, 7); ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.4)'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sp.x - sp.r, sp.y); ctx.lineTo(sp.x + sp.r, sp.y); ctx.moveTo(sp.x, sp.y - sp.r); ctx.lineTo(sp.x, sp.y + sp.r); ctx.strokeStyle = 'rgba(0,0,0,.15)'; ctx.stroke();
+    ctx.fillStyle = '#d32f2f'; ctx.beginPath(); ctx.arc(sp.x + (u.spin ? u.spin[0] : 0)*sp.r*.72, sp.y - (u.spin ? u.spin[1] : 0)*sp.r*.72, 4.2, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+  }
+}
+
+/* ---------------- اللعبة ---------------- */
+const snd = (function(){ let ac = null; return function(kind, v){ try{ ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if(ac.state === 'suspended') ac.resume(); const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime;
+  o.connect(g); g.connect(ac.destination);
+  if(kind === 'hit'){ o.type = 'triangle'; o.frequency.setValueAtTime(900 + v*500, t); o.frequency.exponentialRampToValueAtTime(280, t + .06); g.gain.setValueAtTime(.05 + v*.2, t); g.gain.exponentialRampToValueAtTime(.001, t + .07); o.start(t); o.stop(t + .08); }
+  else if(kind === 'rail'){ o.type = 'sine'; o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(90, t + .08); g.gain.setValueAtTime(.04 + v*.12, t); g.gain.exponentialRampToValueAtTime(.001, t + .1); o.start(t); o.stop(t + .11); }
+  else { o.type = 'sine'; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(50, t + .22); g.gain.setValueAtTime(.2, t); g.gain.exponentialRampToValueAtTime(.001, t + .25); o.start(t); o.stop(t + .27); }
+}catch(e){} }; })();
+
+function make(env){
+  const box = env.box, solo = env.mode !== 'online', mySeat = env.mode === 'online' ? env.seat : 0;
+  box.innerHTML = '<div class="pl-wrap"><div class="pl-hud"><div class="pl-p" data-s="0"></div><div class="pl-msg"></div><div class="pl-p" data-s="1"></div></div><div class="pl-cv"><canvas></canvas></div>' +
+    '<div class="pl-fine"><button type="button" data-f="-1">◀ ضبط دقيق</button><label class="pl-gd"><input type="checkbox" checked> خط التصويب</label><button type="button" data-f="1">ضبط دقيق ▶</button></div></div>';
+  const cvBox = box.querySelector('.pl-cv'), cv = box.querySelector('canvas'), msgEl = box.querySelector('.pl-msg'), pEls = box.querySelectorAll('.pl-p'), gd = box.querySelector('.pl-gd input');
+  const view = new View(cv);
+  let S = P.newGame(env.seed, 0), dead = false, raf = 0, last = 0, acc = 0;
+  const u = {aimA:0, power:0, spin:[0, 0], call:null, now:0, potAnim:{}, guide:true, mine:false, moving:false, needCall:false, badPlace:false};
+  let pend = null, simDone = true, ai = null, remote = {a:null, p:0, t:0}, mode = null, shotLock = false;
+  const names = env.names;
+
+  const isMine = () => S.over == null && !u.moving && !shotLock && (env.mode === 'local' ? true : S.turn === mySeat);
+  const needCall = () => { if(S.over != null || S.grp[S.turn] == null) return false; const t = P.legalTargets(S, S.turn); return t.length === 1 && t[0].n === 8; };
+
+  function hud(){
+    pEls.forEach((el, i) => {
+      const g = S.grp[i], left = g ? S.balls.filter(b => !b.in && b.n && b.n !== 8 && P.grpOf(b.n) === g) : [], clr = g && !left.length;
+      let dots = ''; if(g){ const all = g === 's' ? [1, 2, 3, 4, 5, 6, 7] : [9, 10, 11, 12, 13, 14, 15]; dots = all.map(n => `<i class="${S.balls[n].in ? 'off' : ''}" style="background:${n > 8 ? 'linear-gradient(#fff 28%,' + colOf(n) + ' 28% 72%,#fff 72%)' : colOf(n)}"></i>`).join(''); if(clr) dots += `<i style="background:#141414">8</i>`; }
+      el.className = 'pl-p' + (S.turn === i && S.over == null ? ' on' : '');
+      el.innerHTML = `<b>${E(names[i] || ('لاعب ' + (i + 1)))}${env.mode === 'online' && i === mySeat ? ' (أنت)' : ''}</b><span class="pl-g">${g ? (g === 's' ? 'الملوّنة' : 'المقلّمة') : 'مفتوحة'}</span><span class="pl-d">${dots}</span>`;
+    });
+    let m = S.msg || '';
+    if(S.over != null) m = '🏆 ' + (names[S.over] || '') + ' كسب!';
+    else if(u.moving) m = m || 'الكور بتتحرك…';
+    else if(isMine()){ m = S.bih ? (S.kitchen ? '⚪ حرّك الكرة البيضا (ورا الخط) وبعدين صوّب' : '⚪ الكرة في إيدك: حطها في أي مكان وبعدين صوّب') : (needCall() && u.call == null ? '🎯 اختار الجيب اللي هتدخّل فيه الكرة السودا (اضغط عليه)' : 'دورك — اسحب على الطاولة للتصويب وبعدين اسحب شريط القوة وسيبه'); if(S.msg && !S.bih) m = S.msg + ' · ' + m; }
+    else m = S.msg ? S.msg + ' · دور ' + names[S.turn] : 'دور ' + names[S.turn] + '…';
+    msgEl.textContent = m;
+  }
+  function setAimDefault(){
+    const c = S.balls[0], t = P.legalTargets(S, S.turn)[0];
+    u.aimA = t ? Math.atan2(t.y - c.y, t.x - c.x) : 0; u.power = 0; u.call = null;
+  }
+  function startShot(o, fromRemote){
+    if(!fromRemote && env.mode === 'online') env.send('shot', {vx:o.vx, vy:o.vy, sx:o.sx, sy:o.sy, c:o.c, call:o.call});
+    if(o.c) P.place(S, o.c[0], o.c[1]);
+    S.call = o.call == null ? null : o.call; P.shoot(S, o); u.moving = true; simDone = false; acc = 0; hud();
+  }
+  function settle(){
+    u.moving = false; simDone = true; S.ev = [];
+    const shooter = S.turn;
+    if(env.mode === 'online' && shooter !== mySeat){
+      if(pend){ P.apply(S, pend); pend = null; after(); } else { waitingRes = true; waitSince = performance.now(); }
+      return;
+    }
+    const res = P.finish(S);
+    if(env.mode === 'online') env.send('res', P.snap(S));
+    after(res);
+  }
+  let waitingRes = false, waitSince = 0;
+  function after(){
+    u.potAnim = {}; hud(); shotLock = false;
+    if(S.over != null){ setTimeout(() => env.end(S.over, S.msg), 700); return; }
+    setAimDefault(); lastAimSent = 0; scheduleAI();
+  }
+  function scheduleAI(){
+    if(env.mode !== 'cpu' || S.turn !== 1 || S.over != null) return;
+    ai = {t0:performance.now() + 650, plan:null};
+  }
+  function runAI(now){
+    if(!ai || now < ai.t0) return;
+    if(!ai.plan){ ai.plan = P.aiPlan(S, env.level || 'medium'); if(ai.plan.cx != null) P.place(S, ai.plan.cx, ai.plan.cy); ai.a0 = u.aimA; let d = ai.plan.ang - ai.a0; while(d > Math.PI) d -= 2*Math.PI; while(d < -Math.PI) d += 2*Math.PI; ai.d = d; ai.t0 = now; }
+    const t = now - ai.t0; u.guide = false;
+    if(t < 550){ u.aimA = ai.a0 + ai.d*Math.min(1, t/500); }
+    else if(t < 1100){ u.aimA = ai.plan.ang; u.power = ai.plan.power*Math.min(1, (t - 550)/500); }
+    else { const p = ai.plan; ai = null; u.power = 0; u.guide = gd.checked; startShot({vx:p.vx, vy:p.vy, sx:p.sx, sy:p.sy, call:p.call}, true); }
+  }
+  let lastAimSent = 0;
+  function frame(now){
+    if(dead) return; raf = requestAnimationFrame(frame); u.now = now;
+    if(!last) last = now; let dt = Math.min(.05, (now - last)/1000); last = now;
+    if(u.moving){
+      acc += dt; let n = Math.floor(acc/P.DT); acc -= n*P.DT; n = Math.min(n, 60);
+      for(let i = 0; i < n; i++){ P.step(S, P.DT); }
+      for(const e of S.ev){ if(e.k === 'hit') snd('hit', e.v); else if(e.k === 'rail') snd('rail', e.v); else if(e.k === 'pot'){ snd('pot', 1); u.potAnim[e.n] = {t:now}; } }
+      S.ev = [];
+      if(!P.moving(S)){ settle(); }
+    } else if(waitingRes && pend){ waitingRes = false; P.apply(S, pend); pend = null; after(); }
+    else if(waitingRes && now - waitSince > 6000){ waitingRes = false; P.finish(S); after(); }
+    runAI(now);
+    u.mine = isMine();
+    u.needCall = u.mine && needCall(); u.guide = gd.checked && !ai;
+    if(!u.mine && remote.a != null && !u.moving && S.over == null && now - remote.t < 1500){ u.aimA = remote.a; u.power = remote.p; }
+    else if(!u.mine && !ai && !u.moving){ u.power = 0; }
+    view.draw(S, Object.assign({}, u, {aimA:(u.mine || remote.a != null || ai || env.mode === 'local') ? u.aimA : null}));
+    if(u.mine && env.mode === 'online' && now - lastAimSent > 90 && !u.moving){ lastAimSent = now; env.send('aim', {a:+u.aimA.toFixed(4), p:+u.power.toFixed(3)}); }
+  }
+
+  /* ---- تحكم باللمس ---- */
+  function pos(e){ const r = cv.getBoundingClientRect(); return {x:e.clientX - r.left, y:e.clientY - r.top}; }
+  cv.style.touchAction = 'none';
+  cv.addEventListener('pointerdown', e => {
+    if(dead || !isMine()) return;
+    try{ cv.setPointerCapture(e.pointerId); }catch(_){} snd('x', 0);
+    const p = pos(e), bar = view.bars(), sp = view.spinPos();
+    if(p.x < BAR + 4 && p.y >= bar.y0 - 12 && p.y <= bar.y1 + 12){ mode = 'power'; setPower(p.y); return; }
+    if(Math.hypot(p.x - sp.x, p.y - sp.y) < sp.r + 8){ mode = 'spin'; setSpin(p); return; }
+    const L = view.inv(p.x, p.y), c = S.balls[0];
+    if(u.needCall){ let bk = -1, bd = 1e9; P.POCKETS.forEach((q, k) => { const d = Math.hypot(L.x - q[0], L.y - q[1]); if(d < bd){ bd = d; bk = k; } }); if(bd < 70){ u.call = bk; hud(); return; } }
+    if(S.bih && Math.hypot(L.x - c.x, L.y - c.y) < 36){ mode = 'cue'; dragCue(L); return; }
+    mode = 'aim'; aim(L);
+  });
+  cv.addEventListener('pointermove', e => { if(!mode) return; const p = pos(e); if(mode === 'power') setPower(p.y); else if(mode === 'spin') setSpin(p); else if(mode === 'cue') dragCue(view.inv(p.x, p.y)); else if(mode === 'aim') aim(view.inv(p.x, p.y)); });
+  const up = () => { if(!mode) return; const m = mode; mode = null;
+    if(m === 'power'){ if(u.power > .04){ fire(); } else u.power = 0; } };
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+  function setPower(y){ const b = view.bars(); u.power = Math.max(0, Math.min(1, (b.y1 - y)/(b.y1 - b.y0))); }
+  function setSpin(p){ const s = view.spinPos(); let dx = (p.x - s.x)/(s.r*.72), dy = -(p.y - s.y)/(s.r*.72); const l = Math.hypot(dx, dy); if(l > 1){ dx /= l; dy /= l; } if(Math.hypot(dx, dy) < .12){ dx = dy = 0; } u.spin = [dx, dy]; }
+  function aim(L){ const c = S.balls[0]; if(Math.hypot(L.x - c.x, L.y - c.y) > 6) u.aimA = Math.atan2(L.y - c.y, L.x - c.x); }
+  function dragCue(L){ const c = S.balls[0]; const ok = P.canPlace(S, L.x, L.y); u.badPlace = !ok; if(ok){ c.x = L.x; c.y = L.y; } else { const x = Math.max(R, Math.min(S.kitchen ? P.HEAD : W - R, L.x)), y = Math.max(R, Math.min(H - R, L.y)); if(P.canPlace(S, x, y)){ c.x = x; c.y = y; u.badPlace = false; } } }
+  function fire(){
+    if(u.needCall && u.call == null){ u.power = 0; msgEl.textContent = '🎯 اختار الجيب الأول (اضغط عليه) قبل ضرب الكرة السودا'; return; }
+    const v = P.VMAX*(.03 + .97*Math.pow(u.power, 1.6)), c = S.balls[0], o = {vx:Math.cos(u.aimA)*v, vy:Math.sin(u.aimA)*v, sx:u.spin[0], sy:u.spin[1], call:u.needCall ? u.call : null};
+    if(S.bih) o.c = [c.x, c.y]; shotLock = true; u.power = 0; remote.a = null; startShot(o, false);
+  }
+  box.querySelectorAll('.pl-fine button').forEach(b => {
+    let t = null; const f = () => { if(isMine()) u.aimA += parseInt(b.dataset.f, 10)*.0035; };
+    const on = () => { f(); clearInterval(t); t = setInterval(f, 60); }, off = () => clearInterval(t);
+    b.addEventListener('pointerdown', e => { e.preventDefault(); on(); }); ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, off));
+  });
+  const ro = new ResizeObserver(fit); ro.observe(cvBox);
+  function fit(){ const r = cvBox.getBoundingClientRect(); if(r.width < 50 || r.height < 50) return; cv.style.width = r.width + 'px'; cv.style.height = r.height + 'px'; view.resize(Math.floor(r.width), Math.floor(r.height), Math.min(2, window.devicePixelRatio || 1)); }
+
+  /* ---- رسايل الأونلاين ---- */
+  env.on('shot', d => { if(S.turn === mySeat || u.moving) return; remote.a = null; shotLock = true; startShot(d, true); });
+  env.on('res', d => { if(u.moving || !simDone){ pend = d; } else { pend = d; if(waitingRes){ } else { P.apply(S, d); pend = null; after(); } } });
+  env.on('aim', d => { if(S.turn !== mySeat) remote = {a:d.a, p:d.p, t:performance.now()}; });
+
+  function reset(seed, first){ S = P.newGame(seed, first); u.moving = false; shotLock = false; pend = null; ai = null; waitingRes = false; u.potAnim = {}; u.spin = [0, 0]; setAimDefault(); hud(); scheduleAI(); }
+  fit(); setAimDefault(); hud(); scheduleAI(); raf = requestAnimationFrame(frame);
+  return {reset, destroy(){ dead = true; cancelAnimationFrame(raf); ro.disconnect(); }, fit, state:() => S};
+}
+
+SX.games.pool = {id:'pool', icon:'🎱', name:'بلياردو 8-Ball', desc:'فيزيا حقيقية وقوانين 8-Ball كاملة: مجموعات، فاول، كرة في الإيد، واختيار الجيب للسودا', cpu:true, local:true, online:true, levels:true, make};
+SX.PoolView = View;
+})(SX);
+
+/* ===== الألعاب: إكس أو، أربعة في صف، شطرنج، ذاكرة، تحدي الحساب، بينج بونج، 2048 — كلها أونلاين ===== */
+const rng = a => SX.Pool.mulberry(a >>> 0);
+const canMove = env => env.mode === 'online' ? null : true;
+const myTurn = (env, turn) => env.mode === 'online' ? turn === env.seat : (env.mode === 'cpu' ? turn === 0 : true);
+const statusEl = box => box.querySelector('.g-st');
+const wait = (fn, ms) => setTimeout(fn, ms);
+
+/* ============================ ❌⭕ إكس أو ============================ */
+SX.games.xo = {id:'xo', icon:'❌⭕', name:'إكس أو', desc:'كلاسيك 3×3 أو 5×5 (لازم 4 متتالية)', cpu:true, local:true, online:true, levels:true,
+  opts:[{k:'size', label:'النمط', choices:[[3, '3×3 كلاسيك'], [5, '5×5 (4 متتالية)']]}],
+  make(env){
+    const N = env.opts.size || 3, K = N === 3 ? 3 : 4; let b, turn, over, dead = false, first = env.first || 0, line = [];
+    const box = env.box; box.innerHTML = '<div class="g-wrap"><div class="g-st"></div><div class="xo-b" style="grid-template-columns:repeat(' + N + ',1fr)"></div></div>';
+    const grid = box.querySelector('.xo-b');
+    const win = (bd) => { const D = [[1, 0], [0, 1], [1, 1], [1, -1]];
+      for(let y = 0; y < N; y++) for(let x = 0; x < N; x++){ const v = bd[y*N + x]; if(v == null) continue;
+        for(const [dx, dy] of D){ const cells = [y*N + x]; for(let k = 1; k < K; k++){ const nx = x + dx*k, ny = y + dy*k; if(nx < 0 || ny < 0 || nx >= N || ny >= N || bd[ny*N + nx] !== v) break; cells.push(ny*N + nx); } if(cells.length === K) return {w:v, cells}; } }
+      return bd.every(v => v != null) ? {w:-1, cells:[]} : null; };
+    function reset(seed, f){ first = f || 0; b = new Array(N*N).fill(null); turn = first; over = false; line = []; render(); maybeCpu(); }
+    function render(){
+      grid.innerHTML = b.map((v, i) => `<button type="button" class="xo-c ${v === 0 ? 'x' : v === 1 ? 'o' : ''} ${line.includes(i) ? 'w' : ''}" data-i="${i}">${v === 0 ? '✕' : v === 1 ? '◯' : ''}</button>`).join('');
+      const st = statusEl(box); const n = env.names;
+      st.innerHTML = over ? '' : (myTurn(env, turn) ? (env.mode === 'local' ? 'دور <b>' + E(n[turn]) + '</b> (' + (turn ? '◯' : '✕') + ')' : '✅ دورك (' + (turn ? '◯' : '✕') + ')') : '⏳ دور ' + E(n[turn]) + '…');
+    }
+    function play(i, seat){
+      if(over || b[i] != null || turn !== seat) return false; b[i] = seat; const r = win(b);
+      if(r){ over = true; line = r.cells; render(); wait(() => env.end(r.w === -1 ? null : r.w, ''), 700); return true; }
+      turn = 1 - turn; render(); maybeCpu(); return true;
+    }
+    function minimax(bd, t, me, depth, alpha, beta){ const r = win(bd); if(r) return r.w === -1 ? 0 : (r.w === me ? 10 - depth : depth - 10);
+      let best = t === me ? -99 : 99; for(let i = 0; i < 9; i++){ if(bd[i] != null) continue; bd[i] = t; const s = minimax(bd, 1 - t, me, depth + 1, alpha, beta); bd[i] = null;
+        if(t === me){ best = Math.max(best, s); alpha = Math.max(alpha, s); } else { best = Math.min(best, s); beta = Math.min(beta, s); } if(beta <= alpha) break; } return best; }
+    function cpuPick(){
+      const empt = b.map((v, i) => v == null ? i : -1).filter(i => i >= 0), me = 1, rnd = Math.random(), lv = env.level;
+      if(rnd < (lv === 'easy' ? .45 : lv === 'medium' ? .12 : 0)) return empt[Math.floor(Math.random()*empt.length)];
+      if(N === 3){ let best = -99, pick = []; for(const i of empt){ b[i] = me; const s = minimax(b, 0, me, 1, -99, 99); b[i] = null; if(s > best){ best = s; pick = [i]; } else if(s === best) pick.push(i); } return pick[Math.floor(Math.random()*pick.length)]; }
+      for(const who of [me, 0]) for(const i of empt){ b[i] = who; const r = win(b); b[i] = null; if(r && r.w === who) return i; }
+      const c = Math.floor(N/2)*N + Math.floor(N/2); if(b[c] == null) return c;
+      const near = empt.filter(i => [-1, 0, 1].some(dy => [-1, 0, 1].some(dx => { const x = i%N + dx, y = Math.floor(i/N) + dy; return x >= 0 && y >= 0 && x < N && y < N && b[y*N + x] != null; })));
+      const pool = near.length ? near : empt; return pool[Math.floor(Math.random()*pool.length)];
+    }
+    function maybeCpu(){ if(env.mode === 'cpu' && turn === 1 && !over) wait(() => { if(!dead && !over) play(cpuPick(), 1); }, 450); }
+    grid.addEventListener('click', e => { const c = e.target.closest('.xo-c'); if(!c || over || !myTurn(env, turn)) return; const i = +c.dataset.i, seat = env.mode === 'online' ? env.seat : turn; if(play(i, seat) && env.mode === 'online') env.send('mv', {i}); });
+    env.on('mv', d => { if(env.mode === 'online' && turn !== env.seat) play(d.i, 1 - env.seat); });
+    reset(env.seed, first); return {reset, destroy(){ dead = true; }};
+  }};
+
+/* ============================ 🔴 أربعة في صف ============================ */
+SX.games.c4 = {id:'c4', icon:'🔴', name:'أربعة في صف', desc:'اسقط الأقراص وكوّن 4 متتالية قبل خصمك', cpu:true, local:true, online:true, levels:true,
+  make(env){
+    const RW = 6, CL = 7; let b, turn, over, dead = false, line = [];
+    const box = env.box; box.innerHTML = '<div class="g-wrap"><div class="g-st"></div><div class="c4-b"></div></div>'; const grid = box.querySelector('.c4-b');
+    const at = (bd, r, c) => bd[r*CL + c];
+    function check(bd){ const D = [[1, 0], [0, 1], [1, 1], [1, -1]];
+      for(let r = 0; r < RW; r++) for(let c = 0; c < CL; c++){ const v = at(bd, r, c); if(v == null) continue;
+        for(const [dx, dy] of D){ const cells = [r*CL + c]; for(let k = 1; k < 4; k++){ const nr = r + dy*k, nc = c + dx*k; if(nr < 0 || nr >= RW || nc < 0 || nc >= CL || at(bd, nr, nc) !== v) break; cells.push(nr*CL + nc); } if(cells.length === 4) return {w:v, cells}; } }
+      return bd.every(v => v != null) ? {w:-1, cells:[]} : null; }
+    const rowOf = (bd, c) => { for(let r = RW - 1; r >= 0; r--) if(at(bd, r, c) == null) return r; return -1; };
+    function reset(seed, f){ b = new Array(RW*CL).fill(null); turn = f || 0; over = false; line = []; render(); maybeCpu(); }
+    function render(){
+      let h = ''; for(let r = 0; r < RW; r++) for(let c = 0; c < CL; c++){ const v = at(b, r, c), i = r*CL + c; h += `<button type="button" class="c4-c" data-c="${c}"><i class="${v === 0 ? 'p0' : v === 1 ? 'p1' : ''} ${line.includes(i) ? 'w' : ''}"></i></button>`; }
+      grid.innerHTML = h; const n = env.names;
+      statusEl(box).innerHTML = over ? '' : (myTurn(env, turn) ? (env.mode === 'local' ? 'دور <b>' + E(n[turn]) + '</b> ' + (turn ? '🟡' : '🔴') : '✅ دورك ' + (turn ? '🟡' : '🔴')) : '⏳ دور ' + E(n[turn]) + '…');
+    }
+    function drop(c, seat){ if(over || turn !== seat) return false; const r = rowOf(b, c); if(r < 0) return false; b[r*CL + c] = seat; const res = check(b);
+      if(res){ over = true; line = res.cells; render(); wait(() => env.end(res.w === -1 ? null : res.w, ''), 800); return true; }
+      turn = 1 - turn; render(); maybeCpu(); return true; }
+    const order = [3, 2, 4, 1, 5, 0, 6];
+    function score(bd, me){
+      let s = 0; const W = (cells) => { const m = cells.filter(v => v === me).length, o = cells.filter(v => v === 1 - me).length, e = cells.filter(v => v == null).length; if(m && o) return 0; if(m === 4) return 1000; if(m === 3 && e === 1) return 12; if(m === 2 && e === 2) return 4; if(o === 3 && e === 1) return -14; if(o === 2 && e === 2) return -3; return 0; };
+      for(let r = 0; r < RW; r++) s += (at(bd, r, 3) === me ? 3 : at(bd, r, 3) == null ? 0 : -3);
+      for(let r = 0; r < RW; r++) for(let c = 0; c < CL; c++){ if(c + 3 < CL) s += W([0, 1, 2, 3].map(k => at(bd, r, c + k))); if(r + 3 < RW) s += W([0, 1, 2, 3].map(k => at(bd, r + k, c))); if(r + 3 < RW && c + 3 < CL) s += W([0, 1, 2, 3].map(k => at(bd, r + k, c + k))); if(r + 3 < RW && c - 3 >= 0) s += W([0, 1, 2, 3].map(k => at(bd, r + k, c - k))); }
+      return s; }
+    function ab(bd, d, alpha, beta, t, me){ const res = check(bd); if(res) return res.w === -1 ? 0 : (res.w === me ? 100000 + d : -100000 - d); if(d === 0) return score(bd, me);
+      let best = t === me ? -1e9 : 1e9; for(const c of order){ const r = rowOf(bd, c); if(r < 0) continue; bd[r*CL + c] = t; const s = ab(bd, d - 1, alpha, beta, 1 - t, me); bd[r*CL + c] = null;
+        if(t === me){ best = Math.max(best, s); alpha = Math.max(alpha, s); } else { best = Math.min(best, s); beta = Math.min(beta, s); } if(beta <= alpha) break; } return best; }
+    function cpuPick(){
+      const valid = order.filter(c => rowOf(b, c) >= 0), lv = env.level, depth = lv === 'easy' ? 2 : lv === 'medium' ? 4 : 6;
+      if(Math.random() < (lv === 'easy' ? .3 : lv === 'medium' ? .06 : 0)) return valid[Math.floor(Math.random()*valid.length)];
+      let best = -1e9, pick = valid[0]; for(const c of valid){ const r = rowOf(b, c); b[r*CL + c] = 1; const s = ab(b, depth - 1, -1e9, 1e9, 0, 1) + Math.random()*.01; b[r*CL + c] = null; if(s > best){ best = s; pick = c; } } return pick;
+    }
+    function maybeCpu(){ if(env.mode === 'cpu' && turn === 1 && !over) wait(() => { if(!dead && !over) drop(cpuPick(), 1); }, 500); }
+    grid.addEventListener('click', e => { const c = e.target.closest('.c4-c'); if(!c || over || !myTurn(env, turn)) return; const col = +c.dataset.c, seat = env.mode === 'online' ? env.seat : turn; if(drop(col, seat) && env.mode === 'online') env.send('mv', {c:col}); });
+    env.on('mv', d => { if(env.mode === 'online' && turn !== env.seat) drop(d.c, 1 - env.seat); });
+    reset(env.seed, env.first); return {reset, destroy(){ dead = true; }};
+  }};
+
+/* ============================ ♟️ شطرنج ============================ */
+let chessP = null;
+function loadChess(){ if(window.Chess) return Promise.resolve(); if(chessP) return chessP; return chessP = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js'; s.onload = res; s.onerror = () => { chessP = null; rej(new Error('chess')); }; document.head.appendChild(s); }); }
+const PIECE = {wk:'♔', wq:'♕', wr:'♖', wb:'♗', wn:'♘', wp:'♙', bk:'♚', bq:'♛', br:'♜', bb:'♝', bn:'♞', bp:'♟'}; Object.keys(PIECE).forEach(k => { PIECE[k] += '\uFE0E'; });
+const PV = {p:100, n:320, b:330, r:500, q:900, k:0};
+SX.games.chess = {id:'chess', icon:'♟️', name:'شطرنج', desc:'شطرنج كامل بكل القوانين (كش، مات، تحويل البيدق)', cpu:true, local:true, online:true, levels:true,
+  make(env){
+    const box = env.box; box.innerHTML = '<div class="g-wrap"><div class="g-st">⏳ بحمّل الشطرنج…</div><div class="ch-b"></div><div class="ch-act"><button type="button" data-a="resign">🏳️ استسلم</button></div></div>';
+    const grid = box.querySelector('.ch-b'); let G, sel = null, legal = [], lastMv = null, over = false, dead = false, white = 0, busy = false;
+    const myColor = () => env.mode === 'online' ? (env.seat === white ? 'w' : 'b') : 'w';
+    const turnSeat = () => G.turn() === 'w' ? white : 1 - white;
+    const flip = () => env.mode === 'online' && myColor() === 'b';
+    function reset(seed, f){ white = f || 0; G = new Chess(); sel = null; legal = []; lastMv = null; over = false; busy = false; render(); maybeCpu(); }
+    function render(){
+      const bd = G.board(), fl = flip(); let h = '';
+      for(let vr = 0; vr < 8; vr++) for(let vc = 0; vc < 8; vc++){
+        const r = fl ? 7 - vr : vr, c = fl ? 7 - vc : vc, sq = 'abcdefgh'[c] + (8 - r), p = bd[r][c], dark = (r + c) % 2 === 1;
+        const mv = legal.find(m => m.to === sq), chk = p && p.type === 'k' && G.in_check() && p.color === G.turn();
+        h += `<button type="button" class="ch-s ${dark ? 'd' : 'l'} ${sel === sq ? 'sel' : ''} ${lastMv && (lastMv.from === sq || lastMv.to === sq) ? 'lm' : ''} ${chk ? 'chk' : ''}" data-sq="${sq}">${p ? `<span class="pc ${p.color}">${PIECE[p.color + p.type]}</span>` : ''}${mv ? `<i class="${p ? 'cap' : 'dot'}"></i>` : ''}</button>`;
+      }
+      grid.innerHTML = h; const st = statusEl(box), t = G.turn() === 'w' ? '⚪' : '⚫';
+      st.innerHTML = over ? '' : (G.in_check() ? '⚠️ كش! ' : '') + (myTurn(env, turnSeat()) ? (env.mode === 'local' ? 'دور <b>' + E(env.names[turnSeat()]) + '</b> ' + t : '✅ دورك ' + t) : '⏳ دور ' + E(env.names[turnSeat()]) + '…');
+    }
+    function done(){
+      if(G.in_checkmate()){ over = true; const w = 1 - turnSeat(); wait(() => env.end(w, 'كش مات!'), 600); }
+      else if(G.in_stalemate() || G.in_draw() || G.in_threefold_repetition() || G.insufficient_material()){ over = true; wait(() => env.end(null, 'تعادل'), 600); }
+    }
+    function doMove(m, remote){
+      const r = G.move(m); if(!r) return false; lastMv = r; sel = null; legal = []; render(); done();
+      if(!remote && env.mode === 'online') env.send('mv', {from:r.from, to:r.to, promotion:r.promotion});
+      if(!over) maybeCpu(); return true;
+    }
+    function promo(from, to){
+      const m = SX.modal(`<div class="ch-pr"><b>تحويل البيدق إلى:</b><div>${['q', 'r', 'b', 'n'].map(p => `<button type="button" data-p="${p}">${PIECE[(G.turn()) + p]}</button>`).join('')}</div></div>`, 'sxm-pro lock');
+      m.addEventListener('click', e => { const b = e.target.closest('[data-p]'); if(!b) return; SX.closeModal(); doMove({from, to, promotion:b.dataset.p}); });
+    }
+    grid.addEventListener('click', e => {
+      const s = e.target.closest('.ch-s'); if(!s || over || busy || !myTurn(env, turnSeat())) return; const sq = s.dataset.sq;
+      const mv = legal.find(m => m.to === sq);
+      if(sel && mv){ if(mv.flags.indexOf('p') >= 0 || mv.promotion){ promo(sel, sq); return; } doMove({from:sel, to:sq}); return; }
+      const p = G.get(sq); const mine = env.mode === 'online' ? myColor() : G.turn();
+      if(p && p.color === mine){ sel = sq; legal = G.moves({square:sq, verbose:true}); } else { sel = null; legal = []; } render();
+    });
+    box.querySelector('[data-a="resign"]').addEventListener('click', () => { if(over) return; if(!confirm('تستسلم؟')) return; over = true; if(env.mode === 'online'){ env.send('resign', {}); env.end(1 - env.seat, 'استسلمت'); } else env.end(env.mode === 'cpu' ? 1 : 1 - turnSeat(), 'استسلام'); });
+    env.on('mv', d => { if(G && env.mode === 'online' && turnSeat() !== env.seat) doMove({from:d.from, to:d.to, promotion:d.promotion}, true); });
+    env.on('resign', () => { if(!over){ over = true; env.end(env.seat, 'الخصم استسلم'); } });
+    /* كمبيوتر */
+    const PST = (type, r, c, col) => { const cr = 3.5 - Math.abs(c - 3.5), rr = 3.5 - Math.abs(r - 3.5); return (type === 'p' ? (col === 'w' ? (7 - r) : r)*6 : type === 'k' ? 0 : (cr + rr)*4); };
+    function evalB(){ let s = 0; const bd = G.board(); for(let r = 0; r < 8; r++) for(let c = 0; c < 8; c++){ const p = bd[r][c]; if(!p) continue; const v = PV[p.type] + PST(p.type, r, c, p.color); s += p.color === 'b' ? v : -v; } return s; }
+    function search(d, alpha, beta, maxi){
+      if(d === 0 || G.game_over()){ if(G.in_checkmate()) return maxi ? -99999 - d : 99999 + d; if(G.game_over()) return 0; return evalB(); }
+      const ms = G.moves({verbose:true}).sort((a, b) => ((b.captured ? PV[b.captured] : 0) - (a.captured ? PV[a.captured] : 0)));
+      let best = maxi ? -1e9 : 1e9;
+      for(const m of ms){ G.move(m); const s = search(d - 1, alpha, beta, !maxi); G.undo();
+        if(maxi){ best = Math.max(best, s); alpha = Math.max(alpha, s); } else { best = Math.min(best, s); beta = Math.min(beta, s); } if(beta <= alpha) break; }
+      return best;
+    }
+    function maybeCpu(){
+      if(env.mode !== 'cpu' || over || G.turn() !== 'b') return; busy = true;
+      wait(() => { if(dead || over){ busy = false; return; } const ms = G.moves({verbose:true}); if(!ms.length){ busy = false; return; }
+        const lv = env.level, depth = lv === 'easy' ? 1 : lv === 'medium' ? 2 : 3; let pick;
+        if(lv === 'easy' && Math.random() < .35) pick = ms[Math.floor(Math.random()*ms.length)];
+        else { let best = -1e9; ms.sort(() => Math.random() - .5); for(const m of ms){ G.move(m); const s = search(depth - 1, -1e9, 1e9, false) + Math.random()*(lv === 'easy' ? 60 : 4); G.undo(); if(s > best){ best = s; pick = m; } } }
+        busy = false; doMove(pick); }, 350);
+    }
+    loadChess().then(() => { if(dead) return; reset(env.seed, env.first); }).catch(() => { statusEl(box).innerHTML = '❌ مقدرتش أحمّل مكتبة الشطرنج (محتاج نت).'; });
+    return {reset(s, f){ if(window.Chess) reset(s, f); }, destroy(){ dead = true; }};
+  }};
+
+/* ============================ 🧠 ذاكرة ============================ */
+const EMO = ['🍎', '🚀', '🎸', '🐱', '⚽', '🌙', '🍕', '🎲', '🦊', '🌵', '🎧', '🔥', '🍩', '🐼', '⭐', '🎯'];
+SX.games.mem = {id:'mem', icon:'🧠', name:'ذاكرة الرموز', desc:'اقلب الكروت وطابق الأزواج — اللي يجمع أكتر يكسب', cpu:true, local:true, online:true, levels:true,
+  opts:[{k:'n', label:'عدد الكروت', choices:[[12, '12 (6 أزواج)'], [16, '16 (8 أزواج)'], [20, '20 (10 أزواج)']], def:16}],
+  make(env){
+    const NN = env.opts.n || 16; let deck, up, matched, sc, turn, lock, seen, dead = false, over = false;
+    const box = env.box; box.innerHTML = '<div class="g-wrap"><div class="mm-sc"></div><div class="g-st"></div><div class="mm-b"></div></div>'; const grid = box.querySelector('.mm-b');
+    function reset(seed, f){ const rnd = rng(seed), pool = EMO.slice().sort(() => rnd() - .5).slice(0, NN/2); deck = pool.concat(pool); for(let i = deck.length - 1; i > 0; i--){ const j = Math.floor(rnd()*(i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }
+      up = []; matched = new Array(NN).fill(false); sc = [0, 0]; turn = f || 0; lock = false; seen = {}; over = false; render(); maybeCpu(); }
+    function render(){
+      grid.style.gridTemplateColumns = 'repeat(' + (NN === 12 ? 4 : NN === 16 ? 4 : 5) + ',1fr)';
+      grid.innerHTML = deck.map((v, i) => `<button type="button" class="mm-c ${matched[i] ? 'ok' : up.includes(i) ? 'up' : ''}" data-i="${i}"><span>${matched[i] || up.includes(i) ? v : '❔'}</span></button>`).join('');
+      box.querySelector('.mm-sc').innerHTML = env.names.slice(0, 2).map((n, i) => `<span class="${turn === i && !over ? 'on' : ''}">${E(n)}: <b>${sc[i]}</b></span>`).join('');
+      statusEl(box).innerHTML = over ? '' : (myTurn(env, turn) ? (env.mode === 'local' ? 'دور <b>' + E(env.names[turn]) + '</b>' : '✅ دورك — اقلب كارتين') : '⏳ دور ' + E(env.names[turn]) + '…');
+    }
+    function flip(i, seat){
+      if(over || lock || turn !== seat || matched[i] || up.includes(i)) return false; up.push(i); seen[i] = deck[i]; render();
+      if(up.length === 2){ lock = true; const [a, b] = up;
+        if(deck[a] === deck[b]){ wait(() => { matched[a] = matched[b] = true; sc[turn]++; up = []; lock = false; render(); if(matched.every(x => x)){ over = true; const w = sc[0] === sc[1] ? null : (sc[0] > sc[1] ? 0 : 1); wait(() => env.end(w, sc[0] + ' - ' + sc[1]), 600); } else maybeCpu(); }, 550); }
+        else wait(() => { up = []; turn = 1 - turn; lock = false; render(); maybeCpu(); }, 950); }
+      else if(env.mode === 'cpu' && turn === 1) cpuSecond();
+      return true;
+    }
+    function cpuFirst(){ const lv = env.level, keep = lv === 'easy' ? .35 : lv === 'medium' ? .7 : .97, free = deck.map((v, i) => matched[i] ? -1 : i).filter(i => i >= 0 && !up.includes(i));
+      const known = {}; free.forEach(i => { if(seen[i] != null && Math.random() < keep){ (known[seen[i]] = known[seen[i]] || []).push(i); } });
+      const pair = Object.values(known).find(a => a.length >= 2); if(pair) return [pair[0], pair[1]];
+      const unseen = free.filter(i => seen[i] == null); const pool = unseen.length ? unseen : free; return [pool[Math.floor(Math.random()*pool.length)], null]; }
+    let plan = null;
+    function maybeCpu(){ if(env.mode !== 'cpu' || turn !== 1 || over || lock) return; wait(() => { if(dead || over) return; plan = cpuFirst(); flip(plan[0], 1); if(plan[1] != null) wait(() => { if(!dead) flip(plan[1], 1); }, 650); }, 700); }
+    function cpuSecond(){ if(plan && plan[1] != null) return; wait(() => { if(dead || over) return; const a = up[0], free = deck.map((v, i) => matched[i] ? -1 : i).filter(i => i >= 0 && !up.includes(i));
+      const known = free.filter(i => seen[i] === deck[a] && Math.random() < (env.level === 'easy' ? .3 : env.level === 'medium' ? .7 : .97)); const unseen = free.filter(i => seen[i] == null), pool = known.length ? known : (unseen.length ? unseen : free); flip(pool[Math.floor(Math.random()*pool.length)], 1); }, 650); }
+    grid.addEventListener('click', e => { const c = e.target.closest('.mm-c'); if(!c || !myTurn(env, turn)) return; const i = +c.dataset.i, seat = env.mode === 'online' ? env.seat : turn; if(flip(i, seat) && env.mode === 'online') env.send('mv', {i}); });
+    env.on('mv', d => { if(env.mode === 'online' && turn !== env.seat) flip(d.i, 1 - env.seat); });
+    reset(env.seed, env.first); return {reset, destroy(){ dead = true; }};
+  }};
+
+/* ============================ ⚔️ تحدي الحساب (حتى 4 لاعبين) ============================ */
+function genQ(rnd, lv, type){
+  const R = (a, b) => a + Math.floor(rnd()*(b - a + 1)), t = type === 'mix' ? ['arith', 'alg', 'calc'][R(0, 2)] : (type === 'alg' ? 'alg' : 'arith');
+  if(t === 'alg'){
+    const x = R(-9, 12), a = R(2, lv > 1 ? 9 : 5), b = R(-12, 15), c = a*x + b, bs = b < 0 ? '− ' + (-b) : '+ ' + b;
+    if(lv === 3 && rnd() < .5){ const r1 = R(-6, 8), r2 = R(-6, 8); return {t:`مجموع جذري المعادلة  x² ${-(r1 + r2) < 0 ? '−' : '+'} ${Math.abs(r1 + r2)}x ${r1*r2 < 0 ? '−' : '+'} ${Math.abs(r1*r2)} = 0`, a:r1 + r2}; }
+    return {t:`حلّ المعادلة:  ${a}x ${bs} = ${c}   ⟹   x = ؟`, a:x};
+  }
+  if(t === 'calc'){ const a = R(1, 6), b = R(-5, 9), x = R(-3, 5); return lv === 1 ? {t:`إذا كانت f(x) = ${a}x + ${b}   فإن f(${x}) = ؟`.replace('+ -', '− '), a:a*x + b} : {t:`إذا كانت f(x) = ${a}x² ${b < 0 ? '−' : '+'} ${Math.abs(b)}x   فإن f ′(${x}) = ؟`, a:2*a*x + b}; }
+  if(lv === 1){ const k = R(0, 3); if(k === 0){ const a = R(11, 69), b = R(11, 59); return {t:`${a} + ${b} = ؟`, a:a + b}; } if(k === 1){ const a = R(40, 99), b = R(11, 39); return {t:`${a} − ${b} = ؟`, a:a - b}; } if(k === 2){ const a = R(3, 12), b = R(3, 12); return {t:`${a} × ${b} = ؟`, a:a*b}; } const b = R(2, 9), q = R(3, 12); return {t:`${b*q} ÷ ${b} = ؟`, a:q}; }
+  if(lv === 2){ const k = R(0, 3); if(k === 0){ const a = R(12, 25); return {t:`${a}² = ؟`, a:a*a}; } if(k === 1){ const a = R(12, 49), b = R(3, 9); return {t:`${a} × ${b} = ؟`, a:a*b}; } if(k === 2){ const p = [10, 20, 25, 50][R(0, 3)], n = R(2, 20)*4; return {t:`${p}% من ${n*10} = ؟`, a:p*n*10/100}; } const a = R(100, 400), b = R(20, 99), c = R(5, 19); return {t:`${a} + ${b} − ${c} = ؟`, a:a + b - c}; }
+  const k = R(0, 2); if(k === 0){ const a = R(13, 39), b = R(11, 29); return {t:`${a} × ${b} = ؟`, a:a*b}; } if(k === 1){ const a = R(5, 12), b = R(2, 9), c = R(2, 9); return {t:`${a} + ${b} × ${c} = ؟`, a:a + b*c}; } const a = R(2, 9), b = R(2, 5); return {t:`${a}^${b} = ؟`, a:Math.pow(a, b)};
+}
+function makeQs(seed, n, lv, type){ const out = []; for(let i = 0; i < n; i++){ const rnd = rng(seed + i*7919 + 13); let q = genQ(rnd, lv, type), g = 0; while(q.a == null && g++ < 5) q = genQ(rnd, lv, type); if(q.a == null){ const a = 100 + i, b = 17 + i; q = {t:`${a} + ${b} = ؟`, a:a + b}; } out.push(q); } return out; }
+SX.makeQs = makeQs;
+SX.games.duel = {id:'duel', icon:'⚔️', name:'تحدي الحساب', desc:'نفس الأسئلة للكل — الأسرع والأدق يكسب (حتى 4 لاعبين أونلاين) + تحدي اليوم', cpu:true, local:false, online:true, levels:false, max:4, soloLabel:'العب ضد الكمبيوتر / لوحدك',
+  opts:[{k:'kind', label:'الوضع', choices:[['vs', '⚔️ تحدّي عادي'], ['daily', '📅 تحدّي اليوم (نفس الأسئلة للكل)']]}, {k:'lv', label:'المستوى', choices:[[1, 'سهل'], [2, 'متوسط'], [3, 'صعب']], def:2}, {k:'type', label:'النوع', choices:[['arith', 'حساب'], ['alg', 'جبر'], ['mix', 'خليط + تفاضل']], def:'mix'}, {k:'cnt', label:'عدد الأسئلة', choices:[[8, '8'], [12, '12'], [20, '20']], def:12}],
+  make(env){
+    const o = env.opts, daily = o.kind === 'daily' && env.mode !== 'online', CNT = o.cnt || 12, LV = o.lv || 2, TM = [0, 26, 20, 16][LV];
+    let seed = daily ? (+new Date().toISOString().slice(0, 10).replace(/-/g, '') + 7) : env.seed; let qs, qi, score, t0, ms, dead = false, finished = false, timer = null, prog, bots = [];
+    const names = daily ? [env.names[0]] : env.names, n = names.length;
+    const box = env.box; box.innerHTML = '<div class="g-wrap du"><div class="du-sc"></div><div class="du-q"></div><div class="du-bar"><i></i></div><div class="du-in"><input type="text" inputmode="numeric" autocomplete="off" placeholder="اكتب الإجابة"><button type="button">تأكيد</button></div><div class="du-fb"></div></div>';
+    const qEl = box.querySelector('.du-q'), inp = box.querySelector('input'), bar = box.querySelector('.du-bar i'), fb = box.querySelector('.du-fb');
+    function reset(sd){ seed = daily ? seed : sd; qs = makeQs(seed + LV*31 + (o.type === 'alg' ? 5 : o.type === 'arith' ? 9 : 0), CNT, LV, o.type || 'mix'); qi = 0; score = 0; ms = 0; finished = false; fb.textContent = ''; prog = names.map(() => ({i:0, s:0, t:0, done:false}));
+      bots = (env.mode === 'cpu' && !daily) ? [{i:0, s:0, acc:[0, .55, .75, .9][LV], spd:[0, 9, 6, 4][LV]*1000}] : [];
+      bots.forEach((b, k) => botTick(b, k + 1)); showQ(); }
+    const total = () => daily ? 1 : (env.mode === 'cpu' ? 2 : n);
+    function botTick(b, idx){ const d = b.spd*(.6 + Math.random()*.8); setTimeout(() => { if(dead || b.i >= CNT) return; const ok = Math.random() < b.acc; b.i++; if(ok) b.s += 10 + Math.round(Math.random()*6); prog[idx] = {i:b.i, s:b.s, t:prog[idx].t + d, done:b.i >= CNT}; scoreboard(); if(b.i < CNT) botTick(b, idx); else checkEnd(); }, d); }
+    function scoreboard(){ const all = names; box.querySelector('.du-sc').innerHTML = all.map((nm, i) => { const p = prog[i] || {i:0, s:0}; return `<span class="${i === (env.mode === 'online' ? env.seat : 0) ? 'me' : ''}"><b>${E(nm)}</b> ${p.s}<small>${p.i}/${CNT}</small></span>`; }).join(''); }
+    function showQ(){ clearInterval(timer); scoreboard(); if(qi >= CNT) return finish(); const q = qs[qi]; qEl.innerHTML = `<small>سؤال ${qi + 1} من ${CNT}</small><div dir="ltr">${E(q.t)}</div>`; inp.value = ''; inp.disabled = false; inp.focus({preventScroll:true}); fb.textContent = '';
+      t0 = performance.now(); bar.style.transition = 'none'; bar.style.width = '100%'; void bar.offsetWidth; bar.style.transition = 'width ' + TM + 's linear'; bar.style.width = '0%';
+      timer = setInterval(() => { if(performance.now() - t0 > TM*1000) answer(null); }, 250); }
+    function answer(v){
+      clearInterval(timer); if(finished) return; const q = qs[qi], took = Math.min(TM*1000, performance.now() - t0); ms += took;
+      const ok = v != null && Math.abs(parseFloat(String(v).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('−', '-').replace(/٫/g, '.')) - q.a) < 1e-6;
+      if(ok) score += 10 + Math.round(10*(1 - took/(TM*1000))); fb.innerHTML = ok ? '✅ صح!' : '❌ الإجابة: <b dir="ltr">' + q.a + '</b>'; fb.className = 'du-fb ' + (ok ? 'ok' : 'no'); inp.disabled = true;
+      try{ SX.stat('q', 'duel', ok ? 'ok' : 'no'); }catch(e){}
+      qi++; const me = env.mode === 'online' ? env.seat : 0; prog[me] = {i:qi, s:score, t:ms, done:qi >= CNT}; if(env.mode === 'online') env.send('p', {i:qi, s:score, t:Math.round(ms), done:qi >= CNT}); scoreboard();
+      setTimeout(() => { if(!dead) showQ(); }, ok ? 650 : 1300);
+    }
+    function finish(){ finished = true; qEl.innerHTML = '<div class="du-w">خلّصت! ⏳ بستنى باقي اللاعبين…</div>'; inp.disabled = true; bar.style.width = '0'; checkEnd(); }
+    function checkEnd(){
+      const me = env.mode === 'online' ? env.seat : 0; if(!finished) return; const all = prog.slice(0, total()); if(!all.every(p => p.done)) { if(env.mode === 'online') setTimeout(() => { if(!dead && finished) forceEnd(); }, 25000); return; } forceEnd();
+    }
+    let ended = false;
+    function forceEnd(){ if(ended) return; ended = true; const nm = names, rank = prog.slice(0, nm.length).map((p, i) => ({i, s:p.s, t:p.t, name:nm[i]})).sort((a, b) => b.s - a.s || a.t - b.t);
+      const me = env.mode === 'online' ? env.seat : 0; let extra = '<ol class="du-rank">' + rank.map(r => `<li class="${r.i === me ? 'me' : ''}"><b>${E(r.name)}</b> ${r.s} نقطة <small>${(r.t/1000).toFixed(1)}ث</small></li>`).join('') + '</ol>';
+      if(daily){ const best = lsGet('sx_daily_best', {d:'', s:0}); const d = new Date().toISOString().slice(0, 10); if(best.d !== d || score > best.s) lsSet('sx_daily_best', {d, s:score}); const txt = encodeURIComponent('🎯 تحدّي اليوم في موقع المذاكرة: جبت ' + score + ' نقطة في ' + (ms/1000).toFixed(0) + ' ثانية — جرّب تغلبني!\n' + location.origin + location.pathname); extra += `<a class="du-sh" target="_blank" rel="noopener" href="https://wa.me/?text=${txt}">📲 شارك نتيجتك</a>`; }
+      const w = daily ? null : (rank.length > 1 && rank[0].s === rank[1].s && rank[0].t === rank[1].t ? null : rank[0].i);
+      env.end(daily ? me : w, daily ? 'نتيجتك: ' + score + ' نقطة' : '', extra, daily ? '🏁 خلّصت التحدّي' : null); }
+    env.on('p', (d, p) => { const i = env.ids.indexOf(p.id); if(i < 0) return; prog[i] = {i:d.i, s:d.s, t:d.t, done:d.done}; scoreboard(); if(finished) checkEnd(); });
+    box.querySelector('button').addEventListener('click', () => { if(!inp.disabled && inp.value.trim() !== '') answer(inp.value); });
+    inp.addEventListener('keydown', e => { if(e.key === 'Enter' && !inp.disabled && inp.value.trim() !== '') answer(inp.value); });
+    reset(seed); return {reset(s){ ended = false; reset(s); }, destroy(){ dead = true; clearInterval(timer); }};
+  }};
+
+/* ============================ 🏓 بينج بونج (أونلاين لحظي) ============================ */
+SX.games.pong = {id:'pong', icon:'🏓', name:'بينج بونج', desc:'لحظي: حرّك المضرب بإصبعك — أونلاين من موبايلين!', cpu:true, local:true, online:true, levels:true,
+  opts:[{k:'to', label:'اللعب لحد', choices:[[5, '5 نقاط'], [7, '7 نقاط'], [11, '11 نقطة']], def:5}],
+  make(env){
+    const PW = 360, PH = 560, PD = 74, PT = 12, BR = 8, TO = env.opts.to || 5, host = env.mode !== 'online' || env.seat === 0, flipV = env.mode === 'online' && env.seat === 1;
+    const box = env.box; box.innerHTML = '<div class="g-wrap pg"><div class="pg-sc"></div><div class="pg-cv"><canvas></canvas></div></div>'; const cvw = box.querySelector('.pg-cv'), cv = box.querySelector('canvas'), cx = cv.getContext('2d');
+    let st, tgt = null, dead = false, raf = 0, last = 0, over = false, pX = [PW/2, PW/2], send = 0, remoteP = PW/2, cd = 0;
+    const my = flipV ? 1 : 0;
+    function serve(dir){ const a = (Math.random() - .5)*.9; st.bx = PW/2; st.by = PH/2; const sp = 300; st.vx = Math.sin(a)*sp; st.vy = Math.cos(a)*sp*(dir || 1); st.sp = sp; cd = 1.0; }
+    function reset(seed, f){ st = {bx:PW/2, by:PH/2, vx:0, vy:0, sp:300, s:[0, 0], p:[PW/2, PW/2]}; over = false; pX = [PW/2, PW/2]; if(host) serve(f ? -1 : 1); scoreUi(); }
+    function scoreUi(){ box.querySelector('.pg-sc').innerHTML = env.names.slice(0, 2).map((n, i) => `<span class="${i === (env.mode === 'online' ? env.seat : 0) ? 'me' : ''}"><b>${E(n)}</b> ${st.s[i]}</span>`).join('<i>—</i>'); }
+    function fit(){ const r = cvw.getBoundingClientRect(); const s = Math.min(r.width/PW, r.height/PH); cv.style.width = PW*s + 'px'; cv.style.height = PH*s + 'px'; cv.width = PW*2; cv.height = PH*2; cx.setTransform(2, 0, 0, 2, 0, 0); }
+    const ro = new ResizeObserver(fit); ro.observe(cvw);
+    function pos(e){ const r = cv.getBoundingClientRect(); return {x:(e.clientX - r.left)/r.width*PW, y:(e.clientY - r.top)/r.height*PH}; }
+    function move(e){ const p = pos(e); const x = Math.max(PD/2, Math.min(PW - PD/2, p.x));
+      if(env.mode === 'local'){ if(p.y > PH/2) pX[0] = x; else pX[1] = x; }
+      else if(host) pX[0] = x; else { pX[1] = PW - x; } }
+    cv.style.touchAction = 'none'; cv.addEventListener('pointerdown', e => { try{ cv.setPointerCapture(e.pointerId); }catch(_){} move(e); }); cv.addEventListener('pointermove', e => { if(e.buttons || e.pointerType === 'touch' || true) move(e); });
+    document.addEventListener('keydown', kd); function kd(e){ if(dead) return; if(e.key === 'ArrowLeft') pX[0] = Math.max(PD/2, pX[0] - 28); if(e.key === 'ArrowRight') pX[0] = Math.min(PW - PD/2, pX[0] + 28); }
+    function simulate(dt){
+      if(cd > 0){ cd -= dt; return; }
+      if(env.mode === 'cpu'){ const sp = [0, 160, 230, 330][{easy:1, medium:2, hard:3}[env.level] || 2]; const tx = st.by < PH*.6 || st.vy < 0 ? st.bx : PW/2; const d = tx - pX[1]; pX[1] += Math.max(-sp*dt, Math.min(sp*dt, d)); }
+      st.bx += st.vx*dt; st.by += st.vy*dt;
+      if(st.bx < BR){ st.bx = BR; st.vx = Math.abs(st.vx); } if(st.bx > PW - BR){ st.bx = PW - BR; st.vx = -Math.abs(st.vx); }
+      const py0 = PH - 26, py1 = 26;
+      if(st.vy > 0 && st.by + BR >= py0 - PT/2 && st.by < py0 + PT && Math.abs(st.bx - pX[0]) < PD/2 + BR){ st.by = py0 - PT/2 - BR; hit(0); }
+      if(st.vy < 0 && st.by - BR <= py1 + PT/2 && st.by > py1 - PT && Math.abs(st.bx - pX[1]) < PD/2 + BR){ st.by = py1 + PT/2 + BR; hit(1); }
+      if(st.by > PH + 20){ point(1); } else if(st.by < -20){ point(0); }
+    }
+    function hit(i){ st.sp = Math.min(640, st.sp*1.06); const off = (st.bx - pX[i])/(PD/2); const a = off*1.0; st.vx = Math.sin(a)*st.sp; st.vy = Math.cos(a)*st.sp*(i === 0 ? -1 : 1); }
+    function point(i){ st.s[i]++; scoreUi(); if(st.s[i] >= TO){ over = true; if(env.mode === 'online') env.send('e', {w:i, s:st.s}); setTimeout(() => env.end(i, st.s[0] + ' - ' + st.s[1]), 500); return; } serve(i === 0 ? -1 : 1); }
+    function draw(){
+      cx.clearRect(0, 0, PW, PH); cx.fillStyle = '#0b2a1d'; cx.fillRect(0, 0, PW, PH); cx.strokeStyle = 'rgba(255,255,255,.25)'; cx.setLineDash([8, 8]); cx.beginPath(); cx.moveTo(0, PH/2); cx.lineTo(PW, PH/2); cx.stroke(); cx.setLineDash([]);
+      const f = (x, y) => flipV ? [PW - x, PH - y] : [x, y];
+      const P0 = f(pX[0], PH - 26), P1 = f(pX[1], 26); cx.fillStyle = '#ffd23f'; cx.fillRect(P0[0] - PD/2, P0[1] - PT/2, PD, PT); cx.fillStyle = '#4fc3f7'; cx.fillRect(P1[0] - PD/2, P1[1] - PT/2, PD, PT);
+      if(cd <= 0 || Math.floor(performance.now()/150)%2){ const b = f(st.bx, st.by); cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(b[0], b[1], BR, 0, 7); cx.fill(); }
+      if(cd > 0){ cx.fillStyle = 'rgba(255,255,255,.8)'; cx.font = '700 22px Arial'; cx.textAlign = 'center'; cx.fillText('استعد…', PW/2, PH/2 + 60); }
+    }
+    function frame(now){ if(dead) return; raf = requestAnimationFrame(frame); if(!last) last = now; const dt = Math.min(.04, (now - last)/1000); last = now;
+      if(!over){
+        if(host){ simulate(dt); if(env.mode === 'online' && now - send > 33){ send = now; env.send('s', {bx:+st.bx.toFixed(1), by:+st.by.toFixed(1), p0:+pX[0].toFixed(1), p1:+pX[1].toFixed(1), s:st.s, cd:cd > 0}); } }
+        else { st.bx += (tgt ? (tgt.bx - st.bx) : 0)*.5; st.by += (tgt ? (tgt.by - st.by) : 0)*.5; if(now - send > 33){ send = now; env.send('p', {x:+pX[1].toFixed(1)}); } }
+      }
+      if(!host && tgt){ pX[0] = tgt.p0; cd = tgt.cd ? 1 : 0; } draw(); }
+    env.on('s', d => { if(host) return; if(JSON.stringify(d.s) !== JSON.stringify(st.s)){ st.s = d.s; scoreUi(); } tgt = d; });
+    env.on('p', d => { if(host) pX[1] = Math.max(PD/2, Math.min(PW - PD/2, d.x)); });
+    env.on('e', d => { if(!host && !over){ over = true; st.s = d.s; scoreUi(); setTimeout(() => env.end(d.w, d.s[0] + ' - ' + d.s[1]), 500); } });
+    fit(); reset(env.seed, env.first); raf = requestAnimationFrame(frame);
+    return {reset, destroy(){ dead = true; cancelAnimationFrame(raf); ro.disconnect(); document.removeEventListener('keydown', kd); }};
+  }};
+
+/* ============================ 🔢 2048 (تحدّي بنفس الحظ) ============================ */
+SX.games.g48 = {id:'g48', icon:'🔢', name:'2048 تحدّي', desc:'نفس ترتيب الأرقام للاتنين — مين يجمع نقاط أكتر في 3 دقايق', cpu:true, local:false, online:true, soloLabel:'العب لوحدك',
+  opts:[{k:'dur', label:'المدة', choices:[[180, '3 دقايق'], [300, '5 دقايق'], [0, 'من غير وقت (لوحدك)']]}],
+  make(env){
+    const DUR = env.opts.dur == null ? 180 : env.opts.dur; let g, score, rnd, tl, timer, dead = false, over = false, opp = {s:0, m:0, done:false}, mine = false;
+    const box = env.box; box.innerHTML = '<div class="g-wrap g48"><div class="g48-h"><span>النقاط: <b class="s">0</b></span><span class="t"></span><span class="o"></span></div><div class="g48-b"></div></div>'; const grid = box.querySelector('.g48-b');
+    function spawn(){ const e = []; g.forEach((v, i) => { if(!v) e.push(i); }); if(!e.length) return; g[e[Math.floor(rnd()*e.length)]] = rnd() < .9 ? 2 : 4; }
+    function reset(seed){ rnd = rng(seed); g = new Array(16).fill(0); score = 0; over = false; mine = false; opp = {s:0, m:0, done:false}; spawn(); spawn(); clearInterval(timer); tl = DUR; if(DUR){ timer = setInterval(() => { tl--; hdr(); if(tl <= 0) finish('time'); }, 1000); } render(); }
+    function hdr(){ box.querySelector('.s').textContent = score; box.querySelector('.t').textContent = DUR ? '⏱ ' + Math.floor(tl/60) + ':' + String(tl%60).padStart(2, '0') : ''; box.querySelector('.o').textContent = env.mode === 'online' ? E(env.names[1 - env.seat]) + ': ' + opp.s + (opp.done ? ' ✔' : '') : ''; }
+    function render(){ grid.innerHTML = g.map(v => `<div class="t${v}"><span>${v || ''}</span></div>`).join(''); hdr(); }
+    function line(a){ const f = a.filter(v => v); const out = []; let gain = 0; for(let i = 0; i < f.length; i++){ if(f[i] === f[i + 1]){ out.push(f[i]*2); gain += f[i]*2; i++; } else out.push(f[i]); } while(out.length < 4) out.push(0); return [out, gain]; }
+    function move(dir){
+      if(over || mine) return; const old = g.join(','); let gain = 0;
+      for(let k = 0; k < 4; k++){ const idx = [0, 1, 2, 3].map(j => dir === 'L' ? k*4 + j : dir === 'R' ? k*4 + 3 - j : dir === 'U' ? j*4 + k : (3 - j)*4 + k); const [o, gn] = line(idx.map(i => g[i])); gain += gn; idx.forEach((i, j) => { g[i] = o[j]; }); }
+      if(g.join(',') === old) return; score += gain; spawn(); render(); if(env.mode === 'online') env.send('sc', {s:score, m:Math.max(...g)});
+      if(!canMove()) finish('stuck');
+    }
+    function canMove(){ if(g.some(v => !v)) return true; for(let r = 0; r < 4; r++) for(let c = 0; c < 4; c++){ const v = g[r*4 + c]; if((c < 3 && g[r*4 + c + 1] === v) || (r < 3 && g[(r + 1)*4 + c] === v)) return true; } return false; }
+    function finish(why){ if(mine) return; mine = true; clearInterval(timer); if(env.mode === 'online'){ env.send('done', {s:score, m:Math.max(...g)}); box.querySelector('.t').textContent = '⏳ بستنى صاحبك…'; check(); setTimeout(() => { if(!dead && !over) finalize(); }, 30000); } else finalize(); }
+    function check(){ if(mine && opp.done) finalize(); }
+    function finalize(){ if(over) return; over = true; clearInterval(timer); const m = Math.max(...g); const w = env.mode === 'online' ? (score === opp.s ? null : (score > opp.s ? env.seat : 1 - env.seat)) : env.seat; const best = lsGet('sx_g48_best', 0); if(score > best) lsSet('sx_g48_best', score);
+      env.end(env.mode === 'online' ? w : 0, 'نقاطك: ' + score + (env.mode === 'online' ? ' — الخصم: ' + opp.s : ' — أعلى رقم: ' + m + ' — أفضل نتيجة: ' + Math.max(best, score)), '', env.mode === 'online' ? null : '🏁 خلّصت'); }
+    env.on('sc', d => { opp.s = d.s; opp.m = d.m; hdr(); }); env.on('done', d => { opp = {s:d.s, m:d.m, done:true}; hdr(); check(); });
+    let sx0 = null; const kd = e => { if(dead) return; const m = {ArrowLeft:'L', ArrowRight:'R', ArrowUp:'U', ArrowDown:'D'}[e.key]; if(m){ e.preventDefault(); move(m); } }; document.addEventListener('keydown', kd);
+    grid.style.touchAction = 'none'; grid.addEventListener('pointerdown', e => { sx0 = [e.clientX, e.clientY]; }); grid.addEventListener('pointerup', e => { if(!sx0) return; const dx = e.clientX - sx0[0], dy = e.clientY - sx0[1]; sx0 = null; if(Math.max(Math.abs(dx), Math.abs(dy)) < 24) return; move(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'R' : 'L') : (dy > 0 ? 'D' : 'U')); });
+    reset(env.seed); return {reset, destroy(){ dead = true; clearInterval(timer); document.removeEventListener('keydown', kd); }};
+  }};
+
+/* ===== أدوات المذاكرة الذكية (AI): كويز، فلاش كاردز، امتحان تجريبي، خطة، ورقة غش، شفوي، معدل، مليونير ===== */
+const RETRY_S = [429, 500, 502, 503, 504];
+const aiUrl = () => (typeof MathBot !== 'undefined' && MathBot.url) ? MathBot.url() : '';
+async function aiAsk(prompt, o){
+  o = o || {}; const u = aiUrl(); if(!u) throw new Error('no-server');
+  const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 70000);
+  try{
+    const msg = {role:'user', content:prompt}; if(o.images) msg.images = o.images; let r;
+    for(let n = 0; n < 2; n++){
+      r = await fetch(u, {method:'POST', headers:{'Content-Type':'application/json', 'apikey':(typeof CONFIG !== 'undefined' && CONFIG.QA && CONFIG.QA.anonKey) || ''}, body:JSON.stringify({messages:[msg], stream:false, json:!!o.json}), signal:ctl.signal});
+      if(r.ok || RETRY_S.indexOf(r.status) < 0) break; await sleep(700);
+    }
+    const j = await r.json().catch(() => ({}));
+    if(!r.ok || !j.reply) throw new Error(j.error || ('ai-' + r.status));
+    return String(j.reply);
+  } finally { clearTimeout(to); }
+}
+function parseJson(t){
+  t = String(t).replace(/```(?:json)?/gi, '').trim();
+  try{ return JSON.parse(t); }catch(e){}
+  const a = Math.min(...['{', '['].map(c => { const i = t.indexOf(c); return i < 0 ? 1e9 : i; })), b = Math.max(t.lastIndexOf('}'), t.lastIndexOf(']'));
+  if(a < 1e9 && b > a){ try{ return JSON.parse(t.slice(a, b + 1)); }catch(e){} }
+  throw new Error('bad-json');
+}
+const aiErr = e => { const m = String(e && e.message || e); return m === 'no-server' ? 'الروبوت الذكي مش مفعّل لسه — لازم الأدمن يحط رابط السيرفر (⚙️ في البوت).' : m === 'bad-json' ? 'الذكاء الاصطناعي رجّع رد مش مفهوم — جرّب تاني.' : 'السيرفر مشغول دلوقتي — جرّب تاني بعد ثواني.'; };
+SX.aiAsk = aiAsk;
+const clip = (t, n) => { t = String(t || '').replace(/\n{3,}/g, '\n\n').trim(); return t.length > n ? t.slice(0, n) + '\n…' : t; };
+const busy = m => `<div class="st-busy"><div class="st-spin"></div><p>${E(m || 'الذكاء الاصطناعي بيجهّز…')}</p></div>`;
+const big = html => SX.modal('<button type="button" class="sxm-x" data-st="close">✕</button>' + html, 'sxm-big');
+const body = () => $q('#sxModal .sxm-in');
+const setBody = html => { const b = body(); if(b) b.innerHTML = '<button type="button" class="sxm-x" data-st="close">✕</button>' + html; };
+
+/* ---------------- محتوى الموقع ---------------- */
+function secText(s){ let t = ''; (s.blocks || []).forEach(b => { if(b && b.text) t += String(b.text).replace(/\*\*|==|`/g, '') + '\n'; }); (s.children || []).forEach(c => { t += '\n## ' + c.title + '\n' + secText(c); }); return t; }
+function secList(){ try{ return flatSecs().filter(x => (x.s.blocks || []).length || (x.s.children || []).length); }catch(e){ return []; } }
+function sectionInView(){
+  let best = null, bd = 1e9; const mid = innerHeight/2;
+  secList().forEach(x => { const el = document.getElementById('sec-' + x.s.id); if(!el) return; const r = el.getBoundingClientRect(); if(r.bottom < 0 || r.top > innerHeight) return; const d = Math.abs((r.top + r.bottom)/2 - mid) + (r.height > innerHeight*1.5 ? 2000 : 0); if(d < bd){ bd = d; best = x.s; } });
+  return best;
+}
+SX.sectionInView = sectionInView;
+
+/* ---------------- اختيار المصدر ---------------- */
+function pickSource(title, cb, opt){
+  opt = opt || {}; const secs = secList();
+  big(`<div class="st-h"><b>${E(title)}</b><small>اختار مصدر المحتوى</small></div>
+    <div class="st-tabs"><button type="button" data-t="sec" class="on">📖 قسم من الموقع</button><button type="button" data-t="txt">✏️ نص / موضوع</button><button type="button" data-t="pdf">📄 ملف PDF</button></div>
+    <div class="st-pane" data-p="sec"><select id="stSec">${secs.length ? secs.map(x => `<option value="${E(x.s.id)}">${E((x.path.length ? x.path.join(' › ') + ' › ' : '') + x.s.title)}</option>`).join('') : '<option value="">مفيش أقسام</option>'}</select><small>الأقسام الفرعية بتتحسب تلقائياً.</small></div>
+    <div class="st-pane" data-p="txt" hidden><textarea id="stTxt" rows="6" placeholder="الصق ملخصك أو اكتب اسم موضوع (مثلاً: التكامل بالتجزئة، المصفوفات…)"></textarea></div>
+    <div class="st-pane" data-p="pdf" hidden><input type="file" id="stPdf" accept="application/pdf,.pdf"><small id="stPdfSt">اختار ملف PDF (بنقراه على جهازك).</small></div>
+    ${opt.extra || ''}<button type="button" class="st-go" data-st="srcgo">التالي ▶</button>`);
+  let tab = 'sec', pdfTxt = '', pdfName = '';
+  const m = $q('#sxModal');
+  m.addEventListener('click', e => { const t = e.target.closest('.st-tabs button'); if(t){ tab = t.dataset.t; $qa('.st-tabs button', m).forEach(b => b.classList.toggle('on', b === t)); $qa('.st-pane', m).forEach(p => { p.hidden = p.dataset.p !== tab; }); } });
+  m.addEventListener('change', async e => { if(e.target.id !== 'stPdf' || !e.target.files[0]) return; const f = e.target.files[0], st = $q('#stPdfSt', m); st.textContent = '⏳ بقرا الملف…';
+    try{ if(!MathBot.extractPdf) throw 0; const ex = await MathBot.extractPdf(await f.arrayBuffer()); pdfTxt = ex.text; pdfName = f.name; st.textContent = ex.text.length > 100 ? '✅ اتقرا ' + ex.pages + ' صفحة' : '⚠️ الملف ده ممسوح ضوئياً (صور) ومفيهوش نص — الصق النص بدلاً منه.'; }catch(err){ st.textContent = '❌ مقدرتش أقرا الملف (محتاج نت لتحميل قارئ PDF).'; } });
+  m.addEventListener('click', e => { if(e.target.dataset.st !== 'srcgo') return;
+    let text = '', ttl = '';
+    if(tab === 'sec'){ const id = $q('#stSec', m).value, s = SecTools.find(id); if(!s) return say('اختار قسم'); text = secText(s); ttl = s.title; }
+    else if(tab === 'txt'){ text = $q('#stTxt', m).value.trim(); ttl = text.slice(0, 40); }
+    else { text = pdfTxt; ttl = pdfName; }
+    if(text.replace(/\s/g, '').length < 12) return say('المحتوى قليل أوي — زوّد شوية');
+    cb({title:ttl || 'موضوع', text:clip(text, 14000)}, m);
+  });
+}
+
+/* ---------------- توليد الأسئلة ---------------- */
+const LV = {1:'سهل (تعريفات وتطبيق مباشر)', 2:'متوسط (تطبيق وفهم)', 3:'صعب (مسائل متعددة الخطوات وفخاخ شائعة)'};
+async function genMCQ(src, n, lv, kind, extraRule){
+  const tf = kind === 'tf';
+  const p = `أنت مدرّس رياضيات جامعي. اعمل ${n} ${tf ? 'عبارات صح/غلط (نص ممكن يكون صحيح أو مغلوط بشكل خفي)' : 'أسئلة اختيار من متعدد'} بمستوى ${LV[lv]} اعتماداً على المحتوى التالي (ولو المحتوى قليل استعن بالمفاهيم المرتبطة).
+أرجع JSON فقط بالشكل: {"questions":[{"q":"نص السؤال","options":[${tf ? '"صح","غلط"' : '"أ","ب","ج","د"'}],"answer":0,"explain":"شرح مختصر بالعامية المصرية","topic":"اسم الموضوع الفرعي (2-3 كلمات)"}]}
+القواعد: ${tf ? 'الاختياران "صح" و"غلط" بالترتيب ده،' : '4 اختيارات بالظبط ومكان الإجابة الصحيحة عشوائي،'} answer هو رقم الاختيار الصحيح (يبدأ من 0)، اكتب الرياضيات بنص عادي (x²، √، ∫، π) من غير LaTeX، الأسئلة متنوعة وتقيس الفهم. ${extraRule || ''}
+المحتوى:
+"""
+${src}
+"""`;
+  const j = parseJson(await aiAsk(p, {json:true})), arr = Array.isArray(j) ? j : (j.questions || []);
+  const need = tf ? 2 : 4, out = arr.filter(q => q && q.q && Array.isArray(q.options) && q.options.length === need && Number.isInteger(+q.answer) && +q.answer >= 0 && +q.answer < need).map(q => ({q:String(q.q), o:q.options.map(String), a:+q.answer, x:String(q.explain || ''), t:String(q.topic || '').slice(0, 30)}));
+  if(!out.length) throw new Error('bad-json'); return out;
+}
+async function genCards(src, n){
+  const p = `أنت مدرّس رياضيات جامعي. اعمل ${n} فلاش كاردز للمذاكرة من المحتوى التالي (قوانين، تعريفات، خطوات حل، أخطاء شائعة، أمثلة صغيرة بحلها).
+أرجع JSON فقط: {"cards":[{"front":"سؤال أو مصطلح قصير","back":"الإجابة المختصرة والمباشرة"}]}
+اكتب الرياضيات بنص عادي (x²، √، ∫) من غير LaTeX، والوش مش أطول من سطرين والضهر مش أطول من 3 أسطر.
+المحتوى:
+"""
+${src}
+"""`;
+  const j = parseJson(await aiAsk(p, {json:true})), arr = Array.isArray(j) ? j : (j.cards || []);
+  const out = arr.filter(c => c && c.front && c.back).map(c => ({f:String(c.front), b:String(c.back)})); if(!out.length) throw new Error('bad-json'); return out;
+}
+const recTopic = (t, ok) => { if(!t) return; const S = lsGet('sx_topics', {}); const o = S[t] = S[t] || {ok:0, no:0}; ok ? o.ok++ : o.no++; lsSet('sx_topics', S); };
+const recQuiz = (title, sc, tot) => { const h = lsGet('sx_quizlog', []); h.push({t:title, s:sc, n:tot, d:Date.now()}); lsSet('sx_quizlog', h.slice(-40)); };
+
+/* ---------------- مشغّل الكويز ---------------- */
+function runQuiz(qs, o){
+  o = o || {}; let i = 0, ans = new Array(qs.length).fill(null), timer = null, tl = o.minutes ? o.minutes*60 : 0; const exam = !!o.exam;
+  const draw = () => {
+    const q = qs[i], a = ans[i], pct = Math.round(i/qs.length*100);
+    setBody(`<div class="qz-top"><b>${E(o.title || 'كويز')}</b><span class="qz-n">${i + 1} / ${qs.length}</span>${tl ? '<span class="qz-t" id="qzT"></span>' : ''}</div><div class="qz-bar"><i style="width:${pct}%"></i></div>
+      <div class="qz-q">${MathBot.fmt(q.q)}</div>
+      <div class="qz-o">${q.o.map((t, k) => `<button type="button" data-k="${k}" class="${a == null ? '' : (exam ? (a === k ? 'sel' : '') : (k === q.a ? 'ok' : (a === k ? 'no' : '')))}" ${(!exam && a != null) ? 'disabled' : ''}><b>${q.o.length === 2 ? '' : 'أبجد'[k] + '.'}</b> ${MathBot.fmt(t)}</button>`).join('')}</div>
+      ${(!exam && a != null) ? `<div class="qz-x ${a === q.a ? 'ok' : 'no'}"><b>${a === q.a ? '✅ صح!' : '❌ غلط'}</b>${q.x ? '<div>' + MathBot.fmt(q.x) + '</div>' : ''}</div>` : ''}
+      <div class="qz-nav">${exam ? `<button type="button" data-q="prev" ${i === 0 ? 'disabled' : ''}>◀ السابق</button>` : '<span></span>'}${exam ? (i === qs.length - 1 ? '<button type="button" class="pri" data-q="fin">✔ تسليم الامتحان</button>' : '<button type="button" data-q="next">التالي ▶</button>') : (a != null ? `<button type="button" class="pri" data-q="next">${i === qs.length - 1 ? 'النتيجة 🏁' : 'التالي ▶'}</button>` : '<span></span>')}</div>`);
+    tick();
+  };
+  const tick = () => { const el = $q('#qzT'); if(el && tl){ el.textContent = '⏱ ' + Math.floor(tl/60) + ':' + String(tl%60).padStart(2, '0'); el.classList.toggle('warn', tl < 60); } };
+  const finish = () => {
+    clearInterval(timer); const wrong = []; let sc = 0;
+    qs.forEach((q, k) => { const ok = ans[k] === q.a; if(ok) sc++; else wrong.push(k); recTopic(q.t || o.title, ok); try{ SX.stat('q', 'quiz', ok ? 'ok' : 'no'); }catch(e){} });
+    recQuiz(o.title || 'كويز', sc, qs.length); try{ if(typeof Fun !== 'undefined' && Fun.award && sc >= Math.ceil(qs.length*.6)) Fun.award('sx_quiz', 10, 'كويز ذكي'); }catch(e){}
+    const pct = Math.round(sc/qs.length*100);
+    setBody(`<div class="qz-res"><div class="qz-score ${pct >= 70 ? 'g' : pct >= 50 ? 'm' : 'b'}"><b>${sc}</b><small>من ${qs.length}</small></div><h3>${pct >= 85 ? '🔥 ممتاز!' : pct >= 70 ? '👏 كويس جداً' : pct >= 50 ? '🙂 معقول — راجع الغلطات' : '💪 محتاج مراجعة — بس هتتحسن'}</h3>
+      ${wrong.length ? `<div class="qz-wr"><b>الغلطات (${wrong.length}):</b>${wrong.map(k => { const q = qs[k]; return `<div class="qz-wi"><div>${MathBot.fmt(q.q)}</div><small class="g">✔ ${MathBot.fmt(q.o[q.a])}</small>${ans[k] != null ? `<small class="r">✖ ${MathBot.fmt(q.o[ans[k]])}</small>` : '<small class="r">✖ ما جاوبتش</small>'}${q.x ? `<small>${MathBot.fmt(q.x)}</small>` : ''}</div>`; }).join('')}</div>` : '<p>👌 ولا غلطة!</p>'}
+      <div class="qz-end">${wrong.length && o.src ? '<button type="button" class="pri" data-q="similar">🔁 تمارين مشابهة للغلطات</button><button type="button" data-q="wcards">🃏 حوّل الغلطات لفلاش كاردز</button>' : ''}<button type="button" data-q="again">🔄 كويز جديد</button></div>`);
+    $q('#sxModal').dataset.wrong = JSON.stringify(wrong);
+  };
+  const m = $q('#sxModal'); if(o.minutes) timer = setInterval(() => { tl--; tick(); if(tl <= 0){ say('⏱ الوقت خلص!'); finish(); } }, 1000);
+  m.addEventListener('click', async e => {
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.k != null){ if(!exam && ans[i] != null) return; ans[i] = +b.dataset.k; draw(); if(exam){ /* يفضل نفس السؤال */ } return; }
+    const k = b.dataset.q; if(!k) return;
+    if(k === 'next'){ if(i < qs.length - 1){ i++; draw(); } else finish(); }
+    else if(k === 'prev'){ if(i > 0){ i--; draw(); } }
+    else if(k === 'fin'){ const un = ans.filter(x => x == null).length; if(un && !confirm('لسه ' + un + ' سؤال من غير إجابة. تسلّم؟')) return; finish(); }
+    else if(k === 'again'){ clearInterval(timer); quizTool(); }
+    else if(k === 'similar'){ const wrong = JSON.parse(m.dataset.wrong || '[]'); const seed = wrong.map(x => qs[x].q).join('\n'); setBody(busy('بولّد تمارين مشابهة للغلطات…'));
+      try{ const more = await genMCQ(seed, Math.min(10, wrong.length*2 + 1), o.lv || 2, 'mcq', 'اعمل تمارين مشابهة في الفكرة للأسئلة اللي الطالب غلط فيها لكن بأرقام وصياغة مختلفة (مش نفس الأسئلة).'); clearInterval(timer); runQuiz(more, {title:'تمارين مشابهة', lv:o.lv, src:seed}); }catch(err){ setBody(`<p class="st-err">${E(aiErr(err))}</p>`); } }
+    else if(k === 'wcards'){ const wrong = JSON.parse(m.dataset.wrong || '[]'); const cards = wrong.map(x => ({f:qs[x].q, b:qs[x].o[qs[x].a] + (qs[x].x ? ' — ' + qs[x].x : '')})); saveDeck('أغلاطي — ' + (o.title || 'كويز'), cards); say('✅ اتحفظت ' + cards.length + ' فلاش كارد في «مجموعاتي»'); }
+  });
+  draw();
+}
+function saveDeck(name, cards){ const D = lsGet('sx_decks', []); D.unshift({id:rid(), name, cards:cards.map(c => ({f:c.f, b:c.b, k:0})), d:Date.now()}); lsSet('sx_decks', D.slice(0, 30)); }
+
+/* ---------------- أداة: مولّد الكويز ---------------- */
+function quizTool(pre){
+  const extra = `<div class="st-opts"><div><label>عدد الأسئلة</label><div class="st-ch" data-k="n"><button type="button" data-v="5">5</button><button type="button" data-v="10" class="on">10</button><button type="button" data-v="15">15</button></div></div>
+    <div><label>المستوى</label><div class="st-ch" data-k="lv"><button type="button" data-v="1">سهل</button><button type="button" data-v="2" class="on">متوسط</button><button type="button" data-v="3">صعب</button></div></div>
+    <div><label>النوع</label><div class="st-ch" data-k="kind"><button type="button" data-v="mcq" class="on">اختيار من متعدد</button><button type="button" data-v="tf">صح / غلط</button></div></div></div>`;
+  const go = async (src, m) => {
+    const g = k => +(($q(`.st-ch[data-k="${k}"] .on`, m) || {}).dataset || {}).v || 0, kind = (($q('.st-ch[data-k="kind"] .on', m) || {}).dataset || {}).v || 'mcq', n = g('n') || 10, lv = g('lv') || 2;
+    setBody(busy('بولّد الأسئلة من «' + src.title.slice(0, 30) + '»…'));
+    try{ const qs = await genMCQ(src.text, n, lv, kind); runQuiz(qs, {title:src.title, lv, src:src.text}); }catch(e){ setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p><button type="button" class="st-go" data-st="retry">رجوع</button>`); $q('#sxModal').addEventListener('click', ev => { if(ev.target.dataset.st === 'retry') quizTool(); }); }
+  };
+  pickSource('🧪 مولّد الكويز', go, {extra});
+  const m = $q('#sxModal'); m.addEventListener('click', e => { const b = e.target.closest('.st-ch button'); if(b){ $qa('button', b.parentElement).forEach(x => x.classList.toggle('on', x === b)); } });
+}
+
+/* ---------------- أداة: فلاش كاردز ---------------- */
+function cardsTool(){
+  const extra = `<div class="st-opts"><div><label>عدد الكروت</label><div class="st-ch" data-k="n"><button type="button" data-v="10">10</button><button type="button" data-v="16" class="on">16</button><button type="button" data-v="24">24</button></div></div></div>`;
+  pickSource('🃏 مولّد الفلاش كاردز', async (src, m) => {
+    const n = +(($q('.st-ch[data-k="n"] .on', m) || {}).dataset || {}).v || 16; setBody(busy('بعمل الفلاش كاردز…'));
+    try{ const cards = await genCards(src.text, n); saveDeck(src.title, cards); const D = lsGet('sx_decks', []); deckView(D[0].id); }catch(e){ setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p>`); }
+  }, {extra});
+  $q('#sxModal').addEventListener('click', e => { const b = e.target.closest('.st-ch button'); if(b) $qa('button', b.parentElement).forEach(x => x.classList.toggle('on', x === b)); });
+}
+function deckView(id){
+  const D = lsGet('sx_decks', []), d = D.find(x => x.id === id); if(!d){ return decksList(); }
+  let order = d.cards.map((c, i) => i).sort((a, b) => d.cards[a].k - d.cards[b].k), p = 0, flip = false;
+  if(!$q('#sxModal')) big('');
+  const save = () => { lsSet('sx_decks', D); };
+  const draw = () => {
+    if(p >= order.length){ const known = d.cards.filter(c => c.k >= 2).length; setBody(`<div class="qz-res"><h3>🎉 خلّصت المجموعة</h3><p>بتعرف ${known} من ${d.cards.length} كارت كويس.</p><div class="qz-end"><button type="button" class="pri" data-fc="restart">🔄 كمّل مراجعة (الصعب الأول)</button><button type="button" data-fc="list">📚 مجموعاتي</button></div></div>`); return; }
+    const c = d.cards[order[p]];
+    setBody(`<div class="qz-top"><b>🃏 ${E(d.name)}</b><span class="qz-n">${p + 1} / ${order.length}</span></div><div class="qz-bar"><i style="width:${Math.round(p/order.length*100)}%"></i></div>
+      <div class="fc-card ${flip ? 'back' : ''}" data-fc="flip"><small>${flip ? 'الإجابة' : 'السؤال'} — اضغط للقلب</small><div>${MathBot.fmt(flip ? c.b : c.f)}</div></div>
+      <div class="qz-nav">${flip ? '<button type="button" data-fc="no">😕 لسه مش حافظها</button><button type="button" class="pri" data-fc="ok">😎 حافظها</button>' : '<button type="button" data-fc="list">📚 مجموعاتي</button><button type="button" class="pri" data-fc="flip">اظهر الإجابة</button>'}</div>`);
+  };
+  $q('#sxModal').onclick = e => { const b = e.target.closest('[data-fc]'); if(!b) { const x = e.target.closest('[data-st="close"]'); if(x) SX.closeModal(); return; } const k = b.dataset.fc;
+    if(k === 'flip'){ flip = !flip; draw(); } else if(k === 'ok' || k === 'no'){ const c = d.cards[order[p]]; c.k = k === 'ok' ? Math.min(3, c.k + 1) : 0; save(); p++; flip = false; draw(); }
+    else if(k === 'restart'){ order = d.cards.map((c, i) => i).sort((a, b2) => d.cards[a].k - d.cards[b2].k); p = 0; flip = false; draw(); } else if(k === 'list') decksList(); };
+  draw();
+}
+function decksList(){
+  const D = lsGet('sx_decks', []); if(!$q('#sxModal')) big('');
+  setBody(`<div class="st-h"><b>📚 مجموعاتي (فلاش كاردز)</b><small>محفوظة على جهازك</small></div>${D.length ? D.map(d => `<div class="dk"><button type="button" class="dk-o" data-dk="open" data-id="${d.id}"><b>${E(d.name)}</b><small>${d.cards.length} كارت · بتعرف ${d.cards.filter(c => c.k >= 2).length}</small></button><button type="button" class="dk-d" data-dk="del" data-id="${d.id}" aria-label="حذف">🗑</button></div>`).join('') : '<p>لسه معندكش مجموعات. اعمل واحدة من «مولّد الفلاش كاردز» أو من غلطات الكويز.</p>'}<button type="button" class="st-go" data-dk="new">➕ مجموعة جديدة بالذكاء الاصطناعي</button>`);
+  $q('#sxModal').onclick = e => { const x = e.target.closest('[data-st="close"]'); if(x) return SX.closeModal(); const b = e.target.closest('[data-dk]'); if(!b) return; if(b.dataset.dk === 'open') deckView(b.dataset.id); else if(b.dataset.dk === 'new') cardsTool(); else if(b.dataset.dk === 'del'){ if(confirm('حذف المجموعة؟')){ lsSet('sx_decks', D.filter(d => d.id !== b.dataset.id)); decksList(); } } };
+}
+
+/* ---------------- أداة: امتحان تجريبي ---------------- */
+function mockTool(){
+  const secs = secList().filter(x => !x.path.length || true);
+  big(`<div class="st-h"><b>🎓 امتحان تجريبي بوقت</b><small>اختار الأقسام اللي عايز تتمتحن فيها</small></div>
+    <div class="st-chk">${secs.map(x => `<label><input type="checkbox" value="${E(x.s.id)}"> ${E((x.path.length ? x.path.join(' › ') + ' › ' : '') + x.s.title)}</label>`).join('') || '<p>مفيش أقسام.</p>'}</div>
+    <div class="st-opts"><div><label>عدد الأسئلة</label><div class="st-ch" data-k="n"><button type="button" data-v="10">10</button><button type="button" data-v="20" class="on">20</button><button type="button" data-v="30">30</button></div></div>
+    <div><label>الوقت</label><div class="st-ch" data-k="min"><button type="button" data-v="15">15 د</button><button type="button" data-v="30" class="on">30 د</button><button type="button" data-v="45">45 د</button></div></div>
+    <div><label>المستوى</label><div class="st-ch" data-k="lv"><button type="button" data-v="1">سهل</button><button type="button" data-v="2" class="on">متوسط</button><button type="button" data-v="3">صعب</button></div></div></div>
+    <button type="button" class="st-go" data-st="mockgo">ابدأ الامتحان ▶</button>`);
+  const m = $q('#sxModal');
+  m.addEventListener('click', async e => {
+    const c = e.target.closest('.st-ch button'); if(c){ $qa('button', c.parentElement).forEach(x => x.classList.toggle('on', x === c)); return; }
+    if(e.target.dataset.st !== 'mockgo') return; const ids = $qa('.st-chk input:checked', m).map(i => i.value); if(!ids.length) return say('اختار قسم واحد على الأقل');
+    const g = k => +(($q(`.st-ch[data-k="${k}"] .on`, m) || {}).dataset || {}).v, n = g('n'), mins = g('min'), lv = g('lv');
+    const texts = ids.map(id => SecTools.find(id)).filter(Boolean).map(s => '### ' + s.title + '\n' + clip(secText(s), Math.floor(12000/ids.length))); const src = texts.join('\n\n');
+    setBody(busy('بجهّز الامتحان… (ممكن ياخد دقيقة)'));
+    try{
+      const parts = Math.ceil(n/10), per = Math.ceil(n/parts), res = await Promise.all(Array.from({length:parts}, (_, k) => genMCQ(src, per, lv, 'mcq', 'ده الجزء ' + (k + 1) + ' من ' + parts + ' من الامتحان — نوّع المواضيع وما تكررش أسئلة.').catch(() => [])));
+      let qs = [].concat(...res); const seen = new Set(); qs = qs.filter(q => { if(seen.has(q.q)) return false; seen.add(q.q); return true; }).slice(0, n); if(!qs.length) throw new Error('bad-json');
+      runQuiz(qs, {title:'امتحان تجريبي', exam:true, minutes:mins, lv, src});
+    }catch(err){ setBody(`<p class="st-err">⚠️ ${E(aiErr(err))}</p>`); }
+  });
+}
+
+/* ---------------- أداة: خريطة الضعف ---------------- */
+function weakHtml(){
+  const T = lsGet('sx_topics', {}), rows = Object.keys(T).map(k => ({k, ok:T[k].ok, no:T[k].no, n:T[k].ok + T[k].no, p:Math.round(T[k].ok/(T[k].ok + T[k].no)*100)})).filter(r => r.n >= 1).sort((a, b) => a.p - b.p || b.n - a.n).slice(0, 14);
+  if(!rows.length) return '<p class="st-note">لسه مفيش بيانات — حل كام كويز ذكي وهتظهرلك خريطة نقاط ضعفك هنا. 📉</p>';
+  return rows.map(r => `<div class="wk"><span>${E(r.k)}</span><div class="wk-b"><i class="${r.p >= 75 ? 'g' : r.p >= 50 ? 'm' : 'b'}" style="width:${Math.max(6, r.p)}%"></i></div><b>${r.p}%</b><small>${r.ok}/${r.n}</small></div>`).join('') + `<button type="button" class="st-go" data-st="weakgo">🎯 ذاكر أضعف موضوع دلوقتي</button>`;
+}
+function weakTool(){ big(`<div class="st-h"><b>📉 خريطة نقاط الضعف</b><small>من نتايج كويزاتك وامتحاناتك</small></div>${weakHtml()}`); bindWeak(); }
+function bindWeak(){ const m = $q('#sxModal'); if(!m) return; m.addEventListener('click', async e => { if(e.target.dataset.st !== 'weakgo') return; const T = lsGet('sx_topics', {}); const w = Object.keys(T).map(k => ({k, p:T[k].ok/(T[k].ok + T[k].no)})).sort((a, b) => a.p - b.p)[0]; if(!w) return;
+  setBody(busy('بجهّز كويز على «' + w.k + '»…')); try{ const qs = await genMCQ('الموضوع: ' + w.k + ' (ضمن مقرر الرياضيات الجامعي). غطّي الأفكار الأساسية ونقاط الضعف الشائعة فيه.', 8, 2, 'mcq'); runQuiz(qs, {title:'تقوية: ' + w.k, src:w.k}); }catch(err){ setBody(`<p class="st-err">${E(aiErr(err))}</p>`); } }); }
+
+/* ---------------- أداة: خطة مذاكرة ---------------- */
+function planTool(){
+  const secs = secList(), plan = lsGet('sx_plan', null);
+  const tomorrow = new Date(Date.now() + 14*864e5).toISOString().slice(0, 10);
+  if(plan && plan.days && plan.days.length){ return planView(plan); }
+  big(`<div class="st-h"><b>🗓 خطة المذاكرة الذكية</b><small>اكتب ميعاد الامتحان وهوزّع لك الأقسام على الأيام</small></div>
+    <label class="st-l">ميعاد الامتحان<input type="date" id="plD" value="${tomorrow}"></label>
+    <label class="st-l">ساعات المذاكرة في اليوم<input type="number" id="plH" min="1" max="12" step=".5" value="3"></label>
+    <label class="st-l">الأقسام اللي هتذاكرها</label><div class="st-chk">${secs.map(x => `<label><input type="checkbox" value="${E(x.s.id)}" checked> ${E((x.path.length ? x.path.join(' › ') + ' › ' : '') + x.s.title)}</label>`).join('')}</div>
+    <button type="button" class="st-go" data-st="plgo">اعمل الخطة ▶</button>`);
+  const m = $q('#sxModal'); m.addEventListener('click', e => { if(e.target.dataset.st !== 'plgo') return;
+    const d = $q('#plD', m).value, h = Math.max(.5, +$q('#plH', m).value || 3), ids = $qa('.st-chk input:checked', m).map(i => i.value);
+    const end = new Date(d + 'T00:00:00'), start = new Date(); start.setHours(0, 0, 0, 0); const days = Math.round((end - start)/864e5);
+    if(!(days >= 2)) return say('ميعاد الامتحان لازم يكون بعد يومين على الأقل'); if(!ids.length) return say('اختار قسم واحد على الأقل');
+    const items = ids.map(id => SecTools.find(id)).filter(Boolean).map(s => ({id:s.id, t:s.title, min:Math.max(25, Math.min(140, Math.round(secText(s).length/55)))}));
+    const study = days >= 5 ? days - 2 : days - 1, cap = h*60; const plans = []; let di = 0, left = cap;
+    const D = Array.from({length:days}, (_, i) => ({date:new Date(start.getTime() + i*864e5).toISOString().slice(0, 10), tasks:[]}));
+    const totalMin = items.reduce((a, b) => a + b.min, 0), scale = Math.min(1, (study*cap*.92)/totalMin);
+    items.forEach(it => { let need = Math.max(15, Math.round(it.min*scale)); while(need > 0 && di < study){ const take = Math.min(need, left); D[di].tasks.push({id:rid(), t:it.t, min:take, done:false}); need -= take; left -= take; if(left <= 5){ di++; left = cap; } } });
+    if(days >= 5){ D[days - 2].tasks.push({id:rid(), t:'مراجعة شاملة على أغلاطك + فلاش كاردز', min:Math.round(cap*.8), done:false}); }
+    D[days - 1].tasks.push({id:rid(), t:'🎯 يوم الامتحان: مراجعة القوانين بس + نوم كويس', min:30, done:false});
+    const np = {exam:d, h, days:D.filter(x => x.tasks.length)}; lsSet('sx_plan', np); planView(np);
+  });
+}
+function planView(plan){
+  if(!$q('#sxModal')) big('');
+  const tot = plan.days.reduce((a, d) => a + d.tasks.length, 0), done = plan.days.reduce((a, d) => a + d.tasks.filter(t => t.done).length, 0), today = new Date().toISOString().slice(0, 10);
+  const dn = d => new Date(d + 'T12:00:00').toLocaleDateString('ar-EG', {weekday:'long', day:'numeric', month:'short'});
+  setBody(`<div class="st-h"><b>🗓 خطتك للامتحان (${E(plan.exam)})</b><small>${done} من ${tot} مهمة خلصت</small></div><div class="qz-bar"><i style="width:${tot ? Math.round(done/tot*100) : 0}%"></i></div>
+    ${plan.days.map(d => `<div class="pn-d ${d.date === today ? 'today' : ''} ${d.date < today ? 'past' : ''}"><b>${d.date === today ? '📍 النهاردة — ' : ''}${E(dn(d.date))}</b>${d.tasks.map(t => `<label class="pn-t ${t.done ? 'dn' : ''}"><input type="checkbox" data-pl="${t.id}" ${t.done ? 'checked' : ''}> ${E(t.t)} <small>${t.min} د</small></label>`).join('')}</div>`).join('')}
+    <button type="button" class="st-go" data-pl="reset">🔄 اعمل خطة جديدة</button>`);
+  $q('#sxModal').onclick = e => { const x = e.target.closest('[data-st="close"]'); if(x) return SX.closeModal(); const r = e.target.closest('[data-pl="reset"]'); if(r){ lsSet('sx_plan', null); SX.closeModal(); planTool(); return; }
+    const c = e.target.closest('input[data-pl]'); if(c){ plan.days.forEach(d => d.tasks.forEach(t => { if(t.id === c.dataset.pl) t.done = c.checked; })); lsSet('sx_plan', plan); planView(plan); } };
+}
+
+/* ---------------- أداة: ورقة غش ---------------- */
+function sheetTool(){
+  pickSource('📄 ورقة غش جاهزة للطباعة', async (src) => {
+    setBody(busy('بكتب الورقة…'));
+    try{
+      const txt = await aiAsk(`اكتب «ورقة غش» مختصرة جداً ومرتبة للمراجعة السريعة قبل الامتحان من المحتوى التالي. استخدم عناوين (## عنوان) وتحتها نقط بشرطة (-). غطّي: القوانين والتعريفات الأساسية، خطوات الحل، أخطاء شائعة، ومثال صغير محلول لكل فكرة مهمة. الرياضيات بنص عادي (x²، √، ∫، π) من غير LaTeX. لا تزيد عن صفحة واحدة تقريباً.\nالمحتوى:\n"""\n${src.text}\n"""`);
+      setBody(`<div class="st-h"><b>📄 ورقة الغش: ${E(src.title.slice(0, 40))}</b></div><div class="sh-doc" id="shDoc">${MathBot.fmt(txt)}</div><div class="qz-end"><button type="button" class="pri" data-sh="print">🖨 طباعة / حفظ PDF</button><button type="button" data-sh="copy">📋 نسخ</button></div>`);
+      $q('#sxModal').onclick = e => { const x = e.target.closest('[data-st="close"]'); if(x) return SX.closeModal(); const b = e.target.closest('[data-sh]'); if(!b) return;
+        if(b.dataset.sh === 'copy'){ try{ navigator.clipboard.writeText(txt); say('✅ اتنسخت'); }catch(_){ say('تعذّر النسخ'); } }
+        else { const w = window.open('', '_blank'); if(!w) return say('اسمح بالنوافذ المنبثقة للطباعة'); w.document.write('<!doctype html><html dir="rtl" lang="ar"><meta charset="utf-8"><title>ورقة غش</title><style>body{font:14px/1.7 Tahoma,Arial,sans-serif;margin:18px;columns:2;column-gap:24px}h1,h2,b.mb-hd{display:block;font-size:15px;margin:10px 0 4px;color:#0b4d8a;border-bottom:1px solid #ccc;break-after:avoid}code{background:#eee;padding:0 3px}pre{background:#f4f4f4;padding:6px;direction:ltr}@media print{body{margin:8mm}}</style><body><h1>' + E(src.title) + '</h1>' + $q('#shDoc').innerHTML + '</body></html>'); w.document.close(); setTimeout(() => w.print(), 400); } };
+    }catch(e){ setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p>`); }
+  });
+}
+
+/* ---------------- أداة: امتحان شفوي ---------------- */
+function oralTool(){
+  pickSource('🎙 امتحان شفوي', async (src) => {
+    setBody(busy('بجهّز أسئلة الشفوي…'));
+    let qs; try{ const j = parseJson(await aiAsk(`أنت ممتحن شفوي في الرياضيات الجامعية. اعمل 5 أسئلة شفوية قصيرة متدرجة من المحتوى التالي (تعريف، فهم، تطبيق). أرجع JSON فقط: {"questions":[{"q":"السؤال بالعامية المصرية المبسطة","key":"النقاط الأساسية المطلوبة في الإجابة"}]}\nالمحتوى:\n"""\n${src.text}\n"""`, {json:true})); qs = (Array.isArray(j) ? j : j.questions || []).filter(q => q && q.q).slice(0, 5); if(!qs.length) throw new Error('bad-json'); }catch(e){ return setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p>`); }
+    let i = 0, tot = 0, fb = [], rec = null; const V = (typeof MathBot !== 'undefined' && MathBot.Voice) || null, SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const ask = () => {
+      if(i >= qs.length){ const avg = Math.round(tot/qs.length*10)/10; recQuiz('شفوي: ' + src.title, Math.round(avg), 10); return setBody(`<div class="qz-res"><div class="qz-score ${avg >= 7 ? 'g' : avg >= 5 ? 'm' : 'b'}"><b>${avg}</b><small>من 10</small></div><h3>${avg >= 8 ? '🔥 شفوي ممتاز' : avg >= 6 ? '👏 كويس' : '💪 محتاج تراجع'}</h3>${fb.map((f, k) => `<div class="qz-wi"><div><b>${E(qs[k].q)}</b></div><small>إجابتك: ${E(f.a || '—')}</small><small class="${f.s >= 6 ? 'g' : 'r'}">${f.s}/10 — ${E(f.f)}</small></div>`).join('')}`); }
+      setBody(`<div class="qz-top"><b>🎙 شفوي: ${E(src.title.slice(0, 24))}</b><span class="qz-n">${i + 1} / ${qs.length}</span></div><div class="qz-bar"><i style="width:${i/qs.length*100}%"></i></div><div class="qz-q">${E(qs[i].q)}</div>
+        <textarea id="orA" rows="3" placeholder="اكتب إجابتك أو اضغط 🎤 وتكلم…"></textarea>
+        <div class="qz-nav"><button type="button" data-or="say">🔊 اسمع السؤال</button>${SR ? '<button type="button" data-or="mic" id="orM">🎤 تكلّم</button>' : ''}<button type="button" class="pri" data-or="send">إرسال الإجابة ▶</button></div>`);
+      if(V && V.say) setTimeout(() => V.say(qs[i].q), 300);
+    };
+    $q('#sxModal').onclick = async e => { const x = e.target.closest('[data-st="close"]'); if(x){ if(V) V.stop(); if(rec) try{ rec.stop(); }catch(_){} return SX.closeModal(); } const b = e.target.closest('[data-or]'); if(!b) return; const k = b.dataset.or;
+      if(k === 'say'){ if(V) V.say(qs[i].q); }
+      else if(k === 'mic'){ if(rec){ try{ rec.stop(); }catch(_){} return; } rec = new SR(); rec.lang = 'ar-EG'; rec.interimResults = true; rec.continuous = true; const ta = $q('#orA'), base = ta.value ? ta.value + ' ' : ''; b.textContent = '⏹ وقّف';
+        rec.onresult = ev => { let t = ''; for(let r = 0; r < ev.results.length; r++) t += ev.results[r][0].transcript; ta.value = base + t; }; rec.onend = () => { rec = null; const mm = $q('#orM'); if(mm) mm.textContent = '🎤 تكلّم'; }; try{ rec.start(); }catch(_){ rec = null; } }
+      else if(k === 'send'){ const a = $q('#orA').value.trim(); if(!a) return say('اكتب أو قول إجابتك الأول'); if(rec){ try{ rec.stop(); }catch(_){} } if(V) V.stop(); setBody(busy('بصحّح إجابتك…'));
+        try{ const j = parseJson(await aiAsk(`أنت ممتحن شفوي رياضيات. السؤال: "${qs[i].q}". النقاط المطلوبة: "${qs[i].key || ''}". إجابة الطالب: "${a}". قيّم الإجابة من 10 وأعطِ تعليق قصير مفيد بالعامية المصرية (إيه الصح وإيه الناقص). أرجع JSON فقط: {"score":0,"feedback":"..."}`, {json:true})); const s = Math.max(0, Math.min(10, +j.score || 0)); tot += s; fb.push({a, s, f:String(j.feedback || '')}); recTopic(src.title, s >= 6);
+          setBody(`<div class="qz-q">${E(qs[i].q)}</div><div class="qz-x ${s >= 6 ? 'ok' : 'no'}"><b>${s} / 10</b><div>${E(j.feedback || '')}</div></div><div class="qz-nav"><span></span><button type="button" class="pri" data-or="next">${i === qs.length - 1 ? 'النتيجة 🏁' : 'السؤال التالي ▶'}</button></div>`); }catch(err){ setBody(`<p class="st-err">⚠️ ${E(aiErr(err))}</p><button type="button" class="st-go" data-or="retry">حاول تاني</button>`); } }
+      else if(k === 'next'){ i++; ask(); } else if(k === 'retry'){ ask(); } };
+    ask();
+  });
+}
+
+/* ---------------- أداة: حاسبة المعدل ---------------- */
+const SCALE0 = [['A+', 97, 4], ['A', 93, 4], ['A-', 89, 3.7], ['B+', 84, 3.3], ['B', 80, 3], ['B-', 76, 2.7], ['C+', 73, 2.3], ['C', 70, 2], ['C-', 67, 1.7], ['D+', 64, 1.3], ['D', 60, 1], ['F', 0, 0]];
+function gpaTool(){
+  let st = lsGet('sx_gpa', {rows:[{n:'', h:3, g:''}, {n:'', h:3, g:''}, {n:'', h:2, g:''}], prevG:'', prevH:''}); const scale = lsGet('sx_gpa_scale', SCALE0);
+  const pts = g => { g = parseFloat(g); if(isNaN(g)) return null; for(const s of scale) if(g >= s[1]) return s[2]; return 0; }, lt = g => { g = parseFloat(g); if(isNaN(g)) return ''; for(const s of scale) if(g >= s[1]) return s[0]; return 'F'; };
+  const draw = () => {
+    let sumP = 0, sumH = 0; st.rows.forEach(r => { const p = pts(r.g), h = parseFloat(r.h); if(p != null && h > 0){ sumP += p*h; sumH += h; } });
+    const sem = sumH ? sumP/sumH : 0, pG = parseFloat(st.prevG), pH = parseFloat(st.prevH), cum = (pG >= 0 && pH > 0 && sumH) ? (pG*pH + sumP)/(pH + sumH) : null;
+    setBody(`<div class="st-h"><b>🧮 حاسبة المعدل (GPA)</b><small>الدرجة بالنسبة المئوية — الجدول الافتراضي شائع، ولو كليتك مختلفة عدّله تحت</small></div>
+      <div class="gp-r gp-hd"><span>المادة</span><span>الساعات</span><span>الدرجة %</span><span>التقدير</span><span></span></div>
+      ${st.rows.map((r, i) => `<div class="gp-r"><input data-g="n" data-i="${i}" value="${E(r.n)}" placeholder="اسم المادة"><input data-g="h" data-i="${i}" type="number" min="0" step=".5" value="${E(r.h)}"><input data-g="g" data-i="${i}" type="number" min="0" max="100" value="${E(r.g)}"><b>${lt(r.g)}</b><button type="button" data-gp="del" data-i="${i}">✕</button></div>`).join('')}
+      <button type="button" class="st-b2" data-gp="add">➕ مادة</button>
+      <div class="gp-res"><div><small>معدل الترم</small><b>${sem.toFixed(2)}</b></div>${cum != null ? `<div><small>المعدل التراكمي</small><b>${cum.toFixed(2)}</b></div>` : ''}<div><small>الساعات</small><b>${sumH}</b></div></div>
+      <details class="gp-det"><summary>معدلك السابق (للتراكمي)</summary><div class="gp-r"><input data-g="pg" type="number" step=".01" value="${E(st.prevG)}" placeholder="GPA السابق"><input data-g="ph" type="number" value="${E(st.prevH)}" placeholder="ساعات سابقة"></div></details>
+      <details class="gp-det"><summary>جدول التقديرات (قابل للتعديل)</summary><div class="gp-sc">${scale.map((s, i) => `<div><b>${s[0]}</b> من <input type="number" data-sc="1" data-i="${i}" value="${s[1]}"> = <input type="number" step=".1" data-sc="2" data-i="${i}" value="${s[2]}"></div>`).join('')}</div></details>`);
+  };
+  big(''); draw();
+  const m = $q('#sxModal'); m.onclick = e => { const x = e.target.closest('[data-st="close"]'); if(x) return SX.closeModal(); const b = e.target.closest('[data-gp]'); if(!b) return; if(b.dataset.gp === 'add') st.rows.push({n:'', h:3, g:''}); else st.rows.splice(+b.dataset.i, 1); lsSet('sx_gpa', st); draw(); };
+  m.oninput = e => { const t = e.target; if(t.dataset.g){ if(t.dataset.g === 'pg') st.prevG = t.value; else if(t.dataset.g === 'ph') st.prevH = t.value; else st.rows[+t.dataset.i][t.dataset.g] = t.value; lsSet('sx_gpa', st); clearTimeout(m._t); m._t = setTimeout(() => { const f = document.activeElement, id = f && f.dataset ? (f.dataset.g + '|' + f.dataset.i) : ''; draw(); if(id){ const n = $q(`[data-g="${id.split('|')[0]}"][data-i="${id.split('|')[1]}"]`, m) || $q(`[data-g="${id.split('|')[0]}"]`, m); if(n){ n.focus(); try{ n.setSelectionRange(n.value.length, n.value.length); }catch(_){} } } }, 500); }
+    else if(t.dataset.sc){ const s = scale[+t.dataset.i]; s[+t.dataset.sc] = parseFloat(t.value) || 0; lsSet('sx_gpa_scale', scale); } };
+}
+
+/* ---------------- لعبة: من سيربح المليون ---------------- */
+const LADDER = [100, 200, 300, 500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 125000, 250000, 500000, 1000000];
+function milTool(){
+  big(`<div class="st-h"><b>💰 من سيربح المليون؟</b><small>15 سؤال من السهل للصعب — نقاط مش فلوس 😄</small></div><label class="st-l">موضوع الأسئلة</label>
+    <select id="mlS"><option value="">رياضيات عامة (حساب، جبر، تفاضل وتكامل)</option>${secList().map(x => `<option value="${E(x.s.id)}">${E(x.s.title)}</option>`).join('')}</select><button type="button" class="st-go" data-st="mlgo">ابدأ ▶</button>`);
+  const m = $q('#sxModal'); m.addEventListener('click', async e => { if(e.target.dataset.st !== 'mlgo') return; const id = $q('#mlS', m).value, s = id ? SecTools.find(id) : null, src = s ? clip(secText(s), 9000) : 'مقرر رياضيات جامعي: حساب وجبر ومصفوفات وتفاضل وتكامل ونهايات.';
+    setBody(busy('بجهّز 15 سؤال… (ممكن ياخد حوالي نص دقيقة)'));
+    try{ const sets = await Promise.all([[1, 5], [2, 5], [3, 6]].map(([lv, n]) => genMCQ(src, n, lv, 'mcq').catch(() => []))); const qs = [].concat(...sets.map((a, k) => a.slice(0, k === 2 ? 6 : 5))); if(qs.length < 8) throw new Error('bad-json'); milRun(qs); }catch(err){ setBody(`<p class="st-err">⚠️ ${E(aiErr(err))}</p>`); } });
+}
+function milRun(all){
+  const main = all.slice(0, 15), spare = all.slice(15); let i = 0, used = {fifty:false, ai:false, swap:false}, hid = [];
+  const safe = k => k >= 10 ? LADDER[9] : k >= 5 ? LADDER[4] : 0;
+  const draw = (note) => {
+    if(i >= main.length) return end(true);
+    const q = main[i];
+    setBody(`<div class="ml"><div class="ml-l">${LADDER.map((v, k) => `<span class="${k === i ? 'cur' : k < i ? 'dn' : ''} ${k === 4 || k === 9 ? 'sf' : ''}">${k + 1}. ${v.toLocaleString('ar-EG')}</span>`).reverse().join('')}</div>
+      <div class="ml-m"><div class="ml-lf"><button type="button" ${used.fifty ? 'disabled' : ''} data-ml="fifty">50:50</button><button type="button" ${used.ai ? 'disabled' : ''} data-ml="ai">🤖 اسأل الذكاء</button><button type="button" ${used.swap ? 'disabled' : ''} data-ml="swap">🔄 بدّل السؤال</button></div>
+      <div class="qz-q">${MathBot.fmt(q.q)}</div><div class="qz-o">${q.o.map((t, k) => `<button type="button" data-k="${k}" ${hid.includes(k) ? 'class="gone" disabled' : ''}><b>${'أبجد'[k]}.</b> ${MathBot.fmt(t)}</button>`).join('')}</div>
+      ${note ? `<div class="qz-x ok">${note}</div>` : ''}<button type="button" class="st-b2" data-ml="walk">💼 اسحب ${i ? LADDER[i - 1].toLocaleString('ar-EG') : 0} نقطة وامشي</button></div></div>`);
+  };
+  const end = (won, lose) => { const pts = won ? LADDER[14] : lose ? safe(i) : (i ? LADDER[i - 1] : 0); setBody(`<div class="qz-res"><h3>${won ? '🎉 مبروك! كسبت المليون!' : lose ? '😅 إجابة غلط' : '💼 انسحبت بذكاء'}</h3><div class="qz-score ${pts >= 8000 ? 'g' : 'm'}"><b>${pts.toLocaleString('ar-EG')}</b><small>نقطة</small></div>${lose ? `<p>الإجابة الصح: <b>${MathBot.fmt(lose.o[lose.a])}</b></p>${lose.x ? '<small>' + MathBot.fmt(lose.x) + '</small>' : ''}` : ''}<div class="qz-end"><button type="button" class="pri" data-ml="again">🔄 العب تاني</button></div></div>`); if(pts >= 8000){ try{ if(typeof Fun !== 'undefined' && Fun.award) Fun.award('sx_mil', 12, 'مليونير'); }catch(e){} } };
+  $q('#sxModal').onclick = async e => { const x = e.target.closest('[data-st="close"]'); if(x) return SX.closeModal(); const b = e.target.closest('button'); if(!b) return; const q = main[i];
+    if(b.dataset.k != null){ const k = +b.dataset.k; if(k === q.a){ $qa('.qz-o button', $q('#sxModal')).forEach(z => { if(+z.dataset.k === k) z.classList.add('ok'); }); i++; hid = []; setTimeout(() => draw(i >= 15 ? null : '✅ إجابة صح!'), 700); } else { $qa('.qz-o button', $q('#sxModal')).forEach(z => { if(+z.dataset.k === k) z.classList.add('no'); if(+z.dataset.k === q.a) z.classList.add('ok'); }); setTimeout(() => end(false, q), 1100); } return; }
+    const k = b.dataset.ml; if(k === 'walk') end(false, null); else if(k === 'again') milTool();
+    else if(k === 'fifty'){ used.fifty = true; const wr = [0, 1, 2, 3].filter(z => z !== q.a).sort(() => Math.random() - .5).slice(0, 2); hid = wr; draw(); }
+    else if(k === 'swap'){ used.swap = true; if(spare.length) main[i] = spare.shift(); else { const ok = q; } hid = []; draw(spare.length >= 0 ? '🔄 اتبدّل السؤال' : ''); }
+    else if(k === 'ai'){ used.ai = true; b.disabled = true; b.textContent = '⏳…'; try{ const t = await aiAsk('سؤال اختيار من متعدد:\n' + q.q + '\n' + q.o.map((o, z) => 'أبجد'[z] + '. ' + o).join('\n') + '\nقول رأيك في الإجابة الصح في جملتين بالعامية المصرية وبدون ما تبقى متأكد 100%.'); draw('🤖 ' + E(t.slice(0, 260))); }catch(err){ draw('🤖 الذكاء مش متاح دلوقتي'); } } };
+  draw();
+}
+
+/* ---------------- تسجيل الأدوات + تبويب «تقدّمي» ---------------- */
+SX.tools.push(
+  {id:'quiz', icon:'🧪', name:'مولّد الكويز', desc:'اختيار من متعدد أو صح/غلط من أي قسم أو نص أو PDF', open:quizTool},
+  {id:'cards', icon:'🃏', name:'مولّد فلاش كاردز', desc:'كروت مذاكرة جاهزة بالذكاء الاصطناعي ومراجعة بالأصعب الأول', open:cardsTool},
+  {id:'decks', icon:'📚', name:'مجموعاتي', desc:'كل الفلاش كاردز اللي عملتها (وغلطات الكويز)', open:() => { big(''); decksList(); }},
+  {id:'mock', icon:'🎓', name:'امتحان تجريبي', desc:'أسئلة من كذا قسم بعدّاد وقت ونتيجة وتحليل', open:mockTool},
+  {id:'plan', icon:'🗓', name:'خطة المذاكرة', desc:'وزّع الأقسام على الأيام لحد ميعاد الامتحان', open:planTool},
+  {id:'sheet', icon:'📄', name:'ورقة غش للطباعة', desc:'قوانين وتعريفات وأخطاء شائعة في صفحة واحدة', open:sheetTool},
+  {id:'oral', icon:'🎙', name:'امتحان شفوي', desc:'الذكاء يسألك وتجاوب بصوتك ويقيّمك', open:oralTool},
+  {id:'weak', icon:'📉', name:'خريطة الضعف', desc:'مواضيعك الأضعف من واقع نتايجك', open:weakTool},
+  {id:'mil', icon:'💰', name:'من سيربح المليون', desc:'لعبة أسئلة بمساعدات 50:50 واسأل الذكاء', open:milTool},
+  {id:'gpa', icon:'🧮', name:'حاسبة المعدل', desc:'معدل الترم والتراكمي بجدول تقديرات قابل للتعديل', open:gpaTool}
+);
+SX.renderMe = function(root){
+  const S = lsGet('sx_stats2', {}), g = S.game || {}, q = S.q || {}, log = lsGet('sx_quizlog', []).slice(-5).reverse(), daily = lsGet('sx_daily_best', null);
+  const qq = (q.quiz || {}), ok = (qq.ok || 0) + ((q.duel || {}).ok || 0), no = (qq.no || 0) + ((q.duel || {}).no || 0);
+  root.innerHTML = `<div class="me-grid"><div class="me-c"><b>🎮 الألعاب</b>${Object.keys(g).length ? Object.keys(g).map(k => { const o = g[k], gm = SX.games[k]; return `<div class="me-r"><span>${gm ? gm.icon + ' ' + gm.name : k}</span><span>✅ ${o.w || 0} · ❌ ${o.l || 0} · 🤝 ${o.d || 0}</span></div>`; }).join('') : '<small>لسه معلعبتش أونلاين أو ضد الكمبيوتر.</small>'}${daily ? `<div class="me-r"><span>📅 تحدّي اليوم (${E(daily.d)})</span><span>${daily.s} نقطة</span></div>` : ''}</div>
+    <div class="me-c"><b>🧠 الأسئلة</b><div class="me-r"><span>إجابات صح</span><span>${ok}</span></div><div class="me-r"><span>إجابات غلط</span><span>${no}</span></div>${log.length ? '<small>آخر الكويزات:</small>' + log.map(l => `<div class="me-r"><span>${E(String(l.t).slice(0, 26))}</span><span>${l.s}/${l.n}</span></div>`).join('') : ''}</div>
+    <div class="me-c wide"><b>📉 نقاط الضعف</b>${weakHtml()}</div></div>`;
+  bindMeWeak(root);
+};
+function bindMeWeak(root){ root.addEventListener('click', async e => { if(e.target.dataset.st !== 'weakgo') return; big(busy('بجهّز كويز تقوية…')); const T = lsGet('sx_topics', {}); const w = Object.keys(T).map(k => ({k, p:T[k].ok/(T[k].ok + T[k].no)})).sort((a, b) => a.p - b.p)[0]; if(!w) return;
+  try{ const qs = await genMCQ('الموضوع: ' + w.k + ' (ضمن مقرر الرياضيات الجامعي).', 8, 2, 'mcq'); runQuiz(qs, {title:'تقوية: ' + w.k, src:w.k}); }catch(err){ setBody(`<p class="st-err">${E(aiErr(err))}</p>`); } }); }
+document.addEventListener('click', e => { const c = e.target.closest('#sxModal [data-st="close"]'); if(c) closeModal(); });
+
+/* ---------------- ربط البوت: أزرار سريعة ---------------- */
+SX.botAction = async function(kind){
+  const s = sectionInView(); if(!s){ say('افتح أي قسم من الموقع الأول وبعدين جرّب'); return; }
+  const text = clip(secText(s), 6000);
+  if(kind === 'quiz'){ openHub('study'); big(busy('بعمل كويز من «' + s.title + '»…')); try{ const qs = await genMCQ(text, 8, 2, 'mcq'); runQuiz(qs, {title:s.title, src:text}); }catch(e){ setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p>`); } return; }
+  const p = kind === 'simple' ? 'بسّطلي القسم ده كأني لسه بتعلّم: اشرحه بأمثلة من الحياة وخطوات صغيرة.' : 'لخّصلي القسم ده في نقاط مرتبة مع أهم القوانين.';
+  MathBot.send(p + '\n\nالقسم: «' + s.title + '»\n"""\n' + text + '\n"""');
+};
+document.addEventListener('click', e => { const b = e.target.closest('[data-sxai]'); if(!b) return; const k = b.dataset.sxai; if(k === 'fix'){ MathBot.fixMode = true; $q('#mbFile') && $q('#mbFile').click(); say('📸 صوّر ورقة الحل — وهصحّحها خطوة خطوة'); } else SX.botAction(k); });
+
+/* ===== ربط المركز بالموقع: زرار الأعلى + لينك الدعوة + تثبيت التطبيق ===== */
+(function(){
+  const $i = id => document.getElementById(id);
+  function mkTop(){
+    if($i('sxTopBtn')) return; const ref = $i('gamesTopBtn'); if(!ref || !ref.parentNode) return;
+    const b = document.createElement('button'); b.className = 'top-ico'; b.id = 'sxTopBtn'; b.type = 'button'; b.title = 'مركز التحدّي: ألعاب أونلاين ومذاكرة ذكية'; b.setAttribute('aria-label', 'مركز التحدّي'); b.textContent = '🎯';
+    ref.parentNode.insertBefore(b, ref.nextSibling); b.addEventListener('click', () => SX.openHub('games'));
+  }
+  function placeTop(){
+    mkTop(); const b = $i('sxTopBtn'); if(!b) return;
+    const sp = $i('trackSplash'), blocked = !!(sp && !sp.classList.contains('hide')); b.hidden = blocked; if(blocked) return;
+    const gB = $i('gamesTopBtn'), lB = $i('lectTopBtn'), pB = $i('posterBtn'), compact = innerWidth <= 480, step = compact ? 42 : 52;
+    const n = ((gB && !gB.hidden) ? 1 : 0) + ((lB && !lB.hidden) ? 1 : 0);
+    b.style.left = ((compact ? 92 : 120) + ((pB && !pB.hidden) ? step : 0) + n*step) + 'px';
+  }
+  try{ if(typeof TopIcons !== 'undefined'){ const s0 = TopIcons.sync; TopIcons.sync = function(){ const r = s0.apply(this, arguments); try{ placeTop(); }catch(e){} return r; }; } }catch(e){}
+  setInterval(() => { try{ placeTop(); }catch(e){} }, 1000); addEventListener('resize', () => { try{ placeTop(); }catch(e){} });
+  setTimeout(() => { try{ placeTop(); }catch(e){} }, 300);
+  document.addEventListener('click', e => { const a = e.target.closest('[data-sx-open]'); if(a) SX.openHub(a.dataset.sxOpen); });
+
+  /* تثبيت كتطبيق (PWA) */
+  let deferred = null; const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; });
+  function bannerInstall(){
+    if(standalone() || $i('sxInstall')) return; const last = +lsGet('sx_pwa_no', 0); if(Date.now() - last < 7*864e5) return;
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent), can = !!deferred; if(!can && !ios) return;
+    const d = document.createElement('div'); d.id = 'sxInstall'; d.className = 'sx-install';
+    d.innerHTML = '<span style="font-size:26px">📲</span><b>' + (can ? 'ثبّت الموقع كتطبيق على موبايلك — أسرع وبيشتغل بشاشة كاملة' : 'ثبّت الموقع: اضغط زرار المشاركة ⎋ ثم «إضافة إلى الشاشة الرئيسية»') + '</b>' + (can ? '<button class="go" type="button">تثبيت</button>' : '') + '<button class="no" type="button">لاحقاً</button>';
+    document.body.appendChild(d);
+    d.querySelector('.no').onclick = () => { lsSet('sx_pwa_no', Date.now()); d.remove(); };
+    const g = d.querySelector('.go'); if(g) g.onclick = async () => { try{ deferred.prompt(); await deferred.userChoice; }catch(e){} deferred = null; lsSet('sx_pwa_no', Date.now()); d.remove(); };
+  }
+  setTimeout(bannerInstall, 40000);
+
+  SX.checkInvite();
+})();
+
 })();
 </script>
 </body>
