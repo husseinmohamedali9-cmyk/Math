@@ -12182,6 +12182,22 @@ body[data-bgpattern=fx_peach]{background-image:linear-gradient(135deg,#ffecd2,#f
 body[data-bgpattern=fx_mint]{background-image:linear-gradient(135deg,#d4fc79,#96e6a1)!important}
 body[data-bgpattern=fx_night]{background-image:radial-gradient(ellipse at top,#1b2a49,#0a0f1e)!important}
 body[data-bgpattern=fx_pastel]{background-image:linear-gradient(135deg,#a1c4fd,#c2e9fb 50%,#fbc2eb)!important}
+
+#fxTbar,#fxTbPanel{direction:ltr;display:grid;grid-template-columns:repeat(var(--n,5),42px);gap:6px;box-sizing:border-box;justify-content:start}
+#fxTbar{position:fixed;top:calc(env(safe-area-inset-top,0px) + 18px);left:10px;z-index:55;pointer-events:none}
+#fxTbar>*{pointer-events:auto}
+#fxTbar:empty,#fxTbPanel:empty{display:none}
+#fxTbPanel{position:fixed;top:calc(env(safe-area-inset-top,0px) + 76px);left:10px;z-index:9989;max-width:calc(100vw - 20px);padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 36px #0006;transition:transform .32s cubic-bezier(.2,.9,.25,1),opacity .25s,visibility 0s .32s}
+#fxTbPanel:not(.open){transform:translateY(calc(-100% - 120px))!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+#fxTbPanel:not(.open) *{visibility:hidden!important;pointer-events:none!important}
+#fxTbPanel.open{transform:none;opacity:1;visibility:visible;pointer-events:auto;transition:transform .32s cubic-bezier(.2,.9,.25,1),opacity .25s,visibility 0s}
+#fxTbBtn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 18px);left:12px;z-index:9988;width:50px;height:50px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:24px;line-height:1;box-shadow:0 3px 10px #0003;cursor:pointer;padding:0;display:grid;place-items:center}
+#fxTbBtn[hidden]{display:none}
+.fxtbi{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;margin:0!important;transform:none!important;width:42px!important;height:42px!important;min-width:0!important;max-width:none!important}
+.fxtbi[hidden]{display:none!important}
+@media(min-width:481px){#fxTbar,#fxTbPanel{grid-template-columns:repeat(var(--n,5),48px)}.fxtbi{width:48px!important;height:48px!important}}
+html[style*="--fxtb-h"] .topbar-in{min-height:var(--fxtb-h)}
+html.fx-focus :is(#fxTbar,#fxTbBtn,#fxTbPanel){display:none!important}
 </style>
 
 <script id="fxJs">
@@ -12247,7 +12263,7 @@ p.innerHTML=`<h4>🎨 الثيم</h4><select id="fxTh"><option value="">الاف
 <h4>🖼 الخلفية</h4><div class="fxr">${BGS.map(b=>`<button class="fxbg ${LS.g('fx_bg','')===b[0]?'on':''}" data-bg="${b[0]}">${b[1]}</button>`).join('')}</div>
 <h4>🎯 وضع التركيز</h4><button class="fxb" id="fxFc">${document.documentElement.classList.contains('fx-focus')?'إيقاف':'تشغيل'} (يخفي كل حاجة غير القسم المفتوح)</button>
 <h4>✏️ اسم «مركز التحدّي»</h4><div class="fxr"><input type="text" id="fxNm" maxlength="24" placeholder="اكتب الاسم اللي يعجبك" value="${curName.replace(/"/g,'&quot;')}"><button class="fxb" id="fxNs">حفظ</button></div><small>سيب الخانة فاضية للرجوع للاسم الأصلي.</small>
-<h4>📍 مكان زر ✨</h4>${posHtml()}<h4>🎮 دراع البلايستيشن</h4><small id="fxPd">${padOn()?'✅ الدراع متوصّل':'وصّل الدراع (بلوتوث/كابل) واضغط أي زر'}<br>✕ تأكيد · ○ رجوع · الأسهم/العصا للتنقل واللعب (شغّال في الأونلاين كمان)</small>`;
+<h4>📍 مكان زر ✨</h4>${posHtml()}<h4>🔝 أيقونات الشريط العلوي</h4>${tbHtml()}<h4>🎮 دراع البلايستيشن</h4><small id="fxPd">${padOn()?'✅ الدراع متوصّل':'وصّل الدراع (بلوتوث/كابل) واضغط أي زر'}<br>✕ تأكيد · ○ رجوع · الأسهم/العصا للتنقل واللعب (شغّال في الأونلاين كمان)</small>`;
 document.body.appendChild(p);posPanel();
 p.onchange=e=>{if(e.target.id==='fxTh'){LS.s('fx_auto','0');$('#fxAuto').checked=false;setTheme(e.target.value)}
 if(e.target.id==='fxAuto'){LS.s('fx_auto',e.target.checked?'1':'0');if(e.target.checked)setTheme(season())}
@@ -12352,10 +12368,37 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act="th-pr
 try{if(typeof Plus!=='undefined'&&curTheme())Plus.setPreset('')}catch(_){}
 setTimeout(()=>{const id=(p&&p.fxid)||'';LS.s('fx_decoid',id);deco(id)},0)},true);
 new MutationObserver(()=>{const m=$('#th-mode');if(!m||$('#fxMF'))return;const fld=[...document.querySelectorAll('.field')].find(f=>/ألوان الموقع/.test((f.querySelector('label')||{}).textContent||''))||m.closest('.field');if(!fld)return;
-const d=document.createElement('div');d.className='field';d.id='fxMF';d.innerHTML=`<label>✨ زر التخصيص السريع (ثيمات / خلفيات / تركيز)</label>${posHtml()}<p class="hint">تتحكم في ظهوره ومكانه: زي ما هو، فوق، جوه شنطة الأدوات 🧰، على الشاشة (تسحبه وتحطّه في أي مكان)، أو إخفاء. لو أخفيته: Alt+Shift+F بيرجّعه.</p>`;fld.parentNode.insertBefore(d,fld)}).observe(document.body,{childList:true,subtree:true});
+const d=document.createElement('div');d.className='field';d.id='fxMF';d.innerHTML=`<label>🔝 أيقونات الشريط العلوي (🔔🌙📢🎮📚🎯🧠🚀)</label>${tbHtml()}<label style="display:block;margin-top:12px">✨ زر التخصيص السريع (ثيمات / خلفيات / تركيز)</label>${posHtml()}<p class="hint">تتحكم في ظهوره ومكانه: زي ما هو، فوق، جوه شنطة الأدوات 🧰، على الشاشة (تسحبه وتحطّه في أي مكان)، أو إخفاء. لو أخفيته: Alt+Shift+F بيرجّعه.</p>`;fld.parentNode.insertBefore(d,fld)}).observe(document.body,{childList:true,subtree:true});
+
+/* ===== أيقونات الشريط العلوي (🔔🌙📢🎮📚🎯🧠🚀) ===== */
+const TBM=()=>{const v=LS.g('fx_tb','flat');return v==='bar'?'flat':v==='menu'?'box':v},TBN=()=>+LS.g('fx_tbn','5')||5;
+const TBO=['notifBtn','modeBtn','posterBtn','gamesTopBtn','lectTopBtn','sxTopBtn'],TBX=['fxFab','fxTbBtn','toTop','fab'];
+let tbBar,tbBtn,tbPan;
+const TBL=[['default','📍 زي ما هي (صف واحد)'],['flat','⬇️ بدون بوكس: كل N ينزلوا صف جديد'],['box','📦 بوكس بيتفتح بشرطة']];
+const tbHtml=()=>`<div class="fxposrow">${TBL.map(q=>`<button type="button" class="fxb ${TBM()===q[0]?'on':''}" data-fxtb="${q[0]}">${q[1]}</button>`).join('')}</div><div class="fxposrow" style="margin-top:6px;align-items:center"><small>عدد الأيقونات في الصف:</small>${[4,5,6].map(n=>`<button type="button" class="fxb ${TBN()===n?'on':''}" data-fxtbn="${n}">${n}</button>`).join('')}</div>`;
+function tbOpen(o){if(!tbPan)return;tbPan.classList.toggle('open',o);tbBtn.textContent=o?'▴':'▾'}
+function tbEnsure(){if(tbBar)return;tbBar=document.createElement('div');tbBar.id='fxTbar';tbPan=document.createElement('div');tbPan.id='fxTbPanel';
+tbBtn=document.createElement('button');tbBtn.id='fxTbBtn';tbBtn.type='button';tbBtn.textContent='▾';tbBtn.title='افتح/اقفل أيقونات الشريط';tbBtn.setAttribute('aria-label','أيقونات الشريط');tbBtn.onclick=e=>{e.stopPropagation();tbOpen(!tbPan.classList.contains('open'))};document.body.appendChild(tbPan);document.body.appendChild(tbBtn)}
+function tbCands(){const out=[];document.querySelectorAll('body>button,.top-ico').forEach(el=>{if(TBX.includes(el.id)||el.classList.contains('hamburger')||el.classList.contains('fab')||el.closest('#fxTbar,#fxTbPanel'))return;
+const cs=getComputedStyle(el),t=parseFloat(cs.top);if(cs.position!=='fixed'||!isFinite(t)||t>110)return;
+if(!el.dataset.fxo){const k=TBO.indexOf(el.id);el.dataset.fxo=k>=0?k:50+(parseFloat(cs.left)||0)/1000}out.push(el)});return out}
+function tbH(h){const r=document.documentElement,nv=h?h+'px':'';if((r.style.getPropertyValue('--fxtb-h')||'')!==nv){if(nv)r.style.setProperty('--fxtb-h',nv);else r.style.removeProperty('--fxtb-h');dispatchEvent(new Event('resize'))}}
+function tbApply(){tbEnsure();const m=TBM();document.documentElement.dataset.fxtb=m;tbBtn.hidden=m!=='box';if(m!=='box')tbOpen(false);
+if(m==='default'){[...tbBar.children,...tbPan.children].forEach(el=>{el.classList.remove('fxtbi');document.body.appendChild(el)});tbBar.remove();tbH(0);return}
+const host=m==='flat'?tbBar:tbPan,oth=m==='flat'?tbPan:tbBar;host.style.setProperty('--n',TBN());
+if(m==='flat'){if(!tbBar.parentNode)document.body.appendChild(tbBar)}else tbBar.remove();
+[...oth.children].forEach(el=>host.appendChild(el));tbCands().forEach(el=>{el.classList.add('fxtbi');host.appendChild(el)});
+const cur=[...host.children],srt=cur.slice().sort((a,b)=>a.dataset.fxo-b.dataset.fxo);if(srt.some((e,i)=>e!==cur[i]))srt.forEach(e=>host.appendChild(e));
+if(m==='flat'){const c=cur.filter(e=>!e.hidden).length,rows=Math.max(1,Math.ceil(c/TBN())),cell=innerWidth<=480?42:48;tbH(rows>1?Math.max(80,18+rows*(cell+6)+8):0)}else tbH(0)}
+function tbInit(){tbApply();setInterval(tbApply,800)}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-fxtb]'),n=e.target.closest('[data-fxtbn]');
+if(a){LS.s('fx_tb',a.dataset.fxtb);tbApply();if(a.dataset.fxtb==='box')tbOpen(true)}if(n){LS.s('fx_tbn',n.dataset.fxtbn);tbApply()}
+if(a||n){document.querySelectorAll('[data-fxtb]').forEach(b=>b.classList.toggle('on',b.dataset.fxtb===TBM()));document.querySelectorAll('[data-fxtbn]').forEach(b=>b.classList.toggle('on',+b.dataset.fxtbn===TBN()))}
+if(tbPan&&tbPan.classList.contains('open')&&!a&&!n){if(e.target.closest('#fxTbPanel .fxtbi'))setTimeout(()=>tbOpen(false),60);else if(!e.target.closest('#fxTbPanel,#fxTbBtn'))tbOpen(false)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')tbOpen(false)});
 /* ===== تشغيل ===== */
 function init(){addPresets();reg();
-syncSite();placeBtn();
+syncSite();placeBtn();tbInit();
 if(LS.g('fx_auto','0')==='1')setTheme(season());else deco(curTheme()||LS.g('fx_decoid',''));
 const bg=LS.g('fx_bg','');if(bg)setBg(bg);if(LS.g('fx_focus','0')==='1')focus(true);if(curName)setName(curName);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.documentElement.classList.contains('fx-focus')&&!$('#sxHub:not([hidden])'))focus(false)})}
