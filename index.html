@@ -12030,6 +12030,17 @@ function notesTool(){
     else if(b.dataset.nt === 'del'){ lsSet('sx_notes', lsGet('sx_notes', []).filter(n => n.id !== b.dataset.id)); draw(); }
   };
 }
+
+;(function(){const T=[
+['xmind','🗺','خريطة ذهنية','شجرة أفكار منظمة للمحتوى (رئيسي ← فرعي ← تفاصيل)','اعمل خريطة ذهنية نصية للمحتوى التالي على شكل شجرة: عنوان رئيسي (## ) وتحته فروع بنقط متداخلة، وكل فرع فيه أمثلة قصيرة. بالعامية المصرية.'],
+['xsolve','🧩','حلّ خطوة بخطوة','حل أي مسألة أو تمرين في المحتوى بخطوات مرقّمة وسبب كل خطوة','لو في مسائل أو تمارين في المحتوى التالي حلّها خطوة بخطوة (خطوات مرقّمة، وسبب كل خطوة، والناتج النهائي في الآخر). لو مفيش مسائل، اخترع مسألتين على نفس الفكرة وحلّهم.'],
+['xmistake','🔍','اكتشف الغلطة','حل فيه غلطة مقصودة وانت تلاقيها (والإجابة مخفية في الآخر)','اعمل 4 حلول أو شروحات قصيرة مبنية على المحتوى التالي، وكل واحد فيه غلطة واحدة مقصودة. اكتب الحلول مرقّمة، وفي الآخر تحت عنوان (## الإجابات) وضّح الغلطة في كل واحد وتصحيحها.'],
+['xlife','🌍','أمثلة من الحياة','أمثلة واقعية وتشبيهات تثبّت الفكرة في دماغك','اشرح أهم أفكار المحتوى التالي بأمثلة من الحياة اليومية في مصر وتشبيهات بسيطة، مثال أو تشبيه لكل فكرة.'],
+['xmnemo','🧷','حيل للحفظ','كلمات ربط وقوافي وتشبيهات تسهّل حفظ القوانين والنقاط','اعمل حيل حفظ (اختصارات حروف، جمل مضحكة، قوافي، ترتيب بصري) لأهم القوانين والنقاط في المحتوى التالي. ولكل حاجة اكتب الحيلة وتحتها المعنى.'],
+['xfast','⚡','مراجعة 5 دقايق','مراجعة سريعة: أهم 10 نقط + 5 أسئلة سريعة بإجاباتها','اعمل مراجعة سريعة تتقرأ في 5 دقايق من المحتوى التالي: (## أهم 10 نقط) ثم (## 5 أسئلة سريعة) كل سؤال بإجابته المختصرة ثم (## غلطات شائعة).'],
+['xen','🌐','مصطلحات عربي/إنجليزي','جدول بالمصطلحات بالعربي والإنجليزي عشان الامتحان','استخرج أهم المصطلحات من المحتوى التالي في جدول من 3 أعمدة: المصطلح بالعربي | بالإنجليزي | معناه في سطر. استخدم جدول Markdown.']
+];
+setTimeout(()=>SX.tools.push(...T.map(t=>({id:t[0],icon:t[1],name:t[2],desc:t[3],open:mkTextTool(t[1]+' '+t[2],t[4])}))),0);})();
 /* ---------------- تسجيل الأدوات + تبويب «تقدّمي» ---------------- */
 SX.tools.push(
   {id:'quiz', icon:'🧪', name:'مولّد الكويز', desc:'اختيار من متعدد أو صح/غلط من أي قسم أو نص أو PDF', open:quizTool},
@@ -12109,6 +12120,246 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-sxai
   setTimeout(() => { try{ buildDock(); }catch(e){} try{ Fun.renderBox(); }catch(e){} }, 400);
 })();
 
+})();
+</script>
+
+<style id="fxCss">
+#fxFab{position:fixed;left:12px;bottom:84px;z-index:9990;width:46px;height:46px;border-radius:50%;border:2px solid var(--gold);background:var(--surface);color:var(--ink);font-size:22px;box-shadow:0 4px 16px #0004;cursor:pointer}
+#fxPanel{position:fixed;left:12px;bottom:138px;z-index:9991;width:min(330px,calc(100vw - 24px));max-height:70vh;overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 10px 36px #0006;font-size:14px}
+#fxPanel h4{margin:12px 0 6px;font-size:13px;color:var(--ink-soft)}#fxPanel h4:first-child{margin-top:0}
+#fxPanel select,#fxPanel input[type=text]{width:100%;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit}
+#fxPanel .fxr{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#fxPanel button.fxb{padding:7px 11px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);cursor:pointer;font:inherit}
+#fxPanel button.fxb.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+#fxPanel .fxbg{width:54px;height:40px;border-radius:9px;border:2px solid var(--line);cursor:pointer;background:var(--bg);font-size:10px;color:var(--ink);padding:0}
+#fxPanel .fxbg.on{border-color:var(--gold)}
+#fxPanel small{color:var(--ink-soft)}
+#fxToast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#111d;color:#fff;padding:9px 16px;border-radius:12px;z-index:99999;font-size:14px}
+#fxExit{position:fixed;top:10px;left:10px;z-index:9990;padding:8px 14px;border-radius:12px;border:2px solid var(--gold);background:var(--surface);color:var(--ink);cursor:pointer}
+html.fx-focus .section:not(.open){display:none!important}
+html.fx-focus :is(#nav,.navchips,#topMenu,header,.dock,#dock,footer,.qa-section,#notifDrawer){display:none!important}
+html.fx-focus body{max-width:860px;margin-inline:auto}
+html[data-fxbg] body{background-attachment:fixed}
+html[data-fxbg=dots] body{background-image:radial-gradient(var(--line) 1.5px,transparent 1.5px);background-size:22px 22px}
+html[data-fxbg=grid] body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px}
+html[data-fxbg=notebook] body{background-image:repeating-linear-gradient(transparent 0 31px,var(--line) 31px 32px)}
+html[data-fxbg=islamic] body{background-image:repeating-conic-gradient(from 45deg at 50% 50%,color-mix(in srgb,var(--accent) 16%,transparent) 0 25%,transparent 0 50%);background-size:54px 54px}
+html[data-fxbg=waves] body{background-image:repeating-radial-gradient(circle at 0 100%,transparent 0 22px,color-mix(in srgb,var(--accent) 14%,transparent) 23px 24px)}
+html[data-fxbg=stars] body{background-image:radial-gradient(2px 2px at 20px 30px,var(--gold),transparent),radial-gradient(1.5px 1.5px at 90px 80px,var(--accent),transparent),radial-gradient(2px 2px at 150px 20px,var(--ink),transparent);background-size:180px 120px}
+html[data-fxbg=aurora] body{background-image:linear-gradient(120deg,#0f2027,#2c5364,#7b2ff799,#00c9a799,#0f2027);background-size:300% 300%;animation:fxAur 18s ease infinite}
+html[data-fxbg=sunset] body{background-image:linear-gradient(180deg,#ffd194,#ff9a8b 55%,#9b5de5)}
+html[data-fxbg=ocean] body{background-image:linear-gradient(180deg,#e0f7ff,#7dd3fc 60%,#0ea5e9)}
+html[data-fxbg=hex] body{background-image:conic-gradient(from 30deg at 50% 50%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 25%,color-mix(in srgb,var(--gold) 12%,transparent) 50%,transparent 75%);background-size:60px 104px}
+@keyframes fxAur{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+#fxDeco{position:fixed;inset:0 0 auto 0;height:0;z-index:6;pointer-events:none}
+#fxDeco .g{position:fixed;top:0;left:0;right:0;height:34px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='34'%3E%3Cpath d='M0 1h60' stroke='%23c9a227' stroke-width='3'/%3E%3Cpath d='M2 2l13 26 13-26z' fill='%23e0a526'/%3E%3Cpath d='M30 2l13 26 13-26z' fill='%2322c3a6'/%3E%3C/svg%3E") repeat-x}
+#fxDeco .l{position:fixed;top:30px;font-size:34px;transform-origin:top center;animation:fxSw 3.4s ease-in-out infinite;filter:drop-shadow(0 0 8px #f5c542aa)}
+#fxDeco .l:before{content:"";position:absolute;left:50%;top:-24px;height:24px;border-left:2px solid #c9a227}
+#fxDeco .m{position:fixed;top:44px;right:14px;font-size:38px;animation:fxTw 3s infinite}
+#fxDeco .b{position:fixed;bottom:-60px;font-size:34px;animation:fxUp linear infinite}
+@keyframes fxSw{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
+@keyframes fxTw{50%{opacity:.5;transform:scale(1.1)}}
+@keyframes fxUp{to{transform:translateY(-115vh) rotate(12deg)}}
+.fx-pad :focus{outline:3px solid var(--gold)!important;outline-offset:2px}
+.fxg-cv{display:block;margin:8px auto;max-width:100%;background:var(--surface-2);border-radius:12px;border:2px solid var(--line);touch-action:none}
+.fxg-grid{display:grid;gap:4px;margin:8px auto;max-width:340px}
+.fxg-grid button,.fxg-opts button{aspect-ratio:1;font-weight:700;font-size:1.1rem;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.fxg-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px auto;max-width:340px}.fxg-opts button{aspect-ratio:auto;padding:14px}
+.fxg-q{font-size:1.6rem;text-align:center;direction:ltr;margin:10px}
+.fxposrow{display:flex;gap:6px;flex-wrap:wrap}
+.fxposrow .fxb{padding:7px 11px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);cursor:pointer;font:inherit}
+.fxposrow .fxb.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+#fxFab.fxin{position:static;width:36px;height:36px;font-size:18px;box-shadow:none;margin-inline:4px;flex:none;border-width:1px}
+#fxFab.fxdrag{touch-action:none;cursor:grab}
+body[data-bgpattern=fx_islamic]{background-image:repeating-conic-gradient(from 45deg at 50% 50%,color-mix(in srgb,var(--accent) 16%,transparent) 0 25%,transparent 0 50%)!important;background-size:54px 54px!important}
+body[data-bgpattern=fx_hex]{background-image:conic-gradient(from 30deg at 50% 50%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 25%,color-mix(in srgb,var(--gold) 13%,transparent) 50%,transparent 75%)!important;background-size:60px 104px!important}
+body[data-bgpattern=fx_zigzag]{background-image:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,transparent) 25%,transparent 25%),linear-gradient(225deg,color-mix(in srgb,var(--accent) 12%,transparent) 25%,transparent 25%)!important;background-size:40px 40px!important}
+body[data-bgpattern=fx_diamond]{background-image:linear-gradient(45deg,color-mix(in srgb,var(--gold) 14%,transparent) 25%,transparent 25%,transparent 75%,color-mix(in srgb,var(--gold) 14%,transparent) 75%),linear-gradient(45deg,color-mix(in srgb,var(--gold) 14%,transparent) 25%,transparent 25%,transparent 75%,color-mix(in srgb,var(--gold) 14%,transparent) 75%)!important;background-size:44px 44px!important;background-position:0 0,22px 22px!important}
+body[data-bgpattern=fx_confetti]{background-image:radial-gradient(circle,#f43f5e 2px,transparent 3px),radial-gradient(circle,#22c55e 2px,transparent 3px),radial-gradient(circle,#3b82f6 2px,transparent 3px)!important;background-size:70px 70px,90px 90px,110px 110px!important;background-position:0 0,30px 40px,60px 15px!important}
+body[data-bgpattern=fx_ramadan]{background-image:radial-gradient(circle at 20% 15%,#f5c54255 0 2px,transparent 3px),radial-gradient(circle at 70% 60%,#22c3a655 0 2px,transparent 3px),linear-gradient(180deg,#0b1b3a,#1a3470)!important;background-size:80px 80px,110px 110px,100% 100%!important}
+body[data-bgpattern=fx_sky]{background-image:linear-gradient(180deg,#bae6fd,#e0f2fe 55%,#ffffff)!important}
+body[data-bgpattern=fx_peach]{background-image:linear-gradient(135deg,#ffecd2,#fcb69f)!important}
+body[data-bgpattern=fx_mint]{background-image:linear-gradient(135deg,#d4fc79,#96e6a1)!important}
+body[data-bgpattern=fx_night]{background-image:radial-gradient(ellipse at top,#1b2a49,#0a0f1e)!important}
+body[data-bgpattern=fx_pastel]{background-image:linear-gradient(135deg,#a1c4fd,#c2e9fb 50%,#fbc2eb)!important}
+</style>
+
+<script id="fxJs">
+(function(){
+const $=(q,r)=>(r||document).querySelector(q),LS={g:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},s:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+function toast(t){let e=$('#fxToast');if(e)e.remove();e=document.createElement('div');e.id='fxToast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}
+/* ===== ثيمات موسمية وجديدة ===== */
+const mk=(n,m,a)=>({n,m,c:{bg:a[0],surface:a[1],surface2:a[2],ink:a[3],inkSoft:a[4],line:a[5],accent:a[6],gold:a[7]}});
+const NEW={
+ramadan:mk('🌙 رمضان كريم (زينة)','dark',['#0b1b3a','#12285a','#1a3470','#fff8e1','#c8d3f0','#2b4488','#f5c542','#22c3a6']),
+ramadan_day:mk('🏮 رمضان نهاري','light',['#fff6df','#fffdf5','#fdeec2','#2a2a4a','#6a6a8a','#ecd9a0','#0f766e','#c9a227']),
+eid:mk('🎈 عيد سعيد (بالونات)','light',['#fff0f6','#ffffff','#ffe1ee','#3b1030','#8a4a78','#f6c2da','#d6336c','#f59f00']),
+winter:mk('⛄ شتاء','light',['#eaf1f8','#ffffff','#dde9f4','#10263d','#4a6a88','#c3d6e8','#2b6cb0','#64748b']),
+autumn:mk('🍁 خريف','light',['#fbeedd','#fffaf3','#f6dfc4','#3b2410','#7a5a3a','#ecd0a8','#c2570c','#a16207']),
+spring:mk('🌷 ربيع','light',['#eefaf0','#ffffff','#dff3e3','#14301c','#4b7a58','#c4e6cb','#16a34a','#e11d74']),
+summer:mk('☀️ صيف','light',['#fff9e0','#ffffff','#ffefb3','#33290a','#7a6a2a','#f3e08a','#f59e0b','#0891b2']),
+aurora:mk('🌌 شفق قطبي','dark',['#07141f','#0d2433','#13344a','#e6fbff','#92c5d6','#1d4f6b','#34d399','#a78bfa']),
+sakura:mk('🌸 ساكورا','light',['#fff1f4','#ffffff','#ffe0e8','#401226','#8c4a62','#f7c6d3','#ec4899','#be185d']),
+cyber:mk('🕹 سايبر','dark',['#0a0a12','#12121f','#1b1b30','#e8e8ff','#9a9acb','#2f2f55','#00e5ff','#ff2bd6']),
+desert:mk('🏜 صحراء','light',['#f7ead2','#fff8ea','#f0dbb5','#3a2a12','#7d6540','#e2c996','#b45309','#0f766e']),
+candy:mk('🍭 حلوى','light',['#fdf0ff','#ffffff','#f8dcff','#38104a','#85528f','#efc4f7','#a855f7','#fb7185']),
+emerald:mk('💎 زمرد','dark',['#06201a','#0b3027','#11402f','#e6fff4','#8fd1b4','#1b5a45','#10d9a0','#facc15']),
+rosegold:mk('🌹 روز جولد','light',['#fdf0ec','#ffffff','#fbe0d8','#3d1f1a','#8a5a52','#f1c8bd','#c9776a','#b8860b']),
+nightsea:mk('🌊 ليل المحيط','dark',['#071a2e','#0c2a47','#12385e','#e8f4ff','#93b7d8','#1d4a78','#38bdf8','#f0abfc']),
+lemon:mk('🍋 ليمون','light',['#fbfde8','#ffffff','#f3f8c2','#2a2e0a','#6d7430','#e3ea9a','#65a30d','#ca8a04']),
+volcano:mk('🌋 بركان','dark',['#1a0b08','#2a120d','#3a1912','#ffece6','#d1a090','#5a2a20','#ff5a36','#ffb020']),
+galaxy:mk('🪐 مجرّة','dark',['#0a0618','#140c2e','#1d1242','#f0e9ff','#b2a3e0','#33236b','#c084fc','#38bdf8']),
+matcha:mk('🍵 ماتشا','light',['#f0f5e6','#fbfdf6','#e3ecd0','#233018','#62784a','#cddcb0','#5b8c2a','#b45309']),
+royalblue:mk('👑 أزرق ملكي','light',['#eef2ff','#ffffff','#e0e7ff','#1e1b4b','#5b5f99','#c7d2fe','#4338ca','#d97706']),
+mocha:mk('☕ موكا','dark',['#1c1411','#2a1e19','#38281f','#f5e9df','#c3a995','#4f3a2d','#d6a06a','#f59e0b']),
+nile:mk('🛶 النيل','light',['#e8f6f3','#ffffff','#d3ece6','#0e2f2a','#4a7f76','#b4ddd3','#0d9488','#d4a017'])};
+function addPresets(){try{if(typeof Plus!=='undefined'&&Plus.PRESETS){Object.assign(Plus.PRESETS,NEW);if(!Plus.__fx){Plus.__fx=1;const o=Plus.setPreset;Plus.setPreset=function(id){o.call(this,id);deco(id)}}}}catch(e){}}
+function curTheme(){try{return JSON.parse(LS.g('plus_preset','""'))||''}catch(e){return LS.g('plus_preset','')}}
+function setTheme(id){try{Plus.setPreset(id)}catch(e){toast('الثيمات مش متاحة (Plus مقفول)')}deco(id)}
+function season(){const m=new Date().getMonth()+1;let h=0,d=0;try{const f=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{month:'numeric',day:'numeric'}).formatToParts(new Date());h=+f.find(p=>p.type==='month').value;d=+f.find(p=>p.type==='day').value}catch(e){}
+return h==9?'ramadan':(h==10&&d<=4)?'eid':(m==12||m<=2)?'winter':m<=5?'spring':m<=8?'summer':'autumn'}
+/* ===== زينة رمضان والعيد ===== */
+function deco(id){const o=$('#fxDeco');if(o)o.remove();if(LS.g('fx_deco','1')==='0')return;if(id!=='ramadan'&&id!=='ramadan_day'&&id!=='eid')return;
+const e=document.createElement('div');e.id='fxDeco';let h='';
+if(id==='eid'){for(let i=0;i<12;i++)h+=`<span class="b" style="left:${i*8.3}%;animation-duration:${9+i%5*2}s;animation-delay:${-i*1.3}s">${['🎈','🎊','🎉'][i%3]}</span>`}
+else{h='<div class="g"></div><span class="m">🌙</span>';for(let i=0;i<6;i++)h+=`<span class="l" style="left:${8+i*16}%;animation-delay:${-i*.6}s">${i%2?'🏮':'🪔'}</span>`}
+e.innerHTML=h;document.body.appendChild(e)}
+/* ===== خلفيات ===== */
+const BGS=[['','بدون'],['dots','نقط'],['grid','مربعات'],['notebook','كشكول'],['islamic','زخرفة'],['waves','موجات'],['stars','نجوم'],['hex','ألوان'],['aurora','شفق'],['sunset','غروب'],['ocean','محيط']];
+function setBg(b){if(b)document.documentElement.dataset.fxbg=b;else delete document.documentElement.dataset.fxbg;LS.s('fx_bg',b)}
+/* ===== وضع التركيز ===== */
+function focus(on){document.documentElement.classList.toggle('fx-focus',on);LS.s('fx_focus',on?'1':'0');let x=$('#fxExit');if(x)x.remove();if(on){x=document.createElement('button');x.id='fxExit';x.textContent='✖ خروج من التركيز';x.onclick=()=>focus(false);document.body.appendChild(x);if(!$('.section.open'))toast('🎯 افتح القسم اللي عايز تذاكره')}}
+/* ===== اسم مركز التحدّي ===== */
+const DEF=/مركز التحدّ?ي/g;let curName=LS.g('fx_hubname','');
+function esc(t){return t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+function rx(){return curName?new RegExp(DEF.source+'|'+esc(curName),'g'):DEF}
+function rep(root,to,re){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;const L=[];while(n=w.nextNode())L.push(n);L.forEach(t=>{if(re.test(t.nodeValue)){re.lastIndex=0;t.nodeValue=t.nodeValue.replace(re,to)}re.lastIndex=0});
+(root.querySelectorAll?root.querySelectorAll('[aria-label],[title]'):[]).forEach(el=>['aria-label','title'].forEach(a=>{const v=el.getAttribute(a);if(v&&re.test(v)){el.setAttribute(a,v.replace(re,to))}re.lastIndex=0}))}
+function setName(n){n=(n||'').trim();const re=rx();curName=n;LS.s('fx_hubname',n);if(n)rep(document.body,n,re);else{rep(document.body,'مركز التحدّي',re)}}
+let busy=0;new MutationObserver(m=>{if(busy||!curName)return;busy=1;const re=rx();m.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1)rep(n,curName,re);else if(n.nodeType===3&&re.test(n.nodeValue)){re.lastIndex=0;n.nodeValue=n.nodeValue.replace(re,curName)}}));busy=0}).observe(document.body,{childList:true,subtree:true});
+/* ===== لوحة التحكم ===== */
+function panel(){let p=$('#fxPanel');if(p){p.hidden=!p.hidden;posPanel();return}
+const P=(typeof Plus!=='undefined'&&Plus.PRESETS)||NEW,cur=curTheme();
+p=document.createElement('div');p.id='fxPanel';
+p.innerHTML=`<h4>🎨 الثيم</h4><select id="fxTh"><option value="">الافتراضي</option>${Object.keys(P).map(k=>`<option value="${k}" ${k===cur?'selected':''}>${P[k].n}</option>`).join('')}</select>
+<label class="fxr" style="margin-top:6px"><input type="checkbox" id="fxAuto" ${LS.g('fx_auto','0')==='1'?'checked':''}> تلقائي حسب الموسم (رمضان/عيد/شتا...)</label>
+<label class="fxr"><input type="checkbox" id="fxDc" ${LS.g('fx_deco','1')!=='0'?'checked':''}> زينة رمضان والعيد</label>
+<h4>🖼 الخلفية</h4><div class="fxr">${BGS.map(b=>`<button class="fxbg ${LS.g('fx_bg','')===b[0]?'on':''}" data-bg="${b[0]}">${b[1]}</button>`).join('')}</div>
+<h4>🎯 وضع التركيز</h4><button class="fxb" id="fxFc">${document.documentElement.classList.contains('fx-focus')?'إيقاف':'تشغيل'} (يخفي كل حاجة غير القسم المفتوح)</button>
+<h4>✏️ اسم «مركز التحدّي»</h4><div class="fxr"><input type="text" id="fxNm" maxlength="24" placeholder="اكتب الاسم اللي يعجبك" value="${curName.replace(/"/g,'&quot;')}"><button class="fxb" id="fxNs">حفظ</button></div><small>سيب الخانة فاضية للرجوع للاسم الأصلي.</small>
+<h4>📍 مكان زر ✨</h4>${posHtml()}<h4>🎮 دراع البلايستيشن</h4><small id="fxPd">${padOn()?'✅ الدراع متوصّل':'وصّل الدراع (بلوتوث/كابل) واضغط أي زر'}<br>✕ تأكيد · ○ رجوع · الأسهم/العصا للتنقل واللعب (شغّال في الأونلاين كمان)</small>`;
+document.body.appendChild(p);posPanel();
+p.onchange=e=>{if(e.target.id==='fxTh'){LS.s('fx_auto','0');$('#fxAuto').checked=false;setTheme(e.target.value)}
+if(e.target.id==='fxAuto'){LS.s('fx_auto',e.target.checked?'1':'0');if(e.target.checked)setTheme(season())}
+if(e.target.id==='fxDc'){LS.s('fx_deco',e.target.checked?'1':'0');deco(curTheme())}};
+p.onclick=e=>{const b=e.target.closest('[data-bg]');if(b){setBg(b.dataset.bg);p.querySelectorAll('.fxbg').forEach(x=>x.classList.toggle('on',x===b))}
+if(e.target.id==='fxFc'){focus(!document.documentElement.classList.contains('fx-focus'));p.hidden=true}
+if(e.target.id==='fxNs'){setName($('#fxNm').value);toast('✅ اتغيّر الاسم')}}}
+/* ===== دراع البلايستيشن ===== */
+const padOn=()=>[...(navigator.getGamepads?navigator.getGamepads():[])].some(g=>g&&g.connected);
+const KC={ArrowUp:38,ArrowDown:40,ArrowLeft:37,ArrowRight:39,' ':32,Enter:13,Escape:27};
+function key(t,k){const ev=new KeyboardEvent(t,{key:k,code:k===' '?'Space':k,keyCode:KC[k],which:KC[k],bubbles:true,cancelable:true});document.dispatchEvent(ev)}
+const vis=el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&!el.disabled&&getComputedStyle(el).visibility!=='hidden'};
+function nav(dir){const hub=$('#sxHub'),root=$('#sxModal')||$('#sxStage')||(hub&&!hub.hidden?hub:document.body);
+const L=[...root.querySelectorAll('button,a[href],input,select,textarea,[tabindex="0"]')].filter(vis);let c=document.activeElement;
+if(!c||!L.includes(c)){if(L[0])L[0].focus();return}
+const r=c.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,v={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[dir];let best=null,bs=1e9;
+L.forEach(el=>{if(el===c)return;const q=el.getBoundingClientRect(),dx=q.left+q.width/2-cx,dy=q.top+q.height/2-cy,al=dx*v[0]+dy*v[1];if(al<=2)return;const pe=Math.abs(dx*v[1])+Math.abs(dy*v[0]),sc=al+pe*2;if(sc<bs){bs=sc;best=el}});
+if(best){best.focus();best.scrollIntoView({block:'nearest'})}}
+const held={};let run=false;
+function poll(){const g=[...navigator.getGamepads()].find(x=>x&&x.connected);if(!g){run=false;toast('🎮 الدراع اتفصل');return}
+const b=i=>g.buttons[i]&&g.buttons[i].pressed,ax=g.axes,st={up:b(12)||ax[1]<-.55,down:b(13)||ax[1]>.55,left:b(14)||ax[0]<-.55,right:b(15)||ax[0]>.55,ok:b(0),back:b(1),alt:b(2)||b(3)};
+const stg=$('#sxStage'),pad=stg&&stg.querySelectorAll('.sxs-box button').length<4,now=performance.now();
+for(const k in st){const h=held[k];if(st[k]){if(!h||now>h.n){held[k]={n:now+(h?120:380)};act(k,pad,!h)}}else if(h){delete held[k];if(pad&&KC[ak(k)])key('keyup',ak(k))}}
+requestAnimationFrame(poll)}
+const ak=k=>({up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight',ok:' ',alt:'Enter',back:'Escape'}[k]);
+function act(k,pad,first){document.documentElement.classList.add('fx-pad');
+if(k==='back'){if(first){key('keydown','Escape');key('keyup','Escape')}return}
+if(pad){key('keydown',ak(k));if(k==='ok'||k==='alt')key('keyup',ak(k));return}
+if(k==='ok'){if(first){const a=document.activeElement;if(a&&a!==document.body)a.click();else nav('down')}return}
+if(k==='alt')return;nav(k)}
+addEventListener('gamepadconnected',e=>{toast('🎮 الدراع اتوصّل: '+e.gamepad.id.slice(0,26));if(!run){run=true;requestAnimationFrame(poll)}});
+if(padOn()&&!run){run=true;requestAnimationFrame(poll)}
+/* ===== ألعاب جديدة ===== */
+function reg(){if(!window.SX||!SX.games||SX.games.snake)return;
+const rnd=n=>Math.floor(Math.random()*n);
+SX.games.snake={id:'snake',icon:'🐍',name:'الثعبان',desc:'كُل 15 تفاحة من غير ما تخبط (أسهم / سحب / دراع)',cpu:true,local:false,online:false,
+opts:[{k:'sp',label:'السرعة',choices:[[140,'هادئ'],[100,'عادي'],[70,'سريع']],def:100}],
+make(env){const N=16,Z=20;let sn,d,nd,ap,sc,t,over;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><canvas class="fxg-cv" width="320" height="320"></canvas></div>';
+const cv=env.box.querySelector('canvas'),x=cv.getContext('2d'),st=env.box.querySelector('.g-st'),cs=getComputedStyle(document.documentElement);
+function food(){do{ap=[rnd(N),rnd(N)]}while(sn.some(s=>s[0]===ap[0]&&s[1]===ap[1]))}
+function draw(){x.clearRect(0,0,320,320);x.fillStyle=cs.getPropertyValue('--gold')||'#e0a526';x.beginPath();x.arc(ap[0]*Z+10,ap[1]*Z+10,8,0,7);x.fill();sn.forEach((s,i)=>{x.fillStyle=i?(cs.getPropertyValue('--accent')||'#1f6f6b'):'#16a34a';x.fillRect(s[0]*Z+1,s[1]*Z+1,Z-2,Z-2)});st.textContent='🍎 '+sc+' / 15'}
+function step(){d=nd;const h=[sn[0][0]+d[0],sn[0][1]+d[1]];if(h[0]<0||h[1]<0||h[0]>=N||h[1]>=N||sn.some(s=>s[0]===h[0]&&s[1]===h[1])){clearInterval(t);over=1;return env.end(1,'خبطت! أكلت '+sc+' تفاحة')}
+sn.unshift(h);if(h[0]===ap[0]&&h[1]===ap[1]){sc++;if(sc>=15){clearInterval(t);draw();return env.end(0,'برافو! خلّصت الـ 15 تفاحة 🎉')}food()}else sn.pop();draw()}
+function reset(){clearInterval(t);sn=[[8,8],[7,8],[6,8]];d=nd=[1,0];sc=0;over=0;food();draw();t=setInterval(step,env.opts.sp||100)}
+const kd=e=>{const m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(!m)return;e.preventDefault();if(m[0]+d[0]||m[1]+d[1])nd=m};document.addEventListener('keydown',kd);
+let tx,ty;cv.ontouchstart=e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY};cv.ontouchend=e=>{const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;kd({key:Math.abs(dx)>Math.abs(dy)?(dx>0?'ArrowRight':'ArrowLeft'):(dy>0?'ArrowDown':'ArrowUp'),preventDefault(){}})};
+reset();return{reset,destroy(){clearInterval(t);document.removeEventListener('keydown',kd)}}}};
+SX.games.mines={id:'mines',icon:'💣',name:'كاسحة الألغام',desc:'افتح كل الخانات الآمنة (زر 🚩 للأعلام)',cpu:true,local:false,online:false,
+opts:[{k:'m',label:'الصعوبة',choices:[[8,'سهل'],[12,'عادي'],[16,'صعب']],def:12}],
+make(env){const N=9,M=env.opts.m||12;let B,O,F,flag=0,over,first;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><button type="button" class="fxbtn" style="margin:4px auto;display:block;padding:8px 14px;border-radius:10px">🚩 وضع العلم: مقفول</button><div class="fxg-grid" style="grid-template-columns:repeat(9,1fr)"></div></div>';
+const g=env.box.querySelector('.fxg-grid'),tb=env.box.querySelector('.fxbtn'),st=env.box.querySelector('.g-st');
+const nb=i=>{const r=[],y=i/N|0,c=i%N;for(let a=-1;a<2;a++)for(let b=-1;b<2;b++){const Y=y+a,C=c+b;if((a||b)&&Y>=0&&C>=0&&Y<N&&C<N)r.push(Y*N+C)}return r};
+function put(av){B=new Array(N*N).fill(0);let k=0;while(k<M){const i=rnd(N*N);if(B[i]===-1||nb(av).concat(av).includes(i))continue;B[i]=-1;k++}B.forEach((v,i)=>{if(v!==-1)B[i]=nb(i).filter(j=>B[j]===-1).length})}
+function open(i){if(O[i]||F[i])return;O[i]=1;if(B[i]===0)nb(i).forEach(open)}
+function paint(){g.innerHTML=B.map((v,i)=>`<button type="button" data-i="${i}" style="${O[i]?'background:var(--surface-2)':''}">${O[i]?(v===-1?'💣':v||''):(F[i]?'🚩':'')}</button>`).join('');st.textContent='💣 '+M+' · 🚩 '+F.filter(Boolean).length}
+function reset(){B=null;O=[];F=[];over=0;flag=0;tb.textContent='🚩 وضع العلم: مقفول';for(let i=0;i<N*N;i++){O[i]=0;F[i]=0}B=new Array(N*N).fill(0);first=1;paint()}
+g.onclick=e=>{const b=e.target.closest('button');if(!b||over)return;const i=+b.dataset.i;if(flag){if(!O[i]){F[i]=!F[i];paint()}return}if(F[i])return;if(first){put(i);first=0}
+if(B[i]===-1){over=1;B.forEach((v,j)=>{if(v===-1)O[j]=1});paint();return env.end(1,'💥 دُست على لغم!')}open(i);paint();if(O.filter(Boolean).length===N*N-M){over=1;env.end(0,'سحّبت كل الألغام! 🏆')}};
+tb.onclick=()=>{flag=!flag;tb.textContent='🚩 وضع العلم: '+(flag?'شغّال':'مقفول')};reset();return{reset,destroy(){}}}};
+SX.games.slide={id:'slide',icon:'🧩',name:'بازل الأرقام',desc:'رتّب الأرقام من 1 لـ 8 بالتحريك',cpu:true,local:false,online:false,opts:[],
+make(env){let a,mv;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><div class="fxg-grid" style="grid-template-columns:repeat(3,1fr)"></div></div>';const g=env.box.querySelector('.fxg-grid'),st=env.box.querySelector('.g-st');
+function paint(){g.innerHTML=a.map((v,i)=>`<button type="button" data-i="${i}" style="${v?'':'visibility:hidden'}">${v}</button>`).join('');st.textContent='حركات: '+mv}
+function reset(){a=[1,2,3,4,5,6,7,8,0];mv=0;let z=8;for(let k=0;k<150;k++){const c=[];const r=z/3|0,q=z%3;if(r>0)c.push(z-3);if(r<2)c.push(z+3);if(q>0)c.push(z-1);if(q<2)c.push(z+1);const j=c[rnd(c.length)];[a[z],a[j]]=[a[j],a[z]];z=j}paint()}
+g.onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i,z=a.indexOf(0);if(Math.abs(i-z)===3||(Math.abs(i-z)===1&&(i/3|0)===(z/3|0))){[a[i],a[z]]=[a[z],a[i]];mv++;paint();if(a.slice(0,8).every((v,k)=>v===k+1))env.end(0,'رتّبتها في '+mv+' حركة 🎉')}};reset();return{reset,destroy(){}}}};
+SX.games.sprint={id:'sprint',icon:'⚡',name:'سباق الحساب',desc:'جاوب 10 أسئلة حساب في 60 ثانية (لازم 7 صح)',cpu:true,local:false,online:false,
+opts:[{k:'lv',label:'المستوى',choices:[[1,'سهل'],[2,'متوسط'],[3,'صعب']],def:2}],
+make(env){let q,sc,n,tl,t;const L=env.opts.lv||2;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><div class="fxg-q"></div><div class="fxg-opts"></div></div>';const st=env.box.querySelector('.g-st'),Q=env.box.querySelector('.fxg-q'),O=env.box.querySelector('.fxg-opts');
+function gen(){const o=['+','−','×'][rnd(L>1?3:2)],A=1+rnd(L*12),B=1+rnd(L>2?12:L*8);let r=o==='+'?A+B:o==='−'?A-B:A*B;const s=new Set([r]);while(s.size<4)s.add(r+rnd(11)-5||r+7);q={t:A+' '+o+' '+B+' = ?',r,o:[...s].sort(()=>Math.random()-.5)}}
+function show(){gen();Q.textContent=q.t;O.innerHTML=q.o.map(v=>`<button type="button" data-v="${v}">${v}</button>`).join('');st.textContent='✅ '+sc+' · سؤال '+(n+1)+'/10 · ⏱ '+tl}
+function fin(){clearInterval(t);env.end(sc>=7?0:1,'نتيجتك '+sc+' / 10')}
+function reset(){clearInterval(t);sc=0;n=0;tl=60;show();t=setInterval(()=>{tl--;st.textContent='✅ '+sc+' · سؤال '+(n+1)+'/10 · ⏱ '+tl;if(tl<=0)fin()},1000)}
+O.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(+b.dataset.v===q.r)sc++;n++;if(n>=10)fin();else show()};reset();return{reset,destroy(){clearInterval(t)}}}};
+['snake','mines','slide','sprint'].forEach(k=>{try{if(SX.gameOrder&&SX.gameOrder.indexOf(k)<0)SX.gameOrder.push(k)}catch(e){}})}
+
+/* ===== مكان زر ✨ + المزامنة مع «المظهر والألوان» ===== */
+const POS=()=>LS.g('fx_pos','default');
+const POSL=[['default','📍 زي ما هي'],['top','⬆️ فوق'],['bag','🧰 الشنطة'],['drag','🖐 على الشاشة (اسحبه)'],['hidden','🙈 إخفاء']];
+const posHtml=()=>`<div class="fxposrow">${POSL.map(q=>`<button type="button" class="fxb ${POS()===q[0]?'on':''}" data-fxpos="${q[0]}">${q[1]}</button>`).join('')}</div>`;
+function placeBtn(){let f=$('#fxFab');if(f)f.remove();const m=POS();if(m==='hidden')return;
+f=document.createElement('button');f.id='fxFab';f.type='button';f.textContent='✨';f.title='تخصيص: ثيمات / خلفيات / تركيز';let mv=0;
+f.onclick=()=>{if(mv){mv=0;return}panel();posPanel()};
+if(m==='top'&&$('.topbar-in')){f.className='fxin';$('.topbar-in').appendChild(f)}
+else if(m==='bag'&&$('#readTools .rt-list')){f.className='fxin';$('#readTools .rt-list').appendChild(f)}
+else{if(m==='drag'){f.className='fxdrag';const xy=LS.g('fx_xy','').split(',').map(Number);if(xy.length===2&&!isNaN(xy[0])){f.style.left=Math.min(xy[0],innerWidth-46)+'px';f.style.top=Math.min(xy[1],innerHeight-46)+'px';f.style.bottom='auto'}
+let sx=null,sy,ox,oy;f.onpointerdown=e=>{sx=e.clientX;sy=e.clientY;const r=f.getBoundingClientRect();ox=r.left;oy=r.top;mv=0;try{f.setPointerCapture(e.pointerId)}catch(_){}};
+f.onpointermove=e=>{if(sx==null)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6)mv=1;if(mv){f.style.left=Math.max(0,Math.min(innerWidth-46,ox+dx))+'px';f.style.top=Math.max(0,Math.min(innerHeight-46,oy+dy))+'px';f.style.bottom='auto';posPanel()}};
+f.onpointerup=()=>{if(mv){const r=f.getBoundingClientRect();LS.s('fx_xy',Math.round(r.left)+','+Math.round(r.top))}sx=null}}
+document.body.appendChild(f)}}
+function posPanel(){const p=$('#fxPanel'),f=$('#fxFab'),m=POS();if(!p)return;p.style.left='12px';p.style.right='auto';
+if(m==='top'||m==='bag'||!f){p.style.top='64px';p.style.bottom='auto'}
+else if(m==='drag'){const r=f.getBoundingClientRect();p.style.left=Math.max(8,Math.min(r.left,innerWidth-340))+'px';if(r.top>innerHeight/2){p.style.bottom=(innerHeight-r.top+8)+'px';p.style.top='auto'}else{p.style.top=(r.bottom+8)+'px';p.style.bottom='auto'}}
+else{p.style.top='auto';p.style.bottom='138px'}}
+function setPos(m){LS.s('fx_pos',m);placeBtn();document.querySelectorAll('.fxposrow').forEach(r=>r.querySelectorAll('[data-fxpos]').forEach(b=>b.classList.toggle('on',b.dataset.fxpos===m)));
+const p=$('#fxPanel');if(p){if(m==='hidden')p.hidden=true;else posPanel()}if(m==='hidden')toast('🙈 اتخفى — رجّعه من «المظهر والألوان» أو Alt+Shift+F')}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-fxpos]');if(b)setPos(b.dataset.fxpos)});
+document.addEventListener('keydown',e=>{if(e.altKey&&e.shiftKey&&(e.key==='F'||e.key==='f')){setPos('default');toast('✨ رجع الزر')}});
+setInterval(()=>{const m=POS();if((m==='top'||m==='bag')&&!document.body.contains($('#fxFab')))placeBtn()},1500);
+const FXBG=[['fx_islamic','زخرفة إسلامية','زخرفة'],['fx_hex','ألوان سداسية','سداسي'],['fx_zigzag','زجزاج','زجزاج'],['fx_diamond','معينات ذهبية','معين'],['fx_confetti','كونفيتي','كونفيتي'],['fx_ramadan','ليل رمضان','رمضان'],['fx_sky','سماء صافية','سماء'],['fx_peach','خوخي','خوخي'],['fx_mint','نعناعي','نعناع'],['fx_night','ليل عميق','ليل'],['fx_pastel','باستيل','باستيل']];
+function syncSite(){try{if(typeof PRESETS!=='undefined'&&typeof Plus!=='undefined'&&Plus.PRESETS)Object.keys(Plus.PRESETS).forEach(k=>{const P=Plus.PRESETS[k];if(PRESETS.some(x=>x.fxid===k))return;PRESETS.push({name:P.n,mode:P.m,colors:Object.assign({},P.c),fxid:k})})}catch(e){}
+try{if(typeof BG_PATTERNS!=='undefined')FXBG.forEach(b=>{if(!BG_PATTERNS.some(x=>x.id===b[0]))BG_PATTERNS.push({id:b[0],name:b[1],short:b[2]})})}catch(e){}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act="th-preset"]');if(!b)return;let p;try{p=PRESETS[+b.dataset.i]}catch(_){}
+try{if(typeof Plus!=='undefined'&&curTheme())Plus.setPreset('')}catch(_){}
+setTimeout(()=>{const id=(p&&p.fxid)||'';LS.s('fx_decoid',id);deco(id)},0)},true);
+new MutationObserver(()=>{const m=$('#th-mode');if(!m||$('#fxMF'))return;const fld=[...document.querySelectorAll('.field')].find(f=>/ألوان الموقع/.test((f.querySelector('label')||{}).textContent||''))||m.closest('.field');if(!fld)return;
+const d=document.createElement('div');d.className='field';d.id='fxMF';d.innerHTML=`<label>✨ زر التخصيص السريع (ثيمات / خلفيات / تركيز)</label>${posHtml()}<p class="hint">تتحكم في ظهوره ومكانه: زي ما هو، فوق، جوه شنطة الأدوات 🧰، على الشاشة (تسحبه وتحطّه في أي مكان)، أو إخفاء. لو أخفيته: Alt+Shift+F بيرجّعه.</p>`;fld.parentNode.insertBefore(d,fld)}).observe(document.body,{childList:true,subtree:true});
+/* ===== تشغيل ===== */
+function init(){addPresets();reg();
+syncSite();placeBtn();
+if(LS.g('fx_auto','0')==='1')setTheme(season());else deco(curTheme()||LS.g('fx_decoid',''));
+const bg=LS.g('fx_bg','');if(bg)setBg(bg);if(LS.g('fx_focus','0')==='1')focus(true);if(curName)setName(curName);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.documentElement.classList.contains('fx-focus')&&!$('#sxHub:not([hidden])'))focus(false)})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,300));else setTimeout(init,300);
 })();
 </script>
 </body>
