@@ -12187,16 +12187,19 @@ body[data-bgpattern=fx_pastel]{background-image:linear-gradient(135deg,#a1c4fd,#
 #fxTbar{position:fixed;top:calc(env(safe-area-inset-top,0px) + 18px);left:10px;z-index:55;pointer-events:none}
 #fxTbar>*{pointer-events:auto}
 #fxTbar:empty,#fxTbPanel:empty{display:none}
-#fxTbPanel{position:fixed;top:calc(env(safe-area-inset-top,0px) + 76px);left:10px;z-index:9989;max-width:calc(100vw - 20px);padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 36px #0006;transition:transform .32s cubic-bezier(.2,.9,.25,1),opacity .25s,visibility 0s .32s}
-#fxTbPanel:not(.open){transform:translateY(calc(-100% - 120px))!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
-#fxTbPanel:not(.open) *{visibility:hidden!important;pointer-events:none!important}
-#fxTbPanel.open{transform:none;opacity:1;visibility:visible;pointer-events:auto;transition:transform .32s cubic-bezier(.2,.9,.25,1),opacity .25s,visibility 0s}
+#fxTbPanel{position:fixed;top:76px;left:10px;z-index:9989;max-width:calc(100vw - 20px);padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 36px #0006;transform-origin:top left;will-change:transform,opacity;transform:translateY(-10px) scale(.94);opacity:0;visibility:hidden;pointer-events:none;transition:transform .28s cubic-bezier(.22,1,.36,1),opacity .22s ease,visibility 0s linear .28s}
+#fxTbPanel.open{transform:none;opacity:1;visibility:visible;pointer-events:auto;transition:transform .28s cubic-bezier(.22,1,.36,1),opacity .22s ease,visibility 0s}
 #fxTbBtn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 18px);left:12px;z-index:9988;width:50px;height:50px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:24px;line-height:1;box-shadow:0 3px 10px #0003;cursor:pointer;padding:0;display:grid;place-items:center}
 #fxTbBtn[hidden]{display:none}
 .fxtbi{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;margin:0!important;transform:none!important;width:42px!important;height:42px!important;min-width:0!important;max-width:none!important}
 .fxtbi[hidden]{display:none!important}
 @media(min-width:481px){#fxTbar,#fxTbPanel{grid-template-columns:repeat(var(--n,5),48px)}.fxtbi{width:48px!important;height:48px!important}}
 html[style*="--fxtb-h"] .topbar-in{min-height:var(--fxtb-h)}
+#fxTopGrp{display:flex;gap:6px;align-items:center;flex:none}
+#fxTopGrp #fxFab,#fxTopGrp #fxTbBtn{position:static;width:42px;height:42px;font-size:20px;line-height:1;border-radius:12px;box-shadow:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:0;display:grid;place-items:center;cursor:pointer}
+#fxTopGrp #fxFab{border-color:var(--gold)}
+#fxTopGrp #fxTbBtn[hidden]{display:none}
+
 html.fx-focus :is(#fxTbar,#fxTbBtn,#fxTbPanel){display:none!important}
 </style>
 
@@ -12204,6 +12207,10 @@ html.fx-focus :is(#fxTbar,#fxTbBtn,#fxTbPanel){display:none!important}
 (function(){
 const $=(q,r)=>(r||document).querySelector(q),LS={g:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},s:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 function toast(t){let e=$('#fxToast');if(e)e.remove();e=document.createElement('div');e.id='fxToast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}
+const ADM=()=>{try{return typeof isAdmin!=='undefined'&&!!isAdmin}catch(e){return false}};
+const CF={f(){try{return (typeof site!=='undefined'&&site&&site.meta&&site.meta.fx)||{}}catch(e){return {}}},
+g(k,d){const f=this.f();return f[k]!==undefined?f[k]:LS.g('fx_'+k,d)},
+s(k,v){LS.s('fx_'+k,v);try{if(ADM()&&typeof site!=='undefined'&&site){site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{[k]:v});if(typeof scheduleSave==='function')scheduleSave()}}catch(e){}}};
 /* ===== ثيمات موسمية وجديدة ===== */
 const mk=(n,m,a)=>({n,m,c:{bg:a[0],surface:a[1],surface2:a[2],ink:a[3],inkSoft:a[4],line:a[5],accent:a[6],gold:a[7]}});
 const NEW={
@@ -12235,39 +12242,40 @@ function setTheme(id){try{Plus.setPreset(id)}catch(e){toast('الثيمات مش
 function season(){const m=new Date().getMonth()+1;let h=0,d=0;try{const f=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{month:'numeric',day:'numeric'}).formatToParts(new Date());h=+f.find(p=>p.type==='month').value;d=+f.find(p=>p.type==='day').value}catch(e){}
 return h==9?'ramadan':(h==10&&d<=4)?'eid':(m==12||m<=2)?'winter':m<=5?'spring':m<=8?'summer':'autumn'}
 /* ===== زينة رمضان والعيد ===== */
-function deco(id){const o=$('#fxDeco');if(o)o.remove();if(LS.g('fx_deco','1')==='0')return;if(id!=='ramadan'&&id!=='ramadan_day'&&id!=='eid')return;
+function deco(id){const o=$('#fxDeco');if(o)o.remove();if(CF.g('deco','1')==='0')return;if(id!=='ramadan'&&id!=='ramadan_day'&&id!=='eid')return;
 const e=document.createElement('div');e.id='fxDeco';let h='';
 if(id==='eid'){for(let i=0;i<12;i++)h+=`<span class="b" style="left:${i*8.3}%;animation-duration:${9+i%5*2}s;animation-delay:${-i*1.3}s">${['🎈','🎊','🎉'][i%3]}</span>`}
 else{h='<div class="g"></div><span class="m">🌙</span>';for(let i=0;i<6;i++)h+=`<span class="l" style="left:${8+i*16}%;animation-delay:${-i*.6}s">${i%2?'🏮':'🪔'}</span>`}
 e.innerHTML=h;document.body.appendChild(e)}
 /* ===== خلفيات ===== */
 const BGS=[['','بدون'],['dots','نقط'],['grid','مربعات'],['notebook','كشكول'],['islamic','زخرفة'],['waves','موجات'],['stars','نجوم'],['hex','ألوان'],['aurora','شفق'],['sunset','غروب'],['ocean','محيط']];
-function setBg(b){if(b)document.documentElement.dataset.fxbg=b;else delete document.documentElement.dataset.fxbg;LS.s('fx_bg',b)}
+function applyBg(b){if(b)document.documentElement.dataset.fxbg=b;else delete document.documentElement.dataset.fxbg}
+function setBg(b){CF.s('bg',b);applyBg(b)}
 /* ===== وضع التركيز ===== */
 function focus(on){document.documentElement.classList.toggle('fx-focus',on);LS.s('fx_focus',on?'1':'0');let x=$('#fxExit');if(x)x.remove();if(on){x=document.createElement('button');x.id='fxExit';x.textContent='✖ خروج من التركيز';x.onclick=()=>focus(false);document.body.appendChild(x);if(!$('.section.open'))toast('🎯 افتح القسم اللي عايز تذاكره')}}
 /* ===== اسم مركز التحدّي ===== */
-const DEF=/مركز التحدّ?ي/g;let curName=LS.g('fx_hubname','');
+const DEF=/مركز التحدّ?ي/g;let curName=CF.g('hubname','');
 function esc(t){return t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
 function rx(){return curName?new RegExp(DEF.source+'|'+esc(curName),'g'):DEF}
 function rep(root,to,re){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;const L=[];while(n=w.nextNode())L.push(n);L.forEach(t=>{if(re.test(t.nodeValue)){re.lastIndex=0;t.nodeValue=t.nodeValue.replace(re,to)}re.lastIndex=0});
 (root.querySelectorAll?root.querySelectorAll('[aria-label],[title]'):[]).forEach(el=>['aria-label','title'].forEach(a=>{const v=el.getAttribute(a);if(v&&re.test(v)){el.setAttribute(a,v.replace(re,to))}re.lastIndex=0}))}
-function setName(n){n=(n||'').trim();const re=rx();curName=n;LS.s('fx_hubname',n);if(n)rep(document.body,n,re);else{rep(document.body,'مركز التحدّي',re)}}
+function setName(n,np){n=(n||'').trim();const re=rx();curName=n;if(!np)CF.s('hubname',n);if(n)rep(document.body,n,re);else{rep(document.body,'مركز التحدّي',re)}}
 let busy=0;new MutationObserver(m=>{if(busy||!curName)return;busy=1;const re=rx();m.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1)rep(n,curName,re);else if(n.nodeType===3&&re.test(n.nodeValue)){re.lastIndex=0;n.nodeValue=n.nodeValue.replace(re,curName)}}));busy=0}).observe(document.body,{childList:true,subtree:true});
 /* ===== لوحة التحكم ===== */
-function panel(){let p=$('#fxPanel');if(p){p.hidden=!p.hidden;posPanel();return}
+function panel(){let p=$('#fxPanel');if(p&&p.dataset.adm!==String(ADM())){p.remove();p=null}if(p){p.hidden=!p.hidden;posPanel();return}
 const P=(typeof Plus!=='undefined'&&Plus.PRESETS)||NEW,cur=curTheme();
-p=document.createElement('div');p.id='fxPanel';
+p=document.createElement('div');p.id='fxPanel';p.dataset.adm=String(ADM());
 p.innerHTML=`<h4>🎨 الثيم</h4><select id="fxTh"><option value="">الافتراضي</option>${Object.keys(P).map(k=>`<option value="${k}" ${k===cur?'selected':''}>${P[k].n}</option>`).join('')}</select>
 <label class="fxr" style="margin-top:6px"><input type="checkbox" id="fxAuto" ${LS.g('fx_auto','0')==='1'?'checked':''}> تلقائي حسب الموسم (رمضان/عيد/شتا...)</label>
-<label class="fxr"><input type="checkbox" id="fxDc" ${LS.g('fx_deco','1')!=='0'?'checked':''}> زينة رمضان والعيد</label>
-<h4>🖼 الخلفية</h4><div class="fxr">${BGS.map(b=>`<button class="fxbg ${LS.g('fx_bg','')===b[0]?'on':''}" data-bg="${b[0]}">${b[1]}</button>`).join('')}</div>
+${ADM()?`<label class="fxr"><input type="checkbox" id="fxDc" ${CF.g('deco','1')!=='0'?'checked':''}> زينة رمضان والعيد</label>
+<h4>🖼 الخلفية</h4><div class="fxr">${BGS.map(b=>`<button class="fxbg ${CF.g('bg','')===b[0]?'on':''}" data-bg="${b[0]}">${b[1]}</button>`).join('')}</div>
 <h4>🎯 وضع التركيز</h4><button class="fxb" id="fxFc">${document.documentElement.classList.contains('fx-focus')?'إيقاف':'تشغيل'} (يخفي كل حاجة غير القسم المفتوح)</button>
 <h4>✏️ اسم «مركز التحدّي»</h4><div class="fxr"><input type="text" id="fxNm" maxlength="24" placeholder="اكتب الاسم اللي يعجبك" value="${curName.replace(/"/g,'&quot;')}"><button class="fxb" id="fxNs">حفظ</button></div><small>سيب الخانة فاضية للرجوع للاسم الأصلي.</small>
-<h4>📍 مكان زر ✨</h4>${posHtml()}<h4>🔝 أيقونات الشريط العلوي</h4>${tbHtml()}<h4>🎮 دراع البلايستيشن</h4><small id="fxPd">${padOn()?'✅ الدراع متوصّل':'وصّل الدراع (بلوتوث/كابل) واضغط أي زر'}<br>✕ تأكيد · ○ رجوع · الأسهم/العصا للتنقل واللعب (شغّال في الأونلاين كمان)</small>`;
+<h4>🔝 أيقونات الشريط العلوي</h4>${tbHtml()}<h4>🎮 دراع البلايستيشن</h4><small id="fxPd">${padOn()?'✅ الدراع متوصّل':'وصّل الدراع (بلوتوث/كابل) واضغط أي زر'}<br>✕ تأكيد · ○ رجوع · الأسهم/العصا للتنقل واللعب (شغّال في الأونلاين كمان)</small>`:''}`;
 document.body.appendChild(p);posPanel();
 p.onchange=e=>{if(e.target.id==='fxTh'){LS.s('fx_auto','0');$('#fxAuto').checked=false;setTheme(e.target.value)}
 if(e.target.id==='fxAuto'){LS.s('fx_auto',e.target.checked?'1':'0');if(e.target.checked)setTheme(season())}
-if(e.target.id==='fxDc'){LS.s('fx_deco',e.target.checked?'1':'0');deco(curTheme())}};
+if(e.target.id==='fxDc'){CF.s('deco',e.target.checked?'1':'0');deco(curTheme())}};
 p.onclick=e=>{const b=e.target.closest('[data-bg]');if(b){setBg(b.dataset.bg);p.querySelectorAll('.fxbg').forEach(x=>x.classList.toggle('on',x===b))}
 if(e.target.id==='fxFc'){focus(!document.documentElement.classList.contains('fx-focus'));p.hidden=true}
 if(e.target.id==='fxNs'){setName($('#fxNm').value);toast('✅ اتغيّر الاسم')}}}
@@ -12342,25 +12350,15 @@ O.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(+b.dataset.v===
 const POS=()=>LS.g('fx_pos','default');
 const POSL=[['default','📍 زي ما هي'],['top','⬆️ فوق'],['bag','🧰 الشنطة'],['drag','🖐 على الشاشة (اسحبه)'],['hidden','🙈 إخفاء']];
 const posHtml=()=>`<div class="fxposrow">${POSL.map(q=>`<button type="button" class="fxb ${POS()===q[0]?'on':''}" data-fxpos="${q[0]}">${q[1]}</button>`).join('')}</div>`;
-function placeBtn(){let f=$('#fxFab');if(f)f.remove();const m=POS();if(m==='hidden')return;
-f=document.createElement('button');f.id='fxFab';f.type='button';f.textContent='✨';f.title='تخصيص: ثيمات / خلفيات / تركيز';let mv=0;
-f.onclick=()=>{if(mv){mv=0;return}panel();posPanel()};
-if(m==='top'&&$('.topbar-in')){f.className='fxin';$('.topbar-in').appendChild(f)}
-else if(m==='bag'&&$('#readTools .rt-list')){f.className='fxin';$('#readTools .rt-list').appendChild(f)}
-else{if(m==='drag'){f.className='fxdrag';const xy=LS.g('fx_xy','').split(',').map(Number);if(xy.length===2&&!isNaN(xy[0])){f.style.left=Math.min(xy[0],innerWidth-46)+'px';f.style.top=Math.min(xy[1],innerHeight-46)+'px';f.style.bottom='auto'}
-let sx=null,sy,ox,oy;f.onpointerdown=e=>{sx=e.clientX;sy=e.clientY;const r=f.getBoundingClientRect();ox=r.left;oy=r.top;mv=0;try{f.setPointerCapture(e.pointerId)}catch(_){}};
-f.onpointermove=e=>{if(sx==null)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6)mv=1;if(mv){f.style.left=Math.max(0,Math.min(innerWidth-46,ox+dx))+'px';f.style.top=Math.max(0,Math.min(innerHeight-46,oy+dy))+'px';f.style.bottom='auto';posPanel()}};
-f.onpointerup=()=>{if(mv){const r=f.getBoundingClientRect();LS.s('fx_xy',Math.round(r.left)+','+Math.round(r.top))}sx=null}}
-document.body.appendChild(f)}}
-function posPanel(){const p=$('#fxPanel'),f=$('#fxFab'),m=POS();if(!p)return;p.style.left='12px';p.style.right='auto';
-if(m==='top'||m==='bag'||!f){p.style.top='64px';p.style.bottom='auto'}
-else if(m==='drag'){const r=f.getBoundingClientRect();p.style.left=Math.max(8,Math.min(r.left,innerWidth-340))+'px';if(r.top>innerHeight/2){p.style.bottom=(innerHeight-r.top+8)+'px';p.style.top='auto'}else{p.style.top=(r.bottom+8)+'px';p.style.bottom='auto'}}
-else{p.style.top='auto';p.style.bottom='138px'}}
+function grp(){let g=$('#fxTopGrp');if(g&&g.isConnected)return g;const t=$('.topbar-in');if(!t)return null;g=document.createElement('div');g.id='fxTopGrp';const bw=$('#brandWrap');if(bw&&bw.parentNode===t)bw.insertAdjacentElement('afterend',g);else t.prepend(g);return g}
+function placeBtn(){let f=$('#fxFab');if(!f){f=document.createElement('button');f.id='fxFab';f.type='button';f.textContent='✨';f.title='الثيمات والتخصيص';f.onclick=()=>{panel();posPanel()}}
+const g=grp();if(g){if(f.parentNode!==g)g.appendChild(f)}else if(!f.parentNode)document.body.appendChild(f)}
+function posPanel(){const p=$('#fxPanel'),f=$('#fxFab');if(!p||!f)return;const r=f.getBoundingClientRect(),w=Math.min(330,innerWidth-24);p.style.top=(r.bottom+8)+'px';p.style.bottom='auto';p.style.right='auto';p.style.left=Math.max(8,Math.min(r.left,innerWidth-w-8))+'px'}
 function setPos(m){LS.s('fx_pos',m);placeBtn();document.querySelectorAll('.fxposrow').forEach(r=>r.querySelectorAll('[data-fxpos]').forEach(b=>b.classList.toggle('on',b.dataset.fxpos===m)));
 const p=$('#fxPanel');if(p){if(m==='hidden')p.hidden=true;else posPanel()}if(m==='hidden')toast('🙈 اتخفى — رجّعه من «المظهر والألوان» أو Alt+Shift+F')}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-fxpos]');if(b)setPos(b.dataset.fxpos)});
 document.addEventListener('keydown',e=>{if(e.altKey&&e.shiftKey&&(e.key==='F'||e.key==='f')){setPos('default');toast('✨ رجع الزر')}});
-setInterval(()=>{const m=POS();if((m==='top'||m==='bag')&&!document.body.contains($('#fxFab')))placeBtn()},1500);
+setInterval(placeBtn,1200);
 const FXBG=[['fx_islamic','زخرفة إسلامية','زخرفة'],['fx_hex','ألوان سداسية','سداسي'],['fx_zigzag','زجزاج','زجزاج'],['fx_diamond','معينات ذهبية','معين'],['fx_confetti','كونفيتي','كونفيتي'],['fx_ramadan','ليل رمضان','رمضان'],['fx_sky','سماء صافية','سماء'],['fx_peach','خوخي','خوخي'],['fx_mint','نعناعي','نعناع'],['fx_night','ليل عميق','ليل'],['fx_pastel','باستيل','باستيل']];
 function syncSite(){try{if(typeof PRESETS!=='undefined'&&typeof Plus!=='undefined'&&Plus.PRESETS)Object.keys(Plus.PRESETS).forEach(k=>{const P=Plus.PRESETS[k];if(PRESETS.some(x=>x.fxid===k))return;PRESETS.push({name:P.n,mode:P.m,colors:Object.assign({},P.c),fxid:k})})}catch(e){}
 try{if(typeof BG_PATTERNS!=='undefined')FXBG.forEach(b=>{if(!BG_PATTERNS.some(x=>x.id===b[0]))BG_PATTERNS.push({id:b[0],name:b[1],short:b[2]})})}catch(e){}}
@@ -12368,17 +12366,17 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act="th-pr
 try{if(typeof Plus!=='undefined'&&curTheme())Plus.setPreset('')}catch(_){}
 setTimeout(()=>{const id=(p&&p.fxid)||'';LS.s('fx_decoid',id);deco(id)},0)},true);
 new MutationObserver(()=>{const m=$('#th-mode');if(!m||$('#fxMF'))return;const fld=[...document.querySelectorAll('.field')].find(f=>/ألوان الموقع/.test((f.querySelector('label')||{}).textContent||''))||m.closest('.field');if(!fld)return;
-const d=document.createElement('div');d.className='field';d.id='fxMF';d.innerHTML=`<label>🔝 أيقونات الشريط العلوي (🔔🌙📢🎮📚🎯🧠🚀)</label>${tbHtml()}<label style="display:block;margin-top:12px">✨ زر التخصيص السريع (ثيمات / خلفيات / تركيز)</label>${posHtml()}<p class="hint">تتحكم في ظهوره ومكانه: زي ما هو، فوق، جوه شنطة الأدوات 🧰، على الشاشة (تسحبه وتحطّه في أي مكان)، أو إخفاء. لو أخفيته: Alt+Shift+F بيرجّعه.</p>`;fld.parentNode.insertBefore(d,fld)}).observe(document.body,{childList:true,subtree:true});
+const d=document.createElement('div');d.className='field';d.id='fxMF';d.innerHTML=`<label>🔝 أيقونات الشريط العلوي (🔔🌙📢🎮📚🎯🧠🚀)</label>${tbHtml()}<p class="hint">بوكس بيتفتح بالسهم جنب اسم المادة، أو أيقونات ظاهرة فوق وكل N ينزلوا صف جديد. الإعداد ده بيظهر لكل الزوار.</p>`;fld.parentNode.insertBefore(d,fld)}).observe(document.body,{childList:true,subtree:true});
 
 /* ===== أيقونات الشريط العلوي (🔔🌙📢🎮📚🎯🧠🚀) ===== */
-const TBM=()=>{const v=LS.g('fx_tb','flat');return v==='bar'?'flat':v==='menu'?'box':v},TBN=()=>+LS.g('fx_tbn','5')||5;
+const TBM=()=>{const v=CF.g('tb','box');return v==='bar'?'flat':v==='menu'?'box':v},TBN=()=>+CF.g('tbn','5')||5;
 const TBO=['notifBtn','modeBtn','posterBtn','gamesTopBtn','lectTopBtn','sxTopBtn'],TBX=['fxFab','fxTbBtn','toTop','fab'];
 let tbBar,tbBtn,tbPan;
 const TBL=[['default','📍 زي ما هي (صف واحد)'],['flat','⬇️ بدون بوكس: كل N ينزلوا صف جديد'],['box','📦 بوكس بيتفتح بشرطة']];
 const tbHtml=()=>`<div class="fxposrow">${TBL.map(q=>`<button type="button" class="fxb ${TBM()===q[0]?'on':''}" data-fxtb="${q[0]}">${q[1]}</button>`).join('')}</div><div class="fxposrow" style="margin-top:6px;align-items:center"><small>عدد الأيقونات في الصف:</small>${[4,5,6].map(n=>`<button type="button" class="fxb ${TBN()===n?'on':''}" data-fxtbn="${n}">${n}</button>`).join('')}</div>`;
-function tbOpen(o){if(!tbPan)return;tbPan.classList.toggle('open',o);tbBtn.textContent=o?'▴':'▾'}
+function tbOpen(o){if(!tbPan)return;if(o){const r=tbBtn.getBoundingClientRect();tbPan.style.top=(r.bottom+8)+'px';tbPan.style.left=Math.max(8,Math.min(r.left,innerWidth-tbPan.offsetWidth-8))+'px'}tbPan.classList.toggle('open',o);tbBtn.textContent=o?'▴':'▾'}
 function tbEnsure(){if(tbBar)return;tbBar=document.createElement('div');tbBar.id='fxTbar';tbPan=document.createElement('div');tbPan.id='fxTbPanel';
-tbBtn=document.createElement('button');tbBtn.id='fxTbBtn';tbBtn.type='button';tbBtn.textContent='▾';tbBtn.title='افتح/اقفل أيقونات الشريط';tbBtn.setAttribute('aria-label','أيقونات الشريط');tbBtn.onclick=e=>{e.stopPropagation();tbOpen(!tbPan.classList.contains('open'))};document.body.appendChild(tbPan);document.body.appendChild(tbBtn)}
+tbBtn=document.createElement('button');tbBtn.id='fxTbBtn';tbBtn.type='button';tbBtn.textContent='▾';tbBtn.title='افتح/اقفل أيقونات الشريط';tbBtn.setAttribute('aria-label','أيقونات الشريط');tbBtn.onclick=e=>{e.stopPropagation();tbOpen(!tbPan.classList.contains('open'))};document.body.appendChild(tbPan);document.body.appendChild(tbBtn);placeBtn()}
 function tbCands(){const out=[];document.querySelectorAll('body>button,.top-ico').forEach(el=>{if(TBX.includes(el.id)||el.classList.contains('hamburger')||el.classList.contains('fab')||el.closest('#fxTbar,#fxTbPanel'))return;
 const cs=getComputedStyle(el),t=parseFloat(cs.top);if(cs.position!=='fixed'||!isFinite(t)||t>110)return;
 if(!el.dataset.fxo){const k=TBO.indexOf(el.id);el.dataset.fxo=k>=0?k:50+(parseFloat(cs.left)||0)/1000}out.push(el)});return out}
@@ -12392,7 +12390,7 @@ const cur=[...host.children],srt=cur.slice().sort((a,b)=>a.dataset.fxo-b.dataset
 if(m==='flat'){const c=cur.filter(e=>!e.hidden).length,rows=Math.max(1,Math.ceil(c/TBN())),cell=innerWidth<=480?42:48;tbH(rows>1?Math.max(80,18+rows*(cell+6)+8):0)}else tbH(0)}
 function tbInit(){tbApply();setInterval(tbApply,800)}
 document.addEventListener('click',e=>{const a=e.target.closest('[data-fxtb]'),n=e.target.closest('[data-fxtbn]');
-if(a){LS.s('fx_tb',a.dataset.fxtb);tbApply();if(a.dataset.fxtb==='box')tbOpen(true)}if(n){LS.s('fx_tbn',n.dataset.fxtbn);tbApply()}
+if(a){CF.s('tb',a.dataset.fxtb);tbApply()}if(n){CF.s('tbn',n.dataset.fxtbn);tbApply()}
 if(a||n){document.querySelectorAll('[data-fxtb]').forEach(b=>b.classList.toggle('on',b.dataset.fxtb===TBM()));document.querySelectorAll('[data-fxtbn]').forEach(b=>b.classList.toggle('on',+b.dataset.fxtbn===TBN()))}
 if(tbPan&&tbPan.classList.contains('open')&&!a&&!n){if(e.target.closest('#fxTbPanel .fxtbi'))setTimeout(()=>tbOpen(false),60);else if(!e.target.closest('#fxTbPanel,#fxTbBtn'))tbOpen(false)}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')tbOpen(false)});
@@ -12400,7 +12398,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')tbOpen(false)});
 function init(){addPresets();reg();
 syncSite();placeBtn();tbInit();
 if(LS.g('fx_auto','0')==='1')setTheme(season());else deco(curTheme()||LS.g('fx_decoid',''));
-const bg=LS.g('fx_bg','');if(bg)setBg(bg);if(LS.g('fx_focus','0')==='1')focus(true);if(curName)setName(curName);
+applyBg(CF.g('bg',''));if(LS.g('fx_focus','0')==='1')focus(true);if(curName)setName(curName,1);let lastSig='';setInterval(()=>{const sg=[CF.g('bg',''),CF.g('hubname',''),CF.g('deco','1')].join('|');if(sg!==lastSig){const first=!lastSig;lastSig=sg;applyBg(CF.g('bg',''));const nn=CF.g('hubname','');if(nn!==curName)setName(nn,1);if(!first)deco(curTheme()||LS.g('fx_decoid',''))}},1200);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.documentElement.classList.contains('fx-focus')&&!$('#sxHub:not([hidden])'))focus(false)})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,300));else setTimeout(init,300);
 })();
