@@ -12198,6 +12198,9 @@ html[style*="--fxtb-h"] .topbar-in{min-height:var(--fxtb-h)}
 #fxTopGrp{display:flex;gap:6px;align-items:center;flex:none}
 #fxTopGrp #fxFab,#fxTopGrp #fxTbBtn{position:static;width:42px;height:42px;font-size:20px;line-height:1;border-radius:12px;box-shadow:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:0;display:grid;place-items:center;cursor:pointer}
 #fxTopGrp #fxFab{border-color:var(--gold)}
+#fxFab[hidden]{display:none!important}
+#fxFab.fxin{display:grid;place-items:center;padding:0;line-height:1;border-color:var(--gold)}
+#readTools .rt-list #fxFab.fxin{width:44px;height:44px;margin:0}
 #fxTopGrp #fxTbBtn[hidden]{display:none}
 
 html.fx-focus :is(#fxTbar,#fxTbBtn,#fxTbPanel){display:none!important}
@@ -12265,7 +12268,7 @@ let busy=0;new MutationObserver(m=>{if(busy||!curName)return;busy=1;const re=rx(
 function panel(){let p=$('#fxPanel');if(p&&p.dataset.adm!==String(ADM())){p.remove();p=null}if(p){p.hidden=!p.hidden;posPanel();return}
 const P=(typeof Plus!=='undefined'&&Plus.PRESETS)||NEW,cur=curTheme();
 p=document.createElement('div');p.id='fxPanel';p.dataset.adm=String(ADM());
-p.innerHTML=`<h4>🎨 الثيم</h4><select id="fxTh"><option value="">الافتراضي</option>${Object.keys(P).map(k=>`<option value="${k}" ${k===cur?'selected':''}>${P[k].n}</option>`).join('')}</select>
+p.innerHTML=`<h4>📍 مكان زر ✨ وشكله</h4>${posHtml()}<h4>🎨 الثيم</h4><select id="fxTh"><option value="">الافتراضي</option>${Object.keys(P).map(k=>`<option value="${k}" ${k===cur?'selected':''}>${P[k].n}</option>`).join('')}</select>
 <label class="fxr" style="margin-top:6px"><input type="checkbox" id="fxAuto" ${LS.g('fx_auto','0')==='1'?'checked':''}> تلقائي حسب الموسم (رمضان/عيد/شتا...)</label>
 ${ADM()?`<label class="fxr"><input type="checkbox" id="fxDc" ${CF.g('deco','1')!=='0'?'checked':''}> زينة رمضان والعيد</label>
 <h4>🖼 الخلفية</h4><div class="fxr">${BGS.map(b=>`<button class="fxbg ${CF.g('bg','')===b[0]?'on':''}" data-bg="${b[0]}">${b[1]}</button>`).join('')}</div>
@@ -12346,18 +12349,47 @@ function reset(){clearInterval(t);sc=0;n=0;tl=60;show();t=setInterval(()=>{tl--;
 O.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(+b.dataset.v===q.r)sc++;n++;if(n>=10)fin();else show()};reset();return{reset,destroy(){clearInterval(t)}}}};
 ['snake','mines','slide','sprint'].forEach(k=>{try{if(SX.gameOrder&&SX.gameOrder.indexOf(k)<0)SX.gameOrder.push(k)}catch(e){}})}
 
-/* ===== مكان زر ✨ + المزامنة مع «المظهر والألوان» ===== */
+/* ===== مكان زر ✨ وشكله + المزامنة مع «المظهر والألوان» ===== */
 const POS=()=>LS.g('fx_pos','default');
-const POSL=[['default','📍 زي ما هي'],['top','⬆️ فوق'],['bag','🧰 الشنطة'],['drag','🖐 على الشاشة (اسحبه)'],['hidden','🙈 إخفاء']];
-const posHtml=()=>`<div class="fxposrow">${POSL.map(q=>`<button type="button" class="fxb ${POS()===q[0]?'on':''}" data-fxpos="${q[0]}">${q[1]}</button>`).join('')}</div>`;
+const EMO=()=>LS.g('fx_emoji','✨')||'✨';
+const POSL=[['default','📍 جنب اسم المادة'],['top','⬆️ فوق (الشريط العلوي)'],['bag','🧰 الشنطة'],['drag','🖐 على الشاشة (اسحبه)'],['hidden','🙈 إخفاء']];
+const EMOS=['✨','⭐','🌟','💫','🎨','🪄','🧩','🎛️','🔥','🌈','🎯','🚀'];
+const posHtml=()=>`<div class="fxposrow">${POSL.map(q=>`<button type="button" class="fxb ${POS()===q[0]?'on':''}" data-fxpos="${q[0]}">${q[1]}</button>`).join('')}</div><div class="fxposrow fxemorow" style="margin-top:8px;align-items:center"><small>شكل الزر (إيموجي):</small><input type="text" class="fxemoin" maxlength="12" value="${EMO()}" aria-label="إيموجي الزر" style="width:70px;text-align:center;font-size:18px;padding:6px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink)"><button type="button" class="fxb" data-fxemosave="1">حفظ</button></div><div class="fxposrow" style="margin-top:6px">${EMOS.map(e=>`<button type="button" class="fxb" data-fxemo="${e}">${e}</button>`).join('')}</div>`;
 function grp(){let g=$('#fxTopGrp');if(g&&g.isConnected)return g;const t=$('.topbar-in');if(!t)return null;g=document.createElement('div');g.id='fxTopGrp';const bw=$('#brandWrap');if(bw&&bw.parentNode===t)bw.insertAdjacentElement('afterend',g);else t.prepend(g);return g}
-function placeBtn(){let f=$('#fxFab');if(!f){f=document.createElement('button');f.id='fxFab';f.type='button';f.textContent='✨';f.title='الثيمات والتخصيص';f.onclick=()=>{panel();posPanel()}}
-const g=grp();if(g){if(f.parentNode!==g)g.appendChild(f)}else if(!f.parentNode)document.body.appendChild(f)}
+function dragPos(){try{const o=JSON.parse(LS.g('fx_dragpos','null'));if(o&&isFinite(o.x)&&isFinite(o.y))return o}catch(e){}return{x:12,y:Math.round(innerHeight*.45)}}
+function clampPos(o){return{x:Math.max(4,Math.min(o.x,innerWidth-50)),y:Math.max(4,Math.min(o.y,innerHeight-50))}}
+function dragInit(f){let sx=0,sy=0,ox=0,oy=0,on=0;
+f.addEventListener('pointerdown',e=>{if(POS()!=='drag')return;const r=f.getBoundingClientRect();sx=e.clientX;sy=e.clientY;ox=r.left;oy=r.top;on=1;f._dm=0;try{f.setPointerCapture(e.pointerId)}catch(_){}});
+f.addEventListener('pointermove',e=>{if(!on)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(!f._dm&&Math.abs(dx)+Math.abs(dy)<6)return;f._dm=1;f._dg=1;const o=clampPos({x:ox+dx,y:oy+dy});f.style.left=o.x+'px';f.style.top=o.y+'px';f.style.right='auto';f.style.bottom='auto'});
+const end=()=>{if(!on)return;on=0;f._dg=0;if(f._dm){const r=f.getBoundingClientRect();LS.s('fx_dragpos',JSON.stringify({x:Math.round(r.left),y:Math.round(r.top)}))}};
+f.addEventListener('pointerup',end);f.addEventListener('pointercancel',end)}
+let FAB=null;
+function fabHome(m){
+if(m==='top')return grp();
+if(m==='bag'){const l=$('#readTools:not([hidden]) .rt-list');if(l)return l}
+if(m==='drag'||m==='hidden')return document.body;
+return $('#brandWrap')||grp()||document.body}
+function placeBtn(){
+if(!FAB){FAB=document.createElement('button');FAB.id='fxFab';FAB.type='button';FAB.title='الثيمات والتخصيص';FAB.onclick=()=>{if(FAB._dm){FAB._dm=0;return}panel();posPanel()};dragInit(FAB)}
+const f=FAB,m=POS(),e=EMO();
+if(f.textContent!==e)f.textContent=e;
+f.hidden=m==='hidden';
+f.classList.toggle('fxdrag',m==='drag');
+f.classList.toggle('fxin',m==='default'||m==='bag');
+const home=fabHome(m)||document.body;
+if(f.parentNode!==home)home.appendChild(f);
+if(m==='drag'){if(!f._dg){const o=clampPos(dragPos());f.style.position='fixed';f.style.left=o.x+'px';f.style.top=o.y+'px';f.style.right='auto';f.style.bottom='auto'}}
+else if(!f._dg){['position','left','top','right','bottom'].forEach(k=>{f.style[k]=''})}
+const g=$('#fxTopGrp');if(g&&m!=='top'&&!g.children.length)g.remove()}
 function posPanel(){const p=$('#fxPanel'),f=$('#fxFab');if(!p||!f)return;const r=f.getBoundingClientRect(),w=Math.min(330,innerWidth-24);p.style.top=(r.bottom+8)+'px';p.style.bottom='auto';p.style.right='auto';p.style.left=Math.max(8,Math.min(r.left,innerWidth-w-8))+'px'}
-function setPos(m){LS.s('fx_pos',m);placeBtn();document.querySelectorAll('.fxposrow').forEach(r=>r.querySelectorAll('[data-fxpos]').forEach(b=>b.classList.toggle('on',b.dataset.fxpos===m)));
+function setPos(m){LS.s('fx_pos',m);placeBtn();document.querySelectorAll('[data-fxpos]').forEach(b=>b.classList.toggle('on',b.dataset.fxpos===m));
 const p=$('#fxPanel');if(p){if(m==='hidden')p.hidden=true;else posPanel()}if(m==='hidden')toast('🙈 اتخفى — رجّعه من «المظهر والألوان» أو Alt+Shift+F')}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-fxpos]');if(b)setPos(b.dataset.fxpos)});
-document.addEventListener('keydown',e=>{if(e.altKey&&e.shiftKey&&(e.key==='F'||e.key==='f')){setPos('default');toast('✨ رجع الزر')}});
+function setEmo(v){v=Array.from((v||'').trim()).slice(0,8).join('')||'✨';LS.s('fx_emoji',v);placeBtn();document.querySelectorAll('.fxemoin').forEach(i=>{i.value=v});toast('✅ شكل الزر بقى: '+v)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-fxpos]');if(b){setPos(b.dataset.fxpos);return}
+const q=e.target.closest('[data-fxemo]');if(q){setEmo(q.dataset.fxemo);return}
+const s=e.target.closest('[data-fxemosave]');if(s){const row=s.closest('.fxemorow'),i=row&&row.querySelector('.fxemoin');setEmo(i?i.value:'')}});
+document.addEventListener('keydown',e=>{if(e.altKey&&e.shiftKey&&(e.key==='F'||e.key==='f')){setPos('default');toast('✨ رجع الزر')}
+if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('fxemoin')){e.preventDefault();setEmo(e.target.value)}});
 setInterval(placeBtn,1200);
 const FXBG=[['fx_islamic','زخرفة إسلامية','زخرفة'],['fx_hex','ألوان سداسية','سداسي'],['fx_zigzag','زجزاج','زجزاج'],['fx_diamond','معينات ذهبية','معين'],['fx_confetti','كونفيتي','كونفيتي'],['fx_ramadan','ليل رمضان','رمضان'],['fx_sky','سماء صافية','سماء'],['fx_peach','خوخي','خوخي'],['fx_mint','نعناعي','نعناع'],['fx_night','ليل عميق','ليل'],['fx_pastel','باستيل','باستيل']];
 function syncSite(){try{if(typeof PRESETS!=='undefined'&&typeof Plus!=='undefined'&&Plus.PRESETS)Object.keys(Plus.PRESETS).forEach(k=>{const P=Plus.PRESETS[k];if(PRESETS.some(x=>x.fxid===k))return;PRESETS.push({name:P.n,mode:P.m,colors:Object.assign({},P.c),fxid:k})})}catch(e){}
@@ -12366,7 +12398,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act="th-pr
 try{if(typeof Plus!=='undefined'&&curTheme())Plus.setPreset('')}catch(_){}
 setTimeout(()=>{const id=(p&&p.fxid)||'';LS.s('fx_decoid',id);deco(id)},0)},true);
 new MutationObserver(()=>{const m=$('#th-mode');if(!m||$('#fxMF'))return;const fld=[...document.querySelectorAll('.field')].find(f=>/ألوان الموقع/.test((f.querySelector('label')||{}).textContent||''))||m.closest('.field');if(!fld)return;
-const d=document.createElement('div');d.className='field';d.id='fxMF';d.innerHTML=`<label>🔝 أيقونات الشريط العلوي (🔔🌙📢🎮📚🎯🧠🚀)</label>${tbHtml()}<p class="hint">بوكس بيتفتح بالسهم جنب اسم المادة، أو أيقونات ظاهرة فوق وكل N ينزلوا صف جديد. الإعداد ده بيظهر لكل الزوار.</p>`;fld.parentNode.insertBefore(d,fld)}).observe(document.body,{childList:true,subtree:true});
+const d=document.createElement('div');d.className='field';d.id='fxMF';d.innerHTML=`<label>🔝 أيقونات الشريط العلوي (🔔🌙📢🎮📚🎯🧠🚀)</label>${tbHtml()}<p class="hint">بوكس بيتفتح بالسهم جنب اسم المادة، أو أيقونات ظاهرة فوق وكل N ينزلوا صف جديد. الإعداد ده بيظهر لكل الزوار.</p>`;fld.parentNode.insertBefore(d,fld);const d2=document.createElement('div');d2.className='field';d2.id='fxPF';d2.innerHTML=`<label>📍 مكان زر ✨ وشكله</label>${posHtml()}<p class="hint">تقدر تحطه جنب اسم المادة، فوق، في الشنطة، تسحبه في أي مكان، أو تخفيه. وتغيّر الإيموجي بتاعه.</p>`;fld.parentNode.insertBefore(d2,d)}).observe(document.body,{childList:true,subtree:true});
 
 /* ===== أيقونات الشريط العلوي (🔔🌙📢🎮📚🎯🧠🚀) ===== */
 const TBM=()=>{const v=CF.g('tb','box');return v==='bar'?'flat':v==='menu'?'box':v},TBN=()=>+CF.g('tbn','5')||5;
