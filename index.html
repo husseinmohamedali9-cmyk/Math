@@ -2553,6 +2553,7 @@ function toolsMenuHtml(){
     const a = [];
     if(Lect.show('menu')){ const c = Lect.count(); a.push(`<div class="tm-item"><div class="tm-row-flex"><button class="tm-link tm-tool" data-tool="lect" type="button">📚 متابعة المحاضرات${c.n?`<small>${c.d}/${c.n}</small>`:''}</button></div></div>`); }
     if(Fun.showGames('menu')) a.push(`<div class="tm-item"><div class="tm-row-flex"><button class="tm-link tm-tool" data-tool="fun" data-fun-tab="games" type="button">🎮 الألعاب</button></div></div>`);
+    if(window.SX && SX.showHub && SX.showHub('menu')) a.push(`<div class="tm-item"><div class="tm-row-flex"><button class="tm-link tm-tool" data-tool="sxhub" type="button">🎯 مركز التحدّي</button></div></div>`);
     return a.length ? `<div class="tm-group-label">أدواتي</div>` + a.join('') : '';
   }catch(e){ return ''; }
 }
@@ -4079,6 +4080,7 @@ const FEATURES = [
   ['sounds','🎧 أصوات التركيز',true],
   ['speed','⚡ تحدي السرعة (حساب ذهني)',true],
   ['arcade','🎮 ركن الألعاب (إكس أو + ذاكرة الرموز)',true],
+  ['sxhub','🎯 مركز التحدّي (مذاكرة ذكية + ألعاب أونلاين)',true],
   ['gdeco','🎨 تزيين الألعاب (ثيمات الرقعة والكروت واحتفال الفوز)',true],
   ['poll','🗳️ تصويت الأسبوع (محتاج جداول Supabase)',false],
   ['wall','💬 حيط التشجيع (محتاج جداول Supabase)',false],
@@ -4141,6 +4143,7 @@ function buildDock(){
   if(feat('pomo')) it.push('<button type="button" data-tool="pomo" aria-label="مؤقت المذاكرة" title="مؤقت المذاكرة">⏱️</button>');
   try{ const fh = Fun.dockHtml(); if(fh) it.push(fh); }catch(e){ if(feat('streak')){ const n = streakCount(); if(n) it.push(`<span class="rt-chip" title="أيام متتالية">🔥 ${n}</span>`); } }
   try{ if(Lect.show('bag')) it.push('<button type="button" data-tool="lect" aria-label="متابعة المحاضرات" title="متابعة المحاضرات">📚</button>'); }catch(e){}
+  try{ if(window.SX && SX.showHub && SX.showHub('bag')) it.push('<button type="button" data-tool="sxhub" aria-label="مركز التحدّي" title="مركز التحدّي">🎯</button>'); }catch(e){}
   rt.hidden = !it.length;
   rt.innerHTML = `<button type="button" class="rt-toggle" data-tool="dock" aria-label="أدوات الطالب" aria-expanded="${__dockOpen}">🧰</button><div class="rt-list">${it.join('')}</div>`;
   rt.classList.toggle('open', __dockOpen);
@@ -6052,7 +6055,7 @@ const Fun = {
     sounds: ['rain', 'wind', 'white', 'library', 'calm'], soundVol: 40,
     speedSecs: 60, speedLevel: 2, speedOps: ['add', 'sub', 'mul', 'div', 'sq', 'der'],
     xoLevel: 'medium', arcadeAfterPomo: true,
-    place: { games: { top: true, bag: true, menu: false, home: true }, lect: { top: true, bag: true, menu: true } },
+    place: { games: { top: true, bag: true, menu: false, home: true }, lect: { top: true, bag: true, menu: true }, hub: { top: true, bag: false, menu: false, home: false } },
     pollQ: '', pollOpts: '',
     wallApprove: true, wallMax: 10, wallMaxLen: 120, wallBad: ''
   },
@@ -6067,9 +6070,29 @@ const Fun = {
   tk() { return (currentTrack === 'math1' || currentTrack === 'math2' || currentTrack === 'math3') ? currentTrack : null; },
   pl(what, where) { const p = (this.cfg().place || {})[what] || {}, d = this.D.place[what]; return where in p ? !!p[where] : !!d[where]; },
   showGames(where) { try { return this.on('arcade') && this.gamesOn().length > 0 && this.pl('games', where); } catch (e) { return false; } },
+  showHub(where) { try { return !!feat('sxhub') && !!this.pl('hub', where); } catch (e) { return false; } },
+  hubHome() { try { return this.showHub('home') ? `<div class="fun-hubrow"><button type="button" class="fh-btn" data-tool="sxhub">🎯 مركز التحدّي</button></div>` : ''; } catch (e) { return ''; } },
+  onlineOn() { try { return (this.cfg().hub || {}).onlineInGames !== false && !!(window.SX && SX.onlineList && SX.onlineList().length); } catch (e) { return false; } },
+  onlineHtml() {
+    let L = []; try { L = SX.onlineList(); } catch (e) { }
+    if (!L.length) return '<p class="fh-hint">مفيش ألعاب أونلاين متاحة دلوقتي.</p>';
+    return `<p class="fh-hint">العب ضد صاحبك من موبايلين مختلفين — بكود غرفة أو لينك. اختار اللعبة:</p><div class="fh-onl">${L.map(k => { const g = SX.games[k]; return `<button type="button" class="fh-onb" data-fa="sx-online" data-g="${esc(k)}"><i>${esc(g.icon)}</i><b>${esc(g.name)}</b><small>${esc(g.desc)}</small></button>`; }).join('')}</div>`;
+  },
+  hubCfgHtml(chk) {
+    const S = window.SX || {}, h = this.cfg().hub || {}, offT = h.offTabs || [], offL = h.offTools || [], offG = h.offGames || [];
+    const tabs = [['games', '🎮 ألعاب (أونلاين)'], ['study', '📚 مذاكرة ذكية'], ['me', '📊 تقدّمي']];
+    const tools = (S.tools || []).map(x => [x.id, x.icon + ' ' + x.name]);
+    const games = (S.gameOrder || []).filter(k => S.games && S.games[k]).map(k => [k, S.games[k].icon + ' ' + S.games[k].name + (S.games[k].online ? '' : ' (مش أونلاين)')]);
+    const grp = (label, arr, pre, off) => `<div class="field"><label>${label}</label><div class="fs-feats">${arr.map(x => chk(pre + x[0], esc(x[1]), off.indexOf(x[0]) < 0)).join('')}</div></div>`;
+    return `<hr class="sep"><h4>🎯 محتوى مركز التحدّي</h4><p class="hint">اختار إيه اللي يظهر جوّه المركز. اللي تشيله بيختفي من المركز ومن قايمة «أونلاين» اللي جوّه الألعاب 🎮.</p>${grp('التبويبات', tabs, 'hb-tab-', offT)}${grp('الألعاب', games, 'hb-game-', offG)}${grp('أدوات المذاكرة الذكية', tools, 'hb-tool-', offL)}${chk('hb-onl', '🌐 أظهر «أونلاين» جوّه الألعاب (زرار 🎮)', h.onlineInGames !== false)}`;
+  },
+  hubRead() {
+    const S = window.SX || {}, el = id => document.getElementById(id), off = (ids, pre) => ids.filter(k => el(pre + k) && !el(pre + k).checked), o = el('hb-onl');
+    return { offTabs: off(['games', 'study', 'me'], 'hb-tab-'), offGames: off(S.gameOrder || [], 'hb-game-'), offTools: off((S.tools || []).map(x => x.id), 'hb-tool-'), onlineInGames: o ? o.checked : true };
+  },
   placeHtml(chk) {
-    const row = (w, label) => `<div class="field"><label>${label}</label><div class="fs-feats">${w === 'games' ? chk('pl-games-home', '🏠 الصفحة الرئيسية (زرار «الألعاب» الأخضر تحت الكروت)', this.pl('games', 'home')) : ''}${chk('pl-' + w + '-top', '⬆️ فوق جنب بوستر الافتتاح', this.pl(w, 'top'))}${chk('pl-' + w + '-bag', '🧰 شنطة الأدوات', this.pl(w, 'bag'))}${chk('pl-' + w + '-menu', '☰ قائمة الثلاث شرط', this.pl(w, 'menu'))}</div></div>`;
-    return `<hr class="sep"><h4>📍 أماكن ظهور الأيقونات</h4><p class="hint">علّم على الأماكن اللي عايز الأيقونة تظهر فيها — ولو شلت كلهم هتختفي خالص.</p>${row('games', '🎮 الألعاب')}${row('lect', '📚 متابعة المحاضرات')}`;
+    const row = (w, label) => `<div class="field"><label>${label}</label><div class="fs-feats">${w === 'games' ? chk('pl-games-home', '🏠 الصفحة الرئيسية (زرار «الألعاب» الأخضر تحت الكروت)', this.pl('games', 'home')) : ''}${w === 'hub' ? chk('pl-hub-home', '🏠 الصفحة الرئيسية (زرار «مركز التحدّي» تحت الكروت)', this.pl('hub', 'home')) : ''}${chk('pl-' + w + '-top', '⬆️ فوق جنب بوستر الافتتاح', this.pl(w, 'top'))}${chk('pl-' + w + '-bag', '🧰 شنطة الأدوات (الصندوق)', this.pl(w, 'bag'))}${chk('pl-' + w + '-menu', '☰ قائمة الثلاث شرط', this.pl(w, 'menu'))}</div></div>`;
+    return `<hr class="sep"><h4>📍 أماكن ظهور الأيقونات</h4><p class="hint">علّم على الأماكن اللي عايز الأيقونة تظهر فيها — ولو شلت كلهم هتختفي خالص.</p>${row('games', '🎮 الألعاب')}${row('hub', '🎯 مركز التحدّي')}${row('lect', '📚 متابعة المحاضرات')}`;
   },
 
   /* ---------- الستريك المتطوّر ---------- */
@@ -6218,7 +6241,7 @@ const Fun = {
     const cls = ['fun-grid']; if (u.shape === 'square') { cls.push('sq', 'mini'); if (u.cwAuto) cls.push('cwa'); } else { if (u.side) cls.push('side'); if (u.mini) cls.push('mini'); }
     if (u.hideNote) cls.push('hn'); if (u.hideXp) cls.push('hx'); if (!u.shadow) cls.push('nos'); cls.push('look-' + u.look);
     box.style.setProperty('--fcs', (u.shape === 'square' && !u.cwAuto ? u.scale / 100 * Math.min(1.15, u.cw / 150) : u.scale / 100)); box.style.setProperty('--cw', u.cw + 'px'); box.style.setProperty('--fgap', u.gap + 'px'); box.style.setProperty('--fr', u.radius + 'px');
-    box.innerHTML = (cards ? `<div class="${cls.join(' ')}">${cards}</div>` : '') + hub;
+    box.innerHTML = (cards ? `<div class="${cls.join(' ')}">${cards}</div>` : '') + hub + this.hubHome();
     this.cuPlace(box, u.pos);
   },
   render() { this.renderBox(); try { this.maybeEvolve(); } catch (e) { console.warn('fun', e); } },
@@ -6271,6 +6294,7 @@ const Fun = {
     const a = e.target.closest('[data-fa]'); if (!a) return;
     const k = a.dataset.fa, i = +a.dataset.i;
     switch (k) {
+      case 'sx-online': this.close(); try { SX.openHub('games'); SX.openLobby(a.dataset.g); } catch (e) { toast('مركز التحدّي مش متاح دلوقتي'); } break;
       case 'speed-start': this.speedStart(); break;
       case 'speed-ans': this.speedAns(i); break;
       case 'game-sub': this.stopGames(); this.gsub = a.dataset.g; this.body(this.tab_games()); break;
@@ -6376,12 +6400,13 @@ const Fun = {
   GAMES: [['xo', '❌⭕', 'إكس أو'], ['c4', '🔴', 'أربعة في صف'], ['g48', '🔢', '2048'], ['slide', '🧩', 'بازل الأرقام'], ['pat', '🔮', 'كمّل النمط'], ['simon', '🎵', 'سيمون'], ['mem', '🧠', 'ذاكرة الرموز'], ['rps', '✊', 'حجر ورقة مقص'], ['guess', '🎯', 'خمّن الرقم'], ['duel', '⚔️', 'تحدي الحساب (لاعبين)'], ['snake', '🐍', 'الثعبان'], ['mole', '🐹', 'اضرب الخلد'], ['pong', '🏓', 'بينج بونج'], ['pool', '🎱', 'بلياردو'], ['oth', '⚫', 'أوثيلو'], ['mine', '💣', 'كاسحة الألغام'], ['toss', '🎲', 'نرد وعملة'], ['chess', '♟️', 'شطرنج'], ['basra', '🃏', 'بصرة (كوتشينة)'], ['crazy', '🎴', 'الثمانية المجنونة (كوتشينة)']],
   gamesOn() { const c = this.cfg(); let a = Array.isArray(c.games) ? c.games : this.D.games; const NEW = ['chess', 'basra', 'crazy']; if (c.gamesV !== 4) { if (c.gamesV === 3) a = a.concat(NEW); else a = a.concat(c.gamesV === 2 ? ['pong', 'pool', 'oth', 'mine', 'toss'] : ['rps', 'guess', 'duel', 'snake', 'mole', 'pong', 'pool', 'oth', 'mine', 'toss'], NEW); } return this.GAMES.filter(g => a.includes(g[0])); },
   tab_games() {
-    const on = this.gamesOn(); if (!on.length) return '<p class="fh-hint">مفيش ألعاب متاحة دلوقتي.</p>';
-    if (!on.some(g => g[0] === this.gsub)) this.gsub = on[0][0];
+    const list = this.gamesOn().slice(); if (this.onlineOn()) list.push(['__online', '🌐', 'أونلاين']);
+    if (!list.length) return '<p class="fh-hint">مفيش ألعاب متاحة دلوقتي.</p>';
+    if (!list.some(g => g[0] === this.gsub)) this.gsub = list[0][0];
     const g = this.gsub;
-    return `<div class="fh-sub">${on.map(x => `<button type="button" data-fa="game-sub" data-g="${x[0]}" class="${g === x[0] ? 'on' : ''}">${x[1]} ${x[2]}</button>`).join('')}</div><div id="fgBody">${this.gameHtml(g)}</div>`;
+    return `<div class="fh-sub">${list.map(x => `<button type="button" data-fa="game-sub" data-g="${x[0]}" class="${g === x[0] ? 'on' : ''}">${x[1]} ${x[2]}</button>`).join('')}</div><div id="fgBody">${this.gameHtml(g)}</div>`;
   },
-  gameHtml(g) { const m = { xo: () => this.xoHtml(), mem: () => this.memHtml(), c4: () => this.c4Html(), g48: () => this.g48Html(), slide: () => this.slHtml(), pat: () => this.patHtml(), simon: () => this.simHtml(), rps: () => this.rpsHtml(), guess: () => this.gsHtml(), duel: () => this.duHtml(), snake: () => this.snHtml(), mole: () => this.moHtml(), pong: () => this.pgHtml(), pool: () => this.blHtml(), oth: () => this.othHtml(), mine: () => this.mnHtml(), toss: () => this.tossHtml(), chess: () => this.chHtml(), basra: () => this.bsHtml(), crazy: () => this.c8Html() }; return m[g] ? m[g]() : ''; },
+  gameHtml(g) { const m = { __online: () => this.onlineHtml(), xo: () => this.xoHtml(), mem: () => this.memHtml(), c4: () => this.c4Html(), g48: () => this.g48Html(), slide: () => this.slHtml(), pat: () => this.patHtml(), simon: () => this.simHtml(), rps: () => this.rpsHtml(), guess: () => this.gsHtml(), duel: () => this.duHtml(), snake: () => this.snHtml(), mole: () => this.moHtml(), pong: () => this.pgHtml(), pool: () => this.blHtml(), oth: () => this.othHtml(), mine: () => this.mnHtml(), toss: () => this.tossHtml(), chess: () => this.chHtml(), basra: () => this.bsHtml(), crazy: () => this.c8Html() }; return m[g] ? m[g]() : ''; },
   stopGames() { (this.simT || []).forEach(clearTimeout); this.simT = []; this.sim = null; if (this.pat && this.pat.t) clearTimeout(this.pat.t); this.snStop(); this.moStop(); this.pgStop(); this.blStop(); this.du = null; clearInterval(this._tt); if (this.oth) clearTimeout(this.oth.t); if (this.chs) clearTimeout(this.chs.t); if (this.bs) clearTimeout(this.bs.t); if (this.c8) clearTimeout(this.c8.t); },
   win(key, extra) { this.awardCapped(key, (+this.cfg().xpGame || 0) + (extra || 0), 5, 'لعبة'); },
 
@@ -7209,12 +7234,13 @@ const Fun = {
     const c = this.cfg(), v = x => esc(x == null ? '' : x);
     const chk = (id, label, on) => `<label class="fs-chk"><input type="checkbox" id="${id}" ${on ? 'checked' : ''}> ${label}</label>`;
     const num = (id, label, val, min, max) => `<div class="field fs-num"><label for="${id}">${label}</label><input type="number" id="${id}" value="${v(val)}" min="${min}" max="${max}"></div>`;
-    const feats = [['streak', '🔥 الستريك المتطوّر'], ['xp', '⭐ نقاط ومستويات'], ['confetti', '🎉 كونفتي واحتفال'], ['cdexam', '⏳ عدّاد الامتحان'], ['jokeday', '😄 معلومة / نكتة اليوم'], ['sounds', '🎧 أصوات التركيز'], ['speed', '⚡ تحدي السرعة'], ['arcade', '🎮 ركن الألعاب'], ['gdeco', '🎨 تزيين الألعاب'], ['poll', '🗳️ تصويت الأسبوع'], ['wall', '💬 حيط التشجيع']];
+    const feats = [['streak', '🔥 الستريك المتطوّر'], ['xp', '⭐ نقاط ومستويات'], ['confetti', '🎉 كونفتي واحتفال'], ['cdexam', '⏳ عدّاد الامتحان'], ['jokeday', '😄 معلومة / نكتة اليوم'], ['sounds', '🎧 أصوات التركيز'], ['speed', '⚡ تحدي السرعة'], ['arcade', '🎮 ركن الألعاب'], ['sxhub', '🎯 مركز التحدّي'], ['gdeco', '🎨 تزيين الألعاب'], ['poll', '🗳️ تصويت الأسبوع'], ['wall', '💬 حيط التشجيع']];
     const ops = [['add', 'جمع'], ['sub', 'طرح'], ['mul', 'ضرب'], ['div', 'قسمة'], ['sq', 'تربيع'], ['der', 'تفاضل بسيط']];
     openModal('🎮 المرح والتحفيز', `
       <p class="hint">كل حاجة هنا بتتحكم فيها. بيانات الطالب (الستريك والنقاط) بتتحفظ على جهازه هو.</p>
       <div class="field"><label>تشغيل / إيقاف الإضافات</label><div class="fs-feats">${feats.map(f => chk('fk-' + f[0], f[1], feat(f[0]))).join('')}</div></div>
       ${this.placeHtml(chk)}
+      ${this.hubCfgHtml(chk)}
       ${this.cuHtml()}
       <hr class="sep"><h4>🔥 الستريك</h4>
       ${chk('fs-ev', 'يتطوّر شكله (لو قفلته يفضل ستريك على شكل 🔥 ثابت)', c.evolve !== false)}
@@ -7248,7 +7274,7 @@ const Fun = {
       <hr class="sep"><div class="field"><label for="fs-sql">🛠️ للتصويت والحيط: انسخ الكود ده وشغّله مرة واحدة في SQL Editor في مشروع Supabase بتاع الأسئلة</label><textarea id="fs-sql" readonly style="min-height:110px;direction:ltr;text-align:left;font-family:monospace;font-size:12px">${esc(FUN_SQL)}</textarea></div>`,
       footSave(), () => {
         const m = site.meta; m.feat = m.feat || {};
-        ['streak', 'xp', 'confetti', 'cdexam', 'jokeday', 'sounds', 'speed', 'arcade', 'gdeco', 'poll', 'wall'].forEach(k => { m.feat[k] = document.getElementById('fk-' + k).checked; });
+        ['streak', 'xp', 'confetti', 'cdexam', 'jokeday', 'sounds', 'speed', 'arcade', 'sxhub', 'gdeco', 'poll', 'wall'].forEach(k => { m.feat[k] = document.getElementById('fk-' + k).checked; });
         const g = id => document.getElementById(id), n = (id, d, lo, hi) => { const x = +g(id).value; return isFinite(x) && g(id).value !== '' ? Math.min(hi, Math.max(lo, x)) : d; };
         m.fun = {
           cardUi: this.cuRead() || this.cui(), evolve: g('fs-ev').checked, games: this.GAMES.map(x => x[0]).filter(k => g('fs-gm-' + k).checked), gamesV: 4,
@@ -7260,7 +7286,8 @@ const Fun = {
           sounds: this.SND.map(s => s[0]).filter(k => g('fs-sn-' + k).checked), soundVol: n('fs-sv', 40, 0, 100),
           speedSecs: n('fs-ss', 60, 10, 300), speedLevel: +g('fs-sl').value, speedOps: ops.map(o => o[0]).filter(k => g('fs-op-' + k).checked),
           xoLevel: g('fs-xl').value, arcadeAfterPomo: g('fs-ap').checked,
-          place: { games: { home: g('pl-games-home').checked, top: g('pl-games-top').checked, bag: g('pl-games-bag').checked, menu: g('pl-games-menu').checked }, lect: { top: g('pl-lect-top').checked, bag: g('pl-lect-bag').checked, menu: g('pl-lect-menu').checked } },
+          place: { games: { home: g('pl-games-home').checked, top: g('pl-games-top').checked, bag: g('pl-games-bag').checked, menu: g('pl-games-menu').checked }, lect: { top: g('pl-lect-top').checked, bag: g('pl-lect-bag').checked, menu: g('pl-lect-menu').checked }, hub: { home: g('pl-hub-home').checked, top: g('pl-hub-top').checked, bag: g('pl-hub-bag').checked, menu: g('pl-hub-menu').checked } },
+          hub: this.hubRead(),
           pollQ: g('fs-pq').value.trim(), pollOpts: g('fs-po').value.trim(),
           wallApprove: g('fs-wa').checked, wallMax: n('fs-wm', 10, 1, 50), wallMaxLen: n('fs-wl', 120, 20, 300), wallBad: g('fs-wb').value.trim()
         };
@@ -10484,6 +10511,14 @@ html.sx-lock{overflow:hidden}
 #mbChips button[data-sxai]{background:var(--surface-2,#eef1f7)}
 .sx-install{position:fixed;inset-inline:12px;bottom:12px;z-index:150;background:var(--surface,#fff);border:1px solid var(--line,#dde3ee);border-radius:16px;padding:12px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.2);font-size:13.5px}.sx-install b{flex:1}.sx-install button{border:0;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer}.sx-install .go{background:var(--accent,#2563eb);color:#fff}.sx-install .no{background:transparent;color:var(--ink-soft,#5b6677)}
 @media (max-width:520px){.sxh-nm span{display:none}.ml{flex-direction:column}.ml-l{flex-direction:row;overflow-x:auto;min-width:0}.ml-l span{white-space:nowrap}}
+.fh-onl{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:8px}
+.fh-onb{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:right;border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:14px;padding:10px;cursor:pointer;font-family:inherit}
+.fh-onb i{font-style:normal;font-size:26px;line-height:1}.fh-onb b{font-size:13.5px}.fh-onb small{font-size:11.5px;opacity:.75;line-height:1.5}
+.ak-log{max-height:46vh;overflow:auto;display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.ak-q{align-self:flex-start;background:var(--accent,#2563eb);color:#fff;border-radius:12px;padding:6px 10px;font-size:13px;max-width:90%}
+.ak-a{align-self:flex-end;background:var(--surface-2,#eef1f7);border-radius:12px;padding:8px 10px;font-size:13.5px;line-height:1.8;max-width:95%}
+.st-rng{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:13px}
+.st-rng input{width:74px;border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:10px;padding:5px 8px;font:inherit}
 </style>
 <script id="sxPlus2">
 (function(){
@@ -10775,12 +10810,21 @@ SX.Room = Room;
 let hub = null, stage = null, cur = null;      // cur = {g, cfg, room, inst, ...}
 const GAME_ORDER = ['pool', 'chess', 'xo', 'c4', 'pong', 'duel', 'mem', 'g48'];
 SX.tools = [];   // أدوات المذاكرة تتسجّل من الملف التاني
+const hcfg = () => { try{ return Fun.cfg().hub || {}; }catch(e){ return {}; } };
+const tabOk = t => (hcfg().offTabs || []).indexOf(t) < 0;
+const toolOk = id => (hcfg().offTools || []).indexOf(id) < 0;
+const gameOk = k => (hcfg().offGames || []).indexOf(k) < 0;
+const TAB_DEF = [['games', '🎮 ألعاب (أونلاين)'], ['study', '📚 مذاكرة ذكية'], ['me', '📊 تقدّمي']];
+const tabsHtml = cur => TAB_DEF.filter(t => tabOk(t[0])).map(t => `<button type="button" data-sxh="tab" data-tab="${t[0]}" class="${t[0] === cur ? 'on' : ''}">${t[1]}</button>`).join('');
+SX.hubTabs = () => TAB_DEF.map(t => t[0]).filter(tabOk);
+SX.onlineList = () => GAME_ORDER.filter(k => SX.games[k] && SX.games[k].online && gameOk(k));
+SX.showHub = where => { try{ return !!feat('sxhub') && !!Fun.pl('hub', where); }catch(e){ return false; } };
 
 function hubHtml(){
   return `<div class="sxh-top"><b class="sxh-t">🎯 مركز التحدّي</b>
     <label class="sxh-nm">اسمك: <input id="sxName" maxlength="14" value="${E(ME.name)}"></label>
-    <button type="button" class="sxh-x" data-sxh="close" aria-label="إغلاق">✕</button></div>
-    <div class="sxh-tabs"><button type="button" data-sxh="tab" data-tab="games" class="on">🎮 ألعاب (أونلاين)</button><button type="button" data-sxh="tab" data-tab="study">📚 مذاكرة ذكية</button><button type="button" data-sxh="tab" data-tab="me">📊 تقدّمي</button></div>
+    <button type="button" class="sxh-x" data-sxh="gear" aria-label="إعدادات مركز التحدّي" title="إعدادات (للأدمن)" hidden>⚙️</button><button type="button" class="sxh-x" data-sxh="close" aria-label="إغلاق">✕</button></div>
+    <div class="sxh-tabs">${tabsHtml('games')}</div>
     <div class="sxh-body" id="sxBody"></div>`;
 }
 function ensureHub(){
@@ -10790,23 +10834,26 @@ function ensureHub(){
   document.addEventListener('keydown', e => { if(e.key === 'Escape' && hub && !hub.hidden){ if(cur) leaveGame(); else if($q('#sxModal')) closeModal(); else closeHub(); } });
   return hub;
 }
-function openHub(tab){ ensureHub(); hub.hidden = false; document.documentElement.classList.add('sx-lock'); showTab(tab || 'games'); }
+function openHub(tab){ ensureHub(); hub.hidden = false; document.documentElement.classList.add('sx-lock'); const gb = $q('[data-sxh="gear"]', hub); if(gb) gb.hidden = !(typeof isAdmin !== 'undefined' && isAdmin); showTab(tab || 'games'); }
 function closeHub(){ if(!hub) return; leaveGame(true); closeModal(); hub.hidden = true; document.documentElement.classList.remove('sx-lock'); }
-SX.openHub = openHub;
+SX.openHub = openHub; SX.openLobby = openLobby; SX.gameOrder = GAME_ORDER;
 function showTab(t){
-  $qa('.sxh-tabs button', hub).forEach(b => b.classList.toggle('on', b.dataset.tab === t));
-  const body = $q('#sxBody'); hub.dataset.tab = t;
+  const okT = SX.hubTabs(); if(okT.indexOf(t) < 0) t = okT[0];
+  const tb = $q('.sxh-tabs', hub); if(tb) tb.innerHTML = tabsHtml(t);
+  const body = $q('#sxBody'); hub.dataset.tab = t || '';
+  if(!t){ body.innerHTML = '<p class="sxh-sub">مفيش محتوى متاح دلوقتي في مركز التحدّي.</p>'; return; }
   if(t === 'games'){
-    body.innerHTML = '<p class="sxh-sub">العب ضد الكمبيوتر، أو على نفس الموبايل، أو <b>أونلاين مع صاحبك من موبايلين مختلفين</b> (بكود غرفة أو لينك).</p><div class="sxh-grid">' +
-      GAME_ORDER.filter(k => SX.games[k]).map(k => { const g = SX.games[k]; return `<button type="button" class="sxh-card" data-sxh="game" data-g="${k}"><i>${g.icon}</i><b>${E(g.name)}</b><small>${E(g.desc)}</small><span class="sxh-badges">${g.online ? '<em>🌐 أونلاين</em>' : ''}${g.cpu ? '<em>🤖</em>' : ''}${g.local ? '<em>👥</em>' : ''}</span></button>`; }).join('') + '</div>';
+    const L = GAME_ORDER.filter(k => SX.games[k] && gameOk(k));
+    body.innerHTML = '<p class="sxh-sub">العب ضد الكمبيوتر، أو على نفس الموبايل، أو <b>أونلاين مع صاحبك من موبايلين مختلفين</b> (بكود غرفة أو لينك).</p>' + (L.length ? '<div class="sxh-grid">' + L.map(k => { const g = SX.games[k]; return `<button type="button" class="sxh-card" data-sxh="game" data-g="${k}"><i>${g.icon}</i><b>${E(g.name)}</b><small>${E(g.desc)}</small><span class="sxh-badges">${g.online ? '<em>🌐 أونلاين</em>' : ''}${g.cpu ? '<em>🤖</em>' : ''}${g.local ? '<em>👥</em>' : ''}</span></button>`; }).join('') + '</div>' : '<p class="sxh-sub">مفيش ألعاب متاحة دلوقتي.</p>');
   } else if(t === 'study'){
-    body.innerHTML = '<p class="sxh-sub">أدوات بالذكاء الاصطناعي: كويزات وأسئلة وفلاش كاردز من أي قسم أو ملف PDF، وامتحان تجريبي وخطة مذاكرة.</p><div class="sxh-grid">' +
-      SX.tools.map(x => `<button type="button" class="sxh-card" data-sxh="tool" data-id="${x.id}"><i>${x.icon}</i><b>${E(x.name)}</b><small>${E(x.desc)}</small></button>`).join('') + '</div>';
+    const T = SX.tools.filter(x => toolOk(x.id));
+    body.innerHTML = '<p class="sxh-sub">أدوات بالذكاء الاصطناعي: كويزات وأسئلة وفلاش كاردز وملخصات من أي قسم أو نص أو ملف PDF — في أي مادة، وامتحان تجريبي وخطة مذاكرة.</p>' + (T.length ? '<div class="sxh-grid">' + T.map(x => `<button type="button" class="sxh-card" data-sxh="tool" data-id="${x.id}"><i>${x.icon}</i><b>${E(x.name)}</b><small>${E(x.desc)}</small></button>`).join('') + '</div>' : '<p class="sxh-sub">مفيش أدوات متاحة دلوقتي.</p>');
   } else if(t === 'me' && SX.renderMe){ SX.renderMe(body); }
 }
 function hubClick(e){
   const a = e.target.closest('[data-sxh]'); if(!a) return; const k = a.dataset.sxh;
   if(k === 'close') closeHub();
+  else if(k === 'gear'){ closeHub(); try{ Fun.settings(); }catch(e){} }
   else if(k === 'tab') showTab(a.dataset.tab);
   else if(k === 'game') openLobby(a.dataset.g);
   else if(k === 'tool'){ const t = SX.tools.find(x => x.id === a.dataset.id); if(t) t.open(); }
@@ -11542,11 +11589,12 @@ SX.games.g48 = {id:'g48', icon:'🔢', name:'2048 تحدّي', desc:'نفس تر
 /* ===== أدوات المذاكرة الذكية (AI): كويز، فلاش كاردز، امتحان تجريبي، خطة، ورقة غش، شفوي، معدل، مليونير ===== */
 const RETRY_S = [429, 500, 502, 503, 504];
 const aiUrl = () => (typeof MathBot !== 'undefined' && MathBot.url) ? MathBot.url() : '';
+let CUR_IMGS = null;   // صور صفحات PDF الممسوح ضوئياً
 async function aiAsk(prompt, o){
   o = o || {}; const u = aiUrl(); if(!u) throw new Error('no-server');
   const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 70000);
   try{
-    const msg = {role:'user', content:prompt}; if(o.images) msg.images = o.images; let r;
+    const msg = {role:'user', content:prompt}, imgs = o.images || CUR_IMGS; if(imgs && imgs.length) msg.images = imgs; let r;
     for(let n = 0; n < 2; n++){
       r = await fetch(u, {method:'POST', headers:{'Content-Type':'application/json', 'apikey':(typeof CONFIG !== 'undefined' && CONFIG.QA && CONFIG.QA.anonKey) || ''}, body:JSON.stringify({messages:[msg], stream:false, json:!!o.json}), signal:ctl.signal});
       if(r.ok || RETRY_S.indexOf(r.status) < 0) break; await sleep(700);
@@ -11567,7 +11615,7 @@ const aiErr = e => { const m = String(e && e.message || e); return m === 'no-ser
 SX.aiAsk = aiAsk;
 const clip = (t, n) => { t = String(t || '').replace(/\n{3,}/g, '\n\n').trim(); return t.length > n ? t.slice(0, n) + '\n…' : t; };
 const busy = m => `<div class="st-busy"><div class="st-spin"></div><p>${E(m || 'الذكاء الاصطناعي بيجهّز…')}</p></div>`;
-const big = html => SX.modal('<button type="button" class="sxm-x" data-st="close">✕</button>' + html, 'sxm-big');
+const big = html => { CUR_IMGS = null; return SX.modal('<button type="button" class="sxm-x" data-st="close">✕</button>' + html, 'sxm-big'); };
 const body = () => $q('#sxModal .sxm-in');
 const setBody = html => { const b = body(); if(b) b.innerHTML = '<button type="button" class="sxm-x" data-st="close">✕</button>' + html; };
 
@@ -11582,26 +11630,50 @@ function sectionInView(){
 SX.sectionInView = sectionInView;
 
 /* ---------------- اختيار المصدر ---------------- */
+const PDF_MAX = 14000;
+const GEN_RULES = 'مهم: اعتمد على المحتوى المرفق فقط مهما كان مجاله أو لغته (مش بالضرورة رياضيات) وماتفترضش تخصص معين. لو المحتوى جاي كصور مرفقة اقراها واعتمد عليها. أي رموز أو معادلات اكتبها بنص عادي من غير LaTeX.';
+function pdfPagesOf(text){ const parts = String(text || '').split(/\[صفحة (\d+)\]\n?/), out = []; for(let k = 1; k < parts.length; k += 2) out.push({p:+parts[k], t:(parts[k + 1] || '').trim()}); return out; }
+async function pdfPagesToImages(buf, from, to, max){
+  const lib = window.pdfjsLib; if(!lib) throw new Error('pdfjs');
+  const doc = await lib.getDocument({data:new Uint8Array(buf.slice(0))}).promise, out = [];
+  for(let p = from; p <= Math.min(to, doc.numPages) && out.length < max; p++){
+    const pg = await doc.getPage(p), vp = pg.getViewport({scale:1.4}), cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height;
+    await pg.render({canvasContext:cv.getContext('2d'), viewport:vp}).promise; out.push(cv.toDataURL('image/jpeg', .7));
+  }
+  return out;
+}
 function pickSource(title, cb, opt){
   opt = opt || {}; const secs = secList();
   big(`<div class="st-h"><b>${E(title)}</b><small>اختار مصدر المحتوى</small></div>
     <div class="st-tabs"><button type="button" data-t="sec" class="on">📖 قسم من الموقع</button><button type="button" data-t="txt">✏️ نص / موضوع</button><button type="button" data-t="pdf">📄 ملف PDF</button></div>
     <div class="st-pane" data-p="sec"><select id="stSec">${secs.length ? secs.map(x => `<option value="${E(x.s.id)}">${E((x.path.length ? x.path.join(' › ') + ' › ' : '') + x.s.title)}</option>`).join('') : '<option value="">مفيش أقسام</option>'}</select><small>الأقسام الفرعية بتتحسب تلقائياً.</small></div>
-    <div class="st-pane" data-p="txt" hidden><textarea id="stTxt" rows="6" placeholder="الصق ملخصك أو اكتب اسم موضوع (مثلاً: التكامل بالتجزئة، المصفوفات…)"></textarea></div>
-    <div class="st-pane" data-p="pdf" hidden><input type="file" id="stPdf" accept="application/pdf,.pdf"><small id="stPdfSt">اختار ملف PDF (بنقراه على جهازك).</small></div>
+    <div class="st-pane" data-p="txt" hidden><textarea id="stTxt" rows="6" placeholder="الصق ملخصك أو اكتب اسم موضوع في أي مادة (مثلاً: الثورة الفرنسية، قانون نيوتن الثاني، Photosynthesis…)"></textarea></div>
+    <div class="st-pane" data-p="pdf" hidden><input type="file" id="stPdf" accept="application/pdf,.pdf"><small id="stPdfSt">اختار ملف PDF (بنقراه على جهازك).</small>
+      <div class="st-rng" id="stRng" hidden><label>من صفحة <input type="number" id="stPf" min="1" value="1"></label><label>إلى صفحة <input type="number" id="stPt" min="1" value="1"></label><small id="stRngI"></small></div></div>
     ${opt.extra || ''}<button type="button" class="st-go" data-st="srcgo">التالي ▶</button>`);
-  let tab = 'sec', pdfTxt = '', pdfName = '';
+  CUR_IMGS = null;
+  let tab = 'sec', pdf = null;
   const m = $q('#sxModal');
+  const rng = () => { const n = pdf ? pdf.pages : 1, a = Math.max(1, Math.min(n, parseInt($q('#stPf', m).value, 10) || 1)), b = Math.max(a, Math.min(n, parseInt($q('#stPt', m).value, 10) || n)); return [a, b]; };
+  const pdfText = () => { if(!pdf) return ''; const r = rng(); return pdf.list.filter(x => x.p >= r[0] && x.p <= r[1]).map(x => '[صفحة ' + x.p + ']\n' + x.t).join('\n\n'); };
+  const info = () => { if(!pdf) return; const r = rng(), el = $q('#stRngI', m), t = pdfText(); el.textContent = pdf.scanned ? '🖼 ملف ممسوح ضوئياً — هتتبعت أول 4 صفحات من النطاق كصور للذكاء الاصطناعي.' : (t.length > PDF_MAX ? '⚠️ النطاق كبير (' + t.length + ' حرف) — هيتاخد أول ' + PDF_MAX + ' حرف بس، صغّر النطاق للتركيز.' : '✅ ' + t.length + ' حرف من صفحات ' + r[0] + ' – ' + r[1]); };
   m.addEventListener('click', e => { const t = e.target.closest('.st-tabs button'); if(t){ tab = t.dataset.t; $qa('.st-tabs button', m).forEach(b => b.classList.toggle('on', b === t)); $qa('.st-pane', m).forEach(p => { p.hidden = p.dataset.p !== tab; }); } });
-  m.addEventListener('change', async e => { if(e.target.id !== 'stPdf' || !e.target.files[0]) return; const f = e.target.files[0], st = $q('#stPdfSt', m); st.textContent = '⏳ بقرا الملف…';
-    try{ if(!MathBot.extractPdf) throw 0; const ex = await MathBot.extractPdf(await f.arrayBuffer()); pdfTxt = ex.text; pdfName = f.name; st.textContent = ex.text.length > 100 ? '✅ اتقرا ' + ex.pages + ' صفحة' : '⚠️ الملف ده ممسوح ضوئياً (صور) ومفيهوش نص — الصق النص بدلاً منه.'; }catch(err){ st.textContent = '❌ مقدرتش أقرا الملف (محتاج نت لتحميل قارئ PDF).'; } });
-  m.addEventListener('click', e => { if(e.target.dataset.st !== 'srcgo') return;
+  m.addEventListener('input', e => { if(e.target.id === 'stPf' || e.target.id === 'stPt') info(); });
+  m.addEventListener('change', async e => { if(e.target.id !== 'stPdf' || !e.target.files[0]) return; const f = e.target.files[0], st = $q('#stPdfSt', m); st.textContent = '⏳ بقرا الملف…'; pdf = null; $q('#stRng', m).hidden = true;
+    try{ if(!MathBot.extractPdf) throw 0; const buf = await f.arrayBuffer(), ex = await MathBot.extractPdf(buf.slice(0)), list = pdfPagesOf(ex.text), scanned = ex.text.replace(/\[صفحة \d+\]|\s/g, '').length < Math.min(300, ex.pages*60);
+      pdf = {name:f.name, pages:ex.pages, list, scanned, buf};
+      st.textContent = scanned ? '🖼 الملف ممسوح ضوئياً (صور) — هقراه بالذكاء الاصطناعي من الصفحات اللي تختارها (' + ex.pages + ' صفحة).' : '✅ اتقرا ' + ex.pages + ' صفحة — اختار النطاق اللي عايز تذاكره.';
+      const pf = $q('#stPf', m), pt = $q('#stPt', m); pf.max = pt.max = ex.pages; pf.value = 1; pt.value = ex.pages; $q('#stRng', m).hidden = false; info();
+    }catch(err){ st.textContent = '❌ مقدرتش أقرا الملف (محتاج نت لتحميل قارئ PDF).'; } });
+  m.addEventListener('click', async e => { if(e.target.dataset.st !== 'srcgo') return;
     let text = '', ttl = '';
     if(tab === 'sec'){ const id = $q('#stSec', m).value, s = SecTools.find(id); if(!s) return say('اختار قسم'); text = secText(s); ttl = s.title; }
     else if(tab === 'txt'){ text = $q('#stTxt', m).value.trim(); ttl = text.slice(0, 40); }
-    else { text = pdfTxt; ttl = pdfName; }
-    if(text.replace(/\s/g, '').length < 12) return say('المحتوى قليل أوي — زوّد شوية');
-    cb({title:ttl || 'موضوع', text:clip(text, 14000)}, m);
+    else { if(!pdf) return say('اختار ملف PDF الأول'); ttl = pdf.name; const r = rng();
+      if(pdf.scanned){ say('⏳ بجهّز صفحات الملف كصور…'); try{ CUR_IMGS = await pdfPagesToImages(pdf.buf, r[0], r[1], 4); }catch(_){ return say('تعذّر تجهيز صفحات الملف'); } text = 'ملف PDF ممسوح ضوئياً (' + pdf.name + ') — المحتوى كله في الصور المرفقة (صفحات ' + r[0] + ' إلى ' + Math.min(r[1], r[0] + CUR_IMGS.length - 1) + ').'; }
+      else text = pdfText(); }
+    if(text.replace(/\s/g, '').length < (tab === 'txt' ? 3 : 12)) return say('المحتوى قليل أوي — زوّد شوية');
+    cb({title:ttl || 'موضوع', text:clip(text, PDF_MAX)}, m);
   });
 }
 
@@ -11609,9 +11681,9 @@ function pickSource(title, cb, opt){
 const LV = {1:'سهل (تعريفات وتطبيق مباشر)', 2:'متوسط (تطبيق وفهم)', 3:'صعب (مسائل متعددة الخطوات وفخاخ شائعة)'};
 async function genMCQ(src, n, lv, kind, extraRule){
   const tf = kind === 'tf';
-  const p = `أنت مدرّس رياضيات جامعي. اعمل ${n} ${tf ? 'عبارات صح/غلط (نص ممكن يكون صحيح أو مغلوط بشكل خفي)' : 'أسئلة اختيار من متعدد'} بمستوى ${LV[lv]} اعتماداً على المحتوى التالي (ولو المحتوى قليل استعن بالمفاهيم المرتبطة).
+  const p = `أنت مدرّس خبير في مجال المحتوى المرفق. اعمل ${n} ${tf ? 'عبارات صح/غلط (نص ممكن يكون صحيح أو مغلوط بشكل خفي)' : 'أسئلة اختيار من متعدد'} بمستوى ${LV[lv]} اعتماداً على المحتوى التالي فقط (ولو كان مجرد اسم موضوع أو قليل جداً اعمل أسئلة على أساسيات الموضوع نفسه من غير ما تتحوّل لمجال تاني).
 أرجع JSON فقط بالشكل: {"questions":[{"q":"نص السؤال","options":[${tf ? '"صح","غلط"' : '"أ","ب","ج","د"'}],"answer":0,"explain":"شرح مختصر بالعامية المصرية","topic":"اسم الموضوع الفرعي (2-3 كلمات)"}]}
-القواعد: ${tf ? 'الاختياران "صح" و"غلط" بالترتيب ده،' : '4 اختيارات بالظبط ومكان الإجابة الصحيحة عشوائي،'} answer هو رقم الاختيار الصحيح (يبدأ من 0)، اكتب الرياضيات بنص عادي (x²، √، ∫، π) من غير LaTeX، الأسئلة متنوعة وتقيس الفهم. ${extraRule || ''}
+القواعد: ${tf ? 'الاختياران "صح" و"غلط" بالترتيب ده،' : '4 اختيارات بالظبط ومكان الإجابة الصحيحة عشوائي،'} answer هو رقم الاختيار الصحيح (يبدأ من 0)، اكتب الأسئلة والاختيارات بنفس لغة المحتوى، والأسئلة متنوعة وتقيس الفهم. ${GEN_RULES} ${extraRule || ''}
 المحتوى:
 """
 ${src}
@@ -11621,9 +11693,9 @@ ${src}
   if(!out.length) throw new Error('bad-json'); return out;
 }
 async function genCards(src, n){
-  const p = `أنت مدرّس رياضيات جامعي. اعمل ${n} فلاش كاردز للمذاكرة من المحتوى التالي (قوانين، تعريفات، خطوات حل، أخطاء شائعة، أمثلة صغيرة بحلها).
+  const p = `أنت مدرّس خبير في مجال المحتوى المرفق. اعمل ${n} فلاش كاردز للمذاكرة من المحتوى التالي فقط (مفاهيم، تعريفات، قوانين أو خطوات لو موجودة، أخطاء شائعة، أمثلة صغيرة).
 أرجع JSON فقط: {"cards":[{"front":"سؤال أو مصطلح قصير","back":"الإجابة المختصرة والمباشرة"}]}
-اكتب الرياضيات بنص عادي (x²، √، ∫) من غير LaTeX، والوش مش أطول من سطرين والضهر مش أطول من 3 أسطر.
+${GEN_RULES} والوش مش أطول من سطرين والضهر مش أطول من 3 أسطر.
 المحتوى:
 """
 ${src}
@@ -11752,7 +11824,7 @@ function weakHtml(){
 }
 function weakTool(){ big(`<div class="st-h"><b>📉 خريطة نقاط الضعف</b><small>من نتايج كويزاتك وامتحاناتك</small></div>${weakHtml()}`); bindWeak(); }
 function bindWeak(){ const m = $q('#sxModal'); if(!m) return; m.addEventListener('click', async e => { if(e.target.dataset.st !== 'weakgo') return; const T = lsGet('sx_topics', {}); const w = Object.keys(T).map(k => ({k, p:T[k].ok/(T[k].ok + T[k].no)})).sort((a, b) => a.p - b.p)[0]; if(!w) return;
-  setBody(busy('بجهّز كويز على «' + w.k + '»…')); try{ const qs = await genMCQ('الموضوع: ' + w.k + ' (ضمن مقرر الرياضيات الجامعي). غطّي الأفكار الأساسية ونقاط الضعف الشائعة فيه.', 8, 2, 'mcq'); runQuiz(qs, {title:'تقوية: ' + w.k, src:w.k}); }catch(err){ setBody(`<p class="st-err">${E(aiErr(err))}</p>`); } }); }
+  setBody(busy('بجهّز كويز على «' + w.k + '»…')); try{ const qs = await genMCQ('الموضوع: ' + w.k + '. غطّي الأفكار الأساسية ونقاط الضعف الشائعة فيه.', 8, 2, 'mcq'); runQuiz(qs, {title:'تقوية: ' + w.k, src:w.k}); }catch(err){ setBody(`<p class="st-err">${E(aiErr(err))}</p>`); } }); }
 
 /* ---------------- أداة: خطة مذاكرة ---------------- */
 function planTool(){
@@ -11794,7 +11866,7 @@ function sheetTool(){
   pickSource('📄 ورقة غش جاهزة للطباعة', async (src) => {
     setBody(busy('بكتب الورقة…'));
     try{
-      const txt = await aiAsk(`اكتب «ورقة غش» مختصرة جداً ومرتبة للمراجعة السريعة قبل الامتحان من المحتوى التالي. استخدم عناوين (## عنوان) وتحتها نقط بشرطة (-). غطّي: القوانين والتعريفات الأساسية، خطوات الحل، أخطاء شائعة، ومثال صغير محلول لكل فكرة مهمة. الرياضيات بنص عادي (x²، √، ∫، π) من غير LaTeX. لا تزيد عن صفحة واحدة تقريباً.\nالمحتوى:\n"""\n${src.text}\n"""`);
+      const txt = await aiAsk(`اكتب «ورقة غش» مختصرة جداً ومرتبة للمراجعة السريعة قبل الامتحان من المحتوى التالي. استخدم عناوين (## عنوان) وتحتها نقط بشرطة (-). غطّي (حسب نوع المحتوى): التعريفات والقوانين الأساسية، خطوات الحل، أخطاء شائعة، ومثال صغير محلول لكل فكرة مهمة. ${GEN_RULES} لا تزيد عن صفحة واحدة تقريباً.\nالمحتوى:\n"""\n${src.text}\n"""`);
       setBody(`<div class="st-h"><b>📄 ورقة الغش: ${E(src.title.slice(0, 40))}</b></div><div class="sh-doc" id="shDoc">${MathBot.fmt(txt)}</div><div class="qz-end"><button type="button" class="pri" data-sh="print">🖨 طباعة / حفظ PDF</button><button type="button" data-sh="copy">📋 نسخ</button></div>`);
       $q('#sxModal').onclick = e => { const x = e.target.closest('[data-st="close"]'); if(x) return SX.closeModal(); const b = e.target.closest('[data-sh]'); if(!b) return;
         if(b.dataset.sh === 'copy'){ try{ navigator.clipboard.writeText(txt); say('✅ اتنسخت'); }catch(_){ say('تعذّر النسخ'); } }
@@ -11807,7 +11879,7 @@ function sheetTool(){
 function oralTool(){
   pickSource('🎙 امتحان شفوي', async (src) => {
     setBody(busy('بجهّز أسئلة الشفوي…'));
-    let qs; try{ const j = parseJson(await aiAsk(`أنت ممتحن شفوي في الرياضيات الجامعية. اعمل 5 أسئلة شفوية قصيرة متدرجة من المحتوى التالي (تعريف، فهم، تطبيق). أرجع JSON فقط: {"questions":[{"q":"السؤال بالعامية المصرية المبسطة","key":"النقاط الأساسية المطلوبة في الإجابة"}]}\nالمحتوى:\n"""\n${src.text}\n"""`, {json:true})); qs = (Array.isArray(j) ? j : j.questions || []).filter(q => q && q.q).slice(0, 5); if(!qs.length) throw new Error('bad-json'); }catch(e){ return setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p>`); }
+    let qs; try{ const j = parseJson(await aiAsk(`أنت ممتحن شفوي في مجال المحتوى التالي. اعمل 5 أسئلة شفوية قصيرة متدرجة من المحتوى التالي (تعريف، فهم، تطبيق). ${GEN_RULES} أرجع JSON فقط: {"questions":[{"q":"السؤال بالعامية المصرية المبسطة","key":"النقاط الأساسية المطلوبة في الإجابة"}]}\nالمحتوى:\n"""\n${src.text}\n"""`, {json:true})); qs = (Array.isArray(j) ? j : j.questions || []).filter(q => q && q.q).slice(0, 5); if(!qs.length) throw new Error('bad-json'); }catch(e){ return setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p>`); }
     let i = 0, tot = 0, fb = [], rec = null; const V = (typeof MathBot !== 'undefined' && MathBot.Voice) || null, SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     const ask = () => {
       if(i >= qs.length){ const avg = Math.round(tot/qs.length*10)/10; recQuiz('شفوي: ' + src.title, Math.round(avg), 10); return setBody(`<div class="qz-res"><div class="qz-score ${avg >= 7 ? 'g' : avg >= 5 ? 'm' : 'b'}"><b>${avg}</b><small>من 10</small></div><h3>${avg >= 8 ? '🔥 شفوي ممتاز' : avg >= 6 ? '👏 كويس' : '💪 محتاج تراجع'}</h3>${fb.map((f, k) => `<div class="qz-wi"><div><b>${E(qs[k].q)}</b></div><small>إجابتك: ${E(f.a || '—')}</small><small class="${f.s >= 6 ? 'g' : 'r'}">${f.s}/10 — ${E(f.f)}</small></div>`).join('')}`); }
@@ -11821,7 +11893,7 @@ function oralTool(){
       else if(k === 'mic'){ if(rec){ try{ rec.stop(); }catch(_){} return; } rec = new SR(); rec.lang = 'ar-EG'; rec.interimResults = true; rec.continuous = true; const ta = $q('#orA'), base = ta.value ? ta.value + ' ' : ''; b.textContent = '⏹ وقّف';
         rec.onresult = ev => { let t = ''; for(let r = 0; r < ev.results.length; r++) t += ev.results[r][0].transcript; ta.value = base + t; }; rec.onend = () => { rec = null; const mm = $q('#orM'); if(mm) mm.textContent = '🎤 تكلّم'; }; try{ rec.start(); }catch(_){ rec = null; } }
       else if(k === 'send'){ const a = $q('#orA').value.trim(); if(!a) return say('اكتب أو قول إجابتك الأول'); if(rec){ try{ rec.stop(); }catch(_){} } if(V) V.stop(); setBody(busy('بصحّح إجابتك…'));
-        try{ const j = parseJson(await aiAsk(`أنت ممتحن شفوي رياضيات. السؤال: "${qs[i].q}". النقاط المطلوبة: "${qs[i].key || ''}". إجابة الطالب: "${a}". قيّم الإجابة من 10 وأعطِ تعليق قصير مفيد بالعامية المصرية (إيه الصح وإيه الناقص). أرجع JSON فقط: {"score":0,"feedback":"..."}`, {json:true})); const s = Math.max(0, Math.min(10, +j.score || 0)); tot += s; fb.push({a, s, f:String(j.feedback || '')}); recTopic(src.title, s >= 6);
+        try{ const j = parseJson(await aiAsk(`أنت ممتحن شفوي. السؤال: "${qs[i].q}". النقاط المطلوبة: "${qs[i].key || ''}". إجابة الطالب: "${a}". قيّم الإجابة من 10 وأعطِ تعليق قصير مفيد بالعامية المصرية (إيه الصح وإيه الناقص). أرجع JSON فقط: {"score":0,"feedback":"..."}`, {json:true})); const s = Math.max(0, Math.min(10, +j.score || 0)); tot += s; fb.push({a, s, f:String(j.feedback || '')}); recTopic(src.title, s >= 6);
           setBody(`<div class="qz-q">${E(qs[i].q)}</div><div class="qz-x ${s >= 6 ? 'ok' : 'no'}"><b>${s} / 10</b><div>${E(j.feedback || '')}</div></div><div class="qz-nav"><span></span><button type="button" class="pri" data-or="next">${i === qs.length - 1 ? 'النتيجة 🏁' : 'السؤال التالي ▶'}</button></div>`); }catch(err){ setBody(`<p class="st-err">⚠️ ${E(aiErr(err))}</p><button type="button" class="st-go" data-or="retry">حاول تاني</button>`); } }
       else if(k === 'next'){ i++; ask(); } else if(k === 'retry'){ ask(); } };
     ask();
@@ -11853,11 +11925,10 @@ function gpaTool(){
 /* ---------------- لعبة: من سيربح المليون ---------------- */
 const LADDER = [100, 200, 300, 500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 125000, 250000, 500000, 1000000];
 function milTool(){
-  big(`<div class="st-h"><b>💰 من سيربح المليون؟</b><small>15 سؤال من السهل للصعب — نقاط مش فلوس 😄</small></div><label class="st-l">موضوع الأسئلة</label>
-    <select id="mlS"><option value="">رياضيات عامة (حساب، جبر، تفاضل وتكامل)</option>${secList().map(x => `<option value="${E(x.s.id)}">${E(x.s.title)}</option>`).join('')}</select><button type="button" class="st-go" data-st="mlgo">ابدأ ▶</button>`);
-  const m = $q('#sxModal'); m.addEventListener('click', async e => { if(e.target.dataset.st !== 'mlgo') return; const id = $q('#mlS', m).value, s = id ? SecTools.find(id) : null, src = s ? clip(secText(s), 9000) : 'مقرر رياضيات جامعي: حساب وجبر ومصفوفات وتفاضل وتكامل ونهايات.';
+  pickSource('💰 من سيربح المليون؟', async (src) => {
     setBody(busy('بجهّز 15 سؤال… (ممكن ياخد حوالي نص دقيقة)'));
-    try{ const sets = await Promise.all([[1, 5], [2, 5], [3, 6]].map(([lv, n]) => genMCQ(src, n, lv, 'mcq').catch(() => []))); const qs = [].concat(...sets.map((a, k) => a.slice(0, k === 2 ? 6 : 5))); if(qs.length < 8) throw new Error('bad-json'); milRun(qs); }catch(err){ setBody(`<p class="st-err">⚠️ ${E(aiErr(err))}</p>`); } });
+    try{ const sets = await Promise.all([[1, 5], [2, 5], [3, 6]].map(([lv, n]) => genMCQ(src.text, n, lv, 'mcq').catch(() => []))); const qs = [].concat(...sets.map((a, k) => a.slice(0, k === 2 ? 6 : 5))); if(qs.length < 8) throw new Error('bad-json'); milRun(qs); }catch(err){ setBody(`<p class="st-err">⚠️ ${E(aiErr(err))}</p>`); }
+  });
 }
 function milRun(all){
   const main = all.slice(0, 15), spare = all.slice(15); let i = 0, used = {fifty:false, ai:false, swap:false}, hid = [];
@@ -11880,6 +11951,85 @@ function milRun(all){
   draw();
 }
 
+/* ---------------- أدوات إضافية: ملخص / شرح مبسّط / اسأل المحتوى / مصطلحات / أسئلة مقالية / ملاحظاتي ---------------- */
+function mkTextTool(title, ask){
+  return () => pickSource(title, async (src) => {
+    setBody(busy('بشتغل على «' + src.title.slice(0, 30) + '»…'));
+    try{
+      const txt = await aiAsk(ask + ' ' + GEN_RULES + '\nالمحتوى:\n"""\n' + src.text + '\n"""');
+      setBody(`<div class="st-h"><b>${E(title)}</b><small>${E(src.title.slice(0, 50))}</small></div><div class="sh-doc" id="txDoc">${MathBot.fmt(txt)}</div><div class="qz-end"><button type="button" class="pri" data-tx="copy">📋 نسخ</button></div>`);
+      $q('#sxModal').onclick = e => { if(e.target.closest('[data-st="close"]')) return SX.closeModal(); if(e.target.closest('[data-tx="copy"]')){ try{ navigator.clipboard.writeText(txt); say('✅ اتنسخ'); }catch(_){ say('تعذّر النسخ'); } } };
+    }catch(e){ setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p>`); }
+  });
+}
+const sumTool = mkTextTool('📝 ملخص ذكي', 'لخّص المحتوى التالي بشكل منظم بالعامية المصرية: عناوين رئيسية (## عنوان) وتحتها نقط مختصرة بشرطة (-)، وفي الآخر قسم «أهم حاجات تحفظها».');
+const simpleTool = mkTextTool('🧒 اشرحلي ببساطة', 'اشرح المحتوى التالي كأنك بتشرح لطالب لسه مبتدئ: بسّط الأفكار بأمثلة من الحياة وخطوات صغيرة بالعامية المصرية، وقسّم الشرح لعناوين قصيرة (## عنوان).');
+
+function askTool(){
+  pickSource('💬 اسأل المحتوى', (src) => {
+    const hist = [];
+    const draw = () => setBody(`<div class="st-h"><b>💬 اسأل عن «${E(src.title.slice(0, 30))}»</b><small>الإجابات من المحتوى اللي اخترته بس</small></div><div class="ak-log" id="akLog">${hist.length ? hist.map(h => `<div class="ak-q">${E(h.q)}</div><div class="ak-a">${MathBot.fmt(h.a)}</div>`).join('') : '<p class="st-note">اكتب سؤالك تحت 👇</p>'}</div><textarea id="akQ" rows="2" placeholder="اسأل أي حاجة عن المحتوى…"></textarea><div class="qz-nav"><span></span><button type="button" class="pri" data-ak="send">إرسال ▶</button></div>`);
+    draw();
+    $q('#sxModal').onclick = async e => {
+      if(e.target.closest('[data-st="close"]')) return SX.closeModal();
+      const b = e.target.closest('[data-ak]'); if(!b) return;
+      const t = $q('#akQ'), q = ((t && t.value) || '').trim(); if(!q) return say('اكتب سؤالك الأول');
+      b.disabled = true; b.textContent = '⏳…';
+      try{
+        const ctx = hist.slice(-3).map(h => 'سؤال: ' + h.q + '\nإجابة: ' + h.a).join('\n\n');
+        const a = await aiAsk('جاوب على سؤال الطالب بالعامية المصرية اعتماداً على المحتوى التالي فقط، ولو الإجابة مش موجودة فيه قول ده بصراحة. ' + GEN_RULES + '\n' + (ctx ? 'محادثة سابقة:\n' + ctx + '\n' : '') + 'المحتوى:\n"""\n' + src.text + '\n"""\nسؤال الطالب: ' + q);
+        hist.push({q, a}); draw(); const lg = $q('#akLog'); if(lg) lg.scrollTop = lg.scrollHeight;
+      }catch(err){ say(aiErr(err)); b.disabled = false; b.textContent = 'إرسال ▶'; }
+    };
+  });
+}
+
+function termsTool(){
+  pickSource('🔤 مصطلحات وتعريفات', async (src) => {
+    setBody(busy('باستخرج المصطلحات…'));
+    try{
+      const j = parseJson(await aiAsk(`استخرج أهم 12 إلى 20 مصطلح أو مفهوم أساسي من المحتوى التالي مع تعريف مختصر لكل واحد (جملة أو اتنين). ${GEN_RULES}\nأرجع JSON فقط: {"terms":[{"term":"المصطلح","def":"التعريف"}]}\nالمحتوى:\n"""\n${src.text}\n"""`, {json:true}));
+      const arr = (Array.isArray(j) ? j : j.terms || []).filter(t => t && t.term && t.def).map(t => ({f:String(t.term), b:String(t.def)}));
+      if(!arr.length) throw new Error('bad-json');
+      setBody(`<div class="st-h"><b>🔤 مصطلحات: ${E(src.title.slice(0, 36))}</b><small>${arr.length} مصطلح</small></div>${arr.map(t => `<div class="qz-wi"><div><b>${MathBot.fmt(t.f)}</b></div><small>${MathBot.fmt(t.b)}</small></div>`).join('')}<div class="qz-end"><button type="button" class="pri" data-tm="deck">🃏 احفظها فلاش كاردز</button></div>`);
+      $q('#sxModal').onclick = e => { if(e.target.closest('[data-st="close"]')) return SX.closeModal(); if(e.target.closest('[data-tm="deck"]')){ saveDeck('مصطلحات — ' + src.title.slice(0, 30), arr); say('✅ اتحفظت ' + arr.length + ' كارت في «مجموعاتي»'); } };
+    }catch(e){ setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p>`); }
+  });
+}
+
+function essayTool(){
+  pickSource('✍️ أسئلة مقالية', async (src) => {
+    setBody(busy('بجهّز الأسئلة…'));
+    let qs; try{
+      const j = parseJson(await aiAsk(`اعمل 6 أسئلة مقالية (اشرح / علّل / قارن / ناقش) متدرجة الصعوبة من المحتوى التالي، ومع كل سؤال إجابة نموذجية مختصرة ومحددة. اكتب الأسئلة والإجابات بنفس لغة المحتوى. ${GEN_RULES}\nأرجع JSON فقط: {"questions":[{"q":"السؤال","model":"الإجابة النموذجية"}]}\nالمحتوى:\n"""\n${src.text}\n"""`, {json:true}));
+      qs = (Array.isArray(j) ? j : j.questions || []).filter(q => q && q.q && q.model).slice(0, 8); if(!qs.length) throw new Error('bad-json');
+    }catch(e){ return setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p>`); }
+    let i = 0, shown = false, mine = '';
+    const draw = () => {
+      if(i >= qs.length) return setBody(`<div class="qz-res"><h3>🏁 خلّصت ${qs.length} سؤال</h3><div class="qz-end"><button type="button" class="pri" data-es="again">🔄 أسئلة جديدة</button></div></div>`);
+      const q = qs[i];
+      setBody(`<div class="qz-top"><b>✍️ ${E(src.title.slice(0, 24))}</b><span class="qz-n">${i + 1} / ${qs.length}</span></div><div class="qz-bar"><i style="width:${Math.round(i/qs.length*100)}%"></i></div><div class="qz-q">${MathBot.fmt(q.q)}</div><textarea id="esA" rows="4" placeholder="اكتب إجابتك الأول (اختياري) وبعدين قارنها بالنموذجية…">${E(mine)}</textarea>${shown ? `<div class="qz-x ok"><b>الإجابة النموذجية</b><div>${MathBot.fmt(q.model)}</div></div>` : ''}<div class="qz-nav"><span></span>${shown ? '<button type="button" class="pri" data-es="next">' + (i === qs.length - 1 ? 'إنهاء 🏁' : 'التالي ▶') + '</button>' : '<button type="button" class="pri" data-es="show">👁 اظهر الإجابة النموذجية</button>'}</div>`);
+    };
+    $q('#sxModal').onclick = e => {
+      if(e.target.closest('[data-st="close"]')) return SX.closeModal();
+      const b = e.target.closest('[data-es]'); if(!b) return; const t = $q('#esA'); if(t) mine = t.value; const k = b.dataset.es;
+      if(k === 'show'){ shown = true; draw(); } else if(k === 'next'){ i++; shown = false; mine = ''; draw(); } else if(k === 'again') essayTool();
+    };
+    draw();
+  });
+}
+
+function notesTool(){
+  const draw = () => { const L = lsGet('sx_notes', []);
+    setBody(`<div class="st-h"><b>🗒 ملاحظاتي</b><small>محفوظة على جهازك</small></div><textarea id="ntT" rows="3" placeholder="اكتب ملاحظة سريعة…"></textarea><button type="button" class="st-go" data-nt="add">➕ حفظ الملاحظة</button>${L.length ? L.map(n => `<div class="dk"><div class="dk-o" style="cursor:default"><b>${E(n.t)}</b><small>${E(new Date(n.d).toLocaleDateString('ar-EG'))}</small></div><button type="button" class="dk-d" data-nt="del" data-id="${E(n.id)}" aria-label="حذف">🗑</button></div>`).join('') : '<p class="st-note">لسه مفيش ملاحظات.</p>'}`); };
+  big(''); draw();
+  $q('#sxModal').onclick = e => {
+    if(e.target.closest('[data-st="close"]')) return SX.closeModal();
+    const b = e.target.closest('[data-nt]'); if(!b) return;
+    if(b.dataset.nt === 'add'){ const t = $q('#ntT').value.trim(); if(!t) return say('اكتب الملاحظة الأول'); const L = lsGet('sx_notes', []); L.unshift({id:rid(), t, d:Date.now()}); lsSet('sx_notes', L.slice(0, 100)); draw(); }
+    else if(b.dataset.nt === 'del'){ lsSet('sx_notes', lsGet('sx_notes', []).filter(n => n.id !== b.dataset.id)); draw(); }
+  };
+}
 /* ---------------- تسجيل الأدوات + تبويب «تقدّمي» ---------------- */
 SX.tools.push(
   {id:'quiz', icon:'🧪', name:'مولّد الكويز', desc:'اختيار من متعدد أو صح/غلط من أي قسم أو نص أو PDF', open:quizTool},
@@ -11891,7 +12041,13 @@ SX.tools.push(
   {id:'oral', icon:'🎙', name:'امتحان شفوي', desc:'الذكاء يسألك وتجاوب بصوتك ويقيّمك', open:oralTool},
   {id:'weak', icon:'📉', name:'خريطة الضعف', desc:'مواضيعك الأضعف من واقع نتايجك', open:weakTool},
   {id:'mil', icon:'💰', name:'من سيربح المليون', desc:'لعبة أسئلة بمساعدات 50:50 واسأل الذكاء', open:milTool},
-  {id:'gpa', icon:'🧮', name:'حاسبة المعدل', desc:'معدل الترم والتراكمي بجدول تقديرات قابل للتعديل', open:gpaTool}
+  {id:'gpa', icon:'🧮', name:'حاسبة المعدل', desc:'معدل الترم والتراكمي بجدول تقديرات قابل للتعديل', open:gpaTool},
+  {id:'sum', icon:'📝', name:'ملخص ذكي', desc:'لخّص أي قسم أو نص أو PDF في نقاط مرتبة', open:sumTool},
+  {id:'simple', icon:'🧒', name:'اشرحلي ببساطة', desc:'شرح مبسّط بأمثلة من الحياة لأي محتوى', open:simpleTool},
+  {id:'ask', icon:'💬', name:'اسأل المحتوى', desc:'اسأل عن ملف أو قسم والإجابة من جواه بس', open:askTool},
+  {id:'terms', icon:'🔤', name:'مصطلحات وتعريفات', desc:'أهم المصطلحات مع تعريفها وحفظها كفلاش كاردز', open:termsTool},
+  {id:'essay', icon:'✍️', name:'أسئلة مقالية', desc:'اشرح وعلّل مع إجابة نموذجية تقارن بيها', open:essayTool},
+  {id:'notes', icon:'🗒', name:'ملاحظاتي', desc:'دفتر ملاحظات سريع محفوظ على جهازك', open:notesTool}
 );
 SX.renderMe = function(root){
   const S = lsGet('sx_stats2', {}), g = S.game || {}, q = S.q || {}, log = lsGet('sx_quizlog', []).slice(-5).reverse(), daily = lsGet('sx_daily_best', null);
@@ -11902,7 +12058,7 @@ SX.renderMe = function(root){
   bindMeWeak(root);
 };
 function bindMeWeak(root){ root.addEventListener('click', async e => { if(e.target.dataset.st !== 'weakgo') return; big(busy('بجهّز كويز تقوية…')); const T = lsGet('sx_topics', {}); const w = Object.keys(T).map(k => ({k, p:T[k].ok/(T[k].ok + T[k].no)})).sort((a, b) => a.p - b.p)[0]; if(!w) return;
-  try{ const qs = await genMCQ('الموضوع: ' + w.k + ' (ضمن مقرر الرياضيات الجامعي).', 8, 2, 'mcq'); runQuiz(qs, {title:'تقوية: ' + w.k, src:w.k}); }catch(err){ setBody(`<p class="st-err">${E(aiErr(err))}</p>`); } }); }
+  try{ const qs = await genMCQ('الموضوع: ' + w.k + '. غطّي الأفكار الأساسية ونقاط الضعف الشائعة فيه.', 8, 2, 'mcq'); runQuiz(qs, {title:'تقوية: ' + w.k, src:w.k}); }catch(err){ setBody(`<p class="st-err">${E(aiErr(err))}</p>`); } }); }
 document.addEventListener('click', e => { const c = e.target.closest('#sxModal [data-st="close"]'); if(c) closeModal(); });
 
 /* ---------------- ربط البوت: أزرار سريعة ---------------- */
@@ -11925,7 +12081,7 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-sxai
   }
   function placeTop(){
     mkTop(); const b = $i('sxTopBtn'); if(!b) return;
-    const sp = $i('trackSplash'), blocked = !!(sp && !sp.classList.contains('hide')); b.hidden = blocked; if(blocked) return;
+    const sp = $i('trackSplash'), blocked = !!(sp && !sp.classList.contains('hide')); const shown = SX.showHub('top'); b.hidden = blocked || !shown; if(blocked || !shown) return;
     const gB = $i('gamesTopBtn'), lB = $i('lectTopBtn'), pB = $i('posterBtn'), compact = innerWidth <= 480, step = compact ? 42 : 52;
     const n = ((gB && !gB.hidden) ? 1 : 0) + ((lB && !lB.hidden) ? 1 : 0);
     b.style.left = ((compact ? 92 : 120) + ((pB && !pB.hidden) ? step : 0) + n*step) + 'px';
@@ -11933,7 +12089,7 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-sxai
   try{ if(typeof TopIcons !== 'undefined'){ const s0 = TopIcons.sync; TopIcons.sync = function(){ const r = s0.apply(this, arguments); try{ placeTop(); }catch(e){} return r; }; } }catch(e){}
   setInterval(() => { try{ placeTop(); }catch(e){} }, 1000); addEventListener('resize', () => { try{ placeTop(); }catch(e){} });
   setTimeout(() => { try{ placeTop(); }catch(e){} }, 300);
-  document.addEventListener('click', e => { const a = e.target.closest('[data-sx-open]'); if(a) SX.openHub(a.dataset.sxOpen); });
+  document.addEventListener('click', e => { const a = e.target.closest('[data-sx-open]'); if(a) SX.openHub(a.dataset.sxOpen); const h = e.target.closest('[data-tool="sxhub"]'); if(h) SX.openHub('games'); });
 
   /* تثبيت كتطبيق (PWA) */
   let deferred = null; const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone;
@@ -11950,6 +12106,7 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-sxai
   setTimeout(bannerInstall, 40000);
 
   SX.checkInvite();
+  setTimeout(() => { try{ buildDock(); }catch(e){} try{ Fun.renderBox(); }catch(e){} }, 400);
 })();
 
 })();
