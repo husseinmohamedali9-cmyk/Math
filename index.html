@@ -12768,8 +12768,8 @@ const K=(t,n)=>({t,n}),ATH_M=[K('اللّهُ لَا إِلَهَ إِلَّا �
 K('أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1),K('اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ',1),
 K('اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ (سيد الاستغفار)',1),K('سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',100),K('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',10),K('أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ',100)];
 const ATH_E=ATH_M.map((x,i)=>i===4?K('أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1):i===5?K('اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ',1):x),ATH_A=[K('أَسْتَغْفِرُ اللَّهَ',3),K('سُبْحَانَ اللَّهِ',33),K('الْحَمْدُ لِلَّهِ',33),K('اللَّهُ أَكْبَرُ',33),K('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1)];
-function prayer(){const o=ov('fxPr','🕌 المواقيت والأذكار');let tab='t',tm;const tabs=[['t','🕌 المواقيت'],['morning','🌅 الصباح'],['evening','🌇 المساء'],['after','📿 بعد الصلاة'],['other','✨ أخرى']];tabs.push(['set','⚙️ إعدادات']);
-const draw=()=>{clearInterval(tm);o.body.innerHTML=`<div class="fxprt">${tabs.map(t=>`<button class="fxx ${t[0]===tab?'on':''}" data-pt="${t[0]}">${t[1]}</button>`).join('')}</div><div id="fxPrBody"></div>`;const B=$('#fxPrBody',o.body);if(tab==='t')times(B);else if(tab==='set')sett(B);else ath(B)};
+function prayer(t0){const o=ov('fxPr','🕌 المواقيت والأذكار');let tab=(typeof t0==='string'&&t0)||'t',tm;const tabs=[['t','🕌 المواقيت'],['az','📿 الأذكار']];tabs.push(['set','⚙️ إعدادات']);
+const draw=()=>{clearInterval(tm);o.body.innerHTML=`<div class="fxprt">${tabs.map(t=>`<button class="fxx ${t[0]===tab?'on':''}" data-pt="${t[0]}">${t[1]}</button>`).join('')}</div><div id="fxPrBody"></div>`;const B=$('#fxPrBody',o.body);if(tab==='t')times(B);else if(tab==='set')sett(B);else if(window.FXAZ)window.FXAZ.mount(B);else ath(B)};
 async function times(B){B.innerHTML='<p>⏳ بجيب المواقيت…</p>';let d;try{d=await timings()}catch(e){B.innerHTML='<p>⚠️ مقدرتش أجيب المواقيت — تأكد من النت وجرّب تاني.</p>';return}
 B.innerHTML=`<div class="fxpr-hero"><span class="fxpr-moon">🌙</span><small>${E(d.h)} هـ</small><div>الصلاة الجاية: <b id="fxPrNm"></b></div><div class="fxpr-cd" id="fxPrCd"></div></div>${PN.map(x=>`<div class="fxpr-row" data-k="${x[0]}"><span>${x[2]} ${x[1]}</span><b>${f12(d.t[x[0]])}</b></div>`).join('')}<p><small>📍 ${E(d.loc)}</small> <button class="fxx" id="fxGeo">📡 استخدم موقعي</button>${LSg('fx_geo','')?'<button class="fxx" id="fxGeoX">↩️ المدينة الأساسية</button>':''}</p>`;
 const upd=()=>{if(!document.body.contains(o.el))return clearInterval(tm);const n=nextP(d);$('#fxPrNm',B).textContent=n.x[1];$('#fxPrCd',B).textContent=cdf(n.ms);B.querySelectorAll('.fxpr-row').forEach(r=>r.classList.toggle('nx',r.dataset.k===n.x[0]))};upd();tm=setInterval(upd,1000);
@@ -12796,21 +12796,21 @@ if(t.id==='fxAa'){const txt=$('#fxAt',B).value.trim();if(!txt)return tt('اكت�
 if(editing){if(editing.src==='my')saveMy(myA().map(z=>z.id===o.id?o:z));else savePR({athkar:(PR().athkar||[]).map(z=>z.id===o.id?o:z)});editing=null;tab=o.cat;tt('✅ اتحفظ');return draw()}
 const pb=$('#fxAp',B);addAll([o],pb&&pb.checked);tab=o.cat;pendForm=1;tt('✅ اتضاف — كمّل الذكر اللي بعده');return draw()}};
 if(pendForm){pendForm=0;form(null)}}
-function sett(B){const p=PR(),pm=LSg('fx_pr_mode',''),op=(v,l,c)=>`<option value="${v}" ${c===v?'selected':''}>${l}</option>`,MD=[['box','أيقونة جوه الصندوق اللي فوق'],['float','أيقونة على الشاشة (بتتداس يظهر كله)'],['section','كارت/قسم أعلى الصفحة'],['hidden','مخفية']];
-B.innerHTML=`<h4>📍 مكان ظهور المواقيت (على جهازك)</h4><select id="fxPmU">${op('','زي إعداد الموقع',pm)}${MD.map(m=>op(m[0],m[1],pm)).join('')}</select><small>الاختيار ده ليك إنت بس.</small>`+(ADM()?`<h4>🌐 الافتراضي لكل الزوار</h4><select id="fxPm">${MD.map(m=>op(m[0],m[1],p.mode||'box')).join('')}</select>
-<h4>🏙 المدينة</h4><input id="fxPc" placeholder="City (English) مثلاً Alexandria" value="${E(p.city||'Alexandria')}"><input id="fxPk" placeholder="Country مثلاً Egypt" value="${E(p.country||'Egypt')}"><select id="fxPM"><option value="5" ${(p.method||5)==5?'selected':''}>الهيئة المصرية العامة للمساحة</option><option value="4" ${p.method==4?'selected':''}>أم القرى (مكة)</option><option value="3" ${p.method==3?'selected':''}>رابطة العالم الإسلامي</option><option value="2" ${p.method==2?'selected':''}>ISNA</option><option value="1" ${p.method==1?'selected':''}>جامعة العلوم الإسلامية كراتشي</option></select><button class="fxgo" id="fxPS1" type="button">💾 حفظ</button>`:'');
-B.onchange=e=>{if(e.target.id==='fxPmU'){LSs('fx_pr_mode',e.target.value);sync();tt('✅ اتغيّر')}};
-B.onclick=e=>{if(e.target.id==='fxPS1'&&ADM()){const c=$('#fxPc',B).value.trim()||'Alexandria',k=$('#fxPk',B).value.trim()||'Egypt';if(savePR({mode:$('#fxPm',B).value,city:c,country:k,method:+$('#fxPM',B).value})){tt('✅ اتحفظ');sync()}}}}
+function sett(B){B.innerHTML='<div id="fxDnP"></div><div id="fxPrOld"></div>';if(window.FXDN)window.FXDN.panel($('#fxDnP',B));sett0($('#fxPrOld',B))}
+function sett0(B){if(!ADM()){B.innerHTML='';return}const p=PR();
+B.innerHTML=`<h4>🏙 مدينة المواقيت (للأدمن)</h4><input id="fxPc" placeholder="City (English) مثلاً Alexandria" value="${E(p.city||'Alexandria')}"><input id="fxPk" placeholder="Country مثلاً Egypt" value="${E(p.country||'Egypt')}"><select id="fxPM"><option value="5" ${(p.method||5)==5?'selected':''}>الهيئة المصرية العامة للمساحة</option><option value="4" ${p.method==4?'selected':''}>أم القرى (مكة)</option><option value="3" ${p.method==3?'selected':''}>رابطة العالم الإسلامي</option><option value="2" ${p.method==2?'selected':''}>ISNA</option><option value="1" ${p.method==1?'selected':''}>جامعة العلوم الإسلامية كراتشي</option></select><button class="fxgo" id="fxPS1" type="button">💾 حفظ المدينة</button>`;
+B.onclick=e=>{if(e.target.id==='fxPS1'&&ADM()){const c=$('#fxPc',B).value.trim()||'Alexandria',k=$('#fxPk',B).value.trim()||'Egypt';if(savePR({city:c,country:k,method:+$('#fxPM',B).value})){tt('✅ اتحفظ');pd=null;pf=0}}}}
 o.el.addEventListener('click',e=>{const b=e.target.closest('[data-pt]');if(b){tab=b.dataset.pt;draw()}});draw()}
 function autoLeft(b){if(!b.classList.contains('fxtbi')&&!b.hidden){let mx=0;document.querySelectorAll('.top-ico').forEach(z=>{if(z!==b&&!z.hidden&&z.offsetParent!==null){const r=z.getBoundingClientRect();if(r.top<110)mx=Math.max(mx,r.right)}});if(mx)b.style.left=(mx+6)+'px'}}
-let pd=null,pf=0;function sync(){const md=LSg('fx_pr_mode','')||PR().mode||'box',has=id=>$('#'+id),rm=id=>{const e=has(id);if(e)e.remove()};
+let pd=null,pf=0;function sync(){const md=window.FXDN?window.FXDN.prIcon():(LSg('fx_pr_mode','')||PR().mode||'box'),has=id=>$('#'+id),rm=id=>{const e=has(id);if(e)e.remove()};
 if(md!=='box')rm('fxPrBtn');if(md!=='float')rm('fxPrFl');if(md!=='section')rm('fxPrCard');
 if(md==='box'){let b=has('fxPrBtn');if(!b){if(!($('#sxTopBtn')||$('#gamesTopBtn')))return;b=document.createElement('button');b.className='top-ico';b.id='fxPrBtn';b.type='button';b.title='مواقيت الصلاة والأذكار';b.setAttribute('aria-label','مواقيت الصلاة');b.textContent='🕌';document.body.appendChild(b)}
 const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));if(window.FXTB)FXTB.adopt(b);autoLeft(b)}
 if(md==='float'&&!has('fxPrFl')){const b=document.createElement('button');b.id='fxPrFl';b.type='button';b.title='مواقيت الصلاة';b.textContent='🕌';document.body.appendChild(b)}
-if(md==='section'){let c=has('fxPrCard');const host=$('#sections');if(!c&&host){c=document.createElement('div');c.id='fxPrCard';c.innerHTML='<div>🕌 <b>مواقيت الصلاة والأذكار</b><div><small id="fxPcN">…</small></div></div><div class="cd" id="fxPcC"></div>';host.insertAdjacentElement('beforebegin',c)}
+if(md==='section'&&!window.FXDEEN){let c=has('fxPrCard');const host=$('#sections');if(!c&&host){c=document.createElement('div');c.id='fxPrCard';c.innerHTML='<div>🕌 <b>مواقيت الصلاة والأذكار</b><div><small id="fxPcN">…</small></div></div><div class="cd" id="fxPcC"></div>';host.insertAdjacentElement('beforebegin',c)}
 if(c&&!pd&&!pf){pf=1;timings().then(d=>{pd=d}).catch(()=>{pf=0})}if(c&&pd){const n=nextP(pd);$('#fxPcN').textContent='الجاية: '+n.x[1]+' '+f12(pd.t[n.x[0]]);$('#fxPcC').textContent=cdf(n.ms)}}}
 document.addEventListener('click',e=>{if(e.target.closest('#fxPrB,#fxPrBtn,#fxPrFl,#fxPrCard'))prayer()});
+window.FXPR={timings,nextP,f12,cdf,open:prayer,ATH:{morning:ATH_M,evening:ATH_E,after:ATH_A}};
 setInterval(sync,1000);
 })();
 </script>
@@ -12845,12 +12845,28 @@ html.fx-t-in :is(#fxTbBtn,#fxTbPanel,#fxTbar,#fxTopGrp,#fxFab,#fxProfC,.hamburge
 #fxPrFl{border-color:var(--gold);background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 62%,var(--gold)))}
 /* ===== البروفايل ===== */
 #fxProfBtn{padding:0;overflow:hidden;border-color:var(--gold)}
-#fxProfC{position:fixed;top:calc(env(safe-area-inset-top,0px) + 11px);left:50%;transform:translateX(-50%);z-index:9988;height:42px;min-width:42px;border-radius:21px;border:2px solid var(--gold);background:var(--surface);color:var(--ink);display:flex;align-items:center;gap:6px;padding:2px;cursor:pointer;box-shadow:0 3px 10px #0003;font:inherit}
+#fxProfC{position:fixed;top:calc(env(safe-area-inset-top,0px) + 9px);left:50%;transform:translateX(-50%);z-index:9988;height:46px;min-width:46px;border-radius:23px;border:2px solid var(--gold);background:var(--surface);color:var(--ink);display:flex;align-items:center;gap:7px;padding:2px 4px 2px 12px;cursor:pointer;box-shadow:0 3px 10px #0003;font:inherit;overflow:hidden}
 #fxProfC[hidden]{display:none}
-#fxProfC img{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none}
-#fxProfC span{display:none;font-size:13px;font-weight:700;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-inline:2px 10px}
-@media(min-width:600px){#fxProfC span{display:inline}}
-@media(max-width:480px){#fxProfC{left:calc(50% - 30px)}}
+#fxProfC img{width:38px;height:38px;border-radius:50%;object-fit:cover;flex:none}
+#fxProfC span{display:flex;flex-direction:column;align-items:flex-start;line-height:1.25;min-width:0;text-align:start}
+#fxProfC span b{font-size:12.5px;max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#fxProfC span i{font-style:normal;font-size:10.5px;color:var(--ink-soft);white-space:nowrap}
+#fxProfC.tight{padding:2px}
+#fxProfC.tight span{display:none}
+.pf-lv{display:inline-block;margin:4px 0;padding:3px 12px;border-radius:999px;background:var(--accent);color:var(--fxon,#fff);font-weight:700;font-size:.9rem}
+.pf-xp{height:8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden;margin:6px 0}
+.pf-xp i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:6px;transition:width .6s ease}
+.pf-xp.sm{height:5px;margin:4px 0}
+.pf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.pf-stat{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:8px;text-align:center}
+.pf-stat b{display:block;font-size:1.05rem}
+.pf-stat small{color:var(--ink-soft);font-size:.72rem}
+.pf-bdg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pf-b{background:var(--surface-2);border:1px solid var(--gold);border-radius:12px;padding:8px;text-align:center}
+.pf-b em{font-style:normal;font-size:1.6rem;display:block}
+.pf-b b{font-size:.8rem;display:block}
+.pf-b small{font-size:.68rem;color:var(--ink-soft)}
+.pf-b.off{border-color:var(--line);filter:grayscale(.9);opacity:.65}
 .fxpf{text-align:center}
 .fxpf-img{display:block;margin:0 auto;width:112px;height:112px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);box-shadow:0 6px 18px #0004;background:var(--surface-2)}
 .fxpf h3{margin:10px 0 2px}
@@ -12875,6 +12891,10 @@ html.fx-t-in :is(#fxTbBtn,#fxTbPanel,#fxTbar,#fxTopGrp,#fxFab,#fxProfC,.hamburge
 .fxq-meta{text-align:center;color:var(--ink-soft);font-size:13px;margin:4px 0}
 .fxq-bm{display:flex;gap:6px;align-items:center;margin:4px 0}
 .fxq-bm button:first-child{flex:1}
+#fxMush .fxqtabs,#fxSp .fxqtabs{display:flex;gap:6px;margin:6px 0}
+#fxMush .fxqtabs .fxx,#fxSp .fxqtabs .fxx{flex:1}
+.fxq-set{margin:8px 0}
+.fxq-set summary{cursor:pointer;padding:6px 0}
 #fxPr input[type=checkbox]{width:auto;margin:0 6px}
 .fxdh-t{margin:0 0 6px;color:var(--gold);font-size:1rem}
 #fxPr details{margin-top:8px}
@@ -12900,22 +12920,44 @@ const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));if(ht
 function themeOn(){try{const t=document.createElement('i');t.style.cssText='position:fixed;left:-9px;top:-9px;color:var(--accent)';document.body.appendChild(t);const m=getComputedStyle(t).color.match(/[\d.]+/g)||[0,0,0];t.remove();const l=(.299*m[0]+.587*m[1]+.114*m[2])/255;document.documentElement.style.setProperty('--fxon',l>.62?'#161616':'#ffffff')}catch(e){}}
 /* ===== البروفايل ===== */
 const ANON='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#cbd5e1"/><circle cx="32" cy="24" r="11" fill="#94a3b8"/><path d="M9 64c2-15 13-22 23-22s21 7 23 22z" fill="#94a3b8"/></svg>');
-const pImg=()=>LSg('fx_prof_img','')||ANON,pName=()=>LSg('fx_uname','')||'مجهول',pMode=()=>{const m=LSg('fx_prof_mode','box');return ['box','center','hidden'].includes(m)?m:'box'};
+const pImg=()=>LSg('fx_prof_img','')||ANON,pName=()=>LSg('fx_uname','')||'مجهول',pMode=()=>{const m=LSg('fx_prof_mode','center');return ['box','center','hidden'].includes(m)?m:'center'};
+const LVN=['مبتدئ','مجتهد','متميّز','محترف','خبير','أسطورة'];
+const jget=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
+function gData(){let L={t:0,L:1,name:'',into:0,per:100},S={n:0,best:0},st=null,B=[],prog={d:0,n:0},ps={};
+try{L=Fun.lv()}catch(e){}
+try{S=Fun.streak()||S;st=Fun.stageOf(S.n)}catch(e){S={n:(jget('fun_streak',{}).n||0),best:(jget('fun_streak',{}).best||0)}}
+try{const got=jget('plus_badges',{}),c=Plus.cfg();B=Plus.BADGES.filter(b=>!((c.off||{})[b[0]])).map(b=>{let v=0;try{v=b[5]()}catch(e){}const g=Plus.goal(b);return{ic:b[1],t:b[2],u:b[3],g,v,got:!!got[b[0]]||v>=g}})}catch(e){}
+try{const all=flatSecs().filter(x=>(x.s.blocks||[]).length),dn=jget('site_done',{});prog={n:all.length,d:all.filter(x=>dn[x.s.id]).length}}catch(e){}
+try{ps=Plus.st()||{}}catch(e){}
+const nm=L.name||LVN[Math.min((L.L||1)-1,LVN.length-1)];return{L,S,st,B,prog,ps,nm}}
+/* ضبط مكان الأيقونة في الحتة الفاضية بالشريط اللي فوق */
+function placePill(c){const W=innerWidth,occ=[];
+const add=el=>{if(!el||el===c||c.contains(el))return;const r=el.getBoundingClientRect(),cs=getComputedStyle(el);if(r.width<2||r.height<2||r.top>80||r.bottom<0||cs.visibility==='hidden'||cs.display==='none'||+cs.opacity===0)return;occ.push([r.left,r.right])};
+['#fxTbBtn','#fxFab','#hamburgerBtn','#notifBtn'].forEach(q=>add($(q)));$$('.topbar-in *').forEach(el=>{if(!el.children.length||el.tagName==='BUTTON')add(el)});
+occ.sort((a,b)=>a[0]-b[0]);const m=[];occ.forEach(x=>{const l=m[m.length-1];if(l&&x[0]<=l[1]+2)l[1]=Math.max(l[1],x[1]);else m.push(x.slice())});
+let best=[0,0];for(let i=0;i<m.length-1;i++){if(m[i+1][0]-m[i][1]>best[1]-best[0])best=[m[i][1],m[i+1][0]]}
+if(!m.length)best=[0,W];const gap=best[1]-best[0];
+c.classList.toggle('tight',gap<118);c.style.display=gap<50?'none':'';c.style.maxWidth=Math.max(44,gap-10)+'px';c.style.left=((best[0]+best[1])/2)+'px'}
 function syncProf(){const md=pMode(),rm=id=>{const e=$('#'+id);if(e)e.remove()};
 if(md!=='box')rm('fxProfBtn');if(md!=='center')rm('fxProfC');
 if(md==='box'){boxBtn('fxProfBtn','بروفايلي — '+pName(),`<img class="fxav" alt="" src="${E(pImg())}">`,6.4)}
 if(md==='center'){let c=$('#fxProfC');if(!c){c=document.createElement('button');c.id='fxProfC';c.type='button';c.setAttribute('aria-label','بروفايلي');document.body.appendChild(c)}
-const sp=$('#trackSplash');c.hidden=!!(sp&&!sp.classList.contains('hide'));const h=`<img alt="" src="${E(pImg())}"><span>${E(pName())}</span>`;if(c.dataset.h!==h){c.innerHTML=h;c.dataset.h=h}c.title='بروفايلي — '+pName()}
-/* صورة صغيرة جنب الاسم في مركز التحدّي */
+const sp=$('#trackSplash');c.hidden=!!(sp&&!sp.classList.contains('hide'));const g=gData(),h=`<img alt="" src="${E(pImg())}"><span><b>${E(pName())}</b><i>⭐ مستوى ${g.L.L||1}</i></span>`;if(c.dataset.h!==h){c.innerHTML=h;c.dataset.h=h}c.title='بروفايلي — '+pName();try{placePill(c)}catch(e){}}
 const nm=$('#sxHub .sxh-nm');if(nm){let a=$('.hubav',nm);if(!a){a=document.createElement('img');a.className='fxav hubav';a.alt='';nm.insertBefore(a,nm.firstChild)}if(a.getAttribute('src')!==pImg())a.src=pImg()}}
+addEventListener('resize',()=>{try{syncProf()}catch(e){}});
 function shrink(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onerror=rej;fr.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{const S=256,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d'),m=Math.min(im.width,im.height),sx=(im.width-m)/2,sy=(im.height-m)/2;x.fillStyle='#fff';x.fillRect(0,0,S,S);x.drawImage(im,sx,sy,m,m,0,0,S,S);res(c.toDataURL('image/jpeg',.82))};im.src=fr.result};fr.readAsDataURL(file)})}
-function profile(){const o=ov('fxProf','👤 بروفايلي');const draw=()=>{const md=pMode(),has=!!LSg('fx_prof_img','');
-o.body.innerHTML=`<div class="fxpf"><img class="fxpf-img" id="fxPfI" alt="" src="${E(pImg())}"><h3 id="fxPfN">${E(pName())}</h3><small>${has?'صورتك الشخصية':'صورة مجهولة — اختار صورتك لو حابب'}</small>
-<div class="fxpf-row"><button class="fxgo" id="fxPfUp" type="button">📷 اختار صورة</button>${has?'<button class="fxx" id="fxPfDel" type="button">🗑 إزالة الصورة</button>':''}<button class="fxx" id="fxPfNm" type="button">✏️ تغيير الاسم</button></div><input type="file" id="fxPfF" accept="image/*" hidden></div>
-<h4>📍 مكان الأيقونة</h4><div class="fxpf-row"><button class="fxx ${md==='box'?'on':''}" data-pm="box" type="button">📦 في الصندوق اللي فوق</button><button class="fxx ${md==='center'?'on':''}" data-pm="center" type="button">⬆️ فوق في النص</button><button class="fxx ${md==='hidden'?'on':''}" data-pm="hidden" type="button">🚫 مخفية</button></div>
-<p class="fxpf"><small>الصورة والاسم بيتحفظوا على جهازك وبيظهروا لك إنت.</small></p>`};draw();
+function profile(){const o=ov('fxProf','👤 بروفايلي');const draw=()=>{const md=pMode(),has=!!LSg('fx_prof_img',''),g=gData(),L=g.L,pct=Math.max(0,Math.min(100,Math.round((L.into||0)/(L.per||100)*100))),pg=g.prog.n?Math.round(g.prog.d/g.prog.n*100):0,gotN=g.B.filter(b=>b.got).length;
+const stg=g.st?`<div class="pf-stat"><b>${E(g.st.e||'🔥')}</b><small>${E(g.st.name||'ستريك')}</small></div>`:'';
+o.body.innerHTML=`<div class="fxpf"><img class="fxpf-img" id="fxPfI" alt="" src="${E(pImg())}"><h3 id="fxPfN">${E(pName())}</h3>
+<div class="pf-lv">⭐ مستوى ${L.L||1} — ${E(g.nm)}</div>
+<div class="pf-xp"><i style="width:${pct}%"></i></div><small>${L.t||0} XP · باقي ${Math.max(0,(L.per||100)-(L.into||0))} للمستوى الجاي</small>
+<div class="fxpf-row"><button class="fxgo" id="fxPfUp" type="button">📷 ${has?'غيّر الصورة':'اختار صورة'}</button>${has?'<button class="fxx" id="fxPfDel" type="button">🗑 إزالة الصورة</button>':''}<button class="fxx" id="fxPfNm" type="button">✏️ تغيير الاسم</button></div><input type="file" id="fxPfF" accept="image/*" hidden></div>
+<div class="pf-grid"><div class="pf-stat"><b>🔥 ${g.S.n||0}</b><small>ستريك حالي (يوم)</small></div><div class="pf-stat"><b>🏆 ${g.S.best||g.S.n||0}</b><small>أطول ستريك</small></div>${stg}<div class="pf-stat"><b>🎓 ${E(g.nm)}</b><small>التقدير</small></div><div class="pf-stat"><b>📚 ${pg}%</b><small>تقدّم المذاكرة (${g.prog.d}/${g.prog.n})</small></div><div class="pf-stat"><b>🧩 ${g.ps.qAns||0}</b><small>سؤال اتحلّ</small></div><div class="pf-stat"><b>🃏 ${g.ps.cards||0}</b><small>كارت اتراجع</small></div><div class="pf-stat"><b>🏅 ${gotN}/${g.B.length}</b><small>إنجازات</small></div></div>
+<h4>🏅 الإنجازات</h4><div class="pf-bdg">${g.B.map(b=>`<div class="pf-b ${b.got?'':'off'}"><em>${E(b.ic)}</em><b>${E(b.t)}</b><div class="pf-xp sm"><i style="width:${Math.min(100,Math.round(b.v/b.g*100))}%"></i></div><small>${Math.min(b.v,b.g)}/${b.g} ${E(b.u)}</small></div>`).join('')||'<p>الإنجازات مش مفعّلة.</p>'}</div>
+<h4>⚙️ الإعدادات</h4><div class="fxpf-row"><button class="fxx" id="fxPfDn" type="button">⚙️ ظهور المواقيت والأذكار والمصحف</button></div><h4>📍 مكان أيقونة البروفايل</h4><div class="fxpf-row"><button class="fxx ${md==='center'?'on':''}" data-pm="center" type="button">⬆️ فوق في النص (بالاسم والمستوى)</button><button class="fxx ${md==='box'?'on':''}" data-pm="box" type="button">📦 في الصندوق اللي فوق</button><button class="fxx ${md==='hidden'?'on':''}" data-pm="hidden" type="button">🚫 مخفية</button></div>
+<p class="fxpf"><small>الصورة والاسم والتقدّم بيتحفظوا على جهازك.</small></p>`};draw();
 o.el.addEventListener('click',e=>{const t=e.target;if(t.id==='fxPfUp')$('#fxPfF',o.el).click();else if(t.id==='fxPfDel'){try{localStorage.removeItem('fx_prof_img')}catch(_){}syncProf();draw()}
-else if(t.id==='fxPfNm'){o.el.remove();try{FXQ.askName(false)}catch(_){tt('تعذّر فتح تغيير الاسم')}}
+else if(t.id==='fxPfDn'){o.el.remove();if(window.FXDN)window.FXDN.settings()}else if(t.id==='fxPfNm'){o.el.remove();try{FXQ.askName(false)}catch(_){tt('تعذّر فتح تغيير الاسم')}}
 else if(t.dataset&&t.dataset.pm){LSs('fx_prof_mode',t.dataset.pm);syncProf();draw();tt('✅ اتغيّر المكان')}});
 o.el.addEventListener('change',async e=>{if(e.target.id!=='fxPfF')return;const f=e.target.files&&e.target.files[0];if(!f)return;if(!/^image\//.test(f.type))return tt('اختار ملف صورة');try{const d=await shrink(f);LSs('fx_prof_img',d);syncProf();draw();tt('✅ اتحفظت صورتك')}catch(err){tt('مقدرتش أقرا الصورة')}})}
 document.addEventListener('click',e=>{if(e.target.closest('#fxProfBtn,#fxProfC,.hubav'))profile()});
@@ -12930,13 +12972,13 @@ const a=j.data.ayahs.map(x=>[x.surah.number,x.surah.name,x.numberInSurah,x.text,
 function stripB(t){const w=t.split(' ');return norm(w[0])==='بسم'&&w.length>4?w.slice(4).join(' '):t}
 function qHtml(a){let out='';a.forEach(([s,nm,i,t])=>{if(i===1){out+=`<div class="fxq-sur">${E(nm)}</div>`;if(s!==1&&s!==9){t=stripB(t);out+='<div class="fxq-bsm">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</div>'}}out+=`<span class="fxq-a" data-s="${s}" data-i="${i}">${E(t)} <span class="fxq-n">﴿${toAr(i)}﴾</span></span> `});return out}
 const BM=()=>{try{return JSON.parse(LSg('fx_q_bm','[]'))||[]}catch(e){return[]}};
-function mush(start){const o=ov('fxMush','📖 المصحف');let page=+start||+LSg('fx_q_last','0')||0,fs=+LSg('fx_q_fs','26')||26;
+function mush(start){const o=ov('fxMush','📖 المصحف والاستماع');o.el.querySelector('.fxqh').insertAdjacentHTML('afterend','<div class="fxqtabs"><button class="fxx on" type="button" data-qt="read">📖 قراءة</button><button class="fxx" type="button" data-qt="listen">🎧 استماع</button></div>');let page=+start||+LSg('fx_q_last','0')||0,fs=+LSg('fx_q_fs','26')||26;
 const idx=()=>{const bm=BM(),last=+LSg('fx_q_last','0');
 o.body.innerHTML=`${last?`<button class="fxgo" id="fxQc" type="button" style="width:100%">📌 كمّل من صفحة ${toAr(last)}</button>`:''}
 <div class="fxq-bar"><input type="search" id="fxQs" placeholder="🔎 دوّر على سورة…" style="flex:2;min-width:140px;margin:0"><input type="number" id="fxQg" min="1" max="604" placeholder="صفحة"><button class="fxx" id="fxQgo" type="button">اذهب</button></div>
 <div class="fxq-bar"><select id="fxQj"><option value="">الأجزاء…</option>${JZ.map((p,i)=>`<option value="${p}">الجزء ${toAr(i+1)} — ص ${toAr(p)}</option>`).join('')}</select></div>
 ${bm.length?`<h4>⭐ العلامات</h4>${bm.map((b,i)=>`<div class="fxq-bm"><button class="fxx" data-bp="${b.p}" type="button">⭐ ${E(b.t)} — صفحة ${toAr(b.p)}</button><button class="fxx" data-bd="${i}" type="button" aria-label="حذف">🗑</button></div>`).join('')}`:''}
-<h4>📑 السور</h4><div class="fxq-list" id="fxQl"></div>`;
+<button class="fxx" data-qset type="button" style="width:100%;margin:6px 0">⚙️ إعدادات ظهور المصحف والمواقيت والأذكار</button><h4>📑 السور</h4><div class="fxq-list" id="fxQl"></div>`;
 const L=$('#fxQl',o.body),fill=q=>{const k=norm(q||'');L.innerHTML=SN.map((n,i)=>({n,i})).filter(x=>!k||norm(x.n).includes(k)||String(x.i+1)===k).map(x=>`<button type="button" data-sp="${SP[x.i]}"><b>${x.i+1}</b>${E(x.n)}</button>`).join('')||'<p>مفيش نتايج</p>'};fill('');$('#fxQs',o.body).oninput=e=>fill(e.target.value)};
 const read=async n=>{page=Math.max(1,Math.min(604,+n||1));LSs('fx_q_last',String(page));
 o.body.innerHTML='<p style="text-align:center">⏳ بحمّل الصفحة…</p>';let a;try{a=await qPage(page)}catch(e){o.body.innerHTML=`<p>⚠️ مقدرتش أحمّل الصفحة — تأكد من النت.</p><button class="fxgo" id="fxQr1" type="button">🔄 جرّب تاني</button><button class="fxx" id="fxQb" type="button">📑 الفهرس</button>`;return}
@@ -12949,7 +12991,8 @@ o.el.scrollTop=0;const bx=$('.fxqb',o.el);if(bx)bx.scrollTop=0;if(page<604)qPage
 o.el.addEventListener('click',e=>{const t=e.target,b=t.closest('button');
 if(t.closest('.fxq-a')){return}
 if(!b)return;
-if(b.dataset.sp)read(b.dataset.sp);else if(b.dataset.bp)read(b.dataset.bp);else if(b.dataset.bd!==undefined){const L=BM();L.splice(+b.dataset.bd,1);LSs('fx_q_bm',JSON.stringify(L));idx()}
+if(b.dataset.qt){if(b.dataset.qt==='listen'){o.el.remove();if(window.FXSP)window.FXSP.open('now')}return}
+if(b.dataset.qset){if(window.FXDN)window.FXDN.settings()}else if(b.dataset.qm){LSs('fx_qr_mode',b.dataset.qm);syncQr();try{FXDEEN.sync()}catch(_){}idx();tt('✅ اتغيّر')}else if(b.dataset.qd){try{site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{qrmode:b.dataset.qd});scheduleSave();tt('✅ اتحفظ للكل');try{FXDEEN.sync()}catch(_){}idx()}catch(_){tt('تعذّر الحفظ')}}else if(b.dataset.sp)read(b.dataset.sp);else if(b.dataset.bp)read(b.dataset.bp);else if(b.dataset.bd!==undefined){const L=BM();L.splice(+b.dataset.bd,1);LSs('fx_q_bm',JSON.stringify(L));idx()}
 else if(b.id==='fxQc')read(LSg('fx_q_last','1'));else if(b.id==='fxQgo'){const v=+$('#fxQg',o.el).value;if(v>=1&&v<=604)read(v);else tt('اكتب رقم من 1 لـ 604')}
 else if(b.id==='fxQb')idx();else if(b.id==='fxQr1')read(page);
 else if(b.id==='fxQpv')read(page-1);else if(b.id==='fxQnx')read(page+1);
@@ -12958,9 +13001,10 @@ else if(b.id==='fxQk'){const L=BM(),i=L.findIndex(x=>x.p===page);if(i>=0){L.spli
 o.el.addEventListener('change',e=>{if(e.target.id==='fxQj'&&e.target.value)read(e.target.value)});
 o.el.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='fxQg'){const v=+e.target.value;if(v>=1&&v<=604)read(v)}});
 page?read(page):idx()}
-function syncQr(){boxBtn('fxQrBtn','المصحف','📖',6.5)}
+const qrMode=()=>{try{return window.FXDN?window.FXDN.get('qr'):'box'}catch(e){return'box'}};
+function syncQr(){const m=qrMode();if(m==='box'||m==='both')boxBtn('fxQrBtn','المصحف والاستماع','📖',6.5);else{const e=$('#fxQrBtn');if(e)e.remove()}}
 document.addEventListener('click',e=>{if(e.target.closest('#fxQrBtn'))mush()});
-window.FXMUSH={open:mush,profile,SN};
+window.FXMUSH={open:mush,profile,SN,mode:qrMode,sync:()=>{try{syncQr()}catch(e){}}};
 setInterval(()=>{try{syncProf();syncQr();themeOn()}catch(e){}},700);setInterval(()=>{try{ovTick()}catch(e){}},120);
 })();
 </script>
@@ -13052,7 +13096,7 @@ const saveMy=a=>LSs('fx_sp_my',JSON.stringify(a));
 const myAll=()=>PUB().map(x=>({...x,src:'pub'})).concat(MY().map(x=>({...x,src:'my'})));
 /* ---------- الواجهة ---------- */
 let O=null;
-function open(v){O=ov('fxSp','🎧 القرآن الكريم');view=v||(cur()?'now':(myAll().length?'my':'lib'));O.el.addEventListener('click',onClick);O.el.addEventListener('input',onInput);O.el.addEventListener('change',onInput);paint(true);miniSync()}
+function open(v){O=ov('fxSp','📖 المصحف والاستماع');O.el.querySelector('.fxqh').insertAdjacentHTML('afterend','<div class="fxqtabs"><button class="fxx" type="button" data-qt="read">📖 قراءة</button><button class="fxx on" type="button" data-qt="listen">🎧 استماع</button></div>');view=v||(cur()?'now':(myAll().length?'my':'lib'));O.el.addEventListener('click',onClick);O.el.addEventListener('input',onInput);O.el.addEventListener('change',onInput);paint(true);miniSync()}
 const tabs=()=>[['now','🎧 الآن'],['lib','🎙 المقرئين'],['my','⭐ قائمتي']].map(t=>`<button class="fxx ${view===t[0]||(t[0]==='lib'&&view==='rec')?'on':''}" data-v="${t[0]}" type="button">${t[1]}</button>`).join('');
 function artOf(c){return `<div class="sp-art"><div><i>📖</i><b>${E(c?c.title:'القرآن الكريم')}</b></div></div>`}
 async function paint(force){if(!O||!document.body.contains(O.el))return;
@@ -13070,6 +13114,7 @@ function form(){const F=$('#spF',O.body),adm=ADM();F.innerHTML=`<h4>➕ مقطع
 function addItem(o,pub){if(pub&&ADM()){return savePub(PUB().concat([o]))}saveMy(MY().concat([o]));return true}
 function onInput(e){if(e.target.id==='spSeek'){if(isFinite(A.duration))A.currentTime=A.duration*e.target.value/1000}}
 function onClick(e){const t=e.target,b=t.closest('button'),row=t.closest('.sp-row');
+if(b&&b.dataset.qt){if(b.dataset.qt==='read'){O.el.remove();miniSync();if(window.FXMUSH)window.FXMUSH.open()}return}
 if(b&&b.dataset.v){view=b.dataset.v;return paint(true)}
 if(b){const id=b.id;
 if(id==='spPP')return toggle();if(id==='spNext')return next(false);if(id==='spPrev')return prev();
@@ -13097,11 +13142,155 @@ $('.m-t b',m).textContent=c.title;$('.m-t small',m).textContent=c.sub||'';$('.m-
 setInterval(()=>{try{if(cur())miniSync()}catch(e){}},900);
 /* ---------- أيقونة في البوكس ---------- */
 function autoLeft(b){if(!b.classList.contains('fxtbi')&&!b.hidden){let mx=0;$$('.top-ico').forEach(z=>{if(z!==b&&!z.hidden&&z.offsetParent!==null){const r=z.getBoundingClientRect();if(r.top<110)mx=Math.max(mx,r.right)}});if(mx)b.style.left=(mx+6)+'px'}}
-function syncBtn(){let b=$('#fxSpBtn');if(!b){if(!($('#sxTopBtn')||$('#gamesTopBtn')))return;b=document.createElement('button');b.className='top-ico';b.id='fxSpBtn';b.type='button';b.title='القرآن الكريم (صوت)';b.setAttribute('aria-label','القرآن الكريم (صوت)');b.textContent='🎧';document.body.appendChild(b);b.dataset.fxo=6.6}
-const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));if(window.FXTB)FXTB.adopt(b);autoLeft(b)}
+function syncBtn(){const e=$('#fxSpBtn');if(e)e.remove()}
 document.addEventListener('click',e=>{if(e.target.closest('#fxSpBtn'))open()});
 setInterval(()=>{try{syncBtn()}catch(e){}},700);
 window.FXSP={open,play:playList};
+})();
+</script>
+
+<style id="fxCss6">
+/* ===== صف المواقيت / الأذكار / المصحف في الصفحة ===== */
+#fxDeen{width:calc(100% - 32px);max-width:560px;margin:8px auto}
+.dn-row{display:grid;gap:8px;grid-template-columns:repeat(var(--dn-n,3),minmax(0,1fr))}
+.dn-card{border:0;cursor:pointer;font:inherit;text-align:center;padding:9px 6px;border-radius:14px;color:var(--fxon,#fff);background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 62%,var(--gold)));box-shadow:0 4px 12px color-mix(in srgb,var(--accent) 30%,transparent);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:68px;transition:transform .15s ease,box-shadow .2s}
+.dn-card:active{transform:scale(.97)}
+.dn-card b{font-size:.88rem;line-height:1.3}
+.dn-card small{font-size:.7rem;opacity:.92;line-height:1.25}
+.dn-card .cd{font-size:.95rem;font-weight:800;direction:ltr;font-variant-numeric:tabular-nums}
+.dn-card .ar{display:inline-block;transition:transform .3s ease}
+.dn-card.open .ar{transform:rotate(180deg)}
+.dn-card.az{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 70%,var(--gold)),color-mix(in srgb,var(--gold) 80%,var(--accent)))}
+.dn-card.qr{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 85%,#000),var(--accent))}
+/* حركة الفتح الناعمة */
+.az-wrap{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .38s ease,opacity .3s ease}
+.az-wrap.open{grid-template-rows:1fr;opacity:1}
+.az-wrap>.az-in{overflow:hidden;min-height:0}
+#fxDeenAz{margin-top:8px}
+.az-box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px}
+.az-cat{width:100%;display:flex;align-items:center;gap:8px;padding:10px;border:0;border-radius:12px;background:var(--surface-2);color:var(--ink);font:inherit;cursor:pointer;margin:3px 0;text-align:start}
+.az-cat b{flex:1}
+.az-cat small{color:var(--ink-soft)}
+.az-cat .ar{transition:transform .3s ease}
+.az-cat.open .ar{transform:rotate(180deg)}
+.az-items{padding:2px 2px 6px}
+.az-it{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;margin:6px 0;text-align:center}
+.az-it h5{margin:0 0 6px;color:var(--gold);font-size:.95rem}
+.az-it p{margin:0 0 8px;line-height:2;font-family:'Amiri Quran','Amiri',serif;font-size:1.1rem}
+.az-it.done{opacity:.5}
+.az-cnt{min-width:58px;height:58px;border-radius:50%;border:3px solid var(--gold);background:var(--surface-2);color:var(--ink);font:inherit;font-weight:800;font-size:1.05rem;cursor:pointer}
+.az-tools{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:4px 0}
+.az-btn{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
+.az-btn.pri{background:var(--accent);color:var(--fxon,#fff);border-color:var(--accent)}
+.az-form{border:1px dashed var(--line);border-radius:12px;padding:8px;margin:6px 0;text-align:start}
+.az-form input,.az-form textarea,.az-form select{width:100%;box-sizing:border-box;margin:4px 0;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit}
+.az-form input[type=checkbox]{width:auto;margin:0 6px}
+#fxDeen{position:relative;margin-top:16px}
+.dn-gear{position:absolute;top:-13px;inset-inline-start:-6px;z-index:2;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:13px;padding:0;box-shadow:0 2px 6px #0002}
+.dn-sz-s .dn-card{min-height:48px;padding:5px}.dn-sz-s .dn-card b{font-size:.8rem}.dn-sz-s .dn-card small{display:none}
+.dn-sz-l .dn-card{min-height:96px;padding:14px 8px}.dn-sz-l .dn-card b{font-size:1.05rem}.dn-sz-l .dn-card small{font-size:.8rem}
+.dn-seg{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.dn-set h4{margin:14px 0 4px}
+.dn-chk{display:flex;align-items:center;justify-content:flex-start;gap:8px;margin:6px 0}.dn-chk input{width:auto!important;flex:none;margin:0}
+.dn-ord{display:flex;align-items:center;gap:6px;margin:4px 0}.dn-ord span{flex:1}
+#fxDn .fxqb{width:min(520px,98vw);max-height:94vh}
+</style>
+<script id="fxJs6">
+(function(){
+const $=(q,r)=>(r||document).querySelector(q),$$=(q,r)=>[...(r||document).querySelectorAll(q)];
+const E=v=>String(v==null?'':v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LSg=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},LSs=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const tt=m=>{try{toast(m)}catch(e){}};
+const ADM=()=>{try{return typeof isAdmin!=='undefined'&&!!isAdmin}catch(e){return false}};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const PR=()=>{try{return site.meta.fx.pr||{}}catch(e){return{}}};
+function savePR(q){try{site.meta=site.meta||{};const fx=site.meta.fx=Object.assign({},site.meta.fx);fx.pr=Object.assign({},fx.pr,q);scheduleSave();return true}catch(e){tt('تعذّر الحفظ');return false}}
+const K=(t,n,ti)=>({t,n,ti:ti||''});
+const TM=['آية الكرسي','سورة الإخلاص','سورة الفلق','سورة الناس','أصبحنا وأصبح الملك لله','اللهم بك أصبحنا','سيد الاستغفار','التسبيح','التهليل','الاستغفار'],TE=['آية الكرسي','سورة الإخلاص','سورة الفلق','سورة الناس','أمسينا وأمسى الملك لله','اللهم بك أمسينا','سيد الاستغفار','التسبيح','التهليل','الاستغفار'],TA=['الاستغفار','التسبيح','التحميد','التكبير','التهليل'];
+const STUDY=[K('رَبِّ زِدْنِي عِلْمًا',1,'دعاء زيادة العلم'),K('رَبِّ اشْرَحْ لِي صَدْرِي ۝ وَيَسِّرْ لِي أَمْرِي ۝ وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي ۝ يَفْقَهُوا قَوْلِي',1,'دعاء تيسير الأمر'),K('اللَّهُمَّ انْفَعْنِي بِمَا عَلَّمْتَنِي، وَعَلِّمْنِي مَا يَنْفَعُنِي، وَزِدْنِي عِلْمًا',1,'اللهم انفعني بما علمتني'),K('اللَّهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلْتَهُ سَهْلًا، وَأَنْتَ تَجْعَلُ الْحَزْنَ إِذَا شِئْتَ سَهْلًا',1,'اللهم لا سهل إلا ما جعلته سهلا')];
+function builtin(){const P=window.FXPR&&window.FXPR.ATH||{};const nm=(a,t)=>(a||[]).map((x,i)=>K(x.t,x.n,t[i]||''));
+return[{id:'morning',ic:'🌅',name:'أذكار الصباح',items:nm(P.morning,TM)},{id:'evening',ic:'🌇',name:'أذكار المساء',items:nm(P.evening,TE)},{id:'after',ic:'📿',name:'أذكار بعد الصلاة',items:nm(P.after,TA)},{id:'study',ic:'📚',name:'أذكار المذاكرة',items:STUDY}]}
+const myCats=()=>{try{return JSON.parse(LSg('fx_az_cats','[]'))||[]}catch(e){return[]}},saveCats=a=>LSs('fx_az_cats',JSON.stringify(a));
+const myItems=()=>{try{return JSON.parse(LSg('fx_my_athkar','[]'))||[]}catch(e){return[]}},saveItems=a=>LSs('fx_my_athkar',JSON.stringify(a));
+function cats(){const B=builtin().map(c=>({...c,src:'b'})),pub=(PR().cats||[]).map(c=>({id:c.id,ic:c.ic||'📿',name:c.name,items:[],src:'pub'})),my=myCats().map(c=>({id:c.id,ic:c.ic||'📿',name:c.name,items:[],src:'my'}));
+const all=B.concat(pub,my),byId={};all.forEach(c=>byId[c.id]=c);
+(PR().athkar||[]).forEach(x=>{const c=byId[x.cat]||byId.other||(byId.other={id:'other',ic:'✨',name:'أذكار أخرى',items:[],src:'b'},all.push(byId.other),byId.other);c.items.push({...x,src:'pub'})});
+myItems().forEach(x=>{const c=byId[x.cat]||byId.other||(byId.other={id:'other',ic:'✨',name:'أذكار أخرى',items:[],src:'b'},all.push(byId.other),byId.other);c.items.push({...x,src:'my'})});
+return all}
+/* ---------- قايمة الأقسام (أكورديون ناعم) ---------- */
+const OPEN=new Set();
+function mount(host){host.classList.add('az-box');let edit=null,formFor=null;
+const render=()=>{const C=cats(),adm=ADM();
+host.innerHTML=C.map(c=>{const open=OPEN.has(c.id),can=c.src==='my'||(c.src==='pub'&&adm);return `<button class="az-cat ${open?'open':''}" data-c="${E(c.id)}" type="button"><span>${E(c.ic)}</span><b>${E(c.name)}</b><small>${c.items.length}</small><span class="ar">▾</span></button>
+<div class="az-wrap ${open?'open':''}" data-w="${E(c.id)}"><div class="az-in"><div class="az-items">${c.items.map((x,i)=>{const can2=x.src==='my'||(x.src==='pub'&&adm);return `<div class="az-it" data-n="${x.n}">${x.ti?`<h5>${E(x.ti)}</h5>`:''}<p>${E(x.t)}</p><button class="az-cnt" data-k="${x.n}" type="button">${x.n>1?x.n:'تم'}</button>${can2?`<div class="az-tools"><button class="az-btn" data-ed="${E(c.id)}|${i}" type="button">✏️ تعديل</button><button class="az-btn" data-del="${E(c.id)}|${i}" type="button">🗑 حذف</button></div>`:''}</div>`}).join('')||'<p style="text-align:center;opacity:.7">لسه مفيش أذكار هنا.</p>'}
+<div class="az-tools"><button class="az-btn pri" data-add="${E(c.id)}" type="button">➕ ضيف ذكر</button>${can?`<button class="az-btn" data-delcat="${E(c.id)}" type="button">🗑 احذف القسم</button>`:''}</div><div data-f="${E(c.id)}"></div></div></div></div>`}).join('')+`<div class="az-tools"><button class="az-btn pri" data-newcat type="button">➕ قسم جديد (زي أذكار النوم)</button></div><div data-fc></div>`;
+if(formFor)form(formFor,edit)};
+const form=(cid,ed)=>{const F=$(`[data-f="${cid}"]`,host);if(!F)return;const C=cats();F.innerHTML=`<div class="az-form"><b>${ed?'✏️ تعديل ذكر':'➕ ذكر جديد'}</b><select data-fc2>${C.map(c=>`<option value="${E(c.id)}" ${c.id===cid?'selected':''}>${E(c.ic)} ${E(c.name)}</option>`).join('')}</select><input data-ft placeholder="اسم الذكر (اكتبه براحتك)" value="${E(ed?ed.ti:'')}"><textarea data-fx rows="3" placeholder="نص الذكر">${E(ed?ed.t:'')}</textarea><input data-fn type="number" min="1" value="${ed?ed.n:1}" placeholder="عدد التكرار">${ADM()&&!ed?'<label><input type="checkbox" data-fp> 📢 انشره لكل الزوار</label>':''}<div class="az-tools"><button class="az-btn pri" data-save type="button">${ed?'💾 حفظ':'➕ أضف وكمّل'}</button><button class="az-btn" data-done type="button">✔ خلاص</button></div>${ed?'':'<details><summary>➕ أضف كذا ذكر مرة واحدة</summary><textarea data-fb rows="4" placeholder="كل سطر ذكر:&#10;اسم الذكر | نص الذكر | العدد"></textarea><button class="az-btn pri" data-bulk type="button">➕ أضف الكل</button></details>'}</div>`;F.scrollIntoView({block:'nearest',behavior:'smooth'})};
+host.onclick=e=>{const t=e.target,b=t.closest('button');if(!b)return;
+if(b.dataset.c){const id=b.dataset.c,w=$(`[data-w="${id}"]`,host),o=!w.classList.contains('open');w.classList.toggle('open',o);b.classList.toggle('open',o);o?OPEN.add(id):OPEN.delete(id);return}
+if(b.dataset.k!==undefined){const k=+b.dataset.k,cur=b.dataset.cur==null?k:+b.dataset.cur;if(cur>0){const n=cur-1;b.dataset.cur=n;b.textContent=n>0?n:'✓';if(n<=0)b.closest('.az-it').classList.add('done')}return}
+if(b.dataset.add){formFor=b.dataset.add;edit=null;return form(b.dataset.add,null)}
+if(b.dataset.ed){const[c,i]=b.dataset.ed.split('|'),x=cats().find(z=>z.id===c).items[+i];edit={...x,cat:c};formFor=c;return form(c,edit)}
+if(b.dataset.del){const[c,i]=b.dataset.del.split('|'),x=cats().find(z=>z.id===c).items[+i];if(!confirm('تمسح الذكر ده؟'))return;if(x.src==='my')saveItems(myItems().filter(z=>z.id!==x.id));else if(ADM())savePR({athkar:(PR().athkar||[]).filter(z=>z.id!==x.id)});return render()}
+if(b.dataset.delcat){const id=b.dataset.delcat,c=cats().find(z=>z.id===id);if(!confirm('تمسح القسم "'+c.name+'" بكل أذكاره؟'))return;if(c.src==='my'){saveCats(myCats().filter(z=>z.id!==id));saveItems(myItems().filter(z=>z.cat!==id))}else if(ADM()){savePR({cats:(PR().cats||[]).filter(z=>z.id!==id),athkar:(PR().athkar||[]).filter(z=>z.cat!==id)})}OPEN.delete(id);return render()}
+if(b.hasAttribute('data-newcat')){const F=$('[data-fc]',host);F.innerHTML=`<div class="az-form"><b>➕ قسم جديد</b><input data-cn placeholder="اسم القسم (مثلاً: أذكار النوم)"><input data-ci placeholder="رمز (إيموجي اختياري) 🌙" maxlength="4">${ADM()?'<label><input type="checkbox" data-cp> 📢 انشره لكل الزوار</label>':''}<div class="az-tools"><button class="az-btn pri" data-csave type="button">💾 احفظ القسم</button><button class="az-btn" data-cx type="button">إلغاء</button></div></div>`;F.scrollIntoView({block:'nearest',behavior:'smooth'});return}
+if(b.hasAttribute('data-cx')){$('[data-fc]',host).innerHTML='';return}
+if(b.hasAttribute('data-csave')){const n=$('[data-cn]',host).value.trim();if(!n)return tt('اكتب اسم القسم');const o={id:'c'+uid(),name:n,ic:$('[data-ci]',host).value.trim()||'📿'},p=$('[data-cp]',host);if(p&&p.checked&&ADM())savePR({cats:(PR().cats||[]).concat([o])});else saveCats(myCats().concat([o]));OPEN.add(o.id);tt('✅ اتضاف القسم');return render()}
+if(b.hasAttribute('data-done')){formFor=null;edit=null;return render()}
+const fm=b.closest('.az-form');
+if(b.hasAttribute('data-bulk')&&fm){const cat=$('[data-fc2]',fm).value,arr=$('[data-fb]',fm).value.split('\n').map(l=>l.split('|').map(s=>s.trim())).filter(p=>p.some(Boolean)).map(p=>p.length>=3?{ti:p[0],t:p[1],n:p[2]}:p.length===2?{ti:p[0],t:p[1],n:1}:{ti:'',t:p[0],n:1}).filter(o=>o.t).map(o=>({id:uid(),cat,ti:o.ti,t:o.t,n:Math.max(1,+o.n||1)}));if(!arr.length)return tt('اكتب ذكر واحد على الأقل');const pb=$('[data-fp]',fm);if(pb&&pb.checked&&ADM())savePR({athkar:(PR().athkar||[]).concat(arr)});else saveItems(myItems().concat(arr));OPEN.add(cat);formFor=cat;tt('✅ اتضاف '+arr.length+' ذكر');return render()}
+if(b.hasAttribute('data-save')&&fm){const txt=$('[data-fx]',fm).value.trim();if(!txt)return tt('اكتب نص الذكر');const cat=$('[data-fc2]',fm).value,o={id:edit&&edit.id||uid(),cat,ti:$('[data-ft]',fm).value.trim(),t:txt,n:Math.max(1,+$('[data-fn]',fm).value||1)};
+if(edit){if(edit.src==='my')saveItems(myItems().map(z=>z.id===o.id?o:z));else savePR({athkar:(PR().athkar||[]).map(z=>z.id===o.id?o:z)});edit=null;formFor=null;OPEN.add(cat);tt('✅ اتحفظ');return render()}
+const pb=$('[data-fp]',fm);if(pb&&pb.checked&&ADM())savePR({athkar:(PR().athkar||[]).concat([o])});else saveItems(myItems().concat([o]));OPEN.add(cat);formFor=cat;tt('✅ اتضاف — كمّل اللي بعده');return render()}};
+render()}
+/* ---------- إعدادات الظهور (مواقيت / أذكار / مصحف) ---------- */
+const DEF={pr:'page',az:'page',qr:'page',layout:'row',size:'m',azopen:'inline',cd:true,order:['pr','az','qr']};
+const PLACES={pr:[['page','📄 في الصفحة'],['box','📦 في الصندوق'],['both','📄+📦 الاتنين'],['float','🔘 أيقونة عايمة'],['hidden','🚫 مخفية']],az:[['page','📄 في الصفحة'],['box','📦 في الصندوق'],['both','📄+📦 الاتنين'],['hidden','🚫 مخفية']],qr:[['page','📄 في الصفحة'],['box','📦 في الصندوق'],['both','📄+📦 الاتنين'],['hidden','🚫 مخفية']]};
+const LEG=()=>{const m=LSg('fx_pr_mode','')||PR().mode||'';return m==='box'?{pr:'box',az:'box'}:m==='float'?{pr:'float',az:'hidden'}:m==='hidden'?{pr:'hidden',az:'hidden'}:{}};
+const siteDn=()=>{try{return site.meta.fx.dn||{}}catch(e){return{}}};
+const perDn=()=>{try{return JSON.parse(LSg('fx_dn','{}'))||{}}catch(e){return{}}};
+function cfg(){const c=Object.assign({},DEF,LEG(),siteDn(),perDn());const o=(Array.isArray(c.order)?c.order:[]).filter(k=>DEF.order.includes(k));DEF.order.forEach(k=>{if(!o.includes(k))o.push(k)});c.order=o;['pr','az','qr'].forEach(k=>{if(!PLACES[k].some(p=>p[0]===c[k]))c[k]=DEF[k]});return c}
+function setP(patch){LSs('fx_dn',JSON.stringify(Object.assign({},perDn(),patch)));apply()}
+const onPage=k=>{const p=cfg()[k];return p==='page'||p==='both'},inBox=k=>{const p=cfg()[k];return p==='box'||p==='both'};
+function apply(){try{syncRow();syncIcons();if(window.FXMUSH&&window.FXMUSH.sync)window.FXMUSH.sync()}catch(e){}}
+function panel(host){const c=cfg(),adm=ADM();const seg=(key,list,cur)=>`<div class="dn-seg">${list.map(p=>`<button class="az-btn ${cur===p[0]?'pri':''}" data-k="${key}" data-v="${p[0]}" type="button">${p[1]}</button>`).join('')}</div>`;
+const NM={pr:'🕌 مواقيت الصلاة',az:'📿 الأذكار',qr:'📖 المصحف والمقرئين'};
+host.innerHTML=`<div class="dn-set"><h4>📐 شكل العرض في الصفحة</h4>${seg('layout',[['row','↔️ جنب بعض'],['grid2','▦ اتنين اتنين'],['stack','☰ تحت بعض']],c.layout)}<small>حجم الخانات</small>${seg('size',[['s','صغير'],['m','عادي'],['l','كبير']],c.size)}
+<h4>${NM.pr}</h4>${seg('pr',PLACES.pr,c.pr)}<label class="dn-chk"><input type="checkbox" data-cd ${c.cd?'checked':''}> إظهار العدّاد للصلاة الجاية في الخانة</label>
+<h4>${NM.az}</h4>${seg('az',PLACES.az,c.az)}<small>طريقة فتح الأذكار</small>${seg('azopen',[['inline','▾ تتفتح تحت الخانة'],['window','🗔 في نافذة']],c.azopen)}
+<h4>${NM.qr}</h4>${seg('qr',PLACES.qr,c.qr)}
+<h4>↕️ ترتيب الخانات</h4>${c.order.map((k,i)=>`<div class="dn-ord"><span>${NM[k]}</span><button class="az-btn" data-up="${i}" type="button" ${i?'':'disabled'}>▲</button><button class="az-btn" data-dn2="${i}" type="button" ${i<c.order.length-1?'':'disabled'}>▼</button></div>`).join('')}
+<div class="az-tools" style="margin-top:12px"><button class="az-btn" data-reset type="button">↺ رجّع الافتراضي (ليا)</button>${adm?'<button class="az-btn pri" data-pubdef type="button">🌐 احفظ دي كافتراضي لكل الزوار</button>':''}</div><small>الإعدادات دي بتتطبّق على جهازك. ${adm?'والزرار اللي فوق بيخلّيها الافتراضي لأي زائر لسه ماغيّرش.':''}</small></div>`;
+host.onclick=e=>{const b=e.target.closest('button');if(!b)return;
+if(b.dataset.k){const v=b.dataset.v;setP({[b.dataset.k]:v});return panel(host)}
+if(b.dataset.up!==undefined||b.dataset.dn2!==undefined){const o=cfg().order.slice(),i=+(b.dataset.up!==undefined?b.dataset.up:b.dataset.dn2),j=b.dataset.up!==undefined?i-1:i+1;[o[i],o[j]]=[o[j],o[i]];setP({order:o});return panel(host)}
+if(b.hasAttribute('data-reset')){try{localStorage.removeItem('fx_dn')}catch(_){}apply();tt('✅ رجعت الافتراضي');return panel(host)}
+if(b.hasAttribute('data-pubdef')){try{site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{dn:cfg()});scheduleSave();tt('✅ اتحفظت كافتراضي للكل')}catch(_){tt('تعذّر الحفظ')}}};
+host.onchange=e=>{if(e.target.hasAttribute('data-cd')){setP({cd:e.target.checked})}}}
+function settings(){const old=$('#fxDn');if(old)old.remove();const o=document.createElement('div');o.id='fxDn';o.className='fxov';o.innerHTML='<div class="fxqb"><div class="fxqh"><b>⚙️ إعدادات المواقيت والأذكار والمصحف</b><button class="fxx" data-fxc type="button" aria-label="إغلاق">✕</button></div><div class="fxbody az-box" style="border:0"></div></div>';document.body.appendChild(o);o.addEventListener('click',e=>{if(e.target.closest('[data-fxc]')||e.target===o)o.remove()});panel($('.fxbody',o))}
+/* ---------- أيقونات الصندوق (للأذكار) ---------- */
+function autoLeft(b){if(!b.classList.contains('fxtbi')&&!b.hidden){let mx=0;$$('.top-ico').forEach(z=>{if(z!==b&&!z.hidden&&z.offsetParent!==null){const r=z.getBoundingClientRect();if(r.top<110)mx=Math.max(mx,r.right)}});if(mx)b.style.left=(mx+6)+'px'}}
+function boxBtn(id,title,html,ord){let b=$('#'+id);if(!b){if(!($('#sxTopBtn')||$('#gamesTopBtn')))return;b=document.createElement('button');b.className='top-ico';b.id=id;b.type='button';b.title=title;b.setAttribute('aria-label',title);b.textContent=html;document.body.appendChild(b);b.dataset.fxo=ord}
+const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));if(window.FXTB)FXTB.adopt(b);autoLeft(b)}
+function syncIcons(){if(inBox('az'))boxBtn('fxAzBtn','الأذكار','📿',6.45);else{const e=$('#fxAzBtn');if(e)e.remove()}}
+document.addEventListener('click',e=>{if(e.target.closest('#fxAzBtn')&&window.FXPR)window.FXPR.open('az')});
+/* ---------- صف الصفحة ---------- */
+let pd=null,pf=0;
+function syncRow(){const c=cfg(),host=$('#sections'),keys=c.order.filter(onPage);let r=$('#fxDeen');const old=$('#fxPrCard');if(old)old.remove();
+if(!keys.length||!host){if(r)r.remove();return}
+const sig=JSON.stringify([keys,c.layout,c.size,c.azopen,c.cd]);if(r&&r.dataset.sig!==sig){r.remove();r=null}
+if(!r){const cols=c.layout==='stack'?1:c.layout==='grid2'?2:keys.length;
+const card={pr:`<button class="dn-card pr" data-dn="pr" type="button"><b>🕌 مواقيت الصلاة</b><small id="dnN">…</small>${c.cd?'<span class="cd" id="dnC"></span>':''}</button>`,az:`<button class="dn-card az" data-dn="az" type="button"><b>📿 أذكار <span class="ar">${c.azopen==='inline'?'▾':'◂'}</span></b><small>الصباح · المساء · المذاكرة…</small></button>`,qr:`<button class="dn-card qr" data-dn="qr" type="button"><b>📖 المصحف</b><small>قراءة واستماع</small></button>`};
+r=document.createElement('div');r.id='fxDeen';r.dataset.sig=sig;r.className='dn-sz-'+c.size;
+r.innerHTML=`<button class="dn-gear" data-dn="set" type="button" aria-label="إعدادات" title="إعدادات الظهور">⚙️</button><div class="dn-row" style="--dn-n:${cols}">${keys.map(k=>card[k]).join('')}</div>${keys.includes('az')&&c.azopen==='inline'?'<div class="az-wrap" id="fxDeenAz"><div class="az-in"><div id="fxDeenAzList"></div></div></div>':''}`;
+host.insertAdjacentElement('beforebegin',r);
+r.addEventListener('click',e=>{const b=e.target.closest('[data-dn]');if(!b)return;const k=b.dataset.dn;
+if(k==='set')settings();else if(k==='pr'&&window.FXPR)window.FXPR.open();else if(k==='qr'&&window.FXMUSH)window.FXMUSH.open();
+else if(k==='az'){if(cfg().azopen==='window'){if(window.FXPR)window.FXPR.open('az');return}const w=$('#fxDeenAz',r),l=$('#fxDeenAzList',r),o2=!w.classList.contains('open');if(o2&&!l.dataset.m){l.dataset.m=1;mount(l)}w.classList.toggle('open',o2);b.classList.toggle('open',o2)}})}
+if(keys.includes('pr')&&window.FXPR){if(!pd&&!pf){pf=1;window.FXPR.timings().then(d=>{pd=d}).catch(()=>{pf=0})}const N=$('#dnN',r),C=$('#dnC',r);if(pd&&N){const n=window.FXPR.nextP(pd);N.textContent=n.x[1]+' '+window.FXPR.f12(pd.t[n.x[0]]);if(C)C.textContent=window.FXPR.cdf(n.ms)}}}
+window.FXAZ={mount};window.FXDEEN={sync:syncRow};
+window.FXDN={get:k=>cfg()[k],cfg,settings,panel,apply,prIcon:()=>{const p=cfg().pr;return p==='box'||p==='both'?'box':p==='float'?'float':'hidden'}};
+setInterval(()=>{try{syncRow();syncIcons()}catch(e){}},1000);
 })();
 </script>
 
