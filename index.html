@@ -8540,7 +8540,7 @@ const Plus = {
       case 'show': r.show=true; this.paint(); break;
       case 'g': this.grade(+a.dataset.g); break;
       case 'qstart': { let qs=this.harvest().qs; const s=a.dataset.s; qs=s?qs.filter(x=>x.sec===s):this.shuffle(qs).slice(0,10);
-        this.run={m:'quiz',sec:s,items:this.shuffle(qs).map(x=>Object.assign({},x,{o2:this.shuffle(x.o)})),i:0,ok:0,n:0,pick:-1}; this.paint(); break; }
+        this.run={m:'quiz',nav:true,ans:[],sec:s,items:this.shuffle(qs).map(x=>Object.assign({},x,{o2:this.shuffle(x.o)})),i:0,ok:0,n:0,pick:-1}; this.paint(); break; }
       case 'wstart': { const W=Object.values(lsGet('plus_wrong',{})); this.run={m:'wrong',items:this.shuffle(W).map(x=>Object.assign({},x,{o2:x.o?this.shuffle(x.o):null})),i:0,ok:0,n:0,pick:-1,show:false}; this.paint(); break; }
       case 'wclear': if(confirm('تمسح كل الأغلاط؟')){ lsSet('plus_wrong',{}); this.paint(); } break;
       case 'ans': { const it=r.items[r.i], i=+a.dataset.i, ok=it.o2[i].ok; r.pick=i; r.n++; this.bump({qAns:1});
@@ -9129,11 +9129,16 @@ Object.assign(SecTools, {
     const B = (k, label, extra) => `<button type="button" class="sxt-b${extra||''}" data-sxt="${k}" data-id="${id}">${label}</button>`;
     const R = html => `<div class="sxt-row" style="justify-content:center">${html}</div>`;
     if(p.t === 'quiz'){
-      if(p.i >= n) return W('📝 اختبار القسم', 'خلصت', `<div class="sxt-m" style="font-size:1.3rem">${p.ok===n?'🏆':'🎉'}<br><b>جبت ${p.ok} من ${n}</b></div>` + R(B('qre','🔁 اعمل الاختبار تاني') + B('xs','إغلاق')));
-      const it = p.items[p.i], ans = p.pick >= 0;
-      return W('📝 اختبار القسم', 'سؤال '+(p.i+1)+' / '+n, `<div class="sxs-q">${esc(it.q)}</div>`
-        + it.o.map((o,j)=>`<button type="button" class="sxs-o${ans ? (o.ok ? ' ok' : (j===p.pick ? ' bad' : '')) : ''}" data-sxt="opt" data-id="${id}" data-j="${j}"${ans?' disabled':''}>${esc(o.t)}</button>`).join('')
-        + (ans ? (it.x ? `<div class="sxt-m">💡 ${esc(it.x)}</div>` : '') + R(B('qn', p.i+1>=n ? 'شوف النتيجة' : 'التالي ◀')) : ''));
+      if(!p.ans) p.ans = [];
+      if(p.fin){
+        const wr = []; p.items.forEach((x,j)=>{ const a = p.ans[j]; if(a == null || !x.o[a].ok) wr.push(`<div class="qz-rev"><div class="qz-rq">${j+1}. ${esc(x.q)}</div>${a == null ? '<small class="r">✖ ما جاوبتش</small>' : `<small class="r">✖ إجابتك: ${esc(x.o[a].t)}</small>`}<small class="g">✔ الصح: ${esc((x.o.find(o=>o.ok)||{t:''}).t)}</small><small class="qz-why">💡 ${x.x ? esc(x.x) : 'مفيش شرح متسجّل للسؤال ده — راجع الإجابة الصح فوق.'}</small></div>`); });
+        return W('📝 اختبار القسم', 'النتيجة', `<div class="sxt-m" style="font-size:1.3rem">${p.ok===n?'🏆':'🎉'}<br><b>جبت ${p.ok} من ${n}</b> (${Math.round(p.ok/n*100)}%)</div>` + (wr.length ? `<div class="qz-revs"><b>❌ غلطاتك (${wr.length}) وليه غلط:</b>${wr.join('')}</div>` : '<div class="sxt-m">👌 ولا غلطة! كله صح</div>') + R(B('qre','🔁 اعمل الاختبار تاني') + B('xs','إغلاق')));
+      }
+      const it = p.items[p.i], pk = p.ans[p.i] == null ? -1 : p.ans[p.i];
+      const dots = p.items.map((x,j)=>`<button type="button" class="sxs-dot${j===p.i?' cur':''}${p.ans[j]!=null?' a':''}" data-sxt="qg" data-id="${id}" data-j="${j}">${j+1}</button>`).join('');
+      return W('📝 اختبار القسم', 'سؤال '+(p.i+1)+' / '+n, `<div class="sxs-dots">${dots}</div><div class="sxs-q">${esc(it.q)}</div>`
+        + it.o.map((o,j)=>`<button type="button" class="sxs-o${j===pk ? ' sel' : ''}" data-sxt="opt" data-id="${id}" data-j="${j}">${esc(o.t)}</button>`).join('')
+        + R(`<button type="button" class="sxt-b" data-sxt="qp" data-id="${id}"${p.i===0?' disabled':''}>▶ السابق</button>` + (p.i+1>=n ? B('qf','✅ إنهاء وشوف النتيجة') : B('qn','التالي ◀'))));
     }
     if(p.i >= n) return W('🃏 كروت القسم', 'خلصت', `<div class="sxt-m" style="font-size:1.2rem">✅ عرفت <b>${p.k}</b> • ❌ لسه <b>${p.u}</b></div>` + R((p.miss.length ? B('cmiss','راجع اللي لسه ('+p.miss.length+')') : '') + B('cre','🔁 من الأول') + B('xs','إغلاق')));
     const it = p.items[p.i];
@@ -9151,14 +9156,17 @@ Object.assign(SecTools, {
   document.addEventListener('click', e=>{
     const a = e.target.closest('[data-sxt]'); if(!a) return;
     const k = a.dataset.sxt, id = a.dataset.id, S = SecTools, p = id && S.pan[id], s = id && S.find(id);
-    if(!['opt','qn','qre','flip','cg','cmiss','cre','xs'].includes(k) || !s) return;
+    if(!['opt','qn','qp','qf','qg','qre','flip','cg','cmiss','cre','xs'].includes(k) || !s) return;
     const aw = (key, pts, lbl, big) => { try{ Fun.award(key+':'+id+':'+Plus.day(), pts, lbl); if(big) Fun.confetti(100); }catch(x){} };
     if(k === 'xs'){ delete S.pan[id]; }
     else if(k === 'qre'){ delete S.pan[id]; return S.togglePan(s, 'quiz'); }
     else if(k === 'cre'){ delete S.pan[id]; return S.togglePan(s, 'cards'); }
     else if(!p) return;
-    else if(k === 'opt'){ if(p.pick >= 0) return; p.pick = +a.dataset.j; if(p.items[p.i].o[p.pick].ok) p.ok++; }
-    else if(k === 'qn'){ p.i++; p.pick = -1; if(p.i >= p.items.length) aw('sxq', p.ok*2 + (p.ok === p.items.length ? 10 : 0), 'اختبار القسم', p.ok === p.items.length); }
+    else if(k === 'opt'){ if(p.fin) return; p.ans = p.ans || []; p.ans[p.i] = +a.dataset.j; }
+    else if(k === 'qn'){ if(p.i < p.items.length-1) p.i++; }
+    else if(k === 'qp'){ if(p.i > 0) p.i--; }
+    else if(k === 'qg'){ p.i = +a.dataset.j; }
+    else if(k === 'qf'){ p.ans = p.ans || []; const un = p.items.length - p.items.filter((x,j)=>p.ans[j] != null).length; if(un && !confirm('لسه فاضل '+un+' سؤال من غير إجابة. تنهي الاختبار؟')) return; p.ok = p.items.filter((x,j)=>p.ans[j] != null && x.o[p.ans[j]].ok).length; p.fin = true; aw('sxq', p.ok*2 + (p.ok === p.items.length ? 10 : 0), 'اختبار القسم', p.ok === p.items.length); }
     else if(k === 'flip'){ p.flip = !p.flip; }
     else if(k === 'cg'){ if(a.dataset.v === '1') p.k++; else { p.u++; p.miss.push(p.items[p.i]); } p.i++; p.flip = false; if(p.i >= p.items.length) aw('sxc', p.k, 'كروت القسم'); }
     else if(k === 'cmiss'){ p.items = Plus.shuffle(p.miss); p.miss = []; p.i = 0; p.k = 0; p.u = 0; p.flip = false; }
@@ -9256,12 +9264,21 @@ Object.assign(SecTools, {
     const r = this.run; if(!(r && r.m==='quiz' && r.nav)) return _st.apply(this, arguments);
     if(r.fin) return this.done();
     const n = r.items.length, it = r.items[r.i], pk = r.ans[r.i], A = pk !== undefined;
-    const dots = r.items.map((x,j)=>{ const a = r.ans[j]; return `<button type="button" class="${j===r.i?'cur ':''}${a===undefined?'':(x.o2[a].ok?'g':'r')}" data-sxq="go" data-j="${j}">${j+1}</button>`; }).join('');
+    const dots = r.items.map((x,j)=>{ const a = r.ans[j]; return `<button type="button" class="${j===r.i?'cur ':''}${a===undefined?'':'a'}" data-sxq="go" data-j="${j}">${j+1}</button>`; }).join('');
     return `<div class="pbar"><i style="width:${Math.round((r.ans.filter(v=>v!==undefined).length)/n*100)}%"></i></div><div class="pmut">سؤال ${r.i+1} / ${n}${it.t ? ' • '+esc(it.t) : ''}</div><div class="sxq-dots">${dots}</div>`
       + `<div class="pcard" style="text-align:right">${esc(it.q)}</div>`
-      + it.o2.map((o,i)=>`<button type="button" class="po${A ? (o.ok ? ' ok' : (i===pk ? ' bad' : '')) : ''}" data-sxq="ans" data-i="${i}"${A?' disabled':''}>${esc(o.t)}</button>`).join('')
-      + (A && it.x ? `<p class="pa">💡 ${esc(it.x)}</p>` : '')
+      + it.o2.map((o,i)=>`<button type="button" class="po${i===pk ? ' sel' : ''}" data-sxq="ans" data-i="${i}">${esc(o.t)}</button>`).join('')
+      + ''
       + `<div class="prow"><button type="button" class="pb" data-sxq="prev"${r.i===0?' disabled':''}>▶ السابق</button><button type="button" class="pb" data-sxq="nxt"${r.i>=n-1?' disabled':''}>التالي ◀</button><button type="button" class="pb pri" data-sxq="fin">✅ إنهاء الاختبار</button></div>`;
+  };
+  const _dn = Plus.done;
+  Plus.done = function(){
+    const r = this.run; let h = _dn.apply(this, arguments);
+    if(!(r && r.nav)) return h;
+    const W = [];
+    r.items.forEach((x,j)=>{ const a = r.ans[j]; if(a===undefined || !x.o2[a].ok){ const right = x.o2.find(o=>o.ok); W.push(`<div class="qz-rev"><div class="qz-rq">${j+1}. ${esc(x.q)}</div>${a===undefined ? '<small class="r">✖ ما جاوبتش</small>' : `<small class="r">✖ إجابتك: ${esc(x.o2[a].t)}</small>`}<small class="g">✔ الصح: ${esc(right ? right.t : '')}</small><small class="qz-why">💡 ${x.x ? esc(x.x) : 'مفيش شرح متسجّل للسؤال ده — راجع الإجابة الصح فوق.'}</small></div>`); } });
+    const box = W.length ? `<div class="qz-revs"><b>❌ غلطاتك (${W.length}) وليه غلط:</b>${W.join('')}</div>` : '<p class="pmut" style="text-align:center">👌 ولا غلطة! كله صح</p>';
+    return h.replace('<div class="prow">', box + '<div class="prow">');
   };
   /* ستريك: العدّ شغّال دايماً + الملف الشخصي بيقرا القيمة الحقيقية + تصحيح يدوي */
   const _me = Plus.v_me;
@@ -9305,14 +9322,16 @@ Object.assign(SecTools, {
         lsSet('fun_streak', {last:Fun.today(), n, best:Math.max(n, st.best || 0)}); Plus.checkBadges(); Plus.paint(); try{ Fun.render(); }catch(x){} toast('🔥 الستريك بقى '+n+' يوم');
       }
     }
-    else if(k==='ans'){ if(r.ans[r.i] !== undefined) return; const it = r.items[r.i], i = +a.dataset.i; r.ans[r.i] = i; Plus.bump({qAns:1}); if(!it.o2[i].ok) Plus.addWrong(it); Plus.paint(); }
+    else if(k==='ans'){ r.ans[r.i] = +a.dataset.i; Plus.paint(); }
     else if(k==='go'){ r.i = +a.dataset.j; Plus.paint(); }
     else if(k==='prev'){ if(r.i>0){ r.i--; Plus.paint(); } }
     else if(k==='nxt'){ if(r.i<r.items.length-1){ r.i++; Plus.paint(); } }
     else if(k==='fin'){
       const un = r.items.length - r.ans.filter(v=>v!==undefined).length;
       if(un && !confirm('لسه فاضل '+un+' سؤال من غير إجابة. تنهي الاختبار؟')) return;
-      r.ok = r.items.filter((x,j)=>r.ans[j]!==undefined && x.o2[r.ans[j]].ok).length; r.n = r.items.length; r.fin = true; Plus.paint();
+      r.ok = r.items.filter((x,j)=>r.ans[j]!==undefined && x.o2[r.ans[j]].ok).length; r.n = r.items.length; r.fin = true;
+      r.items.forEach((x,j)=>{ if(r.ans[j]!==undefined){ try{ Plus.bump({qAns:1}); }catch(e){} if(!x.o2[r.ans[j]].ok){ try{ Plus.addWrong(x); }catch(e){} } } });
+      Plus.paint();
     }
   });
 })();
@@ -9382,7 +9401,7 @@ FEATURES.push(['hdr_brain','🧠 زرار المذاكرة الذكية في ا�
   SecTools.begin = function(id, k){
     const p = this.pan[id], src = p.srcs[k], quiz = p.t === 'quiz';
     const items = src.ord ? src.items.slice() : Plus.shuffle(src.items).slice(0, quiz ? 10 : 40);
-    Object.assign(p, quiz ? {items:items.map(x=>({q:x.q, x:x.x||'', o:Plus.shuffle(x.o)})), i:0, ok:0, pick:-1} : {items:items.map(c=>({q:c.q, a:c.a})), i:0, flip:false, k:0, u:0, miss:[]});
+    Object.assign(p, quiz ? {items:items.map(x=>({q:x.q, x:x.x||'', o:Plus.shuffle(x.o)})), i:0, ok:0, pick:-1, ans:[], fin:false} : {items:items.map(c=>({q:c.q, a:c.a})), i:0, flip:false, k:0, u:0, miss:[]});
   };
   SecTools.togglePan = function(s, t){
     const cur = this.pan[s.id];
@@ -10070,6 +10089,7 @@ MathBot.panel = function(){
   document.body.insertAdjacentHTML('beforeend',
   '<div id="mbPanel" hidden role="dialog" aria-label="مساعد الماث">' +
     '<div class="mb-h"><b id="mbTitle"><span class="mb-em">🤖</span> <span>مساعد الماث</span></b>' +
+      '<button type="button" data-mbx="scope" id="mbScope" title="نطاق الروبوت" aria-label="نطاق الروبوت">🌍</button>' +
       '<button type="button" data-mbx="cfg" title="إعدادات الروبوت" aria-label="إعدادات">⚙️</button>' +
       '<button type="button" data-mbx="tts" id="mbTts" title="قراءة الردود بصوت عالي" aria-label="قراءة الردود">🔇</button>' +
       '<button type="button" data-mbx="clear" title="مسح المحادثة" aria-label="مسح">🗑</button>' +
@@ -10111,6 +10131,7 @@ function liveInner(){
 MathBot.paint = function(){
   const p = $i('mbPanel'); if(!p) return; const el = $i('mbMsgs'), f = p.querySelector('.mb-f'), c = $i('mbChips'), pv = $i('mbPrev');
   const tt = $i('mbTts'); if(tt) tt.textContent = autoTts() ? '🔊' : '🔇';
+  const sg = $i('mbScope'); if(sg){ const m = this.scope() === 'math'; sg.textContent = m ? '🧮' : '🌍'; sg.title = m ? 'الماث بس — اضغط للتغيير' : 'يرد على أي حاجة — اضغط للتغيير'; }
   const mx = $i('mbMax'); if(mx){ mx.textContent = S.max ? '🗗' : '⛶'; mx.title = S.max ? 'تصغير' : 'تكبير'; mx.setAttribute('aria-label', mx.title); }
   const sb = $i('mbSend'); if(sb){ sb.textContent = this.busy ? '⏹ إيقاف' : 'إرسال'; sb.classList.toggle('stop', !!this.busy); sb.disabled = false; }
   applyUI();
@@ -10140,6 +10161,12 @@ function warm(){ const u = MathBot.url(), n = Date.now(); if(u && n - (warmed[u]
 document.addEventListener('pointerdown', e=>{ if(e.target.closest && e.target.closest('#mbFab,[data-hdr="bot"],#mbPanel')) warm(); }, true);
 document.addEventListener('input', e=>{ if(e.target && e.target.id === 'mbIn') warm(); });
 MathBot.config = function(){ S.cfg = !S.cfg; this.paint(); };
+/* نطاق الروبوت: open = يرد على أي حاجة (متخصص ماث) | math = ماث بس. بيتحكم فيه الأدمن للموقع كله */
+MathBot.scope = function(){ return this.cfg().scope === 'math' ? 'math' : 'open'; };
+MathBot.sysPrompt = function(){
+  if(this.scope() === 'math') return 'أنت مساعد متخصص في الرياضيات فقط (جبر، هندسة، تفاضل وتكامل، إحصاء، احتمالات، حساب مثلثات...). جاوب على أسئلة الماث بدقة واشرح الحل خطوة خطوة وراجع حساباتك. لو السؤال مش له علاقة بالرياضيات، اعتذر بلطف في جملة واحدة وقل إنك متخصص في الماث بس، واعرض إنك تساعده في أي مسألة ماث. التحية والشكر والأسئلة البسيطة عن طريقة مساعدتك مسموحة. رد بنفس لغة المستخدم (وبالمصري لو كلمك بالمصري).';
+  return 'أنت مساعد ذكي شامل زي Gemini: بتجاوب على أي سؤال في أي مجال (علوم، برمجة، لغات، تاريخ، ثقافة عامة، كتابة، نصايح دراسة وحياة، ترجمة...) وبتتكلم وترد بشكل طبيعي وودود وواضح، وبنفس لغة المستخدم (وبالمصري لو كلمك بالمصري). تخصصك الأعمق والأقوى هو الرياضيات (جبر، هندسة، تفاضل وتكامل، إحصاء، احتمالات، مثلثات...): في الماث اشرح خطوة خطوة بدقة عالية وراجع حساباتك وبسّط الفكرة. في أي مجال تاني جاوب بدقة، وقول لو مش متأكد بدل ما تخترع معلومة. ارفض بس الطلبات الضارة أو غير الآمنة.';
+};
 MathBot.toggle = function(){
   const p = this.panel(); p.hidden = !p.hidden;
   if(!p.hidden){
@@ -10190,7 +10217,7 @@ MathBot.send = async function(txt){
     let text = '', err = '', imgsOut = [], status = 0, errMsg = '';
     try{
       let r; for(let n = 0; n < 2; n++){
-        r = await fetch(this.url(), {method:'POST', headers:{'Content-Type':'application/json', 'apikey':(CONFIG.QA && CONFIG.QA.anonKey) || ''}, body:JSON.stringify({messages:msgs, stream:true}), signal:ctl.signal});
+        r = await fetch(this.url(), {method:'POST', headers:{'Content-Type':'application/json', 'apikey':(CONFIG.QA && CONFIG.QA.anonKey) || ''}, body:JSON.stringify({messages:msgs, stream:true, scope:this.scope(), system:this.sysPrompt()}), signal:ctl.signal});
         if(r.ok || ![429, 500, 502, 503, 504].includes(r.status) || ctl.signal.aborted) break;
         await new Promise(x=>setTimeout(x, 500));
       }
@@ -10257,6 +10284,13 @@ function cfgHtml(){
     '<label>الصوت الإنجليزي (للمصطلحات)</label>' + (en.length ? '<select data-s="vEn">' + opt(en, u.vEn) + '</select>' : '<small>مفيش أصوات إنجليزي متاحة.</small>') +
     '<div class="row"><button type="button" class="pri" data-s="test">🔊 جرّب الصوت</button><button type="button" data-s="stopv">⏹ وقّف</button></div>' +
     '<small>لما تسأل بالصوت 🎤 الروبوت بيرد بالصوت تلقائياً.</small></div>';
+  {
+    const sc = MathBot.scope(), dis = isAdmin ? '' : ' disabled';
+    h += '<div class="sec mb-scope"><b>🎛️ نطاق الروبوت</b><div class="row">' +
+      '<button type="button" data-s="scope" data-v="open"' + dis + ' class="' + (sc === 'open' ? 'on' : '') + '">🌍 يرد على أي حاجة<br><small>زي Gemini — ومتخصص أوي في الماث</small></button>' +
+      '<button type="button" data-s="scope" data-v="math"' + dis + ' class="' + (sc === 'math' ? 'on' : '') + '">🧮 الماث بس<br><small>يعتذر عن أي سؤال بره الماث</small></button></div>' +
+      '<small>' + (isAdmin ? 'الاختيار ده بيتطبّق على كل الطلبة فوراً.' : '🔒 التغيير للأدمن بس — اضغط 🔒 في الموقع وادخل بوضع التحرير الأول. الوضع الحالي: ' + (sc === 'math' ? 'الماث بس' : 'أي حاجة')) + '</small></div>';
+  }
   if(isAdmin){
     h += '<div class="sec"><b>🛠️ السيرفر (للأدمن)</b><label for="mbUrl">رابط سيرفر الروبوت (Supabase Edge Function)</label>' +
       '<input id="mbUrl" placeholder="https://xxxx.supabase.co/functions/v1/math-bot" value="' + esc(saved || loc) + '">' +
@@ -10276,6 +10310,7 @@ function onCfg(e){
     else if(k === 'test'){ Voice.say('أهلاً! أنا مساعد الماث. لو x تربيع زائد 2 يساوي 6، يبقى x يساوي 2. And this is the English voice for terms like derivative and integral.'); }
     else if(k === 'stopv') Voice.stop();
     else if(k === 'back'){ S.cfg = false; MathBot.paint(); }
+    else if(isAdmin && k === 'scope'){ site.meta = site.meta || {}; site.meta.aiBot = Object.assign({}, MathBot.cfg(), {scope:a.dataset.v === 'math' ? 'math' : 'open'}); commit(); repaintCfg(); try{ toast(a.dataset.v === 'math' ? '🧮 الروبوت هيرد على الماث بس' : '🌍 الروبوت هيرد على أي سؤال'); }catch(_){} }
     else if(k === 'reset'){ if(confirm('ترجّع كل إعدادات الروبوت للافتراضي؟')){ lsSet(UIK, {}); lsSet('sx_bot_tts', false); applyUI(); repaintCfg(); } }
     else if(isAdmin && (k === 'cs' || k === 'cl' || k === 'ct')){
       const inp = $i('mbUrl'), v = inp ? inp.value.trim() : '', st = $i('mbSt'), sy = m => { if(st) st.textContent = m; };
@@ -10284,7 +10319,7 @@ function onCfg(e){
       else if(k === 'cs'){ site.meta = site.meta || {}; site.meta.aiBot = Object.assign({}, MathBot.cfg(), {url:v}); commit(); sy('✅ اتحفظ للموقع كله'); }
       else {
         if(!v) return sy('❌ حط الرابط الأول'); sy('⏳ بجرّب الاتصال…');
-        fetch(v, {method:'POST', headers:{'Content-Type':'application/json', 'apikey':(CONFIG.QA && CONFIG.QA.anonKey) || ''}, body:JSON.stringify({messages:[{role:'user', content:'2+2 بكام؟ جاوب بكلمة واحدة'}], stream:false})})
+        fetch(v, {method:'POST', headers:{'Content-Type':'application/json', 'apikey':(CONFIG.QA && CONFIG.QA.anonKey) || ''}, body:JSON.stringify({messages:[{role:'user', content:'2+2 بكام؟ جاوب بكلمة واحدة'}], stream:false, scope:MathBot.scope(), system:MathBot.sysPrompt()})})
           .then(async r=>{ const j = await r.json().catch(()=>({})); sy(r.ok && j.reply ? '✅ شغّال! الرد: ' + String(j.reply).slice(0, 80) : '❌ فشل (' + r.status + '): ' + (j.error || j.message || j.msg || 'رد غير متوقع') + (r.status === 401 ? ' — اقفل Verify JWT للدالة (deploy --no-verify-jwt)' : '')); })
           .catch(()=>sy('❌ مقدرتش أوصل للرابط (الرابط غلط أو الدالة مش منشورة أو CORS)'));
       }
@@ -10311,6 +10346,12 @@ document.addEventListener('click', e=>{
   if(k === 'attach') $i('mbFile').click();
   else if(k === 'mic') mic();
   else if(k === 'cfg') MathBot.config();
+  else if(k === 'scope'){
+    if(!isAdmin){ say('🔒 تغيير نطاق الروبوت للأدمن بس — ادخل وضع التحرير 🔒 الأول'); return; }
+    const nx = MathBot.scope() === 'math' ? 'open' : 'math';
+    site.meta = site.meta || {}; site.meta.aiBot = Object.assign({}, MathBot.cfg(), {scope:nx}); commit(); MathBot.paint();
+    say(nx === 'math' ? '🧮 الروبوت هيرد على الماث بس' : '🌍 الروبوت هيرد على أي سؤال');
+  }
   else if(k === 'max'){ S.max = !S.max; MathBot.paint(); placePanel(); }
   else if(k === 'rm'){ S.imgs.splice(+a.dataset.i, 1); paintPrev(); }
   else if(k === 'rma'){ S.audio = null; paintPrev(); }
@@ -11708,14 +11749,14 @@ const recQuiz = (title, sc, tot) => { const h = lsGet('sx_quizlog', []); h.push(
 
 /* ---------------- مشغّل الكويز ---------------- */
 function runQuiz(qs, o){
-  o = o || {}; let i = 0, ans = new Array(qs.length).fill(null), timer = null, tl = o.minutes ? o.minutes*60 : 0; const exam = !!o.exam;
+  o = o || {}; let i = 0, ans = new Array(qs.length).fill(null), timer = null, tl = o.minutes ? o.minutes*60 : 0; const exam = true; /* دايماً: اختار براحتك، سابق/تالي، والنتيجة في الآخر */
   const draw = () => {
     const q = qs[i], a = ans[i], pct = Math.round(i/qs.length*100);
-    setBody(`<div class="qz-top"><b>${E(o.title || 'كويز')}</b><span class="qz-n">${i + 1} / ${qs.length}</span>${tl ? '<span class="qz-t" id="qzT"></span>' : ''}</div><div class="qz-bar"><i style="width:${pct}%"></i></div>
+    setBody(`<div class="qz-top"><b>${E(o.title || 'كويز')}</b><span class="qz-n">${i + 1} / ${qs.length}</span>${tl ? '<span class="qz-t" id="qzT"></span>' : ''}</div><div class="qz-bar"><i style="width:${pct}%"></i></div><div class="qz-dots">${qs.map((_, j) => `<button type="button" data-q="go" data-j="${j}" class="${j === i ? 'cur ' : ''}${ans[j] != null ? 'a' : ''}">${j + 1}</button>`).join('')}</div>
       <div class="qz-q">${MathBot.fmt(q.q)}</div>
       <div class="qz-o">${q.o.map((t, k) => `<button type="button" data-k="${k}" class="${a == null ? '' : (exam ? (a === k ? 'sel' : '') : (k === q.a ? 'ok' : (a === k ? 'no' : '')))}" ${(!exam && a != null) ? 'disabled' : ''}><b>${q.o.length === 2 ? '' : 'أبجد'[k] + '.'}</b> ${MathBot.fmt(t)}</button>`).join('')}</div>
       ${(!exam && a != null) ? `<div class="qz-x ${a === q.a ? 'ok' : 'no'}"><b>${a === q.a ? '✅ صح!' : '❌ غلط'}</b>${q.x ? '<div>' + MathBot.fmt(q.x) + '</div>' : ''}</div>` : ''}
-      <div class="qz-nav">${exam ? `<button type="button" data-q="prev" ${i === 0 ? 'disabled' : ''}>◀ السابق</button>` : '<span></span>'}${exam ? (i === qs.length - 1 ? '<button type="button" class="pri" data-q="fin">✔ تسليم الامتحان</button>' : '<button type="button" data-q="next">التالي ▶</button>') : (a != null ? `<button type="button" class="pri" data-q="next">${i === qs.length - 1 ? 'النتيجة 🏁' : 'التالي ▶'}</button>` : '<span></span>')}</div>`);
+      <div class="qz-nav">${exam ? `<button type="button" data-q="prev" ${i === 0 ? 'disabled' : ''}>◀ السابق</button>` : '<span></span>'}${exam ? (i === qs.length - 1 ? '<button type="button" class="pri" data-q="fin">' + (o.exam ? '✔ تسليم الامتحان' : '✅ إنهاء وشوف النتيجة') + '</button>' : '<button type="button" data-q="next">التالي ▶</button>') : (a != null ? `<button type="button" class="pri" data-q="next">${i === qs.length - 1 ? 'النتيجة 🏁' : 'التالي ▶'}</button>` : '<span></span>')}</div>`);
     tick();
   };
   const tick = () => { const el = $q('#qzT'); if(el && tl){ el.textContent = '⏱ ' + Math.floor(tl/60) + ':' + String(tl%60).padStart(2, '0'); el.classList.toggle('warn', tl < 60); } };
@@ -11725,23 +11766,26 @@ function runQuiz(qs, o){
     recQuiz(o.title || 'كويز', sc, qs.length); try{ if(typeof Fun !== 'undefined' && Fun.award && sc >= Math.ceil(qs.length*.6)) Fun.award('sx_quiz', 10, 'كويز ذكي'); }catch(e){}
     const pct = Math.round(sc/qs.length*100);
     setBody(`<div class="qz-res"><div class="qz-score ${pct >= 70 ? 'g' : pct >= 50 ? 'm' : 'b'}"><b>${sc}</b><small>من ${qs.length}</small></div><h3>${pct >= 85 ? '🔥 ممتاز!' : pct >= 70 ? '👏 كويس جداً' : pct >= 50 ? '🙂 معقول — راجع الغلطات' : '💪 محتاج مراجعة — بس هتتحسن'}</h3>
-      ${wrong.length ? `<div class="qz-wr"><b>الغلطات (${wrong.length}):</b>${wrong.map(k => { const q = qs[k]; return `<div class="qz-wi"><div>${MathBot.fmt(q.q)}</div><small class="g">✔ ${MathBot.fmt(q.o[q.a])}</small>${ans[k] != null ? `<small class="r">✖ ${MathBot.fmt(q.o[ans[k]])}</small>` : '<small class="r">✖ ما جاوبتش</small>'}${q.x ? `<small>${MathBot.fmt(q.x)}</small>` : ''}</div>`; }).join('')}</div>` : '<p>👌 ولا غلطة!</p>'}
+      ${wrong.length ? `<div class="qz-wr"><b>الغلطات (${wrong.length}):</b>${wrong.map(k => { const q = qs[k]; return `<div class="qz-wi"><div>${k + 1}. ${MathBot.fmt(q.q)}</div><small class="g">✔ ${MathBot.fmt(q.o[q.a])}</small>${ans[k] != null ? `<small class="r">✖ ${MathBot.fmt(q.o[ans[k]])}</small>` : '<small class="r">✖ ما جاوبتش</small>'}<small class="qz-why">💡 ${q.x ? MathBot.fmt(q.x) : 'مفيش شرح متسجّل للسؤال ده — الصح هو «' + MathBot.fmt(q.o[q.a]) + '»'}</small></div>`; }).join('')}</div>` : '<p>👌 ولا غلطة!</p>'}
       <div class="qz-end">${wrong.length && o.src ? '<button type="button" class="pri" data-q="similar">🔁 تمارين مشابهة للغلطات</button><button type="button" data-q="wcards">🃏 حوّل الغلطات لفلاش كاردز</button>' : ''}<button type="button" data-q="again">🔄 كويز جديد</button></div>`);
     $q('#sxModal').dataset.wrong = JSON.stringify(wrong);
   };
   const m = $q('#sxModal'); if(o.minutes) timer = setInterval(() => { tl--; tick(); if(tl <= 0){ say('⏱ الوقت خلص!'); finish(); } }, 1000);
-  m.addEventListener('click', async e => {
+  if(m._qzH) m.removeEventListener('click', m._qzH);
+  const H = async e => {
     const b = e.target.closest('button'); if(!b) return;
     if(b.dataset.k != null){ if(!exam && ans[i] != null) return; ans[i] = +b.dataset.k; draw(); if(exam){ /* يفضل نفس السؤال */ } return; }
     const k = b.dataset.q; if(!k) return;
     if(k === 'next'){ if(i < qs.length - 1){ i++; draw(); } else finish(); }
     else if(k === 'prev'){ if(i > 0){ i--; draw(); } }
+    else if(k === 'go'){ i = +b.dataset.j; draw(); }
     else if(k === 'fin'){ const un = ans.filter(x => x == null).length; if(un && !confirm('لسه ' + un + ' سؤال من غير إجابة. تسلّم؟')) return; finish(); }
-    else if(k === 'again'){ clearInterval(timer); quizTool(); }
+    else if(k === 'again'){ clearInterval(timer); m.removeEventListener('click', H); quizTool(); }
     else if(k === 'similar'){ const wrong = JSON.parse(m.dataset.wrong || '[]'); const seed = wrong.map(x => qs[x].q).join('\n'); setBody(busy('بولّد تمارين مشابهة للغلطات…'));
       try{ const more = await genMCQ(seed, Math.min(10, wrong.length*2 + 1), o.lv || 2, 'mcq', 'اعمل تمارين مشابهة في الفكرة للأسئلة اللي الطالب غلط فيها لكن بأرقام وصياغة مختلفة (مش نفس الأسئلة).'); clearInterval(timer); runQuiz(more, {title:'تمارين مشابهة', lv:o.lv, src:seed}); }catch(err){ setBody(`<p class="st-err">${E(aiErr(err))}</p>`); } }
     else if(k === 'wcards'){ const wrong = JSON.parse(m.dataset.wrong || '[]'); const cards = wrong.map(x => ({f:qs[x].q, b:qs[x].o[qs[x].a] + (qs[x].x ? ' — ' + qs[x].x : '')})); saveDeck('أغلاطي — ' + (o.title || 'كويز'), cards); say('✅ اتحفظت ' + cards.length + ' فلاش كارد في «مجموعاتي»'); }
-  });
+  };
+  m._qzH = H; m.addEventListener('click', H);
   draw();
 }
 function saveDeck(name, cards){ const D = lsGet('sx_decks', []); D.unshift({id:rid(), name, cards:cards.map(c => ({f:c.f, b:c.b, k:0})), d:Date.now()}); lsSet('sx_decks', D.slice(0, 30)); }
@@ -12623,11 +12667,21 @@ else if(a==='mv'&&ADM())mvSec(i,draw);else if(a==='del'&&confirm('تمسح ال�
 function publish(qs,title){const o=ov('fxPub','📢 نشر الكويز للكل');o.body.innerHTML=`<input id="fxPT" value="${E(title)}"><label>📍 القسم اللي يظهر فيه الكويز</label><select id="fxPS">${secOpts('')}</select><p>${qs.length} سؤال — أول سؤال: ${E(qs[0].q)}</p><button class="fxgo" id="fxPG">📢 انشر للكل</button>`;$('#fxPG',o.el).onclick=()=>{const t=$('#fxPT',o.el).value.trim()||title;if(saveQZ(QZ().concat([{id:Date.now().toString(36),title:t,qs,sec:$('#fxPS',o.el).value,at:Date.now()}]))){o.el.remove();tt('✅ اتنشر لكل الزوار');injectSec();hub()}}}
 function manual(){const o=ov('fxMan','✍️ كويز يدوي');o.body.innerHTML=`<input id="fxMT" placeholder="اسم الكويز"><label>📍 القسم اللي يظهر فيه</label><select id="fxMS">${secOpts('')}</select><textarea id="fxMQ" rows="9" placeholder="كل سطر سؤال:\nالسؤال | اختيار1 | اختيار2 | اختيار3 | اختيار4 | رقم الصحيح\nمثال: 2+2 = ؟ | 3 | 4 | 5 | 6 | 2\nصح/غلط: الأرض كروية | صح"></textarea><p class="fxer" id="fxME"></p><button class="fxgo" id="fxMG">📢 انشر للكل</button>`;
 $('#fxMG',o.el).onclick=()=>{const qs=$('#fxMQ',o.el).value.split('\n').map(l=>l.split('|').map(x=>x.trim())).filter(p=>(p.length>=4||(p.length===2&&/^(صح|غلط|ص|غ)$/.test(p[1])))&&p[0]).map(p=>{if(p.length===2)return{q:p[0],o:['صح','غلط'],a:/^(صح|ص)$/.test(p[1])?0:1,x:'',t:''};const a=(+p[p.length-1]||1)-1,op=p.slice(1,p.length-1);return{q:p[0],o:op,a,x:'',t:''}}).filter(q=>q.o.length>=2&&q.a>=0&&q.a<q.o.length),t=$('#fxMT',o.el).value.trim();if(!t||!qs.length){$('#fxME',o.el).textContent='اكتب اسم وسؤال واحد على الأقل بالشكل الصحيح';return}saveQZ(QZ().concat([{id:Date.now().toString(36),title:t,qs,sec:$('#fxMS',o.el).value,at:Date.now()}]));o.el.remove();tt('✅ اتنشر');injectSec();hub()}}
-function run(i){const q=QZ()[i];if(!q)return;const o=ov('fxQr','📝 '+q.title);let k=0,sc=0,wr=[],lock=0;log('start',q);
-const draw=()=>{if(k>=q.qs.length){const p=Math.round(sc/q.qs.length*100);log('finish',q,sc);o.body.innerHTML=`<h2>${p>=50?'🎉':'💪'} ${sc} / ${q.qs.length} (${p}%)</h2>${wr.length?'<h4>غلطاتك</h4>'+wr.map(w=>`<div class="fxw"><b>${E(w.q)}</b><br>✅ ${E(w.o[w.a])}${w.x?'<br><small>'+E(w.x)+'</small>':''}</div>`).join(''):'<p>كله صح 👏</p>'}<button class="fxgo" id="fxAg">🔁 تاني</button>`;$('#fxAg',o.el).onclick=()=>{o.el.remove();run(i)};return}
-const x=q.qs[k];lock=0;o.body.innerHTML=`<small>${k+1} / ${q.qs.length}</small><div class="fxqq">${E(x.q)}</div><div class="fxopts">${x.o.map((t,j)=>`<button data-o="${j}">${E(t)}</button>`).join('')}</div><div id="fxFb"></div>`};
-o.body.onclick=e=>{const b=e.target.closest('[data-o]');if(b&&!lock){lock=1;const x=q.qs[k],j=+b.dataset.o;if(j===x.a)sc++;else wr.push(x);o.body.querySelectorAll('[data-o]').forEach(z=>z.classList.add(+z.dataset.o===x.a?'ok':(z===b?'bad':'')));$('#fxFb',o.body).innerHTML=`${x.x?'<p>'+E(x.x)+'</p>':''}<button class="fxgo" data-nx>التالي ▶</button>`}
-if(e.target.closest('[data-nx]')){k++;draw()}};draw()}
+function run(i){const q=QZ()[i];if(!q)return;const o=ov('fxQr','📝 '+q.title);const N=q.qs.length;let k=0,ans=new Array(N).fill(null),fin=false,logged=false;log('start',q);
+const draw=()=>{
+if(fin){let sc=0;const wr=[];q.qs.forEach((x,j)=>{if(ans[j]===x.a)sc++;else wr.push([x,ans[j],j])});const p=Math.round(sc/N*100);if(!logged){logged=true;log('finish',q,sc)}
+o.body.innerHTML=`<h2>${p>=50?'🎉':'💪'} ${sc} / ${N} (${p}%)</h2>${wr.length?'<h4>❌ غلطاتك ('+wr.length+') وليه غلط</h4>'+wr.map(([w,a,j])=>`<div class="fxw"><b>${j+1}. ${E(w.q)}</b><br>${a==null?'✖ ما جاوبتش':'✖ إجابتك: '+E(w.o[a])}<br>✅ الصح: ${E(w.o[w.a])}<br><small>💡 ${w.x?E(w.x):'مفيش شرح متسجّل للسؤال ده — راجع الإجابة الصح.'}</small></div>`).join(''):'<p>كله صح 👏</p>'}<div class="fxnav"><button class="fxx" data-bk>↩ راجع الأسئلة</button><button class="fxgo" data-ag>🔁 تاني</button></div>`;return}
+const x=q.qs[k];
+o.body.innerHTML=`<small>${k+1} / ${N}</small><div class="fxdots">${q.qs.map((_,j)=>`<button data-go="${j}" class="${j===k?'cur ':''}${ans[j]!=null?'a':''}">${j+1}</button>`).join('')}</div><div class="fxqq">${E(x.q)}</div><div class="fxopts">${x.o.map((t,j)=>`<button data-o="${j}" class="${ans[k]===j?'sel':''}">${E(t)}</button>`).join('')}</div><div class="fxnav"><button class="fxx" data-pv${k===0?' disabled':''}>▶ السابق</button>${k>=N-1?'<button class="fxgo" data-fn>✅ إنهاء وشوف النتيجة</button>':'<button class="fxgo" data-nx>التالي ◀</button>'}</div>`};
+o.body.onclick=e=>{const t=e.target;let b;
+if(b=t.closest('[data-o]')){ans[k]=+b.dataset.o;draw()}
+else if(b=t.closest('[data-go]')){k=+b.dataset.go;draw()}
+else if(t.closest('[data-nx]')){if(k<N-1){k++;draw()}}
+else if(t.closest('[data-pv]')){if(k>0){k--;draw()}}
+else if(t.closest('[data-fn]')){const un=ans.filter(v=>v==null).length;if(un&&!confirm('لسه فاضل '+un+' سؤال من غير إجابة. تنهي الكويز؟'))return;fin=true;draw()}
+else if(t.closest('[data-bk]')){fin=false;k=0;draw()}
+else if(t.closest('[data-ag]')){o.el.remove();run(i)}};
+draw()}
 const secList=()=>{try{return flatSecs()}catch(e){return[]}};
 const secName=id=>{const f=secList().find(x=>x.s.id===id);return f?f.s.title:''};
 const secOpts=sel=>'<option value="">(بدون قسم — يظهر في قايمة الكويزات بس)</option>'+secList().map(x=>`<option value="${E(x.s.id)}"${x.s.id===sel?' selected':''}>${E((x.path.length?x.path.join(' › ')+' › ':'')+x.s.title)}</option>`).join('');
@@ -12823,14 +12877,14 @@ html.fx-ovl :is(#fxTbBtn,#fxTbPanel,#fxTbar,#fxTopGrp,#fxFab,#fxProfC,.hamburger
 html.fx-t-out :is(#fxTbBtn,#fxTbPanel,#fxTbar,#fxTopGrp,#fxFab,#fxProfC,.hamburger,.top-ico,.notif-btn,.mode-btn,.poster-btn){transition:opacity .25s ease,visibility 0s linear .25s!important}
 html.fx-t-in :is(#fxTbBtn,#fxTbPanel,#fxTbar,#fxTopGrp,#fxFab,#fxProfC,.hamburger,.top-ico,.notif-btn,.mode-btn,.poster-btn){transition:opacity .32s ease,visibility 0s!important}
 /* ===== مركز التحدّي: العنوان والاسم في النص ===== */
-#sxHub .sxh-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;padding:8px 10px;flex-wrap:nowrap}
+#sxHub .sxh-top{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:6px;padding:8px 10px;flex-wrap:nowrap}
 #sxHub .sxh-top .sxh-x[data-sxh=close]{grid-column:1;grid-row:1;justify-self:start;order:0;margin:0;width:34px;height:34px}
 #sxHub .sxh-top .sxh-t{grid-column:1;grid-row:1;justify-self:start;margin:0;margin-inline-start:42px;font-size:13px;white-space:nowrap;min-width:0;max-width:calc(100% - 40px)}
 @media(max-width:440px){#sxHub .sxh-top .sxh-e{display:none}}
 @media(max-width:390px){#sxHub .sxh-top .sxh-nm input{width:72px;max-width:72px}#sxHub .sxh-top .sxh-t{font-size:12px;margin-inline-start:38px}#sxHub .sxh-top{padding:8px 6px;gap:4px}}
-#sxHub .sxh-top .sxh-nm{grid-column:2;grid-row:1;display:flex;align-items:center;gap:6px;margin:0;font-size:0}
+#sxHub .sxh-top .sxh-nm{grid-column:3;grid-row:1;justify-self:end;display:flex;align-items:center;gap:6px;margin:0;font-size:0}
 #sxHub .sxh-top .sxh-nm input{font-size:14px;width:92px;max-width:92px;text-align:center;padding:5px 6px}
-#sxHub .sxh-top .sxh-x[data-sxh=gear]{grid-column:3;grid-row:1;justify-self:end;margin:0;width:34px;height:34px}
+#sxHub .sxh-top .sxh-x[data-sxh=gear]{grid-column:2;grid-row:1;justify-self:end;margin:0;width:34px;height:34px}
 .fxav{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}
 #sxHub .fxav.hubav{cursor:pointer;width:30px;height:30px;border-radius:50%;border:2px solid var(--gold);flex:none}
 
@@ -12910,7 +12964,7 @@ const vis=el=>!!el&&!el.hidden&&el.getClientRects().length>0&&getComputedStyle(e
 function ov(id,title){const old=$('#'+id);if(old)old.remove();const o=document.createElement('div');o.id=id;o.className='fxov';o.innerHTML=`<div class="fxqb"><div class="fxqh"><b>${E(title)}</b><button class="fxx" data-fxc type="button" aria-label="إغلاق">✕</button></div><div class="fxbody"></div></div>`;document.body.appendChild(o);o.addEventListener('click',e=>{if(e.target.closest('[data-fxc]')||e.target===o)o.remove()});return{el:o,body:$('.fxbody',o)}}
 const toAr=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
 /* ===== أي تاب مفتوح => يخفي البوكس وزر الثيمات ===== */
-const OVS=['#sxHub','#funHub','#lectBox','#plusBox','.fxov','#notifDrawer.open'];
+const OVS=['#sxHub','#funHub','#lectBox','#plusBox','.fxov','#notifDrawer.open','#mbPanel.mb-max'];
 let ovT=0,ovOn=false;
 function ovTick(){const any=OVS.some(q=>$$(q).some(vis));if(any===ovOn)return;ovOn=any;const h=document.documentElement;clearTimeout(ovT);h.classList.remove('fx-t-in','fx-t-out');h.classList.add(any?'fx-t-out':'fx-t-in');h.classList.toggle('fx-ovl',any);if(any){const p=$('#fxTbPanel'),b=$('#fxTbBtn');if(p)p.classList.remove('open');if(b)b.textContent='▾'}ovT=setTimeout(()=>h.classList.remove('fx-t-in','fx-t-out'),500)}
 /* ===== مكان الأيقونة في الشريط ===== */
@@ -13368,4 +13422,24 @@ const det=document.createElement('details');det.className='fxgal-adv';det.innerH
 new MutationObserver(()=>{const mb=document.getElementById('mBody');if(mb)enh(mb)}).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
+<style id="qzFlowCss">
+/* كويزات: اختيار براحتك + سابق/تالي + نتيجة في الآخر */
+#plusBox .po.sel,.sxs-o.sel,.fxopts button.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--surface));font-weight:700}
+#plusBox .sxq-dots .a,.sxs-dot.a,.qz-dots .a,.fxdots .a{background:color-mix(in srgb,var(--accent) 22%,var(--surface))}
+.sxs-dots,.qz-dots,.fxdots{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+.sxs-dot,.qz-dots button,.fxdots button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line,#dde3ee);background:var(--surface,#fff);color:var(--ink,inherit);font:700 13px inherit;cursor:pointer;padding:0}
+.sxs-dot.cur,.qz-dots .cur,.fxdots .cur{outline:2px solid var(--accent);border-color:var(--accent)}
+.fxnav{display:flex;justify-content:space-between;gap:8px;margin-top:14px}.fxnav button:disabled{opacity:.4}
+.qz-revs{text-align:right;margin:10px 0}
+.qz-rev{background:var(--surface-2,#f4f6fb);border-radius:12px;padding:9px 11px;margin:6px 0;font-size:13.5px;line-height:1.8;text-align:right}
+.qz-rev small{display:block;font-size:12.5px}.qz-rev .g{color:#16a34a}.qz-rev .r{color:#dc2626}
+.qz-rq{font-weight:700;margin-bottom:2px}
+.qz-why,.qz-wi .qz-why{display:block;margin-top:3px;color:var(--ink-soft,#5b6677);border-top:1px dashed var(--line,#dde3ee);padding-top:3px}
+</style>
+<style id="mbScopeCss">
+.mb-scope .row{display:flex;gap:8px;flex-wrap:wrap}
+.mb-scope .row button{flex:1 1 140px;text-align:center;line-height:1.6;padding:10px 8px;border-radius:12px;border:2px solid var(--line);background:var(--surface-2,var(--surface));color:var(--ink);font:inherit;cursor:pointer}
+.mb-scope .row button small{display:block;font-size:11.5px;opacity:.75}
+.mb-scope .row button.on{border-color:var(--mb-c,var(--accent));background:color-mix(in srgb,var(--mb-c,var(--accent)) 14%,var(--surface))}
+</style>
 </body>
