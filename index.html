@@ -11747,14 +11747,16 @@ function runQuiz(qs, o){
 function saveDeck(name, cards){ const D = lsGet('sx_decks', []); D.unshift({id:rid(), name, cards:cards.map(c => ({f:c.f, b:c.b, k:0})), d:Date.now()}); lsSet('sx_decks', D.slice(0, 30)); }
 
 /* ---------------- أداة: مولّد الكويز ---------------- */
+async function fxGen(text,n,lv,kind){const one=async(k,kd)=>{const out=[],seen=new Set();let t=0;while(out.length<k&&t<6){t++;const need=k-out.length,r=await genMCQ(text,Math.min(15,need+(t>1?2:0)),lv,kd);r.forEach(q=>{const key=String(q.q||'').trim();if(key&&!seen.has(key)&&out.length<k){seen.add(key);out.push(q)}});if(!r.length)break}return out};
+  if(kind==='mix'){const a=Math.ceil(n/2),r=[...await one(a,'mcq'),...await one(n-a,'tf')];return r.sort(()=>Math.random()-.5)}return one(n,kind)}
 function quizTool(pre){
-  const extra = `<div class="st-opts"><div><label>عدد الأسئلة</label><div class="st-ch" data-k="n"><button type="button" data-v="5">5</button><button type="button" data-v="10" class="on">10</button><button type="button" data-v="15">15</button></div></div>
+  const extra = `<div class="st-opts"><div><label>عدد الأسئلة</label><div class="st-ch" data-k="n"><button type="button" data-v="5">5</button><button type="button" data-v="10" class="on">10</button><button type="button" data-v="15">15</button><input type="number" class="st-num" min="1" max="60" placeholder="رقم تاني" style="width:90px;margin-inline-start:8px;padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink)"></div></div>
     <div><label>المستوى</label><div class="st-ch" data-k="lv"><button type="button" data-v="1">سهل</button><button type="button" data-v="2" class="on">متوسط</button><button type="button" data-v="3">صعب</button></div></div>
-    <div><label>النوع</label><div class="st-ch" data-k="kind"><button type="button" data-v="mcq" class="on">اختيار من متعدد</button><button type="button" data-v="tf">صح / غلط</button></div></div></div>`;
+    <div><label>النوع</label><div class="st-ch" data-k="kind"><button type="button" data-v="mcq" class="on">اختيار من متعدد</button><button type="button" data-v="tf">صح / غلط</button><button type="button" data-v="mix">الاتنين سوا</button></div></div></div>`;
   const go = async (src, m) => {
-    const g = k => +(($q(`.st-ch[data-k="${k}"] .on`, m) || {}).dataset || {}).v || 0, kind = (($q('.st-ch[data-k="kind"] .on', m) || {}).dataset || {}).v || 'mcq', n = g('n') || 10, lv = g('lv') || 2;
+    const g = k => +(($q(`.st-ch[data-k="${k}"] .on`, m) || {}).dataset || {}).v || 0, kind = (($q('.st-ch[data-k="kind"] .on', m) || {}).dataset || {}).v || 'mcq', n = Math.min(60, Math.max(1, +(($q('.st-num', m) || {}).value) || g('n') || 10)), lv = g('lv') || 2;
     setBody(busy('بولّد الأسئلة من «' + src.title.slice(0, 30) + '»…'));
-    try{ const qs = await genMCQ(src.text, n, lv, kind); if(SX.__pub){const f=SX.__pub;SX.__pub=null;try{closeModal()}catch(_){}f(qs,src.title)}else runQuiz(qs, {title:src.title, lv, src:src.text}); }catch(e){ setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p><button type="button" class="st-go" data-st="retry">رجوع</button>`); $q('#sxModal').addEventListener('click', ev => { if(ev.target.dataset.st === 'retry') quizTool(); }); }
+    try{ const qs = await fxGen(src.text, n, lv, kind); if(SX.__pub){const f=SX.__pub;SX.__pub=null;try{closeModal()}catch(_){}f(qs,src.title)}else runQuiz(qs, {title:src.title, lv, src:src.text}); }catch(e){ setBody(`<p class="st-err">⚠️ ${E(aiErr(e))}</p><button type="button" class="st-go" data-st="retry">رجوع</button>`); $q('#sxModal').addEventListener('click', ev => { if(ev.target.dataset.st === 'retry') quizTool(); }); }
   };
   pickSource('🧪 مولّد الكويز', go, {extra});
   const m = $q('#sxModal'); m.addEventListener('click', e => { const b = e.target.closest('.st-ch button'); if(b){ $qa('button', b.parentElement).forEach(x => x.classList.toggle('on', x === b)); } });
@@ -12310,7 +12312,7 @@ const P=(typeof Plus!=='undefined'&&Plus.PRESETS)||NEW,cur=curTheme();
 p=document.createElement('div');p.id='fxPanel';p.dataset.adm=String(ADM());
 p.innerHTML=`${ADM()?`<h4>📍 مكان زر ✨ وشكله</h4>${adminHtml()}`:''}<h4>🎨 الثيم</h4><select id="fxTh"><option value="">الافتراضي</option>${Object.keys(P).map(k=>`<option value="${k}" ${k===cur?'selected':''}>${P[k].n}</option>`).join('')}</select>
 <label class="fxr" style="margin-top:6px"><input type="checkbox" id="fxAuto" ${LS.g('fx_auto','0')==='1'?'checked':''}> تلقائي حسب الموسم (رمضان/عيد/شتا...)</label>
-<h4>👤 اسم المستخدم</h4><div class="fxr"><b id="fxUnT">${(window.FXQ?FXQ.name():"").replace(/[<>"&]/g,"")}</b><button class="fxb" id="fxUnS">تغيير</button></div>${ADM()?`<button class="fxb" id="fxStB" style="margin:8px 0">📊 إحصائيات الزوار والكويزات</button><label class="fxr"><input type="checkbox" id="fxDc" ${CF.g('deco','1')!=='0'?'checked':''}> زينة رمضان والعيد</label>
+<h4>👤 اسم المستخدم</h4><div class="fxr"><b id="fxUnT">${(window.FXQ?FXQ.name():"").replace(/[<>"&]/g,"")}</b><button class="fxb" id="fxUnS">تغيير</button></div>${ADM()?`<button class="fxb" id="fxStB" style="margin:8px 0">📊 إحصائيات الزوار والكويزات</button> <button class="fxb" id="fxPrB" style="margin:8px 0">🕌 المواقيت والأذكار</button><label class="fxr"><input type="checkbox" id="fxDc" ${CF.g('deco','1')!=='0'?'checked':''}> زينة رمضان والعيد</label>
 <h4>🖼 الخلفية</h4><div class="fxr">${BGS.map(b=>`<button class="fxbg ${CF.g('bg','')===b[0]?'on':''}" data-bg="${b[0]}">${b[1]}</button>`).join('')}</div>
 <h4>🎯 وضع التركيز</h4><button class="fxb" id="fxFc">${document.documentElement.classList.contains('fx-focus')?'إيقاف':'تشغيل'} (يخفي كل حاجة غير القسم المفتوح)</button>
 <h4>✏️ اسم «مركز التحدّي»</h4><div class="fxr"><input type="text" id="fxNm" maxlength="24" placeholder="اكتب الاسم اللي يعجبك" value="${curName.replace(/"/g,'&quot;')}"><button class="fxb" id="fxNs">حفظ</button></div><small>سيب الخانة فاضية للرجوع للاسم الأصلي.</small>
@@ -12349,47 +12351,58 @@ addEventListener('gamepadconnected',e=>{toast('🎮 الدراع اتوصّل: '
 if(padOn()&&!run){run=true;requestAnimationFrame(poll)}
 /* ===== ألعاب جديدة ===== */
 function reg(){if(!window.SX||!SX.games||SX.games.snake)return;
-const rnd=n=>Math.floor(Math.random()*n);
-SX.games.snake={id:'snake',icon:'🐍',name:'الثعبان',desc:'كُل 15 تفاحة من غير ما تخبط (أسهم / سحب / دراع)',cpu:true,local:false,online:false,
+let RS=null;const RR=()=>RS?RS():Math.random(),rnd=n=>Math.floor(RR()*n);const MK=sd=>{let a=(typeof sd==='number'?sd:[...String(sd)].reduce((h,c)=>(h*31+c.charCodeAt(0))|0,7))>>>0;return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}};function NETF(env){const me=env.seat,n=env.names.length;let R,t0,fd,tmr;const bar=document.createElement('div');bar.style.cssText='text-align:center;font-size:13px;margin:4px 0;color:#fff7e6;text-shadow:0 1px 2px #000';(env.box.querySelector('.g-wrap')||env.box).appendChild(bar);
+const nmOf=i=>i===me?'أنت':String(env.names[i]).replace(/[<>&"]/g,'');
+const paint=()=>{bar.innerHTML=Object.keys(R).map(i=>nmOf(+i)+': '+R[i].s+(R[i].done?' ✔':'')).join(' · ')+(fd?' — ⏳ بستنى الباقيين…':'')};
+function check(force){if(env.__ended)return;const ks=Object.keys(R).map(Number);let win=null;ks.forEach(k=>{if(R[k].done&&R[k].w&&(win==null||R[k].t<R[win].t))win=k});
+if(win==null){if(!force&&!ks.every(k=>R[k].done))return;ks.forEach(k=>{if(R[k].done&&(win==null||R[k].s>R[win].s||(R[k].s===R[win].s&&R[k].t<R[win].t)))win=k})}
+if(win==null)return;env.__ended=1;clearTimeout(tmr);env.end(win,nmOf(win)+' كسب — '+R[win].s);}
+function reset(){R={};for(let i=0;i<n;i++)R[i]={s:0,done:0,w:0,t:0};t0=performance.now();fd=0;env.__ended=0;clearTimeout(tmr);paint()}
+env.on('rp',d=>{if(R[d.seat]){R[d.seat].s=d.s;paint()}});
+env.on('rd',d=>{if(R[d.seat]){Object.assign(R[d.seat],{s:d.s,w:d.w,t:d.t,done:1});paint();check()}});
+reset();
+return{reset,prog(s){R[me].s=s;env.send('rp',{seat:me,s});paint()},fin(s,w){if(fd)return;fd=1;R[me]={s,w:w?1:0,t:performance.now()-t0,done:1};env.send('rd',{seat:me,s,w:w?1:0,t:R[me].t});paint();tmr=setTimeout(()=>check(true),45000);check()}}}
+
+SX.games.snake={id:'snake',icon:'🐍',name:'الثعبان',desc:'كُل 15 تفاحة من غير ما تخبط (أسهم / سحب / دراع)',cpu:true,local:false,online:true,max:4,
 opts:[{k:'sp',label:'السرعة',choices:[[140,'هادئ'],[100,'عادي'],[70,'سريع']],def:100}],
-make(env){const N=16,Z=20;let sn,d,nd,ap,sc,t,over;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><canvas class="fxg-cv" width="320" height="320"></canvas></div>';
+make(env){RS=env.mode==='online'?MK(env.seed):null;const ON=env.mode==='online',NET=ON?NETF(env):null;const N=16,Z=20;let sn,d,nd,ap,sc,t,over;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><canvas class="fxg-cv" width="320" height="320"></canvas></div>';
 const cv=env.box.querySelector('canvas'),x=cv.getContext('2d'),st=env.box.querySelector('.g-st'),cs=getComputedStyle(document.documentElement);
 function food(){do{ap=[rnd(N),rnd(N)]}while(sn.some(s=>s[0]===ap[0]&&s[1]===ap[1]))}
 function draw(){for(let i=0;i<N;i++)for(let j=0;j<N;j++){x.fillStyle=(i+j)%2?'#6ab04c':'#78c257';x.fillRect(i*Z,j*Z,Z,Z)}
 const a=ap,ar=x.createRadialGradient(a[0]*Z+7,a[1]*Z+7,1,a[0]*Z+10,a[1]*Z+11,10);ar.addColorStop(0,'#ff9a9a');ar.addColorStop(.4,'#e11d1d');ar.addColorStop(1,'#7f1010');x.fillStyle='#0003';x.beginPath();x.ellipse(a[0]*Z+11,a[1]*Z+18,7,3,0,0,7);x.fill();x.fillStyle=ar;x.beginPath();x.arc(a[0]*Z+10,a[1]*Z+11,8,0,7);x.fill();x.strokeStyle='#5b3a1a';x.lineWidth=2;x.beginPath();x.moveTo(a[0]*Z+10,a[1]*Z+4);x.lineTo(a[0]*Z+12,a[1]*Z);x.stroke();x.fillStyle='#22863a';x.beginPath();x.ellipse(a[0]*Z+14,a[1]*Z+2,4,2,-.5,0,7);x.fill();
 for(let i=sn.length-1;i>=0;i--){const s=sn[i],c=x.createRadialGradient(s[0]*Z+8,s[1]*Z+7,1,s[0]*Z+10,s[1]*Z+10,11);c.addColorStop(0,i?'#7be37b':'#9af09a');c.addColorStop(1,i%2?'#1f7a2e':'#17622a');x.fillStyle='#0003';x.beginPath();x.arc(s[0]*Z+11,s[1]*Z+12,9,0,7);x.fill();x.fillStyle=c;x.beginPath();x.arc(s[0]*Z+10,s[1]*Z+10,i?9:10,0,7);x.fill();if(!i){x.fillStyle='#fff';[[-4,-3],[4,-3]].forEach(o=>{x.beginPath();x.arc(s[0]*Z+10+o[0]+d[0]*2,s[1]*Z+10+o[1]+d[1]*2,3,0,7);x.fill()});x.fillStyle='#111';[[-4,-3],[4,-3]].forEach(o=>{x.beginPath();x.arc(s[0]*Z+10+o[0]+d[0]*3,s[1]*Z+10+o[1]+d[1]*3,1.5,0,7);x.fill()})}}
 st.textContent='🍎 '+sc+' / 15'}
-function step(){d=nd;const h=[sn[0][0]+d[0],sn[0][1]+d[1]];if(h[0]<0||h[1]<0||h[0]>=N||h[1]>=N||sn.some(s=>s[0]===h[0]&&s[1]===h[1])){clearInterval(t);over=1;return env.end(1,'خبطت! أكلت '+sc+' تفاحة')}
-sn.unshift(h);if(h[0]===ap[0]&&h[1]===ap[1]){sc++;if(sc>=15){clearInterval(t);draw();return env.end(0,'برافو! خلّصت الـ 15 تفاحة 🎉')}food()}else sn.pop();draw()}
-function reset(){clearInterval(t);sn=[[8,8],[7,8],[6,8]];d=nd=[1,0];sc=0;over=0;food();draw();t=setInterval(step,env.opts.sp||100)}
+function step(){d=nd;const h=[sn[0][0]+d[0],sn[0][1]+d[1]];if(h[0]<0||h[1]<0||h[0]>=N||h[1]>=N||sn.some(s=>s[0]===h[0]&&s[1]===h[1])){clearInterval(t);over=1;return ON?NET.fin(sc,false):env.end(1,'خبطت! أكلت '+sc+' تفاحة')}
+sn.unshift(h);if(h[0]===ap[0]&&h[1]===ap[1]){sc++;if(ON)NET.prog(sc);if(sc>=15){clearInterval(t);draw();return ON?NET.fin(sc,true):env.end(0,'برافو! خلّصت الـ 15 تفاحة 🎉')}food()}else sn.pop();draw()}
+function reset(sd){if(env.mode==='online'){if(sd!=null)RS=MK(sd);NET.reset()}clearInterval(t);sn=[[8,8],[7,8],[6,8]];d=nd=[1,0];sc=0;over=0;food();draw();t=setInterval(step,env.opts.sp||100)}
 const kd=e=>{const m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(!m)return;e.preventDefault();if(m[0]+d[0]||m[1]+d[1])nd=m};document.addEventListener('keydown',kd);
 let tx,ty;cv.ontouchstart=e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY};cv.ontouchend=e=>{const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;kd({key:Math.abs(dx)>Math.abs(dy)?(dx>0?'ArrowRight':'ArrowLeft'):(dy>0?'ArrowDown':'ArrowUp'),preventDefault(){}})};
 reset();return{reset,destroy(){clearInterval(t);document.removeEventListener('keydown',kd)}}}};
-SX.games.mines={id:'mines',icon:'💣',name:'كاسحة الألغام',desc:'افتح كل الخانات الآمنة (زر 🚩 للأعلام)',cpu:true,local:false,online:false,
+SX.games.mines={id:'mines',icon:'💣',name:'كاسحة الألغام',desc:'افتح كل الخانات الآمنة (زر 🚩 للأعلام)',cpu:true,local:false,online:true,max:4,
 opts:[{k:'m',label:'الصعوبة',choices:[[8,'سهل'],[12,'عادي'],[16,'صعب']],def:12}],
-make(env){const N=9,M=env.opts.m||12;let B,O,F,flag=0,over,first;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><button type="button" class="fxbtn" style="margin:4px auto;display:block;padding:8px 14px;border-radius:10px">🚩 وضع العلم: مقفول</button><div class="fxg-grid" style="grid-template-columns:repeat(9,1fr)"></div></div>';
+make(env){RS=env.mode==='online'?MK(env.seed):null;const ON=env.mode==='online',NET=ON?NETF(env):null;const N=9,M=env.opts.m||12;let B,O,F,flag=0,over,first;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><button type="button" class="fxbtn" style="margin:4px auto;display:block;padding:8px 14px;border-radius:10px">🚩 وضع العلم: مقفول</button><div class="fxg-grid" style="grid-template-columns:repeat(9,1fr)"></div></div>';
 const g=env.box.querySelector('.fxg-grid'),tb=env.box.querySelector('.fxbtn'),st=env.box.querySelector('.g-st');
 const nb=i=>{const r=[],y=i/N|0,c=i%N;for(let a=-1;a<2;a++)for(let b=-1;b<2;b++){const Y=y+a,C=c+b;if((a||b)&&Y>=0&&C>=0&&Y<N&&C<N)r.push(Y*N+C)}return r};
 function put(av){B=new Array(N*N).fill(0);let k=0;while(k<M){const i=rnd(N*N);if(B[i]===-1||nb(av).concat(av).includes(i))continue;B[i]=-1;k++}B.forEach((v,i)=>{if(v!==-1)B[i]=nb(i).filter(j=>B[j]===-1).length})}
 function open(i){if(O[i]||F[i])return;O[i]=1;if(B[i]===0)nb(i).forEach(open)}
 function paint(){g.innerHTML=B.map((v,i)=>`<button type="button" data-i="${i}" class="${O[i]?'rv':''}" style="${O[i]&&v>0?'color:'+['','#1d4ed8','#15803d','#dc2626','#1e3a8a','#7f1d1d','#0e7490','#111','#6b7280'][v]:''}">${O[i]?(v===-1?'💣':v||''):(F[i]?'🚩':'')}</button>`).join('');st.textContent='💣 '+M+' · 🚩 '+F.filter(Boolean).length}
-function reset(){B=null;O=[];F=[];over=0;flag=0;tb.textContent='🚩 وضع العلم: مقفول';for(let i=0;i<N*N;i++){O[i]=0;F[i]=0}B=new Array(N*N).fill(0);first=1;paint()}
+function reset(sd){if(env.mode==='online'){if(sd!=null)RS=MK(sd);NET.reset()}B=null;O=[];F=[];over=0;flag=0;tb.textContent='🚩 وضع العلم: مقفول';for(let i=0;i<N*N;i++){O[i]=0;F[i]=0}B=new Array(N*N).fill(0);first=1;if(ON){put(40);first=0;open(40)}paint()}
 g.onclick=e=>{const b=e.target.closest('button');if(!b||over)return;const i=+b.dataset.i;if(flag){if(!O[i]){F[i]=!F[i];paint()}return}if(F[i])return;if(first){put(i);first=0}
-if(B[i]===-1){over=1;B.forEach((v,j)=>{if(v===-1)O[j]=1});paint();return env.end(1,'💥 دُست على لغم!')}open(i);paint();if(O.filter(Boolean).length===N*N-M){over=1;env.end(0,'سحّبت كل الألغام! 🏆')}};
+if(B[i]===-1){over=1;B.forEach((v,j)=>{if(v===-1)O[j]=1});paint();return ON?NET.fin(O.filter((v,j)=>v&&B[j]!==-1).length,false):env.end(1,'💥 دُست على لغم!')}open(i);paint();if(ON)NET.prog(O.filter(Boolean).length);if(O.filter(Boolean).length===N*N-M){over=1;if(ON)NET.fin(99,true);else env.end(0,'سحّبت كل الألغام! 🏆')}};
 tb.onclick=()=>{flag=!flag;tb.textContent='🚩 وضع العلم: '+(flag?'شغّال':'مقفول')};reset();return{reset,destroy(){}}}};
-SX.games.slide={id:'slide',icon:'🧩',name:'بازل الأرقام',desc:'رتّب الأرقام من 1 لـ 8 بالتحريك',cpu:true,local:false,online:false,opts:[],
-make(env){let a,mv;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><div class="fxg-grid" style="grid-template-columns:repeat(3,1fr)"></div></div>';const g=env.box.querySelector('.fxg-grid'),st=env.box.querySelector('.g-st');
+SX.games.slide={id:'slide',icon:'🧩',name:'بازل الأرقام',desc:'رتّب الأرقام من 1 لـ 8 بالتحريك',cpu:true,local:false,online:true,max:4,opts:[],
+make(env){RS=env.mode==='online'?MK(env.seed):null;const ON=env.mode==='online',NET=ON?NETF(env):null;let a,mv;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><div class="fxg-grid" style="grid-template-columns:repeat(3,1fr)"></div></div>';const g=env.box.querySelector('.fxg-grid'),st=env.box.querySelector('.g-st');
 function paint(){g.innerHTML=a.map((v,i)=>`<button type="button" data-i="${i}" style="${v?'':'visibility:hidden'}">${v}</button>`).join('');st.textContent='حركات: '+mv}
-function reset(){a=[1,2,3,4,5,6,7,8,0];mv=0;let z=8;for(let k=0;k<150;k++){const c=[];const r=z/3|0,q=z%3;if(r>0)c.push(z-3);if(r<2)c.push(z+3);if(q>0)c.push(z-1);if(q<2)c.push(z+1);const j=c[rnd(c.length)];[a[z],a[j]]=[a[j],a[z]];z=j}paint()}
-g.onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i,z=a.indexOf(0);if(Math.abs(i-z)===3||(Math.abs(i-z)===1&&(i/3|0)===(z/3|0))){[a[i],a[z]]=[a[z],a[i]];mv++;paint();if(a.slice(0,8).every((v,k)=>v===k+1))env.end(0,'رتّبتها في '+mv+' حركة 🎉')}};reset();return{reset,destroy(){}}}};
-SX.games.sprint={id:'sprint',icon:'⚡',name:'سباق الحساب',desc:'جاوب 10 أسئلة حساب في 60 ثانية (لازم 7 صح)',cpu:true,local:false,online:false,
+function reset(sd){if(env.mode==='online'){if(sd!=null)RS=MK(sd);NET.reset()}a=[1,2,3,4,5,6,7,8,0];mv=0;let z=8;for(let k=0;k<150;k++){const c=[];const r=z/3|0,q=z%3;if(r>0)c.push(z-3);if(r<2)c.push(z+3);if(q>0)c.push(z-1);if(q<2)c.push(z+1);const j=c[rnd(c.length)];[a[z],a[j]]=[a[j],a[z]];z=j}paint()}
+g.onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i,z=a.indexOf(0);if(Math.abs(i-z)===3||(Math.abs(i-z)===1&&(i/3|0)===(z/3|0))){[a[i],a[z]]=[a[z],a[i]];mv++;paint();if(ON)NET.prog(a.filter((v,k)=>v===k+1).length);if(a.slice(0,8).every((v,k)=>v===k+1)){if(ON)NET.fin(99,true);else env.end(0,'رتّبتها في '+mv+' حركة 🎉')}}};reset();return{reset,destroy(){}}}};
+SX.games.sprint={id:'sprint',icon:'⚡',name:'سباق الحساب',desc:'جاوب 10 أسئلة حساب في 60 ثانية (لازم 7 صح)',cpu:true,local:false,online:true,max:4,
 opts:[{k:'lv',label:'المستوى',choices:[[1,'سهل'],[2,'متوسط'],[3,'صعب']],def:2}],
-make(env){let q,sc,n,tl,t;const L=env.opts.lv||2;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><div class="fxg-q"></div><div class="fxg-opts"></div></div>';const st=env.box.querySelector('.g-st'),Q=env.box.querySelector('.fxg-q'),O=env.box.querySelector('.fxg-opts');
-function gen(){const o=['+','−','×'][rnd(L>1?3:2)],A=1+rnd(L*12),B=1+rnd(L>2?12:L*8);let r=o==='+'?A+B:o==='−'?A-B:A*B;const s=new Set([r]);while(s.size<4)s.add(r+rnd(11)-5||r+7);q={t:A+' '+o+' '+B+' = ?',r,o:[...s].sort(()=>Math.random()-.5)}}
+make(env){RS=env.mode==='online'?MK(env.seed):null;const ON=env.mode==='online',NET=ON?NETF(env):null;let q,sc,n,tl,t;const L=env.opts.lv||2;env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><div class="fxg-q"></div><div class="fxg-opts"></div></div>';const st=env.box.querySelector('.g-st'),Q=env.box.querySelector('.fxg-q'),O=env.box.querySelector('.fxg-opts');
+function gen(){const o=['+','−','×'][rnd(L>1?3:2)],A=1+rnd(L*12),B=1+rnd(L>2?12:L*8);let r=o==='+'?A+B:o==='−'?A-B:A*B;const s=new Set([r]);while(s.size<4)s.add(r+rnd(11)-5||r+7);q={t:A+' '+o+' '+B+' = ?',r,o:[...s].sort(()=>RR()-.5)}}
 function show(){gen();Q.textContent=q.t;O.innerHTML=q.o.map(v=>`<button type="button" data-v="${v}">${v}</button>`).join('');st.textContent='✅ '+sc+' · سؤال '+(n+1)+'/10 · ⏱ '+tl}
-function fin(){clearInterval(t);env.end(sc>=7?0:1,'نتيجتك '+sc+' / 10')}
-function reset(){clearInterval(t);sc=0;n=0;tl=60;show();t=setInterval(()=>{tl--;st.textContent='✅ '+sc+' · سؤال '+(n+1)+'/10 · ⏱ '+tl;if(tl<=0)fin()},1000)}
-O.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(+b.dataset.v===q.r)sc++;n++;if(n>=10)fin();else show()};reset();return{reset,destroy(){clearInterval(t)}}}};
+function fin(){clearInterval(t);if(ON)NET.fin(sc,false);else env.end(sc>=7?0:1,'نتيجتك '+sc+' / 10')}
+function reset(sd){if(env.mode==='online'){if(sd!=null)RS=MK(sd);NET.reset()}clearInterval(t);sc=0;n=0;tl=60;show();t=setInterval(()=>{tl--;st.textContent='✅ '+sc+' · سؤال '+(n+1)+'/10 · ⏱ '+tl;if(tl<=0)fin()},1000)}
+O.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(+b.dataset.v===q.r){sc++;if(ON)NET.prog(sc)}n++;if(n>=10)fin();else show()};reset();return{reset,destroy(){clearInterval(t)}}}};
 ['snake','mines','slide','sprint'].forEach(k=>{try{if(SX.gameOrder&&SX.gameOrder.indexOf(k)<0)SX.gameOrder.push(k)}catch(e){}})}
 
 /* ===== مكان زر ✨ وشكله + المزامنة مع «المظهر والألوان» ===== */
@@ -12445,15 +12458,15 @@ const d=document.createElement('div');d.className='field';d.id='fxMF';d.innerHTM
 
 /* ===== أيقونات الشريط العلوي (🔔🌙📢🎮📚🎯🧠🚀) ===== */
 const TBM=()=>{const v=CF.g('tb','box');return v==='bar'?'flat':v==='menu'?'box':v},TBN=()=>+CF.g('tbn','5')||5;
-const TBO=['notifBtn','modeBtn','posterBtn','gamesTopBtn','lectTopBtn','sxTopBtn','fxQzBtn'],TBX=['fxFab','fxTbBtn','toTop','fab'];
+const TBO=['notifBtn','modeBtn','posterBtn','gamesTopBtn','lectTopBtn','sxTopBtn','fxQzBtn','fxPrBtn'],TBX=['fxFab','fxTbBtn','toTop','fab'];
 let tbBar,tbBtn,tbPan;
 const TBL=[['default','📍 زي ما هي (صف واحد)'],['flat','⬇️ بدون بوكس: كل N ينزلوا صف جديد'],['box','📦 بوكس بيتفتح بشرطة']];
 const tbHtml=()=>`<div class="fxposrow">${TBL.map(q=>`<button type="button" class="fxb ${TBM()===q[0]?'on':''}" data-fxtb="${q[0]}">${q[1]}</button>`).join('')}</div><div class="fxposrow" style="margin-top:6px;align-items:center"><small>عدد الأيقونات في الصف:</small>${[4,5,6].map(n=>`<button type="button" class="fxb ${TBN()===n?'on':''}" data-fxtbn="${n}">${n}</button>`).join('')}</div>`;
 function tbOpen(o){if(!tbPan)return;if(o){const r=tbBtn.getBoundingClientRect();tbPan.style.top=(r.bottom+8)+'px';tbPan.style.left=Math.max(8,Math.min(r.left,innerWidth-tbPan.offsetWidth-8))+'px'}tbPan.classList.toggle('open',o);tbBtn.textContent=o?'▴':'▾'}
 function tbEnsure(){if(tbBar)return;tbBar=document.createElement('div');tbBar.id='fxTbar';tbPan=document.createElement('div');tbPan.id='fxTbPanel';
 tbBtn=document.createElement('button');tbBtn.id='fxTbBtn';tbBtn.type='button';tbBtn.textContent='▾';tbBtn.title='افتح/اقفل أيقونات الشريط';tbBtn.setAttribute('aria-label','أيقونات الشريط');tbBtn.onclick=e=>{e.stopPropagation();tbOpen(!tbPan.classList.contains('open'))};document.body.appendChild(tbPan);document.body.appendChild(tbBtn);placeBtn()}
-function tbCands(){const out=[];document.querySelectorAll('body>button,.top-ico').forEach(el=>{if(TBX.includes(el.id)||el.classList.contains('hamburger')||el.classList.contains('fab')||el.closest('#fxTbar,#fxTbPanel'))return;
-const cs=getComputedStyle(el),t=parseFloat(cs.top);if(el.id!=='fxQzBtn'&&(cs.position!=='fixed'||!isFinite(t)||t>110))return;
+function tbCands(){const out=[];document.querySelectorAll('body>button,.top-ico').forEach(el=>{if(TBX.includes(el.id)||el.classList.contains('hamburger')||el.classList.contains('fab')||el.classList.contains('fxtbi'))return;
+const cs=getComputedStyle(el),t=parseFloat(cs.top);if(!/^fx(Qz|Pr)Btn$/.test(el.id)&&(cs.position!=='fixed'||!isFinite(t)||t>110))return;
 {const j=TBORD().indexOf(el.id),k=TBO.indexOf(el.id);el.dataset.fxo=j>=0?j:(k>=0?100+k:150+(parseFloat(cs.left)||0)/1000)}out.push(el)});return out}
 function tbH(h){const r=document.documentElement,nv=h?h+'px':'';if((r.style.getPropertyValue('--fxtb-h')||'')!==nv){if(nv)r.style.setProperty('--fxtb-h',nv);else r.style.removeProperty('--fxtb-h');dispatchEvent(new Event('resize'))}}
 function tbApply(){tbEnsure();const m=TBM();document.documentElement.dataset.fxtb=m;tbBtn.hidden=m!=='box';if(m!=='box')tbOpen(false);
@@ -12464,7 +12477,7 @@ if(m==='flat'){if(!tbBar.parentNode)document.body.appendChild(tbBar)}else tbBar.
 [...host.children].forEach(e=>{const j=TBORD().indexOf(e.id);if(j>=0)e.dataset.fxo=j});const cur=[...host.children],srt=cur.slice().sort((a,b)=>a.dataset.fxo-b.dataset.fxo);if(srt.some((e,i)=>e!==cur[i]))srt.forEach(e=>host.appendChild(e));
 if(m==='flat'){const c=cur.filter(e=>!e.hidden&&e.dataset.fxhide!=='1').length,rows=Math.max(1,Math.ceil(c/TBN())),cell=innerWidth<=480?42:48;tbH(rows>1?Math.max(80,18+rows*(cell+6)+8):0)}else tbH(0)}
 function tbInit(){tbApply();setInterval(tbApply,800)}
-window.FXTB={adopt(el){const m=TBM();if(m==='default')return;tbEnsure();const host=m==='flat'?tbBar:tbPan;if(host&&el.parentNode!==host){el.classList.add('fxtbi');if(!el.dataset.fxo)el.dataset.fxo=6.5;host.appendChild(el)}}};
+window.FXTB={adopt(el){const m=TBM();if(m==='default')return;tbEnsure();const host=m==='flat'?tbBar:tbPan;if(host){el.classList.add('fxtbi');if(!el.dataset.fxo)el.dataset.fxo=6.5;if(el.parentNode!==host)host.appendChild(el)}}};
 document.addEventListener('click',e=>{const a=e.target.closest('[data-fxtb]'),n=e.target.closest('[data-fxtbn]');
 if(a){CF.s('tb',a.dataset.fxtb);tbApply()}if(n){CF.s('tbn',n.dataset.fxtbn);tbApply()}
 if(a||n){document.querySelectorAll('[data-fxtb]').forEach(b=>b.classList.toggle('on',b.dataset.fxtb===TBM()));document.querySelectorAll('[data-fxtbn]').forEach(b=>b.classList.toggle('on',+b.dataset.fxtbn===TBN()))}
@@ -12608,8 +12621,8 @@ else if(a==='new'){if(!ADM())return;o.el.remove();SX.__pub=publish;try{SX.openHu
 else if(a==='man')manual();else if(a==='st')stats();else if(a==='run'){o.el.remove();run(i)}
 else if(a==='mv'&&ADM())mvSec(i,draw);else if(a==='del'&&confirm('تمسح الكويز ده للكل؟')){const L=QZ().slice();L.splice(i,1);saveQZ(L);draw()}})}
 function publish(qs,title){const o=ov('fxPub','📢 نشر الكويز للكل');o.body.innerHTML=`<input id="fxPT" value="${E(title)}"><label>📍 القسم اللي يظهر فيه الكويز</label><select id="fxPS">${secOpts('')}</select><p>${qs.length} سؤال — أول سؤال: ${E(qs[0].q)}</p><button class="fxgo" id="fxPG">📢 انشر للكل</button>`;$('#fxPG',o.el).onclick=()=>{const t=$('#fxPT',o.el).value.trim()||title;if(saveQZ(QZ().concat([{id:Date.now().toString(36),title:t,qs,sec:$('#fxPS',o.el).value,at:Date.now()}]))){o.el.remove();tt('✅ اتنشر لكل الزوار');injectSec();hub()}}}
-function manual(){const o=ov('fxMan','✍️ كويز يدوي');o.body.innerHTML=`<input id="fxMT" placeholder="اسم الكويز"><label>📍 القسم اللي يظهر فيه</label><select id="fxMS">${secOpts('')}</select><textarea id="fxMQ" rows="9" placeholder="كل سطر سؤال:\nالسؤال | اختيار1 | اختيار2 | اختيار3 | اختيار4 | رقم الصحيح\nمثال: 2+2 = ؟ | 3 | 4 | 5 | 6 | 2"></textarea><p class="fxer" id="fxME"></p><button class="fxgo" id="fxMG">📢 انشر للكل</button>`;
-$('#fxMG',o.el).onclick=()=>{const qs=$('#fxMQ',o.el).value.split('\n').map(l=>l.split('|').map(x=>x.trim())).filter(p=>p.length>=4&&p[0]).map(p=>{const a=(+p[p.length-1]||1)-1,op=p.slice(1,p.length-1);return{q:p[0],o:op,a,x:'',t:''}}).filter(q=>q.o.length>=2&&q.a>=0&&q.a<q.o.length),t=$('#fxMT',o.el).value.trim();if(!t||!qs.length){$('#fxME',o.el).textContent='اكتب اسم وسؤال واحد على الأقل بالشكل الصحيح';return}saveQZ(QZ().concat([{id:Date.now().toString(36),title:t,qs,sec:$('#fxMS',o.el).value,at:Date.now()}]));o.el.remove();tt('✅ اتنشر');injectSec();hub()}}
+function manual(){const o=ov('fxMan','✍️ كويز يدوي');o.body.innerHTML=`<input id="fxMT" placeholder="اسم الكويز"><label>📍 القسم اللي يظهر فيه</label><select id="fxMS">${secOpts('')}</select><textarea id="fxMQ" rows="9" placeholder="كل سطر سؤال:\nالسؤال | اختيار1 | اختيار2 | اختيار3 | اختيار4 | رقم الصحيح\nمثال: 2+2 = ؟ | 3 | 4 | 5 | 6 | 2\nصح/غلط: الأرض كروية | صح"></textarea><p class="fxer" id="fxME"></p><button class="fxgo" id="fxMG">📢 انشر للكل</button>`;
+$('#fxMG',o.el).onclick=()=>{const qs=$('#fxMQ',o.el).value.split('\n').map(l=>l.split('|').map(x=>x.trim())).filter(p=>(p.length>=4||(p.length===2&&/^(صح|غلط|ص|غ)$/.test(p[1])))&&p[0]).map(p=>{if(p.length===2)return{q:p[0],o:['صح','غلط'],a:/^(صح|ص)$/.test(p[1])?0:1,x:'',t:''};const a=(+p[p.length-1]||1)-1,op=p.slice(1,p.length-1);return{q:p[0],o:op,a,x:'',t:''}}).filter(q=>q.o.length>=2&&q.a>=0&&q.a<q.o.length),t=$('#fxMT',o.el).value.trim();if(!t||!qs.length){$('#fxME',o.el).textContent='اكتب اسم وسؤال واحد على الأقل بالشكل الصحيح';return}saveQZ(QZ().concat([{id:Date.now().toString(36),title:t,qs,sec:$('#fxMS',o.el).value,at:Date.now()}]));o.el.remove();tt('✅ اتنشر');injectSec();hub()}}
 function run(i){const q=QZ()[i];if(!q)return;const o=ov('fxQr','📝 '+q.title);let k=0,sc=0,wr=[],lock=0;log('start',q);
 const draw=()=>{if(k>=q.qs.length){const p=Math.round(sc/q.qs.length*100);log('finish',q,sc);o.body.innerHTML=`<h2>${p>=50?'🎉':'💪'} ${sc} / ${q.qs.length} (${p}%)</h2>${wr.length?'<h4>غلطاتك</h4>'+wr.map(w=>`<div class="fxw"><b>${E(w.q)}</b><br>✅ ${E(w.o[w.a])}${w.x?'<br><small>'+E(w.x)+'</small>':''}</div>`).join(''):'<p>كله صح 👏</p>'}<button class="fxgo" id="fxAg">🔁 تاني</button>`;$('#fxAg',o.el).onclick=()=>{o.el.remove();run(i)};return}
 const x=q.qs[k];lock=0;o.body.innerHTML=`<small>${k+1} / ${q.qs.length}</small><div class="fxqq">${E(x.q)}</div><div class="fxopts">${x.o.map((t,j)=>`<button data-o="${j}">${E(t)}</button>`).join('')}</div><div id="fxFb"></div>`};
@@ -12620,8 +12633,8 @@ const secName=id=>{const f=secList().find(x=>x.s.id===id);return f?f.s.title:''}
 const secOpts=sel=>'<option value="">(بدون قسم — يظهر في قايمة الكويزات بس)</option>'+secList().map(x=>`<option value="${E(x.s.id)}"${x.s.id===sel?' selected':''}>${E((x.path.length?x.path.join(' › ')+' › ':'')+x.s.title)}</option>`).join('');
 function mvSec(i,cb){const q=QZ()[i];if(!q)return;const o=ov('fxMv','📍 مكان الكويز: '+q.title);o.body.innerHTML=`<select id="fxMvS">${secOpts(q.sec||'')}</select><button class="fxgo" id="fxMvG">حفظ</button>`;$('#fxMvG',o.el).onclick=()=>{const L=QZ().slice();L[i]=Object.assign({},L[i],{sec:$('#fxMvS',o.el).value});saveQZ(L);o.el.remove();injectSec();if(cb)cb();tt('✅ اتنقل')}}
 function runId(id){const i=QZ().findIndex(q=>q.id===id);if(i>=0)run(i)}
-function injectSec(){const L=QZ();document.querySelectorAll('.fxqin').forEach(e=>{const q=L.find(z=>z.id===e.dataset.fxqs),sc=e.closest('section');if(!q||!q.sec||!sc||sc.id!=='sec-'+q.sec)e.remove()});
-L.forEach(q=>{if(!q.sec)return;const sec=document.getElementById('sec-'+q.sec);if(!sec||sec.querySelector('.fxqin[data-fxqs="'+q.id+'"]'))return;const d=document.createElement('div');d.className='fxqin';d.dataset.fxqs=q.id;d.innerHTML=`<div><b>📝 ${E(q.title)}</b><small>${q.qs.length} سؤال</small></div><button class="fxgo" data-fxqrun="${E(q.id)}">ابدأ ▶</button>`;(sec.querySelector('.sec-body,.section-body')||sec).appendChild(d)})}
+function injectSec(){const L=QZ();document.querySelectorAll('.fxqin').forEach(e=>{const q=L.find(z=>z.id===e.dataset.fxqs),sc=e.closest('section');if(!q||!q.sec||!sc||sc.id!=='sec-'+q.sec||!e.parentElement.matches('.blocks,.sec-inner'))e.remove()});
+L.forEach(q=>{if(!q.sec)return;const sec=document.getElementById('sec-'+q.sec);if(!sec||sec.querySelector('.fxqin[data-fxqs="'+q.id+'"]'))return;const d=document.createElement('div');d.className='fxqin';d.dataset.fxqs=q.id;d.innerHTML=`<div><b>📝 ${E(q.title)}</b><small>${q.qs.length} سؤال</small></div><button class="fxgo" data-fxqrun="${E(q.id)}">ابدأ ▶</button>`;(sec.querySelector('.sec-inner>.blocks')||sec.querySelector('.blocks')||sec.querySelector('.sec-inner')||sec).appendChild(d)})}
 let restored=0;function restore(){if(restored||!ADM()||QZ().length)return;const b=LSg('fx_qz_bak','');if(!b)return;try{const a=JSON.parse(b);if(a.length){restored=1;saveQZ(a);tt('📝 رجّعت الكويزات المحفوظة')}}catch(e){}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-fxqrun]');if(b)runId(b.dataset.fxqrun)});
 /* ===== زرار X للتابات ===== */
@@ -12646,10 +12659,10 @@ function qzBtn(){let b=$('#fxQzBtn');if(!b){const ref=$('#sxTopBtn')||$('#gamesT
 const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));if(window.FXTB)FXTB.adopt(b);
 if(!b.classList.contains('fxtbi')&&!b.hidden){let mx=0;document.querySelectorAll('.top-ico').forEach(z=>{if(z!==b&&!z.hidden&&z.offsetParent!==null){const r=z.getBoundingClientRect();if(r.top<110)mx=Math.max(mx,r.right)}});if(mx)b.style.left=(mx+6)+'px'}}
 /* ===== ألعاب 4 لاعبين ===== */
-function reg2(){if(!window.SX||!SX.games||SX.games.ludo)return;
+function reg2(){if(!window.SX||!SX.games||SX.games.ludo)return;const MK=sd=>{let a=(typeof sd==='number'?sd:[...String(sd)].reduce((h,c)=>(h*31+c.charCodeAt(0))|0,7))>>>0;return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}};
 const CL=['#ef4444','#22c55e','#eab308','#3b82f6'],EM=['🔴','🟢','🟡','🔵'],ST=[0,13,26,39],SAFE=[0,8,13,21,26,34,39,47],OPN=[{k:'n',label:'عدد اللاعبين',choices:[[2,'2'],[3,'3'],[4,'4']],def:4}];
-SX.games.ludo={id:'ludo',icon:'🎲',name:'لودو',desc:'لوحة لودو حقيقية: 6 تخرّج حجر، الأكل بيرجّع الحجر، وكل الأحجار لازم توصل البيت',cpu:true,local:true,online:false,max:4,opts:OPN,
-make(env){const n=env.opts.n||4,cols=n===2?[0,2]:[0,1,2,3].slice(0,n),local=env.mode==='local',hu=s=>local||s===0,nm=s=>local||s?'لاعب '+(s+1):'إنت';
+SX.games.ludo={id:'ludo',icon:'🎲',name:'لودو',desc:'لوحة لودو حقيقية: 6 تخرّج حجر، الأكل بيرجّع الحجر، وكل الأحجار لازم توصل البيت',cpu:true,local:true,online:true,max:4,opts:OPN,
+make(env){const ON=env.mode==='online',n=ON?env.names.length:(env.opts.n||4),cols=n===2?[0,2]:[0,1,2,3].slice(0,n),local=env.mode==='local',hu=s=>ON?s===env.seat:(local||s===0),nm=s=>ON?(s===env.seat?'إنت':String(env.names[s]).replace(/[<>&"]/g,'')):(local||s?'لاعب '+(s+1):'إنت');let R=ON?MK(env.seed):Math.random;
 let T,cur,d,over,busy,mov,tm,raf,an,rolling,dead=false;const CS=22,SZ=330,CD=['#7f1d1d','#14532d','#713f12','#1e3a8a'],PATH=[],HC=[[],[],[],[]],YC=[[3,3],[3,12],[12,12],[12,3]],FACE=[[],[4],[0,8],[0,4,8],[0,2,6,8],[0,2,4,6,8],[0,2,3,5,6,8]];
 const add=(r,c)=>PATH.push([r,c]);for(let c=1;c<=5;c++)add(6,c);for(let r=5;r>=0;r--)add(r,6);add(0,7);add(0,8);for(let r=1;r<=5;r++)add(r,8);for(let c=9;c<=14;c++)add(6,c);add(7,14);add(8,14);for(let c=13;c>=9;c--)add(8,c);for(let r=9;r<=14;r++)add(r,8);add(14,7);add(14,6);for(let r=13;r>=9;r--)add(r,6);for(let c=5;c>=0;c--)add(8,c);add(7,0);add(6,0);
 for(let i=1;i<=5;i++){HC[0].push([7,i]);HC[1].push([i,7]);HC[2].push([7,14-i]);HC[3].push([14-i,7])}
@@ -12672,32 +12685,35 @@ if(an&&now-an.t0>=an.dur){const f=an.done;an=null;f()}}
 function ctl(){ui.innerHTML='';st.textContent=over?'انتهت اللعبة':EM[cols[cur]]+' دور '+nm(cur)+(d?' · 🎲 '+d:'');if(over||!hu(cur)||busy)return;ui.innerHTML=!d?'<button type="button" data-r>🎲 ارمي الزهر</button>':mov.map(k=>`<button type="button" data-k="${k}">حجر ${k+1}</button>`).join('')}
 function bot(){let b=mov[0],bs=-1;mov.forEach(k=>{const r=T[cur][k],nr=r<0?0:r+d;let sc=nr+(r<0?60:0)+(nr>=51?30:0);if(nr<=50){const a=(ST[cols[cur]]+nr)%52;if(!SAFE.includes(a)&&T.some((ts,s)=>s!==cur&&ts.some(q=>q>=0&&q<=50&&(ST[cols[s]]+q)%52===a)))sc+=100}if(sc>bs){bs=sc;b=k}});return b}
 function roll(){if(rolling||over)return;rolling=1;busy=1;ctl();dieEl.classList.add('roll');SND.dice();const iv=setInterval(()=>face(1+Math.floor(Math.random()*6)),70);
-tm=setTimeout(()=>{clearInterval(iv);dieEl.classList.remove('roll');rolling=0;d=1+Math.floor(Math.random()*6);face(d);mov=T[cur].map((r,k)=>(r<0?d===6:r+d<=56)?k:-1).filter(k=>k>=0);busy=0;ctl();if(!mov.length){busy=1;tm=setTimeout(()=>next(0),900)}else if(!hu(cur)){busy=1;tm=setTimeout(()=>move(bot()),700)}},650)}
+tm=setTimeout(()=>{clearInterval(iv);dieEl.classList.remove('roll');rolling=0;d=1+Math.floor(R()*6);face(d);mov=T[cur].map((r,k)=>(r<0?d===6:r+d<=56)?k:-1).filter(k=>k>=0);busy=0;ctl();if(!mov.length){busy=1;tm=setTimeout(()=>next(0),900)}else if(!hu(cur)&&!ON){busy=1;tm=setTimeout(()=>move(bot()),700)}},650)}
 function move(k){const r=T[cur][k],nr=r<0?0:r+d,pts=[];if(r<0)pts.push(pos(cur,k,-1),pos(cur,k,0));else for(let q=r;q<=nr;q++)pts.push(pos(cur,k,q));busy=1;ctl();an={s:cur,k,pts,t0:performance.now(),dur:Math.max(300,(pts.length-1)*150),last:-1,done:()=>land(k,nr)}}
 function land(k,nr){T[cur][k]=nr;SND.clack();let ex=d===6;if(nr<=50){const a=(ST[cols[cur]]+nr)%52;if(!SAFE.includes(a))T.forEach((ts,s)=>{if(s!==cur)ts.forEach((q,j)=>{if(q>=0&&q<=50&&(ST[cols[s]]+q)%52===a){ts[j]=-1;ex=true;SND.cap()}})})}
 if(T[cur].every(q=>q===56)){over=1;ctl();return env.end(cur,nm(cur)+' كسب! '+EM[cols[cur]])}next(ex)}
-function next(ex){busy=0;d=0;mov=null;if(!ex)cur=(cur+1)%n;ctl();if(!hu(cur)){busy=1;tm=setTimeout(()=>{busy=0;roll()},700)}}
-ui.onclick=e=>{if(e.target.closest('[data-r]')&&!d&&!busy&&!over)roll();const b=e.target.closest('[data-k]');if(b&&d&&!busy&&mov&&mov.includes(+b.dataset.k))move(+b.dataset.k)};
-cv.onclick=e=>{if(busy||!d||!mov||!hu(cur))return;const r=cv.getBoundingClientRect(),px=(e.clientX-r.left)*SZ/r.width,py=(e.clientY-r.top)*SZ/r.height;for(const k of mov){const q=pos(cur,k,T[cur][k]);if(Math.hypot(q[0]-px,q[1]-py)<16){move(k);return}}};
-function reset(){clearTimeout(tm);an=null;T=cols.map(()=>[-1,-1,-1,-1]);cur=0;d=0;mov=null;over=0;busy=0;rolling=0;face(1);ctl()}
-reset();frame();return{reset,destroy(){dead=true;cancelAnimationFrame(raf);clearTimeout(tm)}}}};
+function next(ex){busy=0;d=0;mov=null;if(!ex)cur=(cur+1)%n;ctl();if(!hu(cur)&&!ON){busy=1;tm=setTimeout(()=>{busy=0;roll()},700)}}
+ui.onclick=e=>{if(e.target.closest('[data-r]')&&!d&&!busy&&!over){if(ON)env.send('lr',{});roll()}const b=e.target.closest('[data-k]');if(b&&d&&!busy&&mov&&mov.includes(+b.dataset.k)){if(ON)env.send('lm',{k:+b.dataset.k});move(+b.dataset.k)}};
+cv.onclick=e=>{if(busy||!d||!mov||!hu(cur))return;const r=cv.getBoundingClientRect(),px=(e.clientX-r.left)*SZ/r.width,py=(e.clientY-r.top)*SZ/r.height;for(const k of mov){const q=pos(cur,k,T[cur][k]);if(Math.hypot(q[0]-px,q[1]-py)<16){if(ON)env.send('lm',{k});move(k);return}}};
+const later=(f,k)=>{if(f())return;if((k||0)<40)setTimeout(()=>later(f,(k||0)+1),100)};
+if(ON){env.on('lr',()=>{if(!hu(cur))later(()=>{if(rolling||busy)return false;if(d||over)return true;roll();return true})});env.on('lm',m=>{if(!hu(cur))later(()=>{if(!mov||an)return false;if(mov.includes(m.k))move(m.k);return true})})}
+function reset(sd,f){if(ON&&sd!=null)R=MK(sd);clearTimeout(tm);an=null;T=cols.map(()=>[-1,-1,-1,-1]);cur=ON?(f||0):0;d=0;mov=null;over=0;busy=0;rolling=0;face(1);ctl()}
+reset(env.seed,env.first);frame();return{reset,destroy(){dead=true;cancelAnimationFrame(raf);clearTimeout(tm)}}}};
 const PP=[[],[[2,2]],[[1,1],[3,3]],[[1,1],[2,2],[3,3]],[[1,1],[3,1],[1,3],[3,3]],[[1,1],[3,1],[2,2],[1,3],[3,3]],[[1,1],[3,1],[1,2],[3,2],[1,3],[3,3]]];
 const TS=(t,sm)=>{const pp=(v,ox)=>PP[v].map(q=>`<circle cx="${ox+q[0]*8}" cy="${q[1]*8}" r="3.4" fill="#1d1d1d"/>`).join('');return `<svg class="fxdt" viewBox="0 0 64 32" width="${sm?46:64}" height="${sm?23:32}"><defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf4"/><stop offset="1" stop-color="#e6dcbd"/></linearGradient></defs><rect x="1" y="1" width="62" height="30" rx="5" fill="url(#dg)" stroke="#8a7a52" stroke-width="1.5"/><line x1="32" y1="5" x2="32" y2="27" stroke="#8a7a52" stroke-width="1.5"/>${pp(t[0],0)}${pp(t[1],32)}</svg>`};
-SX.games.domino={id:'domino',icon:'🁣',name:'دومينو',desc:'طوب دومينو حقيقي على طاولة قماش: طابق الأطراف واخلّص طوبك الأول',cpu:true,local:true,online:false,max:4,opts:OPN,
-make(env){const n=env.opts.n||4,local=env.mode==='local',hu=s=>local||s===0,nm=s=>local?'لاعب '+(s+1):(s?'كمبيوتر '+s:'إنت');let H,Y,C,cur,over,pass,tm,veil;
+SX.games.domino={id:'domino',icon:'🁣',name:'دومينو',desc:'طوب دومينو حقيقي على طاولة قماش: طابق الأطراف واخلّص طوبك الأول',cpu:true,local:true,online:true,max:4,opts:OPN,
+make(env){const ON=env.mode==='online',n=ON?env.names.length:(env.opts.n||4),local=env.mode==='local',hu=s=>ON?s===env.seat:(local||s===0),nm=s=>ON?(s===env.seat?'إنت':String(env.names[s]).replace(/[<>&"]/g,'')):(local?'لاعب '+(s+1):(s?'كمبيوتر '+s:'إنت'));let R=ON?MK(env.seed):Math.random;let H,Y,C,cur,over,pass,tm,veil;
 env.box.innerHTML='<div class="g-wrap"><div class="g-st"></div><div class="fxdm-ch"></div><div class="fxg-opts" id="dm"></div></div>';
 const st=env.box.querySelector('.g-st'),ch=env.box.querySelector('.fxdm-ch'),ui=env.box.querySelector('#dm'),val=t=>t[0]+t[1];
 const play=s=>{const r=[];H[s].forEach((t,j)=>{if(!C.length){if(j===0)r.push([j,'R'])}else{const e0=C[0][0],e1=C[C.length-1][1];if(t[0]===e0||t[1]===e0)r.push([j,'L']);if(t[0]===e1||t[1]===e1)r.push([j,'R'])}});return r};
-function deal(){const al=[];for(let a=0;a<7;a++)for(let b=a;b<7;b++)al.push([a,b]);al.sort(()=>Math.random()-.5);const k=n===4?5:7;H=Array.from({length:n},()=>al.splice(0,k));Y=al;C=[];pass=0;over=0;let bs=-1,bi=0,bt=0;H.forEach((h,i)=>h.forEach((t,j)=>{const v=t[0]===t[1]?20+t[0]:val(t);if(v>bs){bs=v;bi=i;bt=j}}));C.push(H[bi].splice(bt,1)[0]);cur=(bi+1)%n}
+function deal(){const al=[];for(let a=0;a<7;a++)for(let b=a;b<7;b++)al.push([a,b]);for(let i=al.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[al[i],al[j]]=[al[j],al[i]]}const k=n===4?5:7;H=Array.from({length:n},()=>al.splice(0,k));Y=al;C=[];pass=0;over=0;let bs=-1,bi=0,bt=0;H.forEach((h,i)=>h.forEach((t,j)=>{const v=t[0]===t[1]?20+t[0]:val(t);if(v>bs){bs=v;bi=i;bt=j}}));C.push(H[bi].splice(bt,1)[0]);cur=(bi+1)%n}
 function put(s,j,side){const t=H[s].splice(j,1)[0];if(!C.length)C.push(t);else if(side==='L'){C.unshift(t[1]===C[0][0]?t:[t[1],t[0]])}else{C.push(t[0]===C[C.length-1][1]?t:[t[1],t[0]])}SND.clack();pass=0;if(!H[s].length)return fin(s);adv()}
 function fin(s){over=1;render();env.end(s,nm(s)+' كسب! 🎉')}
 function block(){const sm=H.map(h=>h.reduce((a,t)=>a+val(t),0));fin(sm.indexOf(Math.min(...sm)))}
 function adv(){cur=(cur+1)%n;veil=local&&hu(cur);render();bt()}
-function bt(){if(over||hu(cur))return;tm=setTimeout(()=>{let p=play(cur);while(!p.length&&Y.length){H[cur].push(Y.pop());p=play(cur)}if(p.length){p.sort((a,b)=>val(H[cur][b[0]])-val(H[cur][a[0]]));put(cur,p[0][0],p[0][1])}else{pass++;if(pass>=n)return block();adv()}},800)}
+function bt(){if(over||hu(cur)||ON)return;tm=setTimeout(()=>{let p=play(cur);while(!p.length&&Y.length){H[cur].push(Y.pop());p=play(cur)}if(p.length){p.sort((a,b)=>val(H[cur][b[0]])-val(H[cur][a[0]]));put(cur,p[0][0],p[0][1])}else{pass++;if(pass>=n)return block();adv()}},800)}
 function render(){ch.innerHTML=C.map(t=>TS(t,1)).join('');st.textContent=(over?'انتهت':'دور '+nm(cur))+' · السحب '+Y.length+' · '+H.map((h,i)=>nm(i)+':'+h.length).join(' ');ui.innerHTML='';if(over||!hu(cur))return;if(veil){ui.innerHTML='<button type="button" data-ok>👋 جاهز — '+nm(cur)+'</button>';return}
 const p=play(cur);ui.innerHTML=p.map(([j,sd])=>`<button type="button" data-p="${j}:${sd}">${TS(H[cur][j])} ${C.length?(sd==='L'?'◀':'▶'):''}</button>`).join('')||(Y.length?'<button type="button" data-dr>🎴 اسحب طوبة</button>':'<button type="button" data-ps>⏭ دوّر (باص)</button>')}
-ui.onclick=e=>{if(over)return;if(e.target.closest('[data-ok]')){veil=0;render();return}const b=e.target.closest('[data-p]');if(b){const[j,sd]=b.dataset.p.split(':');put(cur,+j,sd)}else if(e.target.closest('[data-dr]')){if(Y.length){H[cur].push(Y.pop());SND.tick()}render()}else if(e.target.closest('[data-ps]')){pass++;if(pass>=n)return block();adv()}};
-function reset(){clearTimeout(tm);deal();veil=local&&hu(cur);render();bt()}
+ui.onclick=e=>{if(over)return;if(e.target.closest('[data-ok]')){veil=0;render();return}const b=e.target.closest('[data-p]');if(b){const[j,sd]=b.dataset.p.split(':');if(ON)env.send('dp',{j:+j,sd});put(cur,+j,sd)}else if(e.target.closest('[data-dr]')){if(ON)env.send('dd',{});if(Y.length){H[cur].push(Y.pop());SND.tick()}render()}else if(e.target.closest('[data-ps]')){if(ON)env.send('ds',{});pass++;if(pass>=n)return block();adv()}};
+if(ON){env.on('dp',m=>{if(!hu(cur)&&!over)put(cur,m.j,m.sd)});env.on('dd',()=>{if(!hu(cur)&&!over){if(Y.length)H[cur].push(Y.pop());render()}});env.on('ds',()=>{if(!hu(cur)&&!over){pass++;if(pass>=n)return block();adv()}})}
+function reset(sd){if(ON&&sd!=null)R=MK(sd);clearTimeout(tm);deal();veil=local&&hu(cur);render();bt()}
 reset();return{reset,destroy(){clearTimeout(tm)}}}};
 /* صوت الفوز لكل الألعاب */
 Object.keys(SX.games).forEach(k=>{const G=SX.games[k];if(!G||G.__snd||typeof G.make!=='function')return;G.__snd=1;const mk=G.make;G.make=function(env){try{const oe=env.end;if(typeof oe==='function')env.end=function(){SND.win();return oe.apply(this,arguments)}}catch(e){}return mk.call(this,env)}});
@@ -12707,6 +12723,78 @@ function boot(){reg2();let t=0;const w=setInterval(()=>{t++;if(!name()){clearInt
 if(sb()||t>12){clearInterval(w);if(!sessionStorage.getItem('fx_touched')){sessionStorage.setItem('fx_touched','1');touch(name(),true);applyName(name())}}},800);
 setInterval(()=>{qzBtn();reg2();injectSec();xTick();restore()},1000)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,900));else setTimeout(boot,900);
+})();
+</script>
+
+<style id="fxCss3">
+#fxPr select,#fxPr input,#fxPr textarea{width:100%;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;margin:5px 0;box-sizing:border-box}
+.fxprt{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.fxprt .on{background:var(--accent);color:#fff}
+.fxpr-hero{position:relative;overflow:hidden;text-align:center;color:#fff;border-radius:18px;padding:18px 12px;background:linear-gradient(135deg,#0f766e,#14532d 55%,#b45309);box-shadow:0 8px 20px #0004}
+.fxpr-hero b{font-size:1.4rem}.fxpr-moon{position:absolute;top:6px;right:12px;font-size:34px}
+.fxpr-cd{font-size:2.3rem;font-weight:800;letter-spacing:2px;font-variant-numeric:tabular-nums;direction:ltr;text-shadow:0 2px 8px #0006}
+.fxpr-row{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-radius:12px;margin:6px 0;background:var(--surface-2);border:1px solid transparent}
+.fxpr-row.nx{background:linear-gradient(90deg,#0f766e33,#b4530933);border-color:var(--gold);font-weight:700}
+.fxdh{text-align:center;padding:16px 12px;border-radius:16px;margin:8px 0;background:var(--surface-2);border:1px solid var(--line)}
+.fxdh p{font-size:1.2rem;line-height:2.1;margin:0 0 10px;font-family:'Amiri','Traditional Arabic',serif}
+.fxcnt{min-width:64px;height:64px;border-radius:50%;border:3px solid var(--gold);background:var(--surface);color:var(--ink);font-size:1.2rem;font-weight:800;cursor:pointer}
+.fxdh.done{opacity:.55}.fxdh.done .fxcnt{background:#16a34a;color:#fff;border-color:#16a34a}
+#fxPrFl{position:fixed;left:12px;bottom:140px;z-index:9985;width:50px;height:50px;border-radius:50%;border:2px solid var(--gold);background:linear-gradient(135deg,#0f766e,#14532d);font-size:24px;cursor:pointer;box-shadow:0 4px 14px #0006}
+#fxPrCard{max-width:720px;margin:10px auto;padding:14px;border-radius:16px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#0f766e,#14532d 60%,#b45309);display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:0 6px 16px #0004}
+#fxPrCard b{font-size:1.1rem}#fxPrCard .cd{font-size:1.5rem;font-weight:800;direction:ltr;font-variant-numeric:tabular-nums}
+#sxHub .sxh-top{display:flex;align-items:center;gap:8px}
+#sxHub .sxh-top .sxh-x[data-sxh=close]{order:-1;margin-inline-end:2px}
+#fxX{left:auto!important;right:10px}
+.fxqh .fxx{order:-1}
+.blocks>.fxqin{margin:14px 0;padding:14px 16px;border-radius:14px;box-shadow:0 2px 10px #0002}
+</style>
+<script id="fxJs3">
+(function(){
+const $=(q,r)=>(r||document).querySelector(q),ADM=()=>{try{return typeof isAdmin!=='undefined'&&!!isAdmin}catch(e){return false}};
+const E=v=>String(v==null?'':v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LSg=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},LSs=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const tt=m=>{try{toast(m)}catch(e){}};
+const PR=()=>{try{return site.meta.fx.pr||{}}catch(e){return{}}};
+function savePR(q){try{site.meta=site.meta||{};const fx=site.meta.fx=Object.assign({},site.meta.fx);fx.pr=Object.assign({},fx.pr,q);scheduleSave();return true}catch(e){tt('تعذّر الحفظ');return false}}
+function ov(id,title){const old=$('#'+id);if(old)old.remove();const o=document.createElement('div');o.id=id;o.className='fxov';o.innerHTML=`<div class="fxqb"><div class="fxqh"><b>${E(title)}</b><button class="fxx" data-fxc>✕</button></div><div class="fxbody"></div></div>`;document.body.appendChild(o);o.addEventListener('click',e=>{if(e.target.closest('[data-fxc]')||e.target===o)o.remove()});return{el:o,body:$('.fxbody',o)}}
+const PN=[['Fajr','الفجر','🌌'],['Sunrise','الشروق','🌅'],['Dhuhr','الظهر','☀️'],['Asr','العصر','🌤️'],['Maghrib','المغرب','🌇'],['Isha','العشاء','🌃']];
+const f12=t=>{const[h,m]=t.split(':').map(Number);return(h%12||12)+':'+String(m).padStart(2,'0')+' '+(h<12?'ص':'م')};
+const cdf=ms=>{const q=Math.max(0,Math.floor(ms/1000));return[Math.floor(q/3600),Math.floor(q%3600/60),q%60].map(v=>String(v).padStart(2,'0')).join(':')};
+async function timings(){const p=PR(),geo=LSg('fx_geo',''),key='fx_pt_'+new Date().toDateString()+'_'+(geo||(p.city||'')+(p.country||'')+(p.method||''));const c=LSg(key,'');if(c){try{return JSON.parse(c)}catch(e){}}
+const m=p.method||5,url=geo?`https://api.aladhan.com/v1/timings?latitude=${geo.split(',')[0]}&longitude=${geo.split(',')[1]}&method=${m}`:`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(p.city||'Alexandria')}&country=${encodeURIComponent(p.country||'Egypt')}&method=${m}`;
+const j=await (await fetch(url)).json(),t=j.data.timings,h=j.data.date.hijri,o={t:{},h:h.day+' '+h.month.ar+' '+h.year,loc:geo?'موقعك الحالي':(p.city||'Alexandria')};PN.forEach(x=>o.t[x[0]]=t[x[0]].slice(0,5));LSs(key,JSON.stringify(o));return o}
+function nextP(o){const now=new Date(),L=PN.filter(x=>x[0]!=='Sunrise').map(x=>{const[h,m]=o.t[x[0]].split(':').map(Number),d=new Date(now);d.setHours(h,m,0,0);return{x,d}});let n=L.find(z=>z.d>now);if(!n)n={x:L[0].x,d:new Date(L[0].d.getTime()+864e5)};return{x:n.x,ms:n.d-now}}
+const K=(t,n)=>({t,n}),ATH_M=[K('اللّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ (آية الكرسي)',1),K('قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ',3),K('قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِن شَرِّ مَا خَلَقَ ۝ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ',3),K('قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ ۝ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ',3),
+K('أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1),K('اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ',1),
+K('اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ (سيد الاستغفار)',1),K('سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',100),K('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',10),K('أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ',100)];
+const ATH_E=ATH_M.map((x,i)=>i===4?K('أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1):i===5?K('اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ',1):x),ATH_A=[K('أَسْتَغْفِرُ اللَّهَ',3),K('سُبْحَانَ اللَّهِ',33),K('الْحَمْدُ لِلَّهِ',33),K('اللَّهُ أَكْبَرُ',33),K('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1)];
+function prayer(){const o=ov('fxPr','🕌 المواقيت والأذكار');let tab='t',tm;const tabs=[['t','🕌 المواقيت'],['morning','🌅 الصباح'],['evening','🌇 المساء'],['after','📿 بعد الصلاة'],['other','✨ أخرى']];if(ADM())tabs.push(['set','⚙️ إعدادات']);
+const draw=()=>{clearInterval(tm);o.body.innerHTML=`<div class="fxprt">${tabs.map(t=>`<button class="fxx ${t[0]===tab?'on':''}" data-pt="${t[0]}">${t[1]}</button>`).join('')}</div><div id="fxPrBody"></div>`;const B=$('#fxPrBody',o.body);if(tab==='t')times(B);else if(tab==='set')sett(B);else ath(B)};
+async function times(B){B.innerHTML='<p>⏳ بجيب المواقيت…</p>';let d;try{d=await timings()}catch(e){B.innerHTML='<p>⚠️ مقدرتش أجيب المواقيت — تأكد من النت وجرّب تاني.</p>';return}
+B.innerHTML=`<div class="fxpr-hero"><span class="fxpr-moon">🌙</span><small>${E(d.h)} هـ</small><div>الصلاة الجاية: <b id="fxPrNm"></b></div><div class="fxpr-cd" id="fxPrCd"></div></div>${PN.map(x=>`<div class="fxpr-row" data-k="${x[0]}"><span>${x[2]} ${x[1]}</span><b>${f12(d.t[x[0]])}</b></div>`).join('')}<p><small>📍 ${E(d.loc)}</small> <button class="fxx" id="fxGeo">📡 استخدم موقعي</button>${LSg('fx_geo','')?'<button class="fxx" id="fxGeoX">↩️ المدينة الأساسية</button>':''}</p>`;
+const upd=()=>{if(!document.body.contains(o.el))return clearInterval(tm);const n=nextP(d);$('#fxPrNm',B).textContent=n.x[1];$('#fxPrCd',B).textContent=cdf(n.ms);B.querySelectorAll('.fxpr-row').forEach(r=>r.classList.toggle('nx',r.dataset.k===n.x[0]))};upd();tm=setInterval(upd,1000);
+B.onclick=e=>{if(e.target.id==='fxGeo'){if(!navigator.geolocation)return tt('المتصفح مش بيدعم الموقع');navigator.geolocation.getCurrentPosition(g=>{LSs('fx_geo',g.coords.latitude.toFixed(3)+','+g.coords.longitude.toFixed(3));draw()},()=>tt('مقدرتش أحدد موقعك'))}if(e.target.id==='fxGeoX'){LSs('fx_geo','');draw()}}}
+function ath(B){const base={morning:ATH_M,evening:ATH_E,after:ATH_A,other:[]}[tab],cu=(PR().athkar||[]).filter(x=>x.cat===tab),L=base.map(x=>({t:x.t,n:x.n})).concat(cu.map(x=>({t:x.t,n:x.n,id:x.id}))),cnt=L.map(x=>x.n);
+B.innerHTML=(L.length?L.map((x,i)=>`<div class="fxdh"><p>${E(x.t)}</p><button class="fxcnt" data-c="${i}">${x.n>1?x.n:'تم'}</button>${x.id&&ADM()?`<button class="fxx" data-del="${E(x.id)}">🗑</button>`:''}</div>`).join(''):'<p>لسه مفيش أذكار هنا.</p>')+(L.length?'<button class="fxx" id="fxRs">🔄 إعادة</button>':'');
+B.onclick=e=>{const c=e.target.closest('[data-c]');if(c){const i=+c.dataset.c;if(cnt[i]>0){cnt[i]--;c.textContent=cnt[i]>0?cnt[i]:'✓';if(cnt[i]<=0)c.closest('.fxdh').classList.add('done')}}
+if(e.target.closest('#fxRs'))ath(B);const dl=e.target.closest('[data-del]');if(dl&&ADM()){savePR({athkar:(PR().athkar||[]).filter(x=>x.id!==dl.dataset.del)});ath(B)}}}
+function sett(B){if(!ADM()){B.innerHTML='<p>للأدمن بس</p>';return}const p=PR(),md=p.mode||'box';
+B.innerHTML=`<h4>📍 مكان ظهور المواقيت</h4><select id="fxPm"><option value="box" ${md==='box'?'selected':''}>أيقونة جوه الصندوق اللي فوق</option><option value="float" ${md==='float'?'selected':''}>أيقونة على الشاشة (بتتداس يظهر كله)</option><option value="section" ${md==='section'?'selected':''}>كارت/قسم أعلى الصفحة</option><option value="hidden" ${md==='hidden'?'selected':''}>مخفية</option></select>
+<h4>🏙 المدينة</h4><input id="fxPc" placeholder="City (English) مثلاً Alexandria" value="${E(p.city||'Alexandria')}"><input id="fxPk" placeholder="Country مثلاً Egypt" value="${E(p.country||'Egypt')}"><select id="fxPM"><option value="5" ${(p.method||5)==5?'selected':''}>الهيئة المصرية العامة للمساحة</option><option value="4" ${p.method==4?'selected':''}>أم القرى (مكة)</option><option value="3" ${p.method==3?'selected':''}>رابطة العالم الإسلامي</option><option value="2" ${p.method==2?'selected':''}>ISNA</option><option value="1" ${p.method==1?'selected':''}>جامعة العلوم الإسلامية كراتشي</option></select><button class="fxgo" id="fxPS1">💾 حفظ</button>
+<h4>➕ إضافة ذكر</h4><select id="fxAc"><option value="morning">الصباح</option><option value="evening">المساء</option><option value="after">بعد الصلاة</option><option value="other">أخرى</option></select><textarea id="fxAt" rows="3" placeholder="نص الذكر"></textarea><input id="fxAn" type="number" min="1" value="1"><button class="fxgo" id="fxAa">➕ أضف</button>`;
+B.onclick=e=>{if(e.target.id==='fxPS1'){const c=$('#fxPc',B).value.trim()||'Alexandria',k=$('#fxPk',B).value.trim()||'Egypt';if(savePR({mode:$('#fxPm',B).value,city:c,country:k,method:+$('#fxPM',B).value})){tt('✅ اتحفظ');sync()}}
+if(e.target.id==='fxAa'){const t=$('#fxAt',B).value.trim();if(!t)return tt('اكتب الذكر');if(savePR({athkar:(PR().athkar||[]).concat([{id:Date.now().toString(36),cat:$('#fxAc',B).value,t,n:Math.max(1,+$('#fxAn',B).value||1)}])})){tt('✅ اتضاف');$('#fxAt',B).value=''}}}}
+o.el.addEventListener('click',e=>{const b=e.target.closest('[data-pt]');if(b){tab=b.dataset.pt;draw()}});draw()}
+function autoLeft(b){if(!b.classList.contains('fxtbi')&&!b.hidden){let mx=0;document.querySelectorAll('.top-ico').forEach(z=>{if(z!==b&&!z.hidden&&z.offsetParent!==null){const r=z.getBoundingClientRect();if(r.top<110)mx=Math.max(mx,r.right)}});if(mx)b.style.left=(mx+6)+'px'}}
+let pd=null,pf=0;function sync(){const md=PR().mode||'box',has=id=>$('#'+id),rm=id=>{const e=has(id);if(e)e.remove()};
+if(md!=='box')rm('fxPrBtn');if(md!=='float')rm('fxPrFl');if(md!=='section')rm('fxPrCard');
+if(md==='box'){let b=has('fxPrBtn');if(!b){if(!($('#sxTopBtn')||$('#gamesTopBtn')))return;b=document.createElement('button');b.className='top-ico';b.id='fxPrBtn';b.type='button';b.title='مواقيت الصلاة والأذكار';b.setAttribute('aria-label','مواقيت الصلاة');b.textContent='🕌';document.body.appendChild(b)}
+const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));if(window.FXTB)FXTB.adopt(b);autoLeft(b)}
+if(md==='float'&&!has('fxPrFl')){const b=document.createElement('button');b.id='fxPrFl';b.type='button';b.title='مواقيت الصلاة';b.textContent='🕌';document.body.appendChild(b)}
+if(md==='section'){let c=has('fxPrCard');const host=$('#sections');if(!c&&host){c=document.createElement('div');c.id='fxPrCard';c.innerHTML='<div>🕌 <b>مواقيت الصلاة والأذكار</b><div><small id="fxPcN">…</small></div></div><div class="cd" id="fxPcC"></div>';host.insertAdjacentElement('beforebegin',c)}
+if(c&&!pd&&!pf){pf=1;timings().then(d=>{pd=d}).catch(()=>{pf=0})}if(c&&pd){const n=nextP(pd);$('#fxPcN').textContent='الجاية: '+n.x[1]+' '+f12(pd.t[n.x[0]]);$('#fxPcC').textContent=cdf(n.ms)}}}
+document.addEventListener('click',e=>{if(e.target.closest('#fxPrB,#fxPrBtn,#fxPrFl,#fxPrCard'))prayer()});
+setInterval(sync,1000);
 })();
 </script>
 </body>
