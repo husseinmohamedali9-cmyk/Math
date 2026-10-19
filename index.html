@@ -12458,7 +12458,7 @@ const d=document.createElement('div');d.className='field';d.id='fxMF';d.innerHTM
 
 /* ===== أيقونات الشريط العلوي (🔔🌙📢🎮📚🎯🧠🚀) ===== */
 const TBM=()=>{const v=CF.g('tb','box');return v==='bar'?'flat':v==='menu'?'box':v},TBN=()=>+CF.g('tbn','5')||5;
-const TBO=['notifBtn','modeBtn','posterBtn','gamesTopBtn','lectTopBtn','sxTopBtn','fxQzBtn','fxPrBtn'],TBX=['fxFab','fxTbBtn','toTop','fab'];
+const TBO=['notifBtn','modeBtn','posterBtn','gamesTopBtn','lectTopBtn','sxTopBtn','fxQzBtn','fxPrBtn'],TBX=['fxFab','fxTbBtn','toTop','fab','fxProfC'];
 let tbBar,tbBtn,tbPan;
 const TBL=[['default','📍 زي ما هي (صف واحد)'],['flat','⬇️ بدون بوكس: كل N ينزلوا صف جديد'],['box','📦 بوكس بيتفتح بشرطة']];
 const tbHtml=()=>`<div class="fxposrow">${TBL.map(q=>`<button type="button" class="fxb ${TBM()===q[0]?'on':''}" data-fxtb="${q[0]}">${q[1]}</button>`).join('')}</div><div class="fxposrow" style="margin-top:6px;align-items:center"><small>عدد الأيقونات في الصف:</small>${[4,5,6].map(n=>`<button type="button" class="fxb ${TBN()===n?'on':''}" data-fxtbn="${n}">${n}</button>`).join('')}</div>`;
@@ -12768,25 +12768,42 @@ const K=(t,n)=>({t,n}),ATH_M=[K('اللّهُ لَا إِلَهَ إِلَّا �
 K('أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1),K('اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ',1),
 K('اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ (سيد الاستغفار)',1),K('سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',100),K('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',10),K('أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ',100)];
 const ATH_E=ATH_M.map((x,i)=>i===4?K('أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1):i===5?K('اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ',1):x),ATH_A=[K('أَسْتَغْفِرُ اللَّهَ',3),K('سُبْحَانَ اللَّهِ',33),K('الْحَمْدُ لِلَّهِ',33),K('اللَّهُ أَكْبَرُ',33),K('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1)];
-function prayer(){const o=ov('fxPr','🕌 المواقيت والأذكار');let tab='t',tm;const tabs=[['t','🕌 المواقيت'],['morning','🌅 الصباح'],['evening','🌇 المساء'],['after','📿 بعد الصلاة'],['other','✨ أخرى']];if(ADM())tabs.push(['set','⚙️ إعدادات']);
+function prayer(){const o=ov('fxPr','🕌 المواقيت والأذكار');let tab='t',tm;const tabs=[['t','🕌 المواقيت'],['morning','🌅 الصباح'],['evening','🌇 المساء'],['after','📿 بعد الصلاة'],['other','✨ أخرى']];tabs.push(['set','⚙️ إعدادات']);
 const draw=()=>{clearInterval(tm);o.body.innerHTML=`<div class="fxprt">${tabs.map(t=>`<button class="fxx ${t[0]===tab?'on':''}" data-pt="${t[0]}">${t[1]}</button>`).join('')}</div><div id="fxPrBody"></div>`;const B=$('#fxPrBody',o.body);if(tab==='t')times(B);else if(tab==='set')sett(B);else ath(B)};
 async function times(B){B.innerHTML='<p>⏳ بجيب المواقيت…</p>';let d;try{d=await timings()}catch(e){B.innerHTML='<p>⚠️ مقدرتش أجيب المواقيت — تأكد من النت وجرّب تاني.</p>';return}
 B.innerHTML=`<div class="fxpr-hero"><span class="fxpr-moon">🌙</span><small>${E(d.h)} هـ</small><div>الصلاة الجاية: <b id="fxPrNm"></b></div><div class="fxpr-cd" id="fxPrCd"></div></div>${PN.map(x=>`<div class="fxpr-row" data-k="${x[0]}"><span>${x[2]} ${x[1]}</span><b>${f12(d.t[x[0]])}</b></div>`).join('')}<p><small>📍 ${E(d.loc)}</small> <button class="fxx" id="fxGeo">📡 استخدم موقعي</button>${LSg('fx_geo','')?'<button class="fxx" id="fxGeoX">↩️ المدينة الأساسية</button>':''}</p>`;
 const upd=()=>{if(!document.body.contains(o.el))return clearInterval(tm);const n=nextP(d);$('#fxPrNm',B).textContent=n.x[1];$('#fxPrCd',B).textContent=cdf(n.ms);B.querySelectorAll('.fxpr-row').forEach(r=>r.classList.toggle('nx',r.dataset.k===n.x[0]))};upd();tm=setInterval(upd,1000);
 B.onclick=e=>{if(e.target.id==='fxGeo'){if(!navigator.geolocation)return tt('المتصفح مش بيدعم الموقع');navigator.geolocation.getCurrentPosition(g=>{LSs('fx_geo',g.coords.latitude.toFixed(3)+','+g.coords.longitude.toFixed(3));draw()},()=>tt('مقدرتش أحدد موقعك'))}if(e.target.id==='fxGeoX'){LSs('fx_geo','');draw()}}}
-function ath(B){const base={morning:ATH_M,evening:ATH_E,after:ATH_A,other:[]}[tab],cu=(PR().athkar||[]).filter(x=>x.cat===tab),L=base.map(x=>({t:x.t,n:x.n})).concat(cu.map(x=>({t:x.t,n:x.n,id:x.id}))),cnt=L.map(x=>x.n);
-B.innerHTML=(L.length?L.map((x,i)=>`<div class="fxdh"><p>${E(x.t)}</p><button class="fxcnt" data-c="${i}">${x.n>1?x.n:'تم'}</button>${x.id&&ADM()?`<button class="fxx" data-del="${E(x.id)}">🗑</button>`:''}</div>`).join(''):'<p>لسه مفيش أذكار هنا.</p>')+(L.length?'<button class="fxx" id="fxRs">🔄 إعادة</button>':'');
-B.onclick=e=>{const c=e.target.closest('[data-c]');if(c){const i=+c.dataset.c;if(cnt[i]>0){cnt[i]--;c.textContent=cnt[i]>0?cnt[i]:'✓';if(cnt[i]<=0)c.closest('.fxdh').classList.add('done')}}
-if(e.target.closest('#fxRs'))ath(B);const dl=e.target.closest('[data-del]');if(dl&&ADM()){savePR({athkar:(PR().athkar||[]).filter(x=>x.id!==dl.dataset.del)});ath(B)}}}
-function sett(B){if(!ADM()){B.innerHTML='<p>للأدمن بس</p>';return}const p=PR(),md=p.mode||'box';
-B.innerHTML=`<h4>📍 مكان ظهور المواقيت</h4><select id="fxPm"><option value="box" ${md==='box'?'selected':''}>أيقونة جوه الصندوق اللي فوق</option><option value="float" ${md==='float'?'selected':''}>أيقونة على الشاشة (بتتداس يظهر كله)</option><option value="section" ${md==='section'?'selected':''}>كارت/قسم أعلى الصفحة</option><option value="hidden" ${md==='hidden'?'selected':''}>مخفية</option></select>
-<h4>🏙 المدينة</h4><input id="fxPc" placeholder="City (English) مثلاً Alexandria" value="${E(p.city||'Alexandria')}"><input id="fxPk" placeholder="Country مثلاً Egypt" value="${E(p.country||'Egypt')}"><select id="fxPM"><option value="5" ${(p.method||5)==5?'selected':''}>الهيئة المصرية العامة للمساحة</option><option value="4" ${p.method==4?'selected':''}>أم القرى (مكة)</option><option value="3" ${p.method==3?'selected':''}>رابطة العالم الإسلامي</option><option value="2" ${p.method==2?'selected':''}>ISNA</option><option value="1" ${p.method==1?'selected':''}>جامعة العلوم الإسلامية كراتشي</option></select><button class="fxgo" id="fxPS1">💾 حفظ</button>
-<h4>➕ إضافة ذكر</h4><select id="fxAc"><option value="morning">الصباح</option><option value="evening">المساء</option><option value="after">بعد الصلاة</option><option value="other">أخرى</option></select><textarea id="fxAt" rows="3" placeholder="نص الذكر"></textarea><input id="fxAn" type="number" min="1" value="1"><button class="fxgo" id="fxAa">➕ أضف</button>`;
-B.onclick=e=>{if(e.target.id==='fxPS1'){const c=$('#fxPc',B).value.trim()||'Alexandria',k=$('#fxPk',B).value.trim()||'Egypt';if(savePR({mode:$('#fxPm',B).value,city:c,country:k,method:+$('#fxPM',B).value})){tt('✅ اتحفظ');sync()}}
-if(e.target.id==='fxAa'){const t=$('#fxAt',B).value.trim();if(!t)return tt('اكتب الذكر');if(savePR({athkar:(PR().athkar||[]).concat([{id:Date.now().toString(36),cat:$('#fxAc',B).value,t,n:Math.max(1,+$('#fxAn',B).value||1)}])})){tt('✅ اتضاف');$('#fxAt',B).value=''}}}}
+const TM=['آية الكرسي','سورة الإخلاص','سورة الفلق','سورة الناس','أصبحنا وأصبح الملك لله','اللهم بك أصبحنا','سيد الاستغفار','التسبيح','التهليل','الاستغفار'],TE=['آية الكرسي','سورة الإخلاص','سورة الفلق','سورة الناس','أمسينا وأمسى الملك لله','اللهم بك أمسينا','سيد الاستغفار','التسبيح','التهليل','الاستغفار'],TA=['الاستغفار','التسبيح','التحميد','التكبير','التهليل'],CATS=[['morning','الصباح'],['evening','المساء'],['after','بعد الصلاة'],['other','أخرى']];
+let editing=null,pendForm=0;
+function myA(){try{return JSON.parse(LSg('fx_my_athkar','[]'))||[]}catch(e){return[]}}
+function saveMy(a){LSs('fx_my_athkar',JSON.stringify(a))}
+function ath(B){const ti={morning:TM,evening:TE,after:TA,other:[]}[tab]||[],base={morning:ATH_M,evening:ATH_E,after:ATH_A,other:[]}[tab]||[];
+const L=base.map((x,i)=>({t:x.t,n:x.n,ti:ti[i]||''})).concat((PR().athkar||[]).filter(x=>x.cat===tab).map(x=>({t:x.t,n:x.n,ti:x.ti||'',id:x.id,src:'pub'})),myA().filter(x=>x.cat===tab).map(x=>({t:x.t,n:x.n,ti:x.ti||'',id:x.id,src:'my'}))),cnt=L.map(x=>x.n),can=x=>x.src==='my'||(x.src==='pub'&&ADM());
+B.innerHTML=(L.length?L.map((x,i)=>`<div class="fxdh">${x.ti?`<h4 class="fxdh-t">${E(x.ti)}</h4>`:''}<p>${E(x.t)}</p><button class="fxcnt" data-c="${i}">${x.n>1?x.n:'تم'}</button>${can(x)?`<button class="fxx" data-ed="${i}" aria-label="تعديل">✏️</button><button class="fxx" data-del="${i}" aria-label="حذف">🗑</button>`:''}</div>`).join(''):'<p>لسه مفيش أذكار هنا.</p>')+`<div class="fxprt" style="margin-top:8px"><button class="fxx" id="fxRs" type="button">🔄 إعادة</button><button class="fxgo" id="fxAnew" type="button">➕ ضيف ذكر</button></div><div id="fxAf"></div>`;
+const F=$('#fxAf',B);
+const form=ed=>{F.innerHTML=`<div class="fxdh" style="text-align:start"><h4>${ed?'✏️ تعديل ذكر':'➕ ذكر جديد'}</h4><select id="fxAc">${CATS.map(c=>`<option value="${c[0]}" ${(ed?ed.cat:tab)===c[0]?'selected':''}>${c[1]}</option>`).join('')}</select><input id="fxAti" placeholder="اسم الذكر (مثلاً: دعاء الكرب)" value="${E(ed?ed.ti:'')}"><textarea id="fxAt" rows="4" placeholder="نص الذكر">${E(ed?ed.t:'')}</textarea><input id="fxAn" type="number" min="1" value="${ed?ed.n:1}" placeholder="عدد التكرار">${ADM()&&!ed?'<label><input type="checkbox" id="fxAp"> 📢 انشره لكل الزوار</label>':''}<div class="fxprt"><button class="fxgo" id="fxAa" type="button">${ed?'💾 حفظ':'➕ أضف وكمّل'}</button><button class="fxx" id="fxAd" type="button">✔ خلاص</button></div>${ed?'':'<details><summary>➕ أضف كذا ذكر مرة واحدة</summary><textarea id="fxAb" rows="5" placeholder="كل سطر ذكر بالشكل ده:&#10;اسم الذكر | نص الذكر | العدد"></textarea><button class="fxgo" id="fxAbb" type="button">➕ أضف الكل</button></details>'}</div>`;F.scrollIntoView({block:'nearest'})};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const addAll=(arr,pub)=>{if(pub&&ADM())return savePR({athkar:(PR().athkar||[]).concat(arr)});saveMy(myA().concat(arr));return true};
+B.onclick=e=>{const t=e.target,c=t.closest('[data-c]');
+if(c){const i=+c.dataset.c;if(cnt[i]>0){cnt[i]--;c.textContent=cnt[i]>0?cnt[i]:'✓';if(cnt[i]<=0)c.closest('.fxdh').classList.add('done')}return}
+if(t.closest('#fxRs'))return ath(B);if(t.closest('#fxAnew')){editing=null;return form(null)}
+const ed=t.closest('[data-ed]');if(ed){const x=L[+ed.dataset.ed];editing=x;return form({cat:tab,ti:x.ti,t:x.t,n:x.n})}
+const dl=t.closest('[data-del]');if(dl){const x=L[+dl.dataset.del];if(!confirm('تمسح الذكر ده؟'))return;if(x.src==='my')saveMy(myA().filter(z=>z.id!==x.id));else if(ADM())savePR({athkar:(PR().athkar||[]).filter(z=>z.id!==x.id)});return ath(B)}
+if(t.id==='fxAd'){editing=null;return ath(B)}
+if(t.id==='fxAbb'){const cat=$('#fxAc',B).value,arr=$('#fxAb',B).value.split('\n').map(l=>l.split('|').map(s=>s.trim())).filter(p=>p.some(Boolean)).map(p=>p.length>=3?{ti:p[0],t:p[1],n:p[2]}:p.length===2?{ti:p[0],t:p[1],n:1}:{ti:'',t:p[0],n:1}).filter(o=>o.t).map(o=>({id:uid(),cat,ti:o.ti,t:o.t,n:Math.max(1,+o.n||1)}));if(!arr.length)return tt('اكتب ذكر واحد على الأقل');const pb=$('#fxAp',B);addAll(arr,pb&&pb.checked);tab=cat;tt('✅ اتضاف '+arr.length+' ذكر');return draw()}
+if(t.id==='fxAa'){const txt=$('#fxAt',B).value.trim();if(!txt)return tt('اكتب نص الذكر');const o={id:editing&&editing.id||uid(),cat:$('#fxAc',B).value,ti:$('#fxAti',B).value.trim(),t:txt,n:Math.max(1,+$('#fxAn',B).value||1)};
+if(editing){if(editing.src==='my')saveMy(myA().map(z=>z.id===o.id?o:z));else savePR({athkar:(PR().athkar||[]).map(z=>z.id===o.id?o:z)});editing=null;tab=o.cat;tt('✅ اتحفظ');return draw()}
+const pb=$('#fxAp',B);addAll([o],pb&&pb.checked);tab=o.cat;pendForm=1;tt('✅ اتضاف — كمّل الذكر اللي بعده');return draw()}};
+if(pendForm){pendForm=0;form(null)}}
+function sett(B){const p=PR(),pm=LSg('fx_pr_mode',''),op=(v,l,c)=>`<option value="${v}" ${c===v?'selected':''}>${l}</option>`,MD=[['box','أيقونة جوه الصندوق اللي فوق'],['float','أيقونة على الشاشة (بتتداس يظهر كله)'],['section','كارت/قسم أعلى الصفحة'],['hidden','مخفية']];
+B.innerHTML=`<h4>📍 مكان ظهور المواقيت (على جهازك)</h4><select id="fxPmU">${op('','زي إعداد الموقع',pm)}${MD.map(m=>op(m[0],m[1],pm)).join('')}</select><small>الاختيار ده ليك إنت بس.</small>`+(ADM()?`<h4>🌐 الافتراضي لكل الزوار</h4><select id="fxPm">${MD.map(m=>op(m[0],m[1],p.mode||'box')).join('')}</select>
+<h4>🏙 المدينة</h4><input id="fxPc" placeholder="City (English) مثلاً Alexandria" value="${E(p.city||'Alexandria')}"><input id="fxPk" placeholder="Country مثلاً Egypt" value="${E(p.country||'Egypt')}"><select id="fxPM"><option value="5" ${(p.method||5)==5?'selected':''}>الهيئة المصرية العامة للمساحة</option><option value="4" ${p.method==4?'selected':''}>أم القرى (مكة)</option><option value="3" ${p.method==3?'selected':''}>رابطة العالم الإسلامي</option><option value="2" ${p.method==2?'selected':''}>ISNA</option><option value="1" ${p.method==1?'selected':''}>جامعة العلوم الإسلامية كراتشي</option></select><button class="fxgo" id="fxPS1" type="button">💾 حفظ</button>`:'');
+B.onchange=e=>{if(e.target.id==='fxPmU'){LSs('fx_pr_mode',e.target.value);sync();tt('✅ اتغيّر')}};
+B.onclick=e=>{if(e.target.id==='fxPS1'&&ADM()){const c=$('#fxPc',B).value.trim()||'Alexandria',k=$('#fxPk',B).value.trim()||'Egypt';if(savePR({mode:$('#fxPm',B).value,city:c,country:k,method:+$('#fxPM',B).value})){tt('✅ اتحفظ');sync()}}}}
 o.el.addEventListener('click',e=>{const b=e.target.closest('[data-pt]');if(b){tab=b.dataset.pt;draw()}});draw()}
 function autoLeft(b){if(!b.classList.contains('fxtbi')&&!b.hidden){let mx=0;document.querySelectorAll('.top-ico').forEach(z=>{if(z!==b&&!z.hidden&&z.offsetParent!==null){const r=z.getBoundingClientRect();if(r.top<110)mx=Math.max(mx,r.right)}});if(mx)b.style.left=(mx+6)+'px'}}
-let pd=null,pf=0;function sync(){const md=PR().mode||'box',has=id=>$('#'+id),rm=id=>{const e=has(id);if(e)e.remove()};
+let pd=null,pf=0;function sync(){const md=LSg('fx_pr_mode','')||PR().mode||'box',has=id=>$('#'+id),rm=id=>{const e=has(id);if(e)e.remove()};
 if(md!=='box')rm('fxPrBtn');if(md!=='float')rm('fxPrFl');if(md!=='section')rm('fxPrCard');
 if(md==='box'){let b=has('fxPrBtn');if(!b){if(!($('#sxTopBtn')||$('#gamesTopBtn')))return;b=document.createElement('button');b.className='top-ico';b.id='fxPrBtn';b.type='button';b.title='مواقيت الصلاة والأذكار';b.setAttribute('aria-label','مواقيت الصلاة');b.textContent='🕌';document.body.appendChild(b)}
 const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));if(window.FXTB)FXTB.adopt(b);autoLeft(b)}
@@ -12797,4 +12814,138 @@ document.addEventListener('click',e=>{if(e.target.closest('#fxPrB,#fxPrBtn,#fxPr
 setInterval(sync,1000);
 })();
 </script>
+<style id="fxCss4">
+/* في وضع البوكس الأيقونات جوه الصندوق، فمفيش داعي نحجز لها مكان في الشريط */
+html[data-fxtb=box] .topbar-in{padding-inline-end:64px!important}
+@media (min-width:600px){html[data-fxtb=box] .topbar-in{padding-inline-end:76px!important}}
+/* ===== إخفاء البوكس والأزرار العايمة لما أي تاب يتفتح ===== */
+html.fx-ovl body>button:not(#fxX),html.fx-ovl #fxTbPanel,html.fx-ovl #fxTbar,html.fx-ovl #fxTopGrp,html.fx-ovl #fxFab,html.fx-ovl #fxPrFl,html.fx-ovl #fxProfC,html.fx-ovl #readTools,html.fx-ovl #mbTip,html.fx-ovl #fxPrev{display:none!important}
+/* ===== مركز التحدّي: العنوان والاسم في النص ===== */
+#sxHub .sxh-top{position:relative;flex-wrap:wrap;justify-content:center;align-items:center;row-gap:6px;padding:10px 52px}
+#sxHub .sxh-top .sxh-t{flex:1 1 100%;text-align:center;order:0;margin:0}
+#sxHub .sxh-top .sxh-nm{flex:1 1 100%;order:1;display:flex;justify-content:center;align-items:center;gap:8px;margin:0}
+#sxHub .sxh-top .sxh-nm input{text-align:center;max-width:170px}
+#sxHub .sxh-top .sxh-x[data-sxh=close]{position:absolute;top:8px;right:10px;left:auto;order:0;margin:0}
+#sxHub .sxh-top .sxh-x[data-sxh=gear]{position:absolute;top:8px;left:10px;right:auto;order:0;margin:0}
+.fxav{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}
+#sxHub .fxav.hubav{width:30px;height:30px;border-radius:50%;border:2px solid var(--gold);flex:none}
+/* ===== البروفايل ===== */
+#fxProfBtn{padding:0;overflow:hidden;border-color:var(--gold)}
+#fxProfC{position:fixed;top:calc(env(safe-area-inset-top,0px) + 11px);left:50%;transform:translateX(-50%);z-index:9988;height:42px;min-width:42px;border-radius:21px;border:2px solid var(--gold);background:var(--surface);color:var(--ink);display:flex;align-items:center;gap:6px;padding:2px;cursor:pointer;box-shadow:0 3px 10px #0003;font:inherit}
+#fxProfC[hidden]{display:none}
+#fxProfC img{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none}
+#fxProfC span{display:none;font-size:13px;font-weight:700;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-inline:2px 10px}
+@media(min-width:600px){#fxProfC span{display:inline}}
+@media(max-width:480px){#fxProfC{left:calc(50% - 30px)}}
+.fxpf{text-align:center}
+.fxpf-img{display:block;margin:0 auto;width:112px;height:112px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);box-shadow:0 6px 18px #0004;background:var(--surface-2)}
+.fxpf h3{margin:10px 0 2px}
+.fxpf small{color:var(--ink-soft)}
+.fxpf-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.fxx.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.fxqb h4{margin:14px 0 6px}
+/* ===== المصحف ===== */
+#fxMush .fxqb{width:min(680px,98vw);max-height:96vh;padding:12px}
+.fxq-bar{display:flex;gap:6px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:6px 0}
+.fxq-bar input[type=number]{width:78px;text-align:center;margin:0!important}
+.fxq-bar select{margin:0!important;width:auto!important;flex:1;min-width:110px}
+.fxq-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:8px}
+.fxq-list button{display:flex;gap:8px;align-items:center;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);cursor:pointer;font:inherit;text-align:start}
+.fxq-list button b{min-width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:12px}
+.fxq-page{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:16px 14px;line-height:2.4;text-align:justify;font-family:'Amiri Quran','Amiri','Scheherazade New','Traditional Arabic',serif;direction:rtl;font-size:var(--fxqs,26px);min-height:50vh}
+.fxq-sur{margin:10px 0;padding:8px;border:2px solid var(--gold);border-radius:12px;text-align:center;font-weight:700;background:linear-gradient(90deg,#0f766e22,#b4530922)}
+.fxq-bsm{text-align:center;margin:6px 0 10px}
+.fxq-a{cursor:pointer}
+.fxq-a:active{background:color-mix(in srgb,var(--gold) 25%,transparent);border-radius:6px}
+.fxq-n{color:var(--gold);font-size:.8em;white-space:nowrap}
+.fxq-meta{text-align:center;color:var(--ink-soft);font-size:13px;margin:4px 0}
+.fxq-bm{display:flex;gap:6px;align-items:center;margin:4px 0}
+.fxq-bm button:first-child{flex:1}
+#fxPr input[type=checkbox]{width:auto;margin:0 6px}
+.fxdh-t{margin:0 0 6px;color:var(--gold);font-size:1rem}
+#fxPr details{margin-top:8px}
+</style>
+<script id="fxJs4">
+(function(){
+const $=(q,r)=>(r||document).querySelector(q),$$=(q,r)=>[...(r||document).querySelectorAll(q)];
+const E=v=>String(v==null?'':v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LSg=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},LSs=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const tt=m=>{try{toast(m)}catch(e){}};
+const vis=el=>!!el&&!el.hidden&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';
+function ov(id,title){const old=$('#'+id);if(old)old.remove();const o=document.createElement('div');o.id=id;o.className='fxov';o.innerHTML=`<div class="fxqb"><div class="fxqh"><b>${E(title)}</b><button class="fxx" data-fxc type="button" aria-label="إغلاق">✕</button></div><div class="fxbody"></div></div>`;document.body.appendChild(o);o.addEventListener('click',e=>{if(e.target.closest('[data-fxc]')||e.target===o)o.remove()});return{el:o,body:$('.fxbody',o)}}
+const toAr=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+/* ===== أي تاب مفتوح => يخفي البوكس وزر الثيمات ===== */
+const OVS=['#sxHub','#funHub','#lectBox','#plusBox','.fxov','#notifDrawer.open'];
+function ovTick(){const any=OVS.some(q=>$$(q).some(vis)),h=document.documentElement;if(any!==h.classList.contains('fx-ovl')){h.classList.toggle('fx-ovl',any);if(any){const p=$('#fxTbPanel'),b=$('#fxTbBtn');if(p)p.classList.remove('open');if(b)b.textContent='▾'}}}
+/* ===== مكان الأيقونة في الشريط ===== */
+function autoLeft(b){if(!b.classList.contains('fxtbi')&&!b.hidden){let mx=0;$$('.top-ico').forEach(z=>{if(z!==b&&!z.hidden&&z.offsetParent!==null){const r=z.getBoundingClientRect();if(r.top<110)mx=Math.max(mx,r.right)}});if(mx)b.style.left=(mx+6)+'px'}}
+function boxBtn(id,title,html,ord){let b=$('#'+id);if(!b){if(!($('#sxTopBtn')||$('#gamesTopBtn')))return null;b=document.createElement('button');b.className='top-ico';b.id=id;b.type='button';b.title=title;b.setAttribute('aria-label',title);document.body.appendChild(b);b.dataset.fxo=ord}
+const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));if(html!=null&&b.dataset.h!==html){b.innerHTML=html;b.dataset.h=html}if(window.FXTB)FXTB.adopt(b);autoLeft(b);return b}
+/* ===== البروفايل ===== */
+const ANON='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#cbd5e1"/><circle cx="32" cy="24" r="11" fill="#94a3b8"/><path d="M9 64c2-15 13-22 23-22s21 7 23 22z" fill="#94a3b8"/></svg>');
+const pImg=()=>LSg('fx_prof_img','')||ANON,pName=()=>LSg('fx_uname','')||'مجهول',pMode=()=>{const m=LSg('fx_prof_mode','box');return ['box','center','hidden'].includes(m)?m:'box'};
+function syncProf(){const md=pMode(),rm=id=>{const e=$('#'+id);if(e)e.remove()};
+if(md!=='box')rm('fxProfBtn');if(md!=='center')rm('fxProfC');
+if(md==='box'){boxBtn('fxProfBtn','بروفايلي — '+pName(),`<img class="fxav" alt="" src="${E(pImg())}">`,6.4)}
+if(md==='center'){let c=$('#fxProfC');if(!c){c=document.createElement('button');c.id='fxProfC';c.type='button';c.setAttribute('aria-label','بروفايلي');document.body.appendChild(c)}
+const sp=$('#trackSplash');c.hidden=!!(sp&&!sp.classList.contains('hide'));const h=`<img alt="" src="${E(pImg())}"><span>${E(pName())}</span>`;if(c.dataset.h!==h){c.innerHTML=h;c.dataset.h=h}c.title='بروفايلي — '+pName()}
+/* صورة صغيرة جنب الاسم في مركز التحدّي */
+const nm=$('#sxHub .sxh-nm');if(nm){let a=$('.hubav',nm);if(!a){a=document.createElement('img');a.className='fxav hubav';a.alt='';nm.insertBefore(a,nm.firstChild)}if(a.getAttribute('src')!==pImg())a.src=pImg()}}
+function shrink(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onerror=rej;fr.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{const S=256,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d'),m=Math.min(im.width,im.height),sx=(im.width-m)/2,sy=(im.height-m)/2;x.fillStyle='#fff';x.fillRect(0,0,S,S);x.drawImage(im,sx,sy,m,m,0,0,S,S);res(c.toDataURL('image/jpeg',.82))};im.src=fr.result};fr.readAsDataURL(file)})}
+function profile(){const o=ov('fxProf','👤 بروفايلي');const draw=()=>{const md=pMode(),has=!!LSg('fx_prof_img','');
+o.body.innerHTML=`<div class="fxpf"><img class="fxpf-img" id="fxPfI" alt="" src="${E(pImg())}"><h3 id="fxPfN">${E(pName())}</h3><small>${has?'صورتك الشخصية':'صورة مجهولة — اختار صورتك لو حابب'}</small>
+<div class="fxpf-row"><button class="fxgo" id="fxPfUp" type="button">📷 اختار صورة</button>${has?'<button class="fxx" id="fxPfDel" type="button">🗑 إزالة الصورة</button>':''}<button class="fxx" id="fxPfNm" type="button">✏️ تغيير الاسم</button></div><input type="file" id="fxPfF" accept="image/*" hidden></div>
+<h4>📍 مكان الأيقونة</h4><div class="fxpf-row"><button class="fxx ${md==='box'?'on':''}" data-pm="box" type="button">📦 في الصندوق اللي فوق</button><button class="fxx ${md==='center'?'on':''}" data-pm="center" type="button">⬆️ فوق في النص</button><button class="fxx ${md==='hidden'?'on':''}" data-pm="hidden" type="button">🚫 مخفية</button></div>
+<p class="fxpf"><small>الصورة والاسم بيتحفظوا على جهازك وبيظهروا لك إنت.</small></p>`};draw();
+o.el.addEventListener('click',e=>{const t=e.target;if(t.id==='fxPfUp')$('#fxPfF',o.el).click();else if(t.id==='fxPfDel'){try{localStorage.removeItem('fx_prof_img')}catch(_){}syncProf();draw()}
+else if(t.id==='fxPfNm'){o.el.remove();try{FXQ.askName(false)}catch(_){tt('تعذّر فتح تغيير الاسم')}}
+else if(t.dataset&&t.dataset.pm){LSs('fx_prof_mode',t.dataset.pm);syncProf();draw();tt('✅ اتغيّر المكان')}});
+o.el.addEventListener('change',async e=>{if(e.target.id!=='fxPfF')return;const f=e.target.files&&e.target.files[0];if(!f)return;if(!/^image\//.test(f.type))return tt('اختار ملف صورة');try{const d=await shrink(f);LSs('fx_prof_img',d);syncProf();draw();tt('✅ اتحفظت صورتك')}catch(err){tt('مقدرتش أقرا الصورة')}})}
+document.addEventListener('click',e=>{if(e.target.closest('#fxProfBtn,#fxProfC'))profile()});
+/* ===== المصحف ===== */
+const SN='الفاتحة،البقرة،آل عمران،النساء،المائدة،الأنعام،الأعراف،الأنفال،التوبة،يونس،هود،يوسف،الرعد،إبراهيم،الحجر،النحل،الإسراء،الكهف،مريم،طه،الأنبياء،الحج،المؤمنون،النور،الفرقان،الشعراء،النمل،القصص،العنكبوت،الروم،لقمان،السجدة،الأحزاب،سبأ،فاطر،يس،الصافات،ص،الزمر،غافر،فصلت،الشورى،الزخرف،الدخان،الجاثية،الأحقاف،محمد،الفتح،الحجرات،ق،الذاريات،الطور،النجم،القمر،الرحمن،الواقعة،الحديد،المجادلة،الحشر،الممتحنة،الصف،الجمعة،المنافقون،التغابن،الطلاق،التحريم،الملك،القلم،الحاقة،المعارج،نوح،الجن،المزمل،المدثر،القيامة،الإنسان،المرسلات،النبأ،النازعات،عبس،التكوير،الانفطار،المطففين،الانشقاق،البروج،الطارق،الأعلى،الغاشية،الفجر،البلد،الشمس،الليل،الضحى،الشرح،التين،العلق،القدر،البينة،الزلزلة،العاديات،القارعة،التكاثر،العصر،الهمزة،الفيل،قريش،الماعون،الكوثر،الكافرون،النصر،المسد،الإخلاص،الفلق،الناس'.split('،');
+const SP=[1,2,50,77,106,128,151,177,187,208,221,235,249,255,262,267,282,293,305,312,322,332,342,350,359,367,377,385,396,404,411,415,418,428,434,440,446,453,458,467,477,483,489,496,499,502,507,511,515,518,520,523,526,528,531,534,537,542,545,549,551,553,554,556,558,560,562,564,566,568,570,572,574,575,577,578,580,582,583,585,586,587,587,589,590,591,591,592,593,594,595,595,596,596,597,597,598,598,599,599,600,600,601,601,601,602,602,602,603,603,603,604,604,604];
+const JZ=[1,22,42,62,82,102,122,142,162,182,202,222,242,262,282,302,322,342,362,382,402,422,442,462,482,502,522,542,562,582];
+const norm=s=>String(s).replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').trim();
+async function qPage(n){const k='fx_qp_'+n,c=LSg(k,'');if(c){try{return JSON.parse(c)}catch(e){}}
+const r=await fetch('https://api.alquran.cloud/v1/page/'+n+'/quran-uthmani'),j=await r.json();if(!j||!j.data||!j.data.ayahs)throw new Error('bad');
+const a=j.data.ayahs.map(x=>[x.surah.number,x.surah.name,x.numberInSurah,x.text,x.juz]);LSs(k,JSON.stringify(a));return a}
+function stripB(t){const w=t.split(' ');return norm(w[0])==='بسم'&&w.length>4?w.slice(4).join(' '):t}
+function qHtml(a){let out='';a.forEach(([s,nm,i,t])=>{if(i===1){out+=`<div class="fxq-sur">${E(nm)}</div>`;if(s!==1&&s!==9){t=stripB(t);out+='<div class="fxq-bsm">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</div>'}}out+=`<span class="fxq-a" data-s="${s}" data-i="${i}">${E(t)} <span class="fxq-n">﴿${toAr(i)}﴾</span></span> `});return out}
+const BM=()=>{try{return JSON.parse(LSg('fx_q_bm','[]'))||[]}catch(e){return[]}};
+function mush(start){const o=ov('fxMush','📖 المصحف');let page=+start||+LSg('fx_q_last','0')||0,fs=+LSg('fx_q_fs','26')||26;
+const idx=()=>{const bm=BM(),last=+LSg('fx_q_last','0');
+o.body.innerHTML=`${last?`<button class="fxgo" id="fxQc" type="button" style="width:100%">📌 كمّل من صفحة ${toAr(last)}</button>`:''}
+<div class="fxq-bar"><input type="search" id="fxQs" placeholder="🔎 دوّر على سورة…" style="flex:2;min-width:140px;margin:0"><input type="number" id="fxQg" min="1" max="604" placeholder="صفحة"><button class="fxx" id="fxQgo" type="button">اذهب</button></div>
+<div class="fxq-bar"><select id="fxQj"><option value="">الأجزاء…</option>${JZ.map((p,i)=>`<option value="${p}">الجزء ${toAr(i+1)} — ص ${toAr(p)}</option>`).join('')}</select></div>
+${bm.length?`<h4>⭐ العلامات</h4>${bm.map((b,i)=>`<div class="fxq-bm"><button class="fxx" data-bp="${b.p}" type="button">⭐ ${E(b.t)} — صفحة ${toAr(b.p)}</button><button class="fxx" data-bd="${i}" type="button" aria-label="حذف">🗑</button></div>`).join('')}`:''}
+<h4>📑 السور</h4><div class="fxq-list" id="fxQl"></div>`;
+const L=$('#fxQl',o.body),fill=q=>{const k=norm(q||'');L.innerHTML=SN.map((n,i)=>({n,i})).filter(x=>!k||norm(x.n).includes(k)||String(x.i+1)===k).map(x=>`<button type="button" data-sp="${SP[x.i]}"><b>${x.i+1}</b>${E(x.n)}</button>`).join('')||'<p>مفيش نتايج</p>'};fill('');$('#fxQs',o.body).oninput=e=>fill(e.target.value)};
+const read=async n=>{page=Math.max(1,Math.min(604,+n||1));LSs('fx_q_last',String(page));
+o.body.innerHTML='<p style="text-align:center">⏳ بحمّل الصفحة…</p>';let a;try{a=await qPage(page)}catch(e){o.body.innerHTML=`<p>⚠️ مقدرتش أحمّل الصفحة — تأكد من النت.</p><button class="fxgo" id="fxQr1" type="button">🔄 جرّب تاني</button><button class="fxx" id="fxQb" type="button">📑 الفهرس</button>`;return}
+if(!document.body.contains(o.el))return;const bm=BM().some(b=>b.p===page),f=a[0]||[];
+o.body.innerHTML=`<div class="fxq-bar"><button class="fxx" id="fxQb" type="button">📑 الفهرس</button><span><button class="fxx" id="fxQm" type="button" title="تصغير">A−</button><button class="fxx" id="fxQp" type="button" title="تكبير">A+</button><button class="fxx" id="fxQk" type="button" title="علامة">${bm?'⭐':'☆'}</button></span></div>
+<div class="fxq-meta">${E(f[1]||'')} · الجزء ${toAr(f[4]||'')} · صفحة ${toAr(page)} من ٦٠٤</div>
+<div class="fxq-page" id="fxQpg" style="--fxqs:${fs}px">${qHtml(a)}</div>
+<div class="fxq-bar"><button class="fxgo" id="fxQpv" type="button" ${page<=1?'disabled':''}>▶ السابقة</button><input type="number" id="fxQg" min="1" max="604" value="${page}"><button class="fxgo" id="fxQnx" type="button" ${page>=604?'disabled':''}>التالية ◀</button></div>`;
+o.el.scrollTop=0;const bx=$('.fxqb',o.el);if(bx)bx.scrollTop=0;if(page<604)qPage(page+1).catch(()=>{})};
+o.el.addEventListener('click',e=>{const t=e.target,b=t.closest('button');
+if(t.closest('.fxq-a')){return}
+if(!b)return;
+if(b.dataset.sp)read(b.dataset.sp);else if(b.dataset.bp)read(b.dataset.bp);else if(b.dataset.bd!==undefined){const L=BM();L.splice(+b.dataset.bd,1);LSs('fx_q_bm',JSON.stringify(L));idx()}
+else if(b.id==='fxQc')read(LSg('fx_q_last','1'));else if(b.id==='fxQgo'){const v=+$('#fxQg',o.el).value;if(v>=1&&v<=604)read(v);else tt('اكتب رقم من 1 لـ 604')}
+else if(b.id==='fxQb')idx();else if(b.id==='fxQr1')read(page);
+else if(b.id==='fxQpv')read(page-1);else if(b.id==='fxQnx')read(page+1);
+else if(b.id==='fxQm'||b.id==='fxQp'){fs=Math.max(18,Math.min(48,fs+(b.id==='fxQp'?2:-2)));LSs('fx_q_fs',String(fs));const p=$('#fxQpg',o.el);if(p)p.style.setProperty('--fxqs',fs+'px')}
+else if(b.id==='fxQk'){const L=BM(),i=L.findIndex(x=>x.p===page);if(i>=0){L.splice(i,1);b.textContent='☆'}else{const f=$('.fxq-meta',o.el).textContent.split('·')[0].trim();L.push({p:page,t:f||'صفحة'});b.textContent='⭐'}LSs('fx_q_bm',JSON.stringify(L))}});
+o.el.addEventListener('change',e=>{if(e.target.id==='fxQj'&&e.target.value)read(e.target.value)});
+o.el.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='fxQg'){const v=+e.target.value;if(v>=1&&v<=604)read(v)}});
+page?read(page):idx()}
+function syncQr(){boxBtn('fxQrBtn','المصحف','📖',6.5)}
+document.addEventListener('click',e=>{if(e.target.closest('#fxQrBtn'))mush()});
+window.FXMUSH={open:mush,profile};
+setInterval(()=>{try{syncProf();syncQr();ovTick()}catch(e){}},700);
+})();
+</script>
+
 </body>
