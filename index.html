@@ -12768,7 +12768,7 @@ const K=(t,n)=>({t,n}),ATH_M=[K('اللّهُ لَا إِلَهَ إِلَّا �
 K('أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1),K('اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ',1),
 K('اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ (سيد الاستغفار)',1),K('سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',100),K('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',10),K('أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ',100)];
 const ATH_E=ATH_M.map((x,i)=>i===4?K('أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1):i===5?K('اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ',1):x),ATH_A=[K('أَسْتَغْفِرُ اللَّهَ',3),K('سُبْحَانَ اللَّهِ',33),K('الْحَمْدُ لِلَّهِ',33),K('اللَّهُ أَكْبَرُ',33),K('لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',1)];
-function prayer(t0){const o=ov('fxPr','🕌 المواقيت والأذكار');let tab=(typeof t0==='string'&&t0)||'t',tm;const tabs=[['t','🕌 المواقيت'],['az','📿 الأذكار']];tabs.push(['set','⚙️ إعدادات']);
+function prayer(t0){const o=ov('fxPr','🕌 المواقيت والأذكار');let tab=(typeof t0==='string'&&t0)||'t',tm;const tabs=[['t','🕌 المواقيت'],['az','📿 الأذكار']];if(ADM())tabs.push(['set','⚙️ إعدادات']);
 const draw=()=>{clearInterval(tm);o.body.innerHTML=`<div class="fxprt">${tabs.map(t=>`<button class="fxx ${t[0]===tab?'on':''}" data-pt="${t[0]}">${t[1]}</button>`).join('')}</div><div id="fxPrBody"></div>`;const B=$('#fxPrBody',o.body);if(tab==='t')times(B);else if(tab==='set')sett(B);else if(window.FXAZ)window.FXAZ.mount(B);else ath(B)};
 async function times(B){B.innerHTML='<p>⏳ بجيب المواقيت…</p>';let d;try{d=await timings()}catch(e){B.innerHTML='<p>⚠️ مقدرتش أجيب المواقيت — تأكد من النت وجرّب تاني.</p>';return}
 B.innerHTML=`<div class="fxpr-hero"><span class="fxpr-moon">🌙</span><small>${E(d.h)} هـ</small><div>الصلاة الجاية: <b id="fxPrNm"></b></div><div class="fxpr-cd" id="fxPrCd"></div></div>${PN.map(x=>`<div class="fxpr-row" data-k="${x[0]}"><span>${x[2]} ${x[1]}</span><b>${f12(d.t[x[0]])}</b></div>`).join('')}<p><small>📍 ${E(d.loc)}</small> <button class="fxx" id="fxGeo">📡 استخدم موقعي</button>${LSg('fx_geo','')?'<button class="fxx" id="fxGeoX">↩️ المدينة الأساسية</button>':''}</p>`;
@@ -12898,6 +12898,7 @@ html.fx-t-in :is(#fxTbBtn,#fxTbPanel,#fxTbar,#fxTopGrp,#fxFab,#fxProfC,.hamburge
 #fxPr input[type=checkbox]{width:auto;margin:0 6px}
 .fxdh-t{margin:0 0 6px;color:var(--gold);font-size:1rem}
 #fxPr details{margin-top:8px}
+html:not([data-adm]) #fxPfDn,html:not([data-adm]) [data-qset]{display:none!important}
 </style>
 <script id="fxJs4">
 (function(){
@@ -12920,7 +12921,7 @@ const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));if(ht
 function themeOn(){try{const t=document.createElement('i');t.style.cssText='position:fixed;left:-9px;top:-9px;color:var(--accent)';document.body.appendChild(t);const m=getComputedStyle(t).color.match(/[\d.]+/g)||[0,0,0];t.remove();const l=(.299*m[0]+.587*m[1]+.114*m[2])/255;document.documentElement.style.setProperty('--fxon',l>.62?'#161616':'#ffffff')}catch(e){}}
 /* ===== البروفايل ===== */
 const ANON='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#cbd5e1"/><circle cx="32" cy="24" r="11" fill="#94a3b8"/><path d="M9 64c2-15 13-22 23-22s21 7 23 22z" fill="#94a3b8"/></svg>');
-const pImg=()=>LSg('fx_prof_img','')||ANON,pName=()=>LSg('fx_uname','')||'مجهول',pMode=()=>{const m=LSg('fx_prof_mode','center');return ['box','center','hidden'].includes(m)?m:'center'};
+const pImg=()=>LSg('fx_prof_img','')||ANON,pName=()=>LSg('fx_uname','')||'مجهول',pMode=()=>{const l=LSg('fx_prof_mode','');if(['box','center','hidden'].includes(l))return l;let m='';try{m=window.FXDN.get('prof')}catch(e){}return['box','center','hidden'].includes(m)?m:'center'};
 const LVN=['مبتدئ','مجتهد','متميّز','محترف','خبير','أسطورة'];
 const jget=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
 function gData(){let L={t:0,L:1,name:'',into:0,per:100},S={n:0,best:0},st=null,B=[],prog={d:0,n:0},ps={};
@@ -13245,12 +13246,12 @@ const pb=$('[data-fp]',fm);if(pb&&pb.checked&&ADM())savePR({athkar:(PR().athkar|
 render()}
 /* ---------- إعدادات الظهور (مواقيت / أذكار / مصحف) ---------- */
 const DEF={pr:'page',az:'page',qr:'page',layout:'row',size:'m',azopen:'inline',cd:true,order:['pr','az','qr']};
-const PLACES={pr:[['page','📄 في الصفحة'],['box','📦 في الصندوق'],['both','📄+📦 الاتنين'],['float','🔘 أيقونة عايمة'],['hidden','🚫 مخفية']],az:[['page','📄 في الصفحة'],['box','📦 في الصندوق'],['both','📄+📦 الاتنين'],['hidden','🚫 مخفية']],qr:[['page','📄 في الصفحة'],['box','📦 في الصندوق'],['both','📄+📦 الاتنين'],['hidden','🚫 مخفية']]};
+const PLACES={pr:[['page','📊 بار على الواجهة'],['box','📦 في البوكس'],['both','📊+📦 بار وبوكس'],['float','🔘 أيقونة عايمة'],['hidden','🚫 مخفية']],az:[['page','📊 بار على الواجهة'],['box','📦 في البوكس'],['both','📊+📦 بار وبوكس'],['hidden','🚫 مخفية']],qr:[['page','📊 بار على الواجهة'],['box','📦 في البوكس'],['both','📊+📦 بار وبوكس'],['hidden','🚫 مخفية']]};
 const LEG=()=>{const m=LSg('fx_pr_mode','')||PR().mode||'';return m==='box'?{pr:'box',az:'box'}:m==='float'?{pr:'float',az:'hidden'}:m==='hidden'?{pr:'hidden',az:'hidden'}:{}};
 const siteDn=()=>{try{return site.meta.fx.dn||{}}catch(e){return{}}};
-const perDn=()=>{try{return JSON.parse(LSg('fx_dn','{}'))||{}}catch(e){return{}}};
+const perDn=()=>({});
 function cfg(){const c=Object.assign({},DEF,LEG(),siteDn(),perDn());const o=(Array.isArray(c.order)?c.order:[]).filter(k=>DEF.order.includes(k));DEF.order.forEach(k=>{if(!o.includes(k))o.push(k)});c.order=o;['pr','az','qr'].forEach(k=>{if(!PLACES[k].some(p=>p[0]===c[k]))c[k]=DEF[k]});return c}
-function setP(patch){LSs('fx_dn',JSON.stringify(Object.assign({},perDn(),patch)));apply()}
+function setP(patch){if(!ADM())return;try{site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{dn:Object.assign({},siteDn(),patch)});scheduleSave()}catch(e){tt('تعذّر الحفظ')}apply()}
 const onPage=k=>{const p=cfg()[k];return p==='page'||p==='both'},inBox=k=>{const p=cfg()[k];return p==='box'||p==='both'};
 function apply(){try{syncRow();syncIcons();if(window.FXMUSH&&window.FXMUSH.sync)window.FXMUSH.sync()}catch(e){}}
 function panel(host){const c=cfg(),adm=ADM();const seg=(key,list,cur)=>`<div class="dn-seg">${list.map(p=>`<button class="az-btn ${cur===p[0]?'pri':''}" data-k="${key}" data-v="${p[0]}" type="button">${p[1]}</button>`).join('')}</div>`;
@@ -13259,15 +13260,17 @@ host.innerHTML=`<div class="dn-set"><h4>📐 شكل العرض في الصفحة
 <h4>${NM.pr}</h4>${seg('pr',PLACES.pr,c.pr)}<label class="dn-chk"><input type="checkbox" data-cd ${c.cd?'checked':''}> إظهار العدّاد للصلاة الجاية في الخانة</label>
 <h4>${NM.az}</h4>${seg('az',PLACES.az,c.az)}<small>طريقة فتح الأذكار</small>${seg('azopen',[['inline','▾ تتفتح تحت الخانة'],['window','🗔 في نافذة']],c.azopen)}
 <h4>${NM.qr}</h4>${seg('qr',PLACES.qr,c.qr)}
+<h4>👤 البروفايل في الشريط</h4>${seg('prof',[['center','⭕ في نص الشريط'],['box','📦 في البوكس'],['hidden','🚫 مخفي']],(c.prof||'center'))}
 <h4>↕️ ترتيب الخانات</h4>${c.order.map((k,i)=>`<div class="dn-ord"><span>${NM[k]}</span><button class="az-btn" data-up="${i}" type="button" ${i?'':'disabled'}>▲</button><button class="az-btn" data-dn2="${i}" type="button" ${i<c.order.length-1?'':'disabled'}>▼</button></div>`).join('')}
-<div class="az-tools" style="margin-top:12px"><button class="az-btn" data-reset type="button">↺ رجّع الافتراضي (ليا)</button>${adm?'<button class="az-btn pri" data-pubdef type="button">🌐 احفظ دي كافتراضي لكل الزوار</button>':''}</div><small>الإعدادات دي بتتطبّق على جهازك. ${adm?'والزرار اللي فوق بيخلّيها الافتراضي لأي زائر لسه ماغيّرش.':''}</small></div>`;
+<div class="az-tools" style="margin-top:12px"><button class="az-btn" data-reset type="button">↺ رجّع الافتراضي للكل</button></div><small>أي تعديل هنا بيتحفظ في الموقع ويظهر لكل الزوار — وانت بس اللي تشوف الإعدادات دي.</small></div>`;
 host.onclick=e=>{const b=e.target.closest('button');if(!b)return;
+if(b.dataset.k==='prof'){setP({prof:b.dataset.v});LSs('fx_prof_mode','');tt('✅ اتغيّر مكان البروفايل للكل');return panel(host)}
 if(b.dataset.k){const v=b.dataset.v;setP({[b.dataset.k]:v});return panel(host)}
 if(b.dataset.up!==undefined||b.dataset.dn2!==undefined){const o=cfg().order.slice(),i=+(b.dataset.up!==undefined?b.dataset.up:b.dataset.dn2),j=b.dataset.up!==undefined?i-1:i+1;[o[i],o[j]]=[o[j],o[i]];setP({order:o});return panel(host)}
-if(b.hasAttribute('data-reset')){try{localStorage.removeItem('fx_dn')}catch(_){}apply();tt('✅ رجعت الافتراضي');return panel(host)}
+if(b.hasAttribute('data-reset')){try{site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{dn:{}});scheduleSave()}catch(_){}apply();tt('✅ رجعت الافتراضي للكل');return panel(host)}
 if(b.hasAttribute('data-pubdef')){try{site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{dn:cfg()});scheduleSave();tt('✅ اتحفظت كافتراضي للكل')}catch(_){tt('تعذّر الحفظ')}}};
 host.onchange=e=>{if(e.target.hasAttribute('data-cd')){setP({cd:e.target.checked})}}}
-function settings(){const old=$('#fxDn');if(old)old.remove();const o=document.createElement('div');o.id='fxDn';o.className='fxov';o.innerHTML='<div class="fxqb"><div class="fxqh"><b>⚙️ إعدادات المواقيت والأذكار والمصحف</b><button class="fxx" data-fxc type="button" aria-label="إغلاق">✕</button></div><div class="fxbody az-box" style="border:0"></div></div>';document.body.appendChild(o);o.addEventListener('click',e=>{if(e.target.closest('[data-fxc]')||e.target===o)o.remove()});panel($('.fxbody',o))}
+function settings(){if(!ADM()){tt('الإعدادات للأدمن بس');return}const old=$('#fxDn');if(old)old.remove();const o=document.createElement('div');o.id='fxDn';o.className='fxov';o.innerHTML='<div class="fxqb"><div class="fxqh"><b>⚙️ إعدادات المواقيت والأذكار والمصحف</b><button class="fxx" data-fxc type="button" aria-label="إغلاق">✕</button></div><div class="fxbody az-box" style="border:0"></div></div>';document.body.appendChild(o);o.addEventListener('click',e=>{if(e.target.closest('[data-fxc]')||e.target===o)o.remove()});panel($('.fxbody',o))}
 /* ---------- أيقونات الصندوق (للأذكار) ---------- */
 function autoLeft(b){if(!b.classList.contains('fxtbi')&&!b.hidden){let mx=0;$$('.top-ico').forEach(z=>{if(z!==b&&!z.hidden&&z.offsetParent!==null){const r=z.getBoundingClientRect();if(r.top<110)mx=Math.max(mx,r.right)}});if(mx)b.style.left=(mx+6)+'px'}}
 function boxBtn(id,title,html,ord){let b=$('#'+id);if(!b){if(!($('#sxTopBtn')||$('#gamesTopBtn')))return;b=document.createElement('button');b.className='top-ico';b.id=id;b.type='button';b.title=title;b.setAttribute('aria-label',title);b.textContent=html;document.body.appendChild(b);b.dataset.fxo=ord}
@@ -13278,11 +13281,11 @@ document.addEventListener('click',e=>{if(e.target.closest('#fxAzBtn')&&window.FX
 let pd=null,pf=0;
 function syncRow(){const c=cfg(),host=$('#sections'),keys=c.order.filter(onPage);let r=$('#fxDeen');const old=$('#fxPrCard');if(old)old.remove();
 if(!keys.length||!host){if(r)r.remove();return}
-const sig=JSON.stringify([keys,c.layout,c.size,c.azopen,c.cd]);if(r&&r.dataset.sig!==sig){r.remove();r=null}
+const sig=JSON.stringify([keys,c.layout,c.size,c.azopen,c.cd,ADM()]);if(r&&r.dataset.sig!==sig){r.remove();r=null}
 if(!r){const cols=c.layout==='stack'?1:c.layout==='grid2'?2:keys.length;
 const card={pr:`<button class="dn-card pr" data-dn="pr" type="button"><b>🕌 مواقيت الصلاة</b><small id="dnN">…</small>${c.cd?'<span class="cd" id="dnC"></span>':''}</button>`,az:`<button class="dn-card az" data-dn="az" type="button"><b>📿 أذكار <span class="ar">${c.azopen==='inline'?'▾':'◂'}</span></b><small>الصباح · المساء · المذاكرة…</small></button>`,qr:`<button class="dn-card qr" data-dn="qr" type="button"><b>📖 المصحف</b><small>قراءة واستماع</small></button>`};
 r=document.createElement('div');r.id='fxDeen';r.dataset.sig=sig;r.className='dn-sz-'+c.size;
-r.innerHTML=`<button class="dn-gear" data-dn="set" type="button" aria-label="إعدادات" title="إعدادات الظهور">⚙️</button><div class="dn-row" style="--dn-n:${cols}">${keys.map(k=>card[k]).join('')}</div>${keys.includes('az')&&c.azopen==='inline'?'<div class="az-wrap" id="fxDeenAz"><div class="az-in"><div id="fxDeenAzList"></div></div></div>':''}`;
+r.innerHTML=`${ADM()?'<button class="dn-gear" data-dn="set" type="button" aria-label="إعدادات" title="إعدادات الظهور">⚙️</button>':''}<div class="dn-row" style="--dn-n:${cols}">${keys.map(k=>card[k]).join('')}</div>${keys.includes('az')&&c.azopen==='inline'?'<div class="az-wrap" id="fxDeenAz"><div class="az-in"><div id="fxDeenAzList"></div></div></div>':''}`;
 host.insertAdjacentElement('beforebegin',r);
 r.addEventListener('click',e=>{const b=e.target.closest('[data-dn]');if(!b)return;const k=b.dataset.dn;
 if(k==='set')settings();else if(k==='pr'&&window.FXPR)window.FXPR.open();else if(k==='qr'&&window.FXMUSH)window.FXMUSH.open();
@@ -13294,4 +13297,5 @@ setInterval(()=>{try{syncRow();syncIcons()}catch(e){}},1000);
 })();
 </script>
 
+<script id="fxJs7">setInterval(function(){try{document.documentElement.toggleAttribute('data-adm',!!isAdmin)}catch(e){}},600);</script>
 </body>
