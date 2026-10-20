@@ -3350,7 +3350,7 @@ function applyTheme(t){
   r.setAttribute('data-motion', t.motion || 'full');
   r.classList.toggle('no-progress', t.progress === false);
   r.classList.toggle('no-totop', t.toTop === false);
-  r.classList.toggle('bg-still', t.bgAnim === false);
+  r.classList.toggle('bg-still', t.bgAnim === false); r.classList.toggle('no-msym', t.mathSym === false);
   r.classList.toggle('respect-rm', t.respectRM === true);
   document.body.setAttribute('data-bgpattern', t.bgPattern || 'dots');
   (function(){ const id = t.bgPattern || 'dots';
@@ -3449,6 +3449,7 @@ function themeModal(draft){
     <div class="field"><label for="th-bg">🧮 خلفية بصرية رياضية</label>
       <select id="th-bg">${BG_PATTERNS.map(p=>`<option value="${p.id}" ${t.bgPattern===p.id?'selected':''}>${p.name}</option>`).join('')}</select>
       <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin-top:8px"><input type="checkbox" id="th-bganim" ${t.bgAnim!==false?'checked':''} style="width:auto"> ✨ تشغيل حركة الخلفيات (مفتاح عام: لو شلته كل الخلفيات تقف)</label>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin-top:8px"><input type="checkbox" id="th-msym" ${t.mathSym!==false?'checked':''} style="width:auto"> 🔣 رموز الماث الطايرة (π ∑ ∫) ورا الصفحة — منفصلة عن الخلفية اللي فوق</label>
       <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin-top:8px"><input type="checkbox" id="th-rm" ${t.respectRM===true?'checked':''} style="width:auto"> 📵 احترام إعداد "تقليل الحركة" / "توفير الطاقة" في موبايل الطالب</label>
       <p class="hint">لو مقفولة (الافتراضي) الحركات بتظهر على كل الأجهزة. لو مفعّلة، الطلبة اللي عندهم "إزالة الأنيميشن" أو توفير الطاقة هيشوفوا الخلفيات ثابتة.</p>
       <label for="th-bgdrift" style="display:block;margin-top:10px">🎚️ تحريك الخلفيات اللي بتبقى ثابتة (نقاط، شبكة، رموز، معادلات…)</label>
@@ -3503,7 +3504,7 @@ function readThemeForm(readSwatches = true){
               radius:+document.getElementById('th-r').value,
               bgPattern: (document.getElementById('th-bg')||{}).value || 'dots', dv2:2, cv:3,
               introMs:+((document.getElementById('th-intro')||{}).value ?? 2200), motion:(document.getElementById('th-motion')||{}).value || 'full',
-              progress:(document.getElementById('th-prog')||{checked:true}).checked, bgAnim:(document.getElementById('th-bganim')||{checked:true}).checked, bgDrift:(document.getElementById('th-bgdrift')||{}).value || 'off', respectRM:(document.getElementById('th-rm')||{}).checked === true, toTop:(document.getElementById('th-top')||{checked:true}).checked,
+              progress:(document.getElementById('th-prog')||{checked:true}).checked, bgAnim:(document.getElementById('th-bganim')||{checked:true}).checked, mathSym:(document.getElementById('th-msym')||{checked:true}).checked, bgDrift:(document.getElementById('th-bgdrift')||{}).value || 'off', respectRM:(document.getElementById('th-rm')||{}).checked === true, toTop:(document.getElementById('th-top')||{checked:true}).checked,
               colors: clone((themeDraft||{}).light || {}), colorsDark: clone((themeDraft||{}).dark || {}) };
   return t;
 }
@@ -10890,7 +10891,7 @@ SX.Room = Room;
 
 /* ---------------- الواجهة ---------------- */
 let hub = null, stage = null, cur = null;      // cur = {g, cfg, room, inst, ...}
-const GAME_ORDER = ['pool', 'chess', 'xo', 'c4', 'pong', 'duel', 'mem', 'g48'];
+const GAME_ORDER = ['pool', 'chess', 'xo', 'c4', 'dots', 'snk', 'tug', 'draw', 'pong', 'duel', 'mem', 'g48'];
 SX.tools = [];   // أدوات المذاكرة تتسجّل من الملف التاني
 const hcfg = () => { try{ return Fun.cfg().hub || {}; }catch(e){ return {}; } };
 const tabOk = t => (hcfg().offTabs || []).indexOf(t) < 0;
@@ -10926,7 +10927,7 @@ function showTab(t){
   if(!t){ body.innerHTML = '<p class="sxh-sub">مفيش محتوى متاح دلوقتي في مركز التحدّي.</p>'; return; }
   if(t === 'games'){
     const L = GAME_ORDER.filter(k => SX.games[k] && gameOk(k));
-    body.innerHTML = '<p class="sxh-sub">العب ضد الكمبيوتر، أو على نفس الموبايل، أو <b>أونلاين مع صاحبك من موبايلين مختلفين</b> (بكود غرفة أو لينك).</p>' + (L.length ? '<div class="sxh-grid">' + L.map(k => { const g = SX.games[k]; return `<button type="button" class="sxh-card" data-sxh="game" data-g="${k}"><i>${g.icon}</i><b>${E(g.name)}</b><small>${E(g.desc)}</small><span class="sxh-badges">${g.online ? '<em>🌐 أونلاين</em>' : ''}${g.cpu ? '<em>🤖</em>' : ''}${g.local ? '<em>👥</em>' : ''}</span></button>`; }).join('') + '</div>' : '<p class="sxh-sub">مفيش ألعاب متاحة دلوقتي.</p>');
+    body.innerHTML = '<p class="sxh-sub">العب ضد الكمبيوتر، أو على نفس الموبايل، أو <b>أونلاين مع صاحبك من موبايلين مختلفين</b> (بكود غرفة أو لينك).</p>' + (L.length ? '<div class="sxh-grid">' + L.map(k => { const g = SX.games[k]; return `<button type="button" class="sxh-card" data-sxh="game" data-g="${k}"><i>${g.icon}</i><b>${E(g.name)}</b><small>${E(g.desc)}</small><span class="sxh-badges">${g.players ? '<em>👥 ' + g.players + '</em>' : ''}${g.teams ? '<em>🤝 فرق</em>' : ''}${g.online ? '<em>🌐 أونلاين</em>' : ''}${g.cpu ? '<em>🤖</em>' : ''}${g.local ? '<em>👥</em>' : ''}</span></button>`; }).join('') + '</div>' : '<p class="sxh-sub">مفيش ألعاب متاحة دلوقتي.</p>');
   } else if(t === 'study'){
     const T = SX.tools.filter(x => toolOk(x.id));
     body.innerHTML = '<p class="sxh-sub">أدوات بالذكاء الاصطناعي: كويزات وأسئلة وفلاش كاردز وملخصات من أي قسم أو نص أو ملف PDF — في أي مادة، وامتحان تجريبي وخطة مذاكرة.</p>' + (T.length ? '<div class="sxh-grid">' + T.map(x => `<button type="button" class="sxh-card" data-sxh="tool" data-id="${x.id}"><i>${x.icon}</i><b>${E(x.name)}</b><small>${E(x.desc)}</small></button>`).join('') + '</div>' : '<p class="sxh-sub">مفيش أدوات متاحة دلوقتي.</p>');
@@ -10977,8 +10978,8 @@ SX.openLobby = openLobby;
 /* ---------------- بدء لعبة ---------------- */
 function startLocal(g, mode, opts, level){
   closeModal(); const seed = (Math.random()*4e9) >>> 0;
-  const cpuName = 'الكمبيوتر', names = mode === 'cpu' ? [ME.name, cpuName] : [ME.name, 'اللاعب 2'];
-  launch(g, {mode, seat:0, names, seed, first:0, opts, level, n:2});
+  const N = mode === 'cpu' ? (typeof g.cpuN === 'function' ? g.cpuN(opts) : (g.cpuN || 2)) : 2, names = mode === 'cpu' ? [ME.name].concat(Array.from({length:N - 1}, (_, i) => N > 2 ? 'بوت ' + (i + 1) : 'الكمبيوتر')) : [ME.name, 'اللاعب 2'];
+  launch(g, {mode, seat:0, names, seed, first:0, opts, level, n:N});
 }
 async function hostRoom(g, opts, m){
   const st = $q('#sxLs', m); st.innerHTML = '⏳ بجهّز الغرفة…';
@@ -10986,14 +10987,14 @@ async function hostRoom(g, opts, m){
   try{ await room.open(); }catch(e){ st.innerHTML = '❌ مقدرتش أفتح غرفة أونلاين. اتأكد من النت أو إن Supabase شغّال.'; return; }
   const roster = [{id:ME.id, name:ME.name}], max = g.max || 2;
   const link = shareLink(code, g.id), txt = encodeURIComponent('تعالى العب ' + g.name + ' معايا على موقع المذاكرة 🎯\nالكود: ' + code + '\n' + link);
-  const render = () => { st.innerHTML = `<div class="sxl-room"><div class="sxl-code">${code}</div><small>ابعت الكود أو اللينك لصاحبك — لازم يفتح الموقع من موبايله</small>
+  const render = () => { st.innerHTML = `<div class="sxl-room"><div class="sxl-code">${code}</div><small>ابعت الكود أو اللينك لصحابك — لازم يفتحوا الموقع من موبايلاتهم${max > 2 ? ' (من ' + (g.min || 2) + ' لـ ' + max + ' لاعبين)' : ''}</small>
     <div class="sxl-share"><a target="_blank" rel="noopener" href="https://wa.me/?text=${txt}">📲 واتساب</a><button type="button" data-l="copy">📋 نسخ اللينك</button></div>
     <div class="sxl-roster">${roster.map(p => '<span>' + (p.id === ME.id ? '👑 ' : '👤 ') + E(p.name) + '</span>').join('')}<span class="wait">⏳ في انتظار ${roster.length < max ? 'اللاعبين…' : ''}</span></div>
-    ${max > 2 && roster.length >= 2 ? '<button type="button" class="sxl-m on" data-l="go">▶ ابدأ دلوقتي (' + roster.length + ' لاعبين)</button>' : ''}<button type="button" class="sxl-m" data-l="cancel">إلغاء</button></div>`; };
+    ${max > 2 && roster.length >= (g.min || 2) ? '<button type="button" class="sxl-m on" data-l="go">▶ ابدأ دلوقتي (' + roster.length + ' لاعبين)</button>' : ''}<button type="button" class="sxl-m" data-l="cancel">إلغاء</button></div>`; };
   render();
   const startNow = () => { const seed = (Math.random()*4e9) >>> 0, names = roster.map(p => p.name), cfg = {mode:'online', names, seed, first:0, opts, n:roster.length, ids:roster.map(p => p.id)};
     room.send('start', {gid:g.id, seed, names, opts, ids:cfg.ids, first:0}); SX._pending = null; closeModal(); launch(g, Object.assign(cfg, {seat:0, room})); };
-  room.on('join', (d, p) => { if(cur) return; if(!roster.find(r => r.id === p.id) && roster.length < max) roster.push({id:p.id, name:p.name}); room.send('roster', {r:roster, gid:g.id}); render(); if(roster.length >= max && max === 2) startNow(); });
+  room.on('join', (d, p) => { if(cur) return; if(!roster.find(r => r.id === p.id) && roster.length < max) roster.push({id:p.id, name:p.name}); room.send('roster', {r:roster, gid:g.id}); render(); if(roster.length >= max) setTimeout(() => { if(!cur && SX._pending === room) startNow(); }, 600); });
   room.on('hb', (d, p) => { if(!cur && !roster.find(r => r.id === p.id)){ /* حد لسه جاي */ } });
   st.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return;
     if(b.dataset.l === 'copy'){ try{ navigator.clipboard.writeText(link); say('✅ اتنسخ اللينك'); }catch(_){ say(link); } }
@@ -11045,15 +11046,15 @@ function launch(g, cfg){
   function floatEmo(e){ const f = $q('.sxs-float', st); if(!f) return; const s = document.createElement('span'); s.textContent = e; s.style.left = (20 + Math.random()*60) + '%'; f.appendChild(s); setTimeout(() => s.remove(), 2200); }
   function endBtns(){ const b = $q('.sxs-end .rm', st); if(b){ b.textContent = rm.me ? '⏳ مستني الخصم يوافق…' : (Object.keys(rm.others).length ? '🔁 صاحبك عايز يعيد — وافق' : '🔁 العب تاني'); } }
   function showEnd(win, text, extra, ttl){
-    const solo = cfg.mode !== 'online', iWin = win != null && (cfg.mode === 'online' ? win === cfg.seat : (cfg.mode === 'cpu' ? win === 0 : true));
-    const title = win == null ? '🤝 تعادل' : (cfg.mode === 'online' ? (iWin ? '🏆 كسبت!' : '😅 الخصم كسب') : (cfg.mode === 'cpu' ? (iWin ? '🎉 كسبت!' : '😅 الكمبيوتر كسب') : '🏆 ' + E(cfg.names[win]) + ' كسب!'));
+    const solo = cfg.mode !== 'online', WN = Array.isArray(win) ? win : (win == null ? [] : [win]), team = Array.isArray(win), iWin = WN.length > 0 && (cfg.mode === 'online' ? WN.includes(cfg.seat) : (cfg.mode === 'cpu' ? WN.includes(0) : true));
+    const title = !WN.length ? '🤝 تعادل' : (cfg.mode === 'online' || cfg.mode === 'cpu' ? (iWin ? (team ? '🏆 فريقك كسب!' : '🏆 كسبت!') : (team ? '😅 الفريق التاني كسب' : ((cfg.n || 2) > 2 ? '😅 ' + E(cfg.names[WN[0]]) + ' كسب' : (cfg.mode === 'cpu' ? '😅 الكمبيوتر كسب' : '😅 الخصم كسب')))) : '🏆 ' + E(cfg.names[WN[0]]) + ' كسب!');
     if(iWin && (cfg.mode !== 'local')){ try{ if(typeof Fun !== 'undefined' && Fun.award) Fun.award('sx_' + g.id, 15, g.name); }catch(e){} }
     try{ SX.stat('game', g.id, win == null ? 'd' : (iWin ? 'w' : 'l')); }catch(e){}
     const ov = document.createElement('div'); ov.className = 'sxs-end'; ov.innerHTML = `<div class="sxs-card"><h3>${ttl || title}</h3>${text ? '<p>' + E(text) + '</p>' : ''}${extra || ''}<div class="sxs-eb"><button type="button" class="rm" data-sxs="rematch">🔁 العب تاني</button><button type="button" data-sxs="exit">🏠 رجوع</button></div></div>`;
     $q('.sxs-box', st).appendChild(ov);
   }
   function restartWith(d){ rm.me = false; rm.others = {}; ended = false; const o = $q('.sxs-end', st); if(o) o.remove(); cfg.seed = d.seed; if(inst && inst.reset) inst.reset(d.seed, d.first); }
-  function restart(){ const first = ((cfg.first = 1 - (cfg.first || 0)) | 0), seed = (Math.random()*4e9) >>> 0; if(room) room.send('start', {rematch:true, seed, first, gid:g.id}); restartWith({seed, first}); }
+  function restart(){ const first = ((cfg.first = ((cfg.first || 0) + 1) % (cfg.n || 2)) | 0), seed = (Math.random()*4e9) >>> 0; if(room) room.send('start', {rematch:true, seed, first, gid:g.id}); restartWith({seed, first}); }
   st.addEventListener('click', e => {
     const b = e.target.closest('[data-sxs]'); if(!b) return; const k = b.dataset.sxs;
     if(k === 'exit') leaveGame();
@@ -11061,7 +11062,7 @@ function launch(g, cfg){
     else if(k === 'send'){ if(room) room.send('emo', {e:b.dataset.e}); floatEmo(b.dataset.e); $q('.sxs-emo', st).hidden = true; }
     else if(k === 'win'){ ended = false; env.end(cfg.seat, 'الخصم انقطع'); }
     else if(k === 'rematch'){
-      if(cfg.mode !== 'online'){ const o = $q('.sxs-end', st); if(o) o.remove(); ended = false; cfg.first = 1 - (cfg.first || 0); cfg.seed = (Math.random()*4e9) >>> 0; if(inst && inst.reset) inst.reset(cfg.seed, cfg.first); }
+      if(cfg.mode !== 'online'){ const o = $q('.sxs-end', st); if(o) o.remove(); ended = false; cfg.first = ((cfg.first || 0) + 1) % (cfg.n || 2); cfg.seed = (Math.random()*4e9) >>> 0; if(inst && inst.reset) inst.reset(cfg.seed, cfg.first); }
       else { rm.me = true; room.send('rm', {}); endBtns(); if(cfg.seat === 0 && allRm()) restart(); }
     }
   });
@@ -12674,6 +12675,237 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .fxqin small{display:block;color:var(--ink-soft)}
 #fxX{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;z-index:2147483000;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:20px;box-shadow:0 4px 14px #0005;cursor:pointer}
 </style>
+<style id="sxMultiCss">
+/* ===== ألعاب جماعية ===== */
+.mp-sc{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.mp-sc span{display:flex;align-items:center;gap:6px;background:var(--surface,#fff);border:2px solid var(--line,#dde3ee);border-radius:12px;padding:4px 10px;font-size:13px;box-shadow:0 2px 6px #0001}
+.mp-sc span.on{border-color:var(--c,var(--accent));box-shadow:0 0 0 3px color-mix(in srgb,var(--c,var(--accent)) 25%,transparent)}
+.mp-sc span i{width:11px;height:11px;border-radius:50%;background:var(--c,#999);box-shadow:inset 0 -2px 3px #0005,inset 0 2px 2px #fff7}
+.db-svg{width:min(100%,520px);background:#fffdf6;border-radius:16px;box-shadow:0 10px 26px #0005,inset 0 0 0 4px #c9a66b;touch-action:manipulation}
+.db-d{fill:#3b2a14}.db-g{stroke:#d9ccb0;stroke-width:3;stroke-dasharray:2 6;stroke-linecap:round}
+.db-l{stroke-width:7;stroke-linecap:round;filter:drop-shadow(0 1.5px 1px #0004)}.db-l.new{animation:dbN .3s ease-out}@keyframes dbN{from{stroke-width:1;opacity:.3}}
+.db-h{stroke:transparent;stroke-width:26;cursor:pointer}.db-h:hover{stroke:#0000001a}
+.db-b{animation:dbB .35s ease-out}@keyframes dbB{from{opacity:0;transform:scale(.6)}}
+.g-wrap.sl{max-width:min(100%,700px)}
+.sl-b{position:relative;width:min(100%,680px);aspect-ratio:1;border-radius:14px;border:10px solid #6b3f1d;box-shadow:0 14px 34px #000a,inset 0 0 18px #0006;background:#f3e2b8;overflow:hidden;user-select:none}
+.sl-b>i{position:absolute;width:10%;height:10%;box-sizing:border-box;font:700 clamp(8px,2vw,13px)/1 inherit;font-style:normal;padding:3px 4px;color:#5a3b17}
+.sl-b>i.a{background:#f7e9c6}.sl-b>i.b{background:#e6c98d}
+.sl-b svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.sl-lad line{stroke:#7a4a1e;stroke-width:.75;stroke-linecap:round;filter:drop-shadow(.2px .3px .2px #0007)}
+.sl-snk path{fill:none;stroke:#2e8b3d;stroke-width:3;stroke-linecap:round;filter:drop-shadow(.3px .5px .4px #0008)}
+.sl-snk:nth-of-type(3n) path{stroke:#c0392b}.sl-snk:nth-of-type(3n+1) path{stroke:#8e44ad}.sl-snk circle:first-of-type{fill:#2e8b3d}
+.sl-t{position:absolute;width:5.6%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);transition:left .18s ease,top .18s ease;border:2px solid #fff;color:#fff;display:grid;place-items:center;font:800 clamp(9px,2.3vw,14px) inherit;box-shadow:0 4px 6px #0007,inset 0 -3px 4px #0005,inset 0 3px 4px #fff8;z-index:3}
+.sl-act{display:flex;align-items:center;gap:14px}.sl-roll{border:0;border-radius:14px;background:linear-gradient(145deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#000));color:var(--fxon,#fff);padding:14px 22px;font:800 16px inherit;cursor:pointer;box-shadow:0 6px 14px #0005}.sl-roll:disabled{opacity:.45}
+.tg-top{display:flex;justify-content:space-between;gap:8px;width:100%;font-size:13px}.tg-a{color:#e53935}.tg-b{color:#1e88e5}
+.tg-rope{position:relative;width:100%;height:46px;direction:ltr}.tg-rope u{position:absolute;inset:18px 0 auto;height:10px;border-radius:6px;background:repeating-linear-gradient(90deg,#b8863b 0 8px,#8f6425 8px 16px);box-shadow:0 3px 6px #0006;display:flex;justify-content:space-between;text-decoration:none}
+.tg-rope u i{width:2px;height:22px;margin-top:-6px;background:#fff6}.tg-rope u i.mid{background:#fff;width:3px}
+.tg-rope s{position:absolute;top:2px;width:30px;height:42px;transform:translateX(-50%);transition:left .5s cubic-bezier(.3,1.4,.5,1);background:radial-gradient(circle at 35% 30%,#ffe082,#f9a825);border-radius:10px;box-shadow:0 5px 10px #0007;text-decoration:none}
+.tg-q{width:100%;text-align:center;background:var(--surface,#fff);border-radius:18px;padding:18px 12px;box-shadow:0 6px 18px #0003}.tg-q small{display:block;opacity:.6}.tg-q>div{font-size:clamp(22px,7vw,34px);font-weight:800}
+.tg-q.shake{animation:tgS .35s}@keyframes tgS{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.dw-h{display:flex;justify-content:space-between;width:100%;font-weight:800}.dw-cv{width:min(100%,520px);aspect-ratio:1;background:#fff;border-radius:14px;box-shadow:0 10px 26px #0006;touch-action:none;cursor:crosshair}
+.dw-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}.dw-tools i{width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 5px #0006;cursor:pointer}.dw-tools button{border:0;border-radius:10px;padding:6px 10px;font-size:16px;cursor:pointer}
+/* ===== شكل أواقع للألعاب الحالية ===== */
+.c4-b{background:linear-gradient(145deg,#2b6df0,#1b3a9a);gap:6px;padding:12px;border-radius:20px;box-shadow:0 14px 30px #0006,inset 0 3px 5px #fff4,inset 0 -8px 12px #0005}
+.c4-c i{background:radial-gradient(circle at 50% 35%,#0b1230,#1a2350);box-shadow:inset 0 6px 10px #000a,0 1px 0 #fff3}
+.c4-c i.p0{background:radial-gradient(circle at 32% 28%,#ffc2c2,#e53935 55%,#9b1212);box-shadow:inset 0 -5px 8px #0005,inset 0 4px 6px #fff6,0 2px 4px #0006}
+.c4-c i.p1{background:radial-gradient(circle at 32% 28%,#fff3b0,#f6c000 55%,#b07d00);box-shadow:inset 0 -5px 8px #0005,inset 0 4px 6px #fff7,0 2px 4px #0006}
+.xo-c{background:linear-gradient(145deg,#fff,#e9edf6);box-shadow:0 4px 8px #0002,inset 0 -3px 5px #0001,inset 0 2px 3px #fff;transition:transform .12s}.xo-c:active{transform:scale(.95)}
+.xo-c.x,.xo-c.o{text-shadow:0 3px 4px #0003;animation:xoP .25s ease-out}@keyframes xoP{from{transform:scale(.5);opacity:.3}}
+.ch-b{border:10px solid #5b3a1e;border-radius:10px;box-shadow:0 14px 30px #0007,inset 0 0 0 2px #3a2410}
+.ch-s.l{background:linear-gradient(145deg,#f6e3bf,#ecd2a0)}.ch-s.d{background:linear-gradient(145deg,#b98b5e,#a2764b)}
+.ch-s .pc{filter:drop-shadow(0 3px 2px #0006);transition:transform .15s}.ch-s:hover .pc{transform:translateY(-2px)}
+.mm-c{background:linear-gradient(145deg,var(--accent),color-mix(in srgb,var(--accent) 65%,#000));box-shadow:0 5px 9px #0004,inset 0 2px 3px #fff5;transition:transform .25s}.mm-c.up{animation:mmF .3s}.mm-c:active{transform:scale(.95)}
+@keyframes mmF{from{transform:rotateY(90deg)}}
+.g48-b{background:linear-gradient(145deg,#a89886,#8f7e6c);box-shadow:0 10px 24px #0005,inset 0 2px 4px #fff3}.g48-b div{box-shadow:0 3px 5px #0003,inset 0 2px 3px #fff5;transition:background .15s}
+.sxh-card{background:linear-gradient(160deg,var(--surface,#fff),var(--surface-2,#f4f6fb));box-shadow:0 4px 12px #0001}
+.sxh-card:hover{box-shadow:0 12px 26px #0003}
+/* ===== المصحف + المواقيت + الأذكار: نفس اللون وتابعين السيم ===== */
+#fxPr .fxqb,#fxMush .fxqb,#fxSp .fxqb,.az-box,#fxDn .fxqb{--tn:color-mix(in srgb,var(--accent) 9%,var(--surface));--tn2:color-mix(in srgb,var(--accent) 16%,var(--surface));background:var(--tn)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--accent) 30%,var(--line))!important}
+#fxPr .fxpr-row,#fxPr .az-cat,#fxPr .az-it,#fxPr .az-btn,#fxPr .az-cnt,#fxMush .fxq-list button,#fxMush .fxq-page,#fxPr input,#fxPr select,#fxPr textarea,#fxMush input,#fxMush select,.az-box .az-cat,.az-box .az-it{background:var(--tn2)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--accent) 22%,var(--line))!important}
+#fxPr .az-btn.pri,#fxMush .fxx.on,#fxPr .fxx.on,#fxPr .fxprt .on{background:var(--accent)!important;color:var(--fxon,#fff)!important}
+#fxMush .fxq-sur{background:var(--tn2)!important}#fxPr .fxpr-row.nx{background:color-mix(in srgb,var(--accent) 28%,var(--surface))!important}
+#fxSp .fxqh b,#fxSp h4,#fxSp small,#fxSp .sp-sub{color:var(--ink)!important}
+#fxSp .fxx,#fxSp input,#fxSp select{background:var(--tn2)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--accent) 25%,var(--line))!important}
+#fxSp .fxx.on{background:var(--accent)!important;color:var(--fxon,#fff)!important}
+#fxSp input::placeholder{color:var(--ink-soft)}
+#fxSpMini{background:var(--tn2,color-mix(in srgb,var(--accent) 16%,var(--surface)))!important;color:var(--ink)!important;border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line))}
+#fxSpMini button{color:var(--ink)!important}#fxSpMini .m-t small{color:var(--ink-soft)!important}#fxSpMini .m-pp{background:var(--accent)!important;color:var(--fxon,#fff)!important}
+html.no-msym .math-bg{display:none!important}
+</style>
+<script id="sxMulti">
+/* ===== ألعاب جماعية أونلاين: نقط وصناديق + سلم وثعبان + شدّ الحبل (فرق) ===== */
+(function(SX){
+if(!SX || !SX.games) return;
+const E = SX.E || (s => String(s)), rng = a => SX.Pool.mulberry(a >>> 0), wait = (f, ms) => setTimeout(f, ms);
+const COL = ['#e53935', '#1e88e5', '#43a047', '#fb8c00'];
+const mySeat = env => env.mode === 'online' ? env.seat : 0;
+const isMyTurn = (env, t) => env.mode === 'online' ? t === env.seat : t === 0;
+/* مزامنة الحركات بالترتيب (نفس الحركات عند كل اللاعبين) مع طابور للأنيميشن */
+function sync(env, apply, after){
+  let n = 0, pend = {}, q = [], run = false, dead = false;
+  const pump = () => { if(dead || run) return; if(!q.length){ if(after) after(); return; } run = true; const x = q.shift(); apply(x[0], x[1], () => { run = false; pump(); }); };
+  const feed = () => { while(pend[n]){ q.push(pend[n]); delete pend[n]; n++; } pump(); };
+  env.on('a', (d, p) => { const s = env.ids.indexOf(p.id); if(s < 0) return; pend[d.n] = [d.a, s]; feed(); });
+  return {act(a, s){ if(env.mode === 'online' && s === env.seat) env.send('a', {n, a}); n++; q.push([a, s]); pump(); }, idle:() => !run && !q.length, kick:pump, reset(){ n = 0; pend = {}; q = []; run = false; }, kill(){ dead = true; }};
+}
+const winTeam = (n, t) => Array.from({length:n}, (_, i) => i).filter(i => i % 2 === t);
+
+/* ============================ 🔲 نقط وصناديق ============================ */
+SX.games.dots = {id:'dots', icon:'🔲', name:'نقط وصناديق', desc:'ارسم خطوط وقفّل صناديق — اللي يقفل صندوق يلعب تاني', cpu:true, local:false, online:true, max:4, min:2, players:'2–4', teams:true, cpuN:o => o.teams ? 4 : 3,
+  opts:[{k:'size', label:'حجم اللوح', choices:[[4, '4×4'], [5, '5×5'], [6, '6×6']], def:4}, {k:'teams', label:'طريقة اللعب', choices:[[0, 'كل واحد لنفسه'], [1, '🤝 فرق 2×2 (محتاج 4 لاعبين)']], def:0}],
+  make(env){
+    const S0 = env.opts.size || 4, n = env.n, TM = !!env.opts.teams && n === 4, col = s => COL[TM ? s % 2 : s];
+    let h, v, own, sc, turn, over, dead = false, last = '', botT = 0, sy;
+    const box = env.box; box.innerHTML = '<div class="g-wrap"><div class="mp-sc"></div><div class="g-st"></div><svg class="db-svg"></svg></div>';
+    const svg = box.querySelector('svg'), scEl = box.querySelector('.mp-sc'), st = box.querySelector('.g-st'), G = 46, P = 24, W = S0*G + P*2;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + W);
+    const sides = (r, c) => (h[r][c] >= 0) + (h[r + 1][c] >= 0) + (v[r][c] >= 0) + (v[r][c + 1] >= 0);
+    function reset(seed, f){
+      h = Array.from({length:S0 + 1}, () => new Array(S0).fill(-1)); v = Array.from({length:S0}, () => new Array(S0 + 1).fill(-1));
+      own = Array.from({length:S0}, () => new Array(S0).fill(-1)); sc = new Array(n).fill(0); turn = (f || 0) % n; over = false; last = ''; if(sy) sy.reset(); render(); if(sy) sy.kick();
+    }
+    function render(){
+      let s = '';
+      for(let r = 0; r < S0; r++) for(let c = 0; c < S0; c++) if(own[r][c] >= 0){ const o = own[r][c], x = P + c*G, y = P + r*G; s += `<rect class="db-b" x="${x + 3}" y="${y + 3}" width="${G - 6}" height="${G - 6}" rx="8" fill="${col(o)}" fill-opacity=".28"/><text x="${x + G/2}" y="${y + G/2 + 6}" text-anchor="middle" font-size="18" font-weight="800" fill="${col(o)}">${E((env.names[o] || '?').trim().charAt(0))}</text>`; }
+      const L = (t, r, c, x1, y1, x2, y2, o) => `<line class="${o >= 0 ? 'db-l' + (last === t + r + c ? ' new' : '') : 'db-g'}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" ${o >= 0 ? `stroke="${col(o)}"` : ''}/>` + (o < 0 ? `<line class="db-h" data-t="${t}" data-r="${r}" data-c="${c}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>` : '');
+      for(let r = 0; r <= S0; r++) for(let c = 0; c < S0; c++) s += L('h', r, c, P + c*G + 6, P + r*G, P + (c + 1)*G - 6, P + r*G, h[r][c]);
+      for(let r = 0; r < S0; r++) for(let c = 0; c <= S0; c++) s += L('v', r, c, P + c*G, P + r*G + 6, P + c*G, P + (r + 1)*G - 6, v[r][c]);
+      for(let r = 0; r <= S0; r++) for(let c = 0; c <= S0; c++) s += `<circle class="db-d" cx="${P + c*G}" cy="${P + r*G}" r="4.5"/>`;
+      svg.innerHTML = s;
+      scEl.innerHTML = env.names.slice(0, n).map((nm, i) => `<span class="${i === turn && !over ? 'on' : ''}" style="--c:${col(i)}"><i></i>${E(nm)} <b>${sc[i]}</b></span>`).join('');
+      st.innerHTML = over ? '' : (isMyTurn(env, turn) ? '✅ دورك — اختار خط' : '⏳ دور ' + E(env.names[turn]) + '…');
+    }
+    function apply(a, s, done){
+      if(over || s !== turn){ done(); return; } const arr = a.t === 'h' ? h : v;
+      if(!arr[a.r] || arr[a.r][a.c] !== -1){ done(); return; }
+      arr[a.r][a.c] = s; last = a.t + a.r + a.c; let got = 0;
+      const chk = (r, c) => { if(r < 0 || c < 0 || r >= S0 || c >= S0) return; if(own[r][c] < 0 && sides(r, c) === 4){ own[r][c] = s; got++; sc[s]++; } };
+      if(a.t === 'h'){ chk(a.r - 1, a.c); chk(a.r, a.c); } else { chk(a.r, a.c - 1); chk(a.r, a.c); }
+      if(!got) turn = (turn + 1) % n; render();
+      if(own.every(row => row.every(x => x >= 0))){ over = true; const T = TM ? [sc[0] + sc[2], sc[1] + sc[3]] : sc, mx = Math.max(...T), tops = T.map((x, i) => x === mx ? i : -1).filter(i => i >= 0);
+        const win = tops.length > 1 ? null : (TM ? winTeam(n, tops[0]) : tops[0]); const txt = TM ? 'الفريقين: ' + T.join(' - ') : env.names.slice(0, n).map((nm, i) => nm + ' ' + sc[i]).join(' • '); wait(() => { if(!dead) env.end(win, txt); }, 800); }
+      done();
+    }
+    function bot(){
+      botT = 0; if(dead || over || env.mode !== 'cpu' || turn === 0 || !sy.idle()) return; const free = [];
+      for(let r = 0; r <= S0; r++) for(let c = 0; c < S0; c++) if(h[r][c] < 0) free.push(['h', r, c]);
+      for(let r = 0; r < S0; r++) for(let c = 0; c <= S0; c++) if(v[r][c] < 0) free.push(['v', r, c]);
+      const adj = x => x[0] === 'h' ? [[x[1] - 1, x[2]], [x[1], x[2]]] : [[x[1], x[2] - 1], [x[1], x[2]]];
+      const val = x => { let s3 = 0, s2 = 0; adj(x).forEach(([r, c]) => { if(r < 0 || c < 0 || r >= S0 || c >= S0) return; const k = sides(r, c); if(k === 3) s3++; if(k === 2) s2++; }); return s3 ? 100 : -s2; };
+      let best = -1e9, pool = []; free.forEach(x => { const s = val(x); if(s > best){ best = s; pool = [x]; } else if(s === best) pool.push(x); });
+      const m = pool[Math.floor(Math.random()*pool.length)]; if(m) sy.act({t:m[0], r:m[1], c:m[2]}, turn);
+    }
+    sy = sync(env, apply, () => { if(env.mode === 'cpu' && turn !== 0 && !over && !botT) botT = wait(bot, 650); });
+    svg.addEventListener('click', e => { const l = e.target.closest('[data-t]'); if(!l || over || !sy.idle() || !isMyTurn(env, turn)) return; sy.act({t:l.dataset.t, r:+l.dataset.r, c:+l.dataset.c}, mySeat(env)); });
+    reset(env.seed, env.first); return {reset, destroy(){ dead = true; sy.kill(); }};
+  }};
+
+/* ============================ 🐍 سلم وثعبان ============================ */
+const SL = {4:14, 9:31, 20:38, 28:84, 40:59, 51:67, 63:81, 71:91, 17:7, 54:34, 62:19, 64:60, 87:24, 93:73, 95:75, 99:78};
+const cellXY = k => { const r = Math.floor((k - 1)/10), c = r % 2 === 0 ? (k - 1) % 10 : 9 - (k - 1) % 10; return [c*10 + 5, (9 - r)*10 + 5]; };
+const PIPS = {1:[4], 2:[0, 8], 3:[0, 4, 8], 4:[0, 2, 6, 8], 5:[0, 2, 4, 6, 8], 6:[0, 2, 3, 5, 6, 8]};
+SX.games.snk = {id:'snk', icon:'🐍', name:'سلم وثعبان', desc:'ارمي النرد، اطلع السلالم وخلّي بالك من التعابين — أول واحد يوصل 100', cpu:true, local:false, online:true, max:4, min:2, players:'2–4', cpuN:() => 3,
+  make(env){
+    const n = env.n; let pos, turn, rnd, over, dead = false, die = 1, msg = '', botT = 0, sy, vis;
+    const box = env.box; box.innerHTML = '<div class="g-wrap sl"><div class="mp-sc"></div><div class="g-st"></div><div class="sl-b"><svg viewBox="0 0 100 100"></svg></div><div class="sl-act"><div class="fxdie"></div><button type="button" class="sl-roll">🎲 ارمي النرد</button></div></div>';
+    const bd = box.querySelector('.sl-b'), svg = bd.querySelector('svg'), scEl = box.querySelector('.mp-sc'), st = box.querySelector('.g-st'), dieEl = box.querySelector('.fxdie'), btn = box.querySelector('.sl-roll');
+    let cells = ''; for(let k = 1; k <= 100; k++){ const [x, y] = cellXY(k); cells += `<i class="${((Math.floor((k - 1)/10)) + (k - 1)) % 2 ? 'a' : 'b'}" style="left:${x - 5}%;top:${y - 5}%">${k}</i>`; }
+    let art = ''; Object.keys(SL).forEach(k => { k = +k; const to = SL[k], [x1, y1] = cellXY(k), [x2, y2] = cellXY(to);
+      if(to > k){ const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), nx = -dy/L*1.6, ny = dx/L*1.6; art += `<g class="sl-lad"><line x1="${x1 + nx}" y1="${y1 + ny}" x2="${x2 + nx}" y2="${y2 + ny}"/><line x1="${x1 - nx}" y1="${y1 - ny}" x2="${x2 - nx}" y2="${y2 - ny}"/>`; for(let t = .12; t < .95; t += .13) art += `<line x1="${x1 + dx*t + nx}" y1="${y1 + dy*t + ny}" x2="${x1 + dx*t - nx}" y2="${y1 + dy*t - ny}"/>`; art += '</g>'; }
+      else { const mx = (x1 + x2)/2 + (y2 - y1)*.28, my = (y1 + y2)/2 - (x2 - x1)*.28; art += `<g class="sl-snk"><path d="M${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}"/><circle cx="${x1}" cy="${y1}" r="2.4"/><circle cx="${x1 - .8}" cy="${y1 - .6}" r=".5" fill="#fff"/><circle cx="${x1 + .8}" cy="${y1 - .6}" r=".5" fill="#fff"/></g>`; } });
+    svg.innerHTML = art; bd.insertAdjacentHTML('afterbegin', cells);
+    const tok = Array.from({length:n}, (_, i) => { const d = document.createElement('div'); d.className = 'sl-t'; d.style.background = COL[i]; d.textContent = (env.names[i] || '?').trim().charAt(0); d.style.setProperty('--o', i); bd.appendChild(d); return d; });
+    const place = (i, k) => { const [x, y] = k ? cellXY(k) : [-3 + i*3.2, 103]; const ox = (i % 2 ? 1.8 : -1.8), oy = (i > 1 ? 1.8 : -1.8); tok[i].style.left = (x + (k ? ox : 0)) + '%'; tok[i].style.top = (y + (k ? oy : 0)) + '%'; };
+    const showDie = (d, roll) => { dieEl.className = 'fxdie' + (roll ? ' roll' : ''); dieEl.innerHTML = Array.from({length:9}, (_, i) => `<i class="${PIPS[d].includes(i) ? 'on' : ''}"></i>`).join(''); };
+    function ui(){ scEl.innerHTML = env.names.slice(0, n).map((nm, i) => `<span class="${i === turn && !over ? 'on' : ''}" style="--c:${COL[i]}"><i></i>${E(nm)} <b>${pos[i]}</b></span>`).join('');
+      st.innerHTML = over ? '' : (msg ? msg + '<br>' : '') + (isMyTurn(env, turn) ? '✅ دورك — ارمي النرد' : '⏳ دور ' + E(env.names[turn]) + '…'); btn.disabled = over || !isMyTurn(env, turn) || !sy || !sy.idle(); }
+    function reset(seed, f){ rnd = rng(seed); pos = new Array(n).fill(0); vis = pos.slice(); turn = (f || 0) % n; over = false; msg = ''; die = 1; showDie(1); tok.forEach((t, i) => place(i, 0)); if(sy) sy.reset(); ui(); if(sy) sy.kick(); }
+    function apply(a, s, done){
+      if(over || s !== turn){ done(); return; } const d = 1 + Math.floor(rnd()*6); showDie(d, true); msg = ''; btn.disabled = true; let p = pos[s]; const path = [];
+      if(p + d <= 100){ for(let k = 1; k <= d; k++) path.push(p + k); p += d; if(SL[p]){ msg = SL[p] > p ? '🪜 طلعت سلم!' : '🐍 نزلت مع ثعبان!'; path.push(SL[p]); p = SL[p]; } } else msg = '🎯 محتاج رقم مظبوط للمية';
+      pos[s] = p; let i = 0;
+      const step = () => { if(dead) return; if(i < path.length){ place(s, path[i]); i++; wait(step, i === path.length && SL[path[i - 1]] === undefined && path.length > d ? 0 : (path.length > d && i === path.length ? 550 : 190)); return; }
+        if(p === 100){ over = true; ui(); wait(() => { if(!dead) env.end(s, env.names[s] + ' وصل المية!'); }, 700); done(); return; }
+        if(d !== 6) turn = (turn + 1) % n; else msg += ' 🎲 رمية تانية!'; ui(); done(); };
+      wait(step, 650);
+    }
+    sy = sync(env, apply, () => { ui(); if(env.mode === 'cpu' && turn !== 0 && !over && !botT) botT = wait(() => { botT = 0; if(!dead && !over && sy.idle() && turn !== 0) sy.act({}, turn); }, 800); });
+    btn.addEventListener('click', () => { if(over || !sy.idle() || !isMyTurn(env, turn)) return; sy.act({}, mySeat(env)); });
+    reset(env.seed, env.first); return {reset, destroy(){ dead = true; sy.kill(); }};
+  }};
+
+/* ============================ 🪢 شدّ الحبل (ماث — فرق) ============================ */
+SX.games.tug = {id:'tug', icon:'🪢', name:'شدّ الحبل بالماث', desc:'فريق ضد فريق (1×1 أو 2×2): أول واحد يجاوب صح يشدّ الحبل ناحية فريقه', cpu:true, local:false, online:true, max:4, min:2, players:'2–4', teams:true, cpuN:o => o.cm === 4 ? 4 : 2,
+  opts:[{k:'lv', label:'المستوى', choices:[[1, 'سهل'], [2, 'متوسط'], [3, 'صعب']], def:2}, {k:'type', label:'النوع', choices:[['arith', 'حساب'], ['alg', 'جبر'], ['mix', 'خليط']], def:'arith'}, {k:'cm', label:'ضد الكمبيوتر', choices:[[2, '1 ضد 1'], [4, '🤝 أنا وبوت ضد 2 بوت']], def:2}],
+  make(env){
+    const n = env.n, T = 5, LV = env.opts.lv || 2, host = env.mode !== 'online' || env.seat === 0, ME = mySeat(env), TL = [0, 22, 17, 13][LV];
+    let qs, qi, rope, over, dead = false, lock = 0, resolved = false, cnt, tmr = 0, bots = [];
+    const team = s => s % 2, tn = t => winTeam(n, t).map(i => env.names[i]).join(' + ');
+    const box = env.box; box.innerHTML = '<div class="g-wrap tg"><div class="tg-top"><b class="tg-a"></b><b class="tg-b"></b></div><div class="tg-rope"><u></u><s></s></div><div class="tg-q"></div><div class="du-bar"><i></i></div><div class="du-in"><input type="text" inputmode="numeric" autocomplete="off" placeholder="اكتب الإجابة"><button type="button">تأكيد</button></div><div class="du-fb"></div><div class="mp-sc"></div></div>';
+    const q$ = s => box.querySelector(s), inp = q$('input'), fb = q$('.du-fb'), bar = q$('.du-bar i'), mark = q$('.tg-rope s');
+    q$('.tg-a').textContent = '🔴 ' + tn(0); q$('.tg-b').textContent = '🔵 ' + tn(1);
+    q$('.tg-rope u').innerHTML = Array.from({length:2*T + 1}, (_, i) => `<i class="${i === T ? 'mid' : ''}"></i>`).join('');
+    const parse = v => parseFloat(String(v).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('−', '-').replace(/٫/g, '.'));
+    function ui(){ mark.style.left = ((T - rope)/(2*T)*100) + '%'; q$('.mp-sc').innerHTML = env.names.slice(0, n).map((nm, i) => `<span style="--c:${COL[team(i)]}" class="${i === ME ? 'on' : ''}"><i></i>${E(nm)} <b>${cnt[i]}</b></span>`).join(''); }
+    function show(){ if(over) return; const q = qs[qi]; q$('.tg-q').innerHTML = `<small>سؤال ${qi + 1}</small><div dir="ltr">${E(q.t)}</div>`; inp.value = ''; inp.disabled = false; lock = 0; resolved = false; fb.textContent = ''; fb.className = 'du-fb';
+      bar.style.transition = 'none'; bar.style.width = '100%'; void bar.offsetWidth; bar.style.transition = 'width ' + TL + 's linear'; bar.style.width = '0%'; if(!('ontouchstart' in window)) inp.focus({preventScroll:true});
+      clearTimeout(tmr); if(host){ const k = qi; tmr = wait(() => hostRes(k, -1), TL*1000 + 400);
+        bots.forEach(b => { if(Math.random() < b.acc){ wait(() => hostRes(k, b.seat), b.spd*(.6 + Math.random()*.9)); } }); } }
+    function hostRes(k, s){ if(over || dead || k !== qi || resolved) return; resolved = true; env.send('adv', {qi:k, s}); adv(k, s); }
+    function adv(k, s){ if(over || k !== qi) return; resolved = true; clearTimeout(tmr); inp.disabled = true;
+      if(s >= 0){ cnt[s]++; rope += team(s) === 0 ? 1 : -1; fb.innerHTML = '✅ ' + E(env.names[s]) + ' جاوب صح!'; fb.className = 'du-fb ok'; } else { fb.innerHTML = '⌛ الوقت خلص — الإجابة: <b dir="ltr">' + qs[qi].a + '</b>'; fb.className = 'du-fb no'; }
+      ui(); if(Math.abs(rope) >= T){ over = true; const t = rope > 0 ? 0 : 1; wait(() => { if(!dead) env.end(winTeam(n, t), 'الحبل اتشدّ لفريق ' + tn(t)); }, 900); return; }
+      qi++; wait(() => { if(!dead && !over) show(); }, 1100); }
+    function submit(){ if(over || resolved || inp.disabled || Date.now() < lock || inp.value.trim() === '') return; const ok = Math.abs(parse(inp.value) - qs[qi].a) < 1e-6;
+      if(ok){ inp.disabled = true; if(host) hostRes(qi, ME); else env.send('try', {qi}); } else { lock = Date.now() + 1500; fb.textContent = '❌ غلط — استنى ثانية ونص'; fb.className = 'du-fb no'; inp.value = ''; q$('.tg-q').classList.remove('shake'); void q$('.tg-q').offsetWidth; q$('.tg-q').classList.add('shake'); try{ SX.stat('q', 'tug', 'no'); }catch(e){} } }
+    function reset(seed){ qs = SX.makeQs(seed + 91, 60, LV, env.opts.type || 'arith'); qi = 0; rope = 0; over = false; cnt = new Array(n).fill(0); clearTimeout(tmr);
+      bots = env.mode === 'cpu' ? Array.from({length:n - 1}, (_, i) => ({seat:i + 1, acc:[0, .5, .7, .85][LV], spd:[0, 9000, 6500, 4500][LV]})) : []; ui(); show(); }
+    env.on('try', (d, p) => { if(host){ const s = env.ids.indexOf(p.id); if(s >= 0) hostRes(d.qi, s); } });
+    env.on('adv', d => { if(!host) adv(d.qi, d.s); });
+    q$('.du-in button').addEventListener('click', submit); inp.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
+    reset(env.seed); return {reset, destroy(){ dead = true; clearTimeout(tmr); }};
+  }};
+
+/* ============================ 🎨 ارسم وخمّن ============================ */
+const WORDS = ['قطة', 'بيت', 'شجرة', 'سيارة', 'شمس', 'قمر', 'كتاب', 'قلم', 'طيارة', 'سمكة', 'وردة', 'كورة', 'جبل', 'مثلث', 'دايرة', 'ساعة', 'نضارة', 'موبايل', 'موزة', 'تفاحة', 'قلب', 'نجمة', 'كرسي', 'باب', 'مفتاح', 'هرم', 'جمل', 'فيل', 'أسد', 'عصفورة', 'شمسية', 'شنطة', 'لابتوب', 'حصان', 'صاروخ', 'مركب', 'قطر', 'خيمة', 'تاج', 'جيتار', 'مسطرة', 'برجل'];
+const norm = s => String(s).replace(/[\u064B-\u0652\s]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase();
+SX.games.draw = {id:'draw', icon:'🎨', name:'ارسم وخمّن', desc:'واحد يرسم والباقي يخمّنوا الكلمة — كل لاعب بدوره (أونلاين)', cpu:false, local:false, online:true, max:6, min:2, players:'2–6',
+  opts:[{k:'t', label:'وقت الرسمة', choices:[[45, '45 ثانية'], [60, '60 ثانية'], [90, '90 ثانية']], def:60}],
+  make(env){
+    const n = env.n, TT = env.opts.t || 60, host = env.seat === 0, ME = env.seat; let r, words, sc, guessed, tl, tm = 0, phase, dead = false, over = false, pend = [], flushT = 0, down = false, color = '#111827', size = 4;
+    const box = env.box; box.innerHTML = '<div class="g-wrap dw"><div class="mp-sc"></div><div class="dw-h"><b class="dw-w"></b><span class="dw-t"></span></div><canvas class="dw-cv" width="600" height="600"></canvas><div class="dw-tools"></div><div class="du-in dw-g"><input type="text" autocomplete="off" placeholder="اكتب تخمينك"><button type="button">خمّن</button></div><div class="du-fb"></div></div>';
+    const q$ = s => box.querySelector(s), cv = q$('canvas'), cx = cv.getContext('2d'), inp = q$('.dw-g input'), fb = q$('.du-fb');
+    q$('.dw-tools').innerHTML = ['#111827', '#e53935', '#1e88e5', '#43a047', '#fb8c00', '#ffffff'].map(c => `<i data-c="${c}" style="background:${c}"></i>`).join('') + '<button type="button" data-s="4">✏️</button><button type="button" data-s="12">🖌️</button><button type="button" data-x="1">🗑️</button>';
+    const drawer = () => r % n, amD = () => drawer() === ME;
+    const clear = () => { cx.fillStyle = '#fff'; cx.fillRect(0, 0, 600, 600); };
+    const seg = (a, b, c, w) => { cx.strokeStyle = c; cx.lineWidth = w*2; cx.lineCap = cx.lineJoin = 'round'; cx.beginPath(); cx.moveTo(a[0]*600, a[1]*600); cx.lineTo(b[0]*600, b[1]*600); cx.stroke(); };
+    const ui = () => { q$('.mp-sc').innerHTML = env.names.slice(0, n).map((nm, i) => `<span class="${i === drawer() && !over ? 'on' : ''}" style="--c:${COL[i % 4]}"><i></i>${E(nm)}${i === drawer() ? ' ✏️' : ''} <b>${sc[i]}</b></span>`).join('');
+      q$('.dw-w').innerHTML = phase === 'rev' ? 'الكلمة: ' + E(words[r]) : (amD() ? '✏️ ارسم: <u>' + E(words[r]) + '</u>' : '🤔 ' + words[r].replace(/\S/g, '＿ ')); q$('.dw-t').textContent = '⏱ ' + tl + 'ث • جولة ' + (r + 1) + '/' + n;
+      q$('.dw-tools').style.display = amD() && phase === 'draw' ? 'flex' : 'none'; q$('.dw-g').style.display = !amD() && phase === 'draw' && !guessed[ME] ? 'flex' : 'none'; }
+    function startRound(){ if(dead) return; if(r >= n){ finish(); return; } phase = 'draw'; guessed = {}; tl = TT; clear(); fb.textContent = ''; inp.value = ''; ui(); clearInterval(tm);
+      tm = setInterval(() => { tl--; ui(); if(tl <= 0 && host) hostEnd(r); }, 1000); }
+    function hostEnd(k){ if(k !== r || phase !== 'draw') return; env.send('end', {r:k}); endRound(k); }
+    function endRound(k){ if(k !== r || phase !== 'draw') return; phase = 'rev'; clearInterval(tm); const gc = Object.keys(guessed).length; if(!gc) fb.textContent = '⌛ محدش خمّن الكلمة'; ui(); wait(() => { r++; startRound(); }, 2800); }
+    function okG(k, s){ if(k !== r || phase !== 'draw' || guessed[s] || s === drawer()) return; guessed[s] = 1; const pts = 10 + Math.round(tl/TT*10); sc[s] += pts; sc[drawer()] += 5; fb.innerHTML = '✅ ' + E(env.names[s]) + ' خمّن الكلمة! +' + pts; ui();
+      if(host && Object.keys(guessed).length >= n - 1) hostEnd(k); }
+    function finish(){ over = true; const rk = sc.map((s, i) => ({i, s})).sort((a, b) => b.s - a.s), tie = rk.length > 1 && rk[0].s === rk[1].s; env.end(tie ? null : rk[0].i, '', '<ol class="du-rank">' + rk.map(x => `<li class="${x.i === ME ? 'me' : ''}"><b>${E(env.names[x.i])}</b> ${x.s} نقطة</li>`).join('') + '</ol>'); }
+    function reset(seed){ const rd = rng(seed); words = WORDS.slice().sort(() => rd() - .5); r = 0; sc = new Array(n).fill(0); over = false; down = false; startRound(); }
+    const pt = e => { const b = cv.getBoundingClientRect(); return [Math.max(0, Math.min(1, (e.clientX - b.left)/b.width)), Math.max(0, Math.min(1, (e.clientY - b.top)/b.height))]; };
+    let lp = null; const flush = () => { flushT = 0; if(pend.length){ env.send('st', {r, p:pend, c:color, w:size}); pend = []; } };
+    cv.style.touchAction = 'none';
+    cv.addEventListener('pointerdown', e => { if(!amD() || phase !== 'draw') return; down = true; lp = pt(e); pend.push(lp, lp); seg(lp, lp, color, size); try{ cv.setPointerCapture(e.pointerId); }catch(_){} });
+    cv.addEventListener('pointermove', e => { if(!down) return; const p = pt(e); seg(lp, p, color, size); pend.push(p); lp = p; if(!flushT) flushT = wait(flush, 70); });
+    const up = () => { if(!down) return; down = false; flush(); env.send('up', {}); lp = null; }; cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+    q$('.dw-tools').addEventListener('click', e => { const b = e.target.closest('[data-c],[data-s],[data-x]'); if(!b) return; if(b.dataset.c) color = b.dataset.c; if(b.dataset.s) size = +b.dataset.s; if(b.dataset.x){ clear(); env.send('clr', {r}); } });
+    let rp = null; env.on('st', d => { if(d.r !== r) return; d.p.forEach((p, i) => { if(i === 0 && !rp){ rp = p; } if(rp) seg(rp, p, d.c, d.w); rp = p; }); }); env.on('up', () => { rp = null; }); env.on('clr', d => { if(d.r === r) clear(); });
+    env.on('end', d => endRound(d.r)); env.on('ok', d => okG(d.r, d.s));
+    env.on('g', (d, p) => { if(!host) return; const s = env.ids.indexOf(p.id); if(s >= 0 && d.r === r && phase === 'draw' && !guessed[s] && s !== drawer() && norm(d.w) === norm(words[r])){ env.send('ok', {r, s}); okG(r, s); } });
+    const guess = () => { const w = inp.value.trim(); if(!w || phase !== 'draw' || amD() || guessed[ME]) return; inp.value = ''; if(host){ if(norm(w) === norm(words[r])){ env.send('ok', {r, s:ME}); okG(r, ME); } else { fb.textContent = '❌ مش دي'; } } else { env.send('g', {r, w}); fb.textContent = '📨 ' + w; } };
+    q$('.dw-g button').addEventListener('click', guess); inp.addEventListener('keydown', e => { if(e.key === 'Enter') guess(); });
+    reset(env.seed); return {reset, destroy(){ dead = true; clearInterval(tm); }};
+  }};
+})(window.SX);
+</script>
 <script id="fxJs2">
 (function(){
 const $=(q,r)=>(r||document).querySelector(q),ADM=()=>{try{return typeof isAdmin!=='undefined'&&!!isAdmin}catch(e){return false}};
