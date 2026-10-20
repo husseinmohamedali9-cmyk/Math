@@ -8638,6 +8638,7 @@ const SecTools = {
     if(this.on('sec_match') && d.cards.filter(c=>this.short(c)).length >= 3) h += `<button type="button" class="sx-btn" data-sxt="match" data-id="${id}">🧩 لعبة المطابقة</button>`;
     if(this.on('sec_notes')){ const has = (this.notes()[s.id]||{}).t, op = this.open.has(s.id);
       h += `<button type="button" class="sx-btn${op?' on':''}" data-sxt="note" data-id="${id}">📝 ملاحظاتي${has?' (محفوظة)':''}</button>`; }
+    try{ h += window.GXSEC ? GXSEC.btns(s) : ''; }catch(e){}
     return h;
   },
   panelHtml(s){
@@ -8759,7 +8760,7 @@ const SecTools = {
   document.addEventListener('keydown', e=>{ if(e.key==='Escape') SecTools.close(); });
   const _sa = secActionsHtml;
   secActionsHtml = function(s){
-    let h = _sa.apply(this, arguments); if(!(s.blocks||[]).length) return h;
+    let h = _sa.apply(this, arguments); if(!(s.blocks||[]).length){ try{ const g = window.GXSEC ? GXSEC.btns(s) : ''; if(!g) return h; return h ? h.replace(/<\/div>\s*$/, g + '</div>') : '<div class="sec-actions">' + g + '</div>'; }catch(e){ return h; } }
     let add = ''; try{ add = SecTools.btns(s); }catch(e){}
     if(!add) return h;
     h = h ? h.replace(/<\/div>\s*$/, add + '</div>') : '<div class="sec-actions">' + add + '</div>';
@@ -10929,7 +10930,7 @@ function showTab(t){
     const L = GAME_ORDER.filter(k => SX.games[k] && gameOk(k));
     body.innerHTML = '<p class="sxh-sub">العب ضد الكمبيوتر، أو على نفس الموبايل، أو <b>أونلاين مع صاحبك من موبايلين مختلفين</b> (بكود غرفة أو لينك).</p>' + (L.length ? '<div class="sxh-grid">' + L.map(k => { const g = SX.games[k]; return `<button type="button" class="sxh-card" data-sxh="game" data-g="${k}"><i>${g.icon}</i><b>${E(g.name)}</b><small>${E(g.desc)}</small><span class="sxh-badges">${g.players ? '<em>👥 ' + g.players + '</em>' : ''}${g.teams ? '<em>🤝 فرق</em>' : ''}${g.online ? '<em>🌐 أونلاين</em>' : ''}${g.cpu ? '<em>🤖</em>' : ''}${g.local ? '<em>👥</em>' : ''}</span></button>`; }).join('') + '</div>' : '<p class="sxh-sub">مفيش ألعاب متاحة دلوقتي.</p>');
   } else if(t === 'study'){
-    const T = SX.tools.filter(x => toolOk(x.id));
+    const T = SX.tools.filter(x => toolOk(x.id) && (!x.vis || x.vis()) && !(window.GXHIDE && GXHIDE(x.id)));
     body.innerHTML = '<p class="sxh-sub">أدوات بالذكاء الاصطناعي: كويزات وأسئلة وفلاش كاردز وملخصات من أي قسم أو نص أو ملف PDF — في أي مادة، وامتحان تجريبي وخطة مذاكرة.</p>' + (T.length ? '<div class="sxh-grid">' + T.map(x => `<button type="button" class="sxh-card" data-sxh="tool" data-id="${x.id}"><i>${x.icon}</i><b>${E(x.name)}</b><small>${E(x.desc)}</small></button>`).join('') + '</div>' : '<p class="sxh-sub">مفيش أدوات متاحة دلوقتي.</p>');
   } else if(t === 'me' && SX.renderMe){ SX.renderMe(body); }
 }
@@ -11018,9 +11019,9 @@ async function joinRoom(g, code, m){
 function launch(g, cfg){
   closeModal(); if(cur) leaveGame(true);
   const room = cfg.room || null, st = document.createElement('div'); st.id = 'sxStage';
-  st.innerHTML = `<div class="sxs-top"><b>${g.icon} ${E(g.name)}</b><span class="sxs-st"></span><button type="button" data-sxs="emo" title="تفاعل">😀</button><button type="button" data-sxs="exit">🚪 خروج</button></div>
+  st.innerHTML = `<div class="sxs-top"><b>${g.icon} ${E(g.name)}</b><span class="sxs-st"></span>${room ? '<button type="button" data-sxs="chat" title="رسايل سريعة">💬</button>' : ''}<button type="button" data-sxs="emo" title="تفاعل">😀</button><button type="button" data-sxs="exit">🚪 خروج</button></div>
     <div class="sxs-emo" hidden>${['👏', '😂', '😮', '🔥', '😎', '🤝', '😭', '👀'].map(e => `<button type="button" data-sxs="send" data-e="${e}">${e}</button>`).join('')}</div>
-    <div class="sxs-banner" hidden></div><div class="sxs-box"></div><div class="sxs-float"></div>`;
+    <div class="sxs-chat" hidden>${['يلا بينا 👏', 'حظ سعيد 🍀', 'لعبة حلوة!', 'استنى شوية ⏳', 'برافو 👌', 'معلش 😅', 'مرة تانية؟'].map(t => `<button type="button" data-sxs="qm" data-t="${t}">${t}</button>`).join('')}<input maxlength="40" placeholder="اكتب رسالة واضغط Enter"></div><div class="sxs-banner" hidden></div><div class="sxs-box"></div><div class="sxs-float"></div>`;
   hub.appendChild(st); stage = st;
   const hs = {}, rm = {me:false, others:{}}; let inst = null, ended = false;
   const env = {
@@ -11034,6 +11035,7 @@ function launch(g, cfg){
     room.on('hb', () => {});
     room.on('bye', (d, p) => { banner('🚪 ' + E(p.name || 'اللاعب') + ' خرج من الغرفة'); if(g.onBye) g.onBye(inst, p); });
     room.on('emo', d => floatEmo(d.e));
+    room.on('chat', (d, p) => floatMsg((p.name || '') + ': ' + String(d.t).slice(0, 40)));
     room.on('rm', (d, p) => { rm.others[p.id] = true; endBtns(); if(cfg.seat === 0 && allRm()) restart(); });
     room.on('start', d => { if(cfg.seat !== 0 && d.rematch){ restartWith(d); } });
     const orig = room._in.bind(room);
@@ -11043,6 +11045,8 @@ function launch(g, cfg){
   cur.t0 = Date.now();
   function allRm(){ return rm.me && cfg.ids.filter(id => id !== ME.id).every(id => rm.others[id]); }
   function banner(h){ const b = $q('.sxs-banner', st); if(!b) return; b.hidden = !h; b.innerHTML = h || ''; }
+  function floatMsg(t){ const f = $q('.sxs-float', st); if(!f) return; const s = document.createElement('span'); s.className = 'sxs-msg'; s.textContent = t; s.style.bottom = (-30 + Math.random()*10) + 'px'; f.appendChild(s); setTimeout(() => s.remove(), 3300); }
+  function sendChat(t){ t = String(t || '').trim().slice(0, 40); if(!t || !room) return; room.send('chat', {t}); floatMsg('أنا: ' + t); const c = $q('.sxs-chat', st); if(c) c.hidden = true; }
   function floatEmo(e){ const f = $q('.sxs-float', st); if(!f) return; const s = document.createElement('span'); s.textContent = e; s.style.left = (20 + Math.random()*60) + '%'; f.appendChild(s); setTimeout(() => s.remove(), 2200); }
   function endBtns(){ const b = $q('.sxs-end .rm', st); if(b){ b.textContent = rm.me ? '⏳ مستني الخصم يوافق…' : (Object.keys(rm.others).length ? '🔁 صاحبك عايز يعيد — وافق' : '🔁 العب تاني'); } }
   function showEnd(win, text, extra, ttl){
@@ -11055,9 +11059,12 @@ function launch(g, cfg){
   }
   function restartWith(d){ rm.me = false; rm.others = {}; ended = false; const o = $q('.sxs-end', st); if(o) o.remove(); cfg.seed = d.seed; if(inst && inst.reset) inst.reset(d.seed, d.first); }
   function restart(){ const first = ((cfg.first = ((cfg.first || 0) + 1) % (cfg.n || 2)) | 0), seed = (Math.random()*4e9) >>> 0; if(room) room.send('start', {rematch:true, seed, first, gid:g.id}); restartWith({seed, first}); }
+  st.addEventListener('keydown', e => { if(e.key === 'Enter' && e.target.matches('.sxs-chat input')){ sendChat(e.target.value); e.target.value = ''; } });
   st.addEventListener('click', e => {
     const b = e.target.closest('[data-sxs]'); if(!b) return; const k = b.dataset.sxs;
     if(k === 'exit') leaveGame();
+    else if(k === 'chat'){ const c = $q('.sxs-chat', st); c.hidden = !c.hidden; }
+    else if(k === 'qm') sendChat(b.dataset.t);
     else if(k === 'emo'){ const p = $q('.sxs-emo', st); p.hidden = !p.hidden; }
     else if(k === 'send'){ if(room) room.send('emo', {e:b.dataset.e}); floatEmo(b.dataset.e); $q('.sxs-emo', st).hidden = true; }
     else if(k === 'win'){ ended = false; env.end(cfg.seat, 'الخصم انقطع'); }
@@ -12400,7 +12407,7 @@ p.innerHTML=`${ADM()?`<h4>📍 مكان زر ✨ وشكله</h4>${adminHtml()}`:
 <label class="fxr" style="margin-top:6px"><input type="checkbox" id="fxAuto" ${LS.g('fx_auto','0')==='1'?'checked':''}> تلقائي حسب الموسم (رمضان/عيد/شتا...)</label>
 <h4>👤 اسم المستخدم</h4><div class="fxr"><b id="fxUnT">${(window.FXQ?FXQ.name():"").replace(/[<>"&]/g,"")}</b><button class="fxb" id="fxUnS">تغيير</button></div>${ADM()?`<button class="fxb" id="fxStB" style="margin:8px 0">📊 إحصائيات الزوار والكويزات</button> <button class="fxb" id="fxPrB" style="margin:8px 0">🕌 المواقيت والأذكار</button><label class="fxr"><input type="checkbox" id="fxDc" ${CF.g('deco','1')!=='0'?'checked':''}> زينة رمضان والعيد</label>
 <h4>🖼 الخلفية</h4><div class="fxr">${BGS.map(b=>`<button class="fxbg ${CF.g('bg','')===b[0]?'on':''}" data-bg="${b[0]}">${b[1]}</button>`).join('')}</div>
-<h4>🎯 وضع التركيز</h4><button class="fxb" id="fxFc">${document.documentElement.classList.contains('fx-focus')?'إيقاف':'تشغيل'} (يخفي كل حاجة غير القسم المفتوح)</button>
+<h4>🌟 الإضافات</h4><button class="fxb" id="fxGx">⚙️ إعدادات الإضافات وإظهار أيقونتها في البوكس</button> <h4>🎯 وضع التركيز</h4><button class="fxb" id="fxFc">${document.documentElement.classList.contains('fx-focus')?'إيقاف':'تشغيل'} (يخفي كل حاجة غير القسم المفتوح)</button>
 <h4>✏️ اسم «مركز التحدّي»</h4><div class="fxr"><input type="text" id="fxNm" maxlength="24" placeholder="اكتب الاسم اللي يعجبك" value="${curName.replace(/"/g,'&quot;')}"><button class="fxb" id="fxNs">حفظ</button></div><small>سيب الخانة فاضية للرجوع للاسم الأصلي.</small>
 <h4>🔝 أيقونات الشريط العلوي</h4>${tbHtml()}<h4>🎮 دراع البلايستيشن</h4><small id="fxPd">${padOn()?'✅ الدراع متوصّل':'وصّل الدراع (بلوتوث/كابل) واضغط أي زر'}<br>✕ تأكيد · ○ رجوع · الأسهم/العصا للتنقل واللعب (شغّال في الأونلاين كمان)</small>`:''}`;
 document.body.appendChild(p);posPanel();
@@ -12408,7 +12415,7 @@ p.onchange=e=>{if(e.target.id==='fxTh'){LS.s('fx_auto','0');$('#fxAuto').checked
 if(e.target.id==='fxAuto'){LS.s('fx_auto',e.target.checked?'1':'0');if(e.target.checked)setTheme(season())}
 if(e.target.id==='fxDc'){CF.s('deco',e.target.checked?'1':'0');deco(curTheme())}};
 p.onclick=e=>{const b=e.target.closest('[data-bg]');if(b){setBg(b.dataset.bg);p.querySelectorAll('.fxbg').forEach(x=>x.classList.toggle('on',x===b))}
-if(e.target.id==='fxFc'){focus(!document.documentElement.classList.contains('fx-focus'));p.hidden=true}
+if(e.target.id==='fxGx'){p.hidden=true;if(window.GXOPEN){window.GXOPEN();setTimeout(function(){var b=document.querySelector('#gxOv [data-set]');if(b)b.click()},50)}} if(e.target.id==='fxFc'){focus(!document.documentElement.classList.contains('fx-focus'));p.hidden=true}
 if(e.target.id==='fxNs'){setName($('#fxNm').value);toast('✅ اتغيّر الاسم')}}}
 /* ===== دراع البلايستيشن ===== */
 const padOn=()=>[...(navigator.getGamepads?navigator.getGamepads():[])].some(g=>g&&g.connected);
@@ -12720,7 +12727,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .sxh-card{background:linear-gradient(160deg,var(--surface,#fff),var(--surface-2,#f4f6fb));box-shadow:0 4px 12px #0001}
 .sxh-card:hover{box-shadow:0 12px 26px #0003}
 /* ===== المصحف + المواقيت + الأذكار: نفس اللون وتابعين السيم ===== */
-#fxPr .fxqb,#fxMush .fxqb,#fxSp .fxqb,.az-box,#fxDn .fxqb{--tn:color-mix(in srgb,var(--accent) 9%,var(--surface));--tn2:color-mix(in srgb,var(--accent) 16%,var(--surface));background:var(--tn)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--accent) 30%,var(--line))!important}
+#fxPr .fxqb,#fxMush .fxqb,#fxSp .fxqb,.az-box,#fxDn .fxqb,#gxOv .fxqb{--tn:color-mix(in srgb,var(--accent) 9%,var(--surface));--tn2:color-mix(in srgb,var(--accent) 16%,var(--surface));background:var(--tn)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--accent) 30%,var(--line))!important}
 #fxPr .fxpr-row,#fxPr .az-cat,#fxPr .az-it,#fxPr .az-btn,#fxPr .az-cnt,#fxMush .fxq-list button,#fxMush .fxq-page,#fxPr input,#fxPr select,#fxPr textarea,#fxMush input,#fxMush select,.az-box .az-cat,.az-box .az-it{background:var(--tn2)!important;color:var(--ink)!important;border-color:color-mix(in srgb,var(--accent) 22%,var(--line))!important}
 #fxPr .az-btn.pri,#fxMush .fxx.on,#fxPr .fxx.on,#fxPr .fxprt .on{background:var(--accent)!important;color:var(--fxon,#fff)!important}
 #fxMush .fxq-sur{background:var(--tn2)!important}#fxPr .fxpr-row.nx{background:color-mix(in srgb,var(--accent) 28%,var(--surface))!important}
@@ -12904,6 +12911,255 @@ SX.games.draw = {id:'draw', icon:'🎨', name:'ارسم وخمّن', desc:'وا�
     q$('.dw-g button').addEventListener('click', guess); inp.addEventListener('keydown', e => { if(e.key === 'Enter') guess(); });
     reset(env.seed); return {reset, destroy(){ dead = true; clearInterval(tm); }};
   }};
+})(window.SX);
+</script>
+<style id="sxExtrasCss">
+.px h3{margin:0 0 8px}.px-l{display:block;margin:6px 0;font-size:13px}.px-l select,.px-l input[type=time]{width:100%;margin-top:3px;padding:8px;border-radius:10px;border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;font:inherit}.px-l.row{display:flex;gap:8px;align-items:center}
+.px-q{margin:10px 0;text-align:center;background:var(--surface-2,#f4f6fb);border-radius:14px;padding:14px}.px-q small{display:block;opacity:.6}.px-q div{font-size:clamp(20px,6vw,28px);font-weight:800}
+.px-a{width:100%;box-sizing:border-box;padding:10px;border-radius:12px;border:2px solid var(--line,#dde3ee);background:var(--surface,#fff);color:inherit;font:700 18px monospace;text-align:center;direction:ltr}
+.px-fb{min-height:22px;font-weight:700;margin:6px 0}.px-fb.ok{color:#16a34a}.px-fb.no{color:#dc2626}.px-sol{background:color-mix(in srgb,var(--accent) 10%,var(--surface));border-radius:12px;padding:10px;line-height:2}
+.px-b{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.px-b button{flex:1 1 auto;border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:12px;padding:9px;font:inherit;font-weight:700;cursor:pointer}.px-b .on{background:var(--accent);color:var(--fxon,#fff);border-color:transparent}
+.sxs-chat{display:flex;flex-wrap:wrap;gap:6px;padding:6px 12px;justify-content:center;background:var(--surface,#fff);border-bottom:1px solid var(--line,#dde3ee)}.sxs-chat[hidden]{display:none}
+.sxs-chat button{border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;border-radius:99px;padding:5px 11px;font:inherit;font-size:12.5px;cursor:pointer}.sxs-chat input{flex:1 1 140px;min-width:0;border:1px solid var(--line,#dde3ee);border-radius:99px;padding:5px 12px;background:var(--surface-2,#f4f6fb);color:inherit;font:inherit}
+.sxs-msg{position:absolute;left:50%;bottom:-40px;transform:translateX(-50%);background:#111c;color:#fff;border-radius:14px;padding:6px 12px;font-size:13px;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis;animation:sxf 3.2s ease-out forwards}
+</style>
+<script id="sxExtras">
+/* ===== إضافات: مولّد مسائل + تصوير مسألة + تذكير يومي ===== */
+(function(SX){
+if(!SX || !SX.tools) return;
+const E = SX.E, $q = s => document.querySelector(s);
+const ls = (k, d) => { try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } }, lss = (k, v) => { try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} };
+const sel = (id, label, arr, def) => `<label class="px-l">${label}<select id="${id}">${arr.map(a => `<option value="${a[0]}" ${String(a[0]) === String(def) ? 'selected' : ''}>${a[1]}</option>`).join('')}</select></label>`;
+/* شرح الحل */
+function explain(q){
+  let m = q.t.match(/(-?\d+)x\s*([+−-])\s*(\d+)\s*=\s*(-?\d+)/);
+  if(m){ const a = +m[1], b = (m[2] === '+' ? 1 : -1)*(+m[3]), c = +m[4]; return `1) انقل الثابت للطرف التاني: ${a}x = ${c} ${b < 0 ? '+' : '−'} ${Math.abs(b)} = ${c - b}<br>2) اقسم على ${a}: x = ${c - b} ÷ ${a} = <b>${q.a}</b>`; }
+  if(/مجموع جذري/.test(q.t)) return 'مجموع الجذرين = −(معامل x) ÷ (معامل x²) = <b>' + q.a + '</b>';
+  if(/f ′/.test(q.t)) return 'اشتق f(x) = ax² + bx ← f ′(x) = 2ax + b ثم عوّض بقيمة x = <b>' + q.a + '</b>';
+  if(/f\(/.test(q.t)) return 'عوّض بقيمة x في الدالة واحسب = <b>' + q.a + '</b>';
+  if(/%/.test(q.t)) return 'النسبة المئوية: (النسبة ÷ 100) × العدد = <b>' + q.a + '</b>';
+  return 'الناتج = <b>' + q.a + '</b>';
+}
+function genTool(){
+  const m = SX.modal(`<div class="px"><h3>🎲 مولّد مسائل</h3>${sel('pxT', 'النوع', [['arith', 'حساب'], ['alg', 'جبر'], ['mix', 'خليط + تفاضل']], 'alg')}${sel('pxL', 'المستوى', [[1, 'سهل'], [2, 'متوسط'], [3, 'صعب']], 2)}
+    <div class="px-q" id="pxQ"></div><input id="pxA" class="px-a" inputmode="numeric" placeholder="اكتب إجابتك (اختياري)"><div class="px-fb" id="pxF"></div><div class="px-sol" id="pxS" hidden></div>
+    <div class="px-b"><button type="button" data-px="chk">✔ تحقق</button><button type="button" data-px="sol">💡 الحل</button><button type="button" data-px="ai">🤖 اشرحها بالتفصيل</button><button type="button" data-px="nx" class="on">➡ تمرين تاني</button></div><small id="pxC"></small></div>`, 'sxm-lobby');
+  let q = null, cnt = 0, ok = 0; const g = id => m.querySelector('#' + id);
+  const next = () => { q = SX.makeQs((Math.random()*4e9) >>> 0, 1, +g('pxL').value, g('pxT').value)[0]; cnt++; g('pxQ').innerHTML = '<small>تمرين ' + cnt + '</small><div dir="ltr">' + E(q.t) + '</div>'; g('pxA').value = ''; g('pxF').textContent = ''; g('pxS').hidden = true; g('pxC').textContent = 'صح: ' + ok + ' من ' + (cnt - 1); };
+  m.addEventListener('click', e => { const b = e.target.closest('[data-px]'); if(!b) return; const k = b.dataset.px;
+    if(k === 'nx') next();
+    else if(k === 'sol'){ g('pxS').innerHTML = explain(q); g('pxS').hidden = false; }
+    else if(k === 'chk'){ const v = parseFloat(String(g('pxA').value).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('−', '-')); if(isNaN(v)) return; const good = Math.abs(v - q.a) < 1e-6; if(good) ok++; g('pxF').innerHTML = good ? '✅ صح!' : '❌ غلط — جرّب تاني أو شوف الحل'; g('pxF').className = 'px-fb ' + (good ? 'ok' : 'no'); g('pxC').textContent = 'صح: ' + ok; }
+    else if(k === 'ai'){ const h = $q('[data-sxh="close"]'); if(h) h.click(); try{ const p = $q('#mbPanel'); if(!p || p.hidden) MathBot.toggle(); setTimeout(() => { const i = $q('#mbIn'); if(i){ i.value = 'اشرحلي حل المسألة دي بالتفصيل خطوة بخطوة: ' + q.t.replace('؟', ''); i.focus(); } }, 150); }catch(err){} } });
+  m.addEventListener('change', e => { if(e.target.id === 'pxT' || e.target.id === 'pxL') next(); }); next();
+}
+function photoTool(){
+  const h = $q('[data-sxh="close"]'); if(h) h.click();
+  try{ const p = $q('#mbPanel'); if(!p || p.hidden) MathBot.toggle(); }catch(e){}
+  setTimeout(() => { const i = $q('#mbIn'), f = $q('#mbFile'); if(i){ i.value = 'حلّ المسألة اللي في الصورة خطوة بخطوة واشرح كل خطوة بالمصري.'; } if(f) f.click(); else SX.say('دوس 📎 في الشات واختار صورة المسألة'); }, 250);
+}
+/* تذكير يومي (بيشتغل والموقع مفتوح) */
+const RK = 'sx_remind';
+function remindTick(force){ const r = ls(RK, null); if(!r || !r.on) return; const d = new Date(), today = d.toISOString().slice(0, 10), [H, M] = r.time.split(':').map(Number);
+  if(r.last === today || (d.getHours()*60 + d.getMinutes()) < H*60 + M) return; r.last = today; lss(RK, r); const msg = '📚 وقت المذاكرة! افتح الموقع وكمّل رحلتك النهاردة.';
+  try{ SX.say(msg); }catch(e){}
+  try{ if(window.Notification && Notification.permission === 'granted') new Notification('تذكير المذاكرة', {body:msg, tag:'sx-remind'}); }catch(e){} }
+function remindTool(){
+  const r = ls(RK, {on:false, time:'18:00', last:''});
+  const m = SX.modal(`<div class="px"><h3>⏰ تذكير يومي</h3><label class="px-l">الوقت<input type="time" id="rmT" value="${r.time}"></label><label class="px-l row"><input type="checkbox" id="rmO" ${r.on ? 'checked' : ''}> شغّل التذكير كل يوم</label>
+    <small>التذكير بيطلعلك لما الموقع يكون مفتوح (حتى في تاب تاني). لو قفلت الموقع خالص مش هيوصلك.</small><div class="px-b"><button type="button" class="on" data-rm="save">💾 حفظ</button><button type="button" data-rm="x">إغلاق</button></div></div>`, 'sxm-lobby');
+  m.addEventListener('click', async e => { const b = e.target.closest('[data-rm]'); if(!b) return; if(b.dataset.rm === 'x') return SX.closeModal();
+    const on = m.querySelector('#rmO').checked, time = m.querySelector('#rmT').value || '18:00'; if(on && window.Notification && Notification.permission === 'default'){ try{ await Notification.requestPermission(); }catch(_){} }
+    lss(RK, {on, time, last:''}); SX.say(on ? '✅ هفكّرك كل يوم الساعة ' + time : '🔕 التذكير اتقفل'); SX.closeModal(); remindTick(); });
+}
+SX.tools.push({id:'gen', icon:'🎲', name:'مولّد مسائل', desc:'تمارين لا نهائية في الحساب والجبر والتفاضل — بحلولها وتصحيح فوري', open:genTool},
+  {id:'photo', icon:'📸', name:'صوّر مسألة', desc:'صوّر المسألة من الكتاب والذكاء الاصطناعي يحلها ويشرحها', open:photoTool},
+  {id:'remind', icon:'⏰', name:'تذكير يومي', desc:'اختار وقت وهفكّرك تذاكر كل يوم', open:remindTool});
+setInterval(remindTick, 30000); setTimeout(remindTick, 4000);
+})(window.SX);
+</script>
+<style id="sxGrowthCss">
+.gx{max-height:78vh;overflow:auto}.gx h3{margin:0 0 8px}.gx h4{margin:12px 0 6px}
+.gx-bar{position:relative;height:18px;border-radius:99px;background:var(--surface-2,#e5e9f2);overflow:hidden;margin:8px 0}.gx-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold,#f5b400));transition:width .6s}.gx-bar span{position:absolute;inset:0;text-align:center;font-size:11px;line-height:18px;font-weight:700}
+.gx-pet{position:relative;text-align:center;font-size:84px;padding:14px;margin:6px 0;border-radius:20px;background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--accent) 18%,var(--surface)),var(--surface-2,#f4f6fb));animation:gxB 2.4s ease-in-out infinite}.gx-pet.sad{filter:grayscale(.6);animation:none}.gx-pet .hat{position:absolute;top:2px;left:50%;transform:translateX(-50%);font-style:normal;font-size:40px}.gx-pet em{position:absolute;bottom:8px;right:12px;font-style:normal;font-size:28px}
+@keyframes gxB{50%{transform:translateY(-6px)}}
+.gx-sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}.gx-it{display:flex;flex-direction:column;align-items:center;gap:2px;border:2px solid var(--line,#dde3ee);background:var(--surface,#fff);color:inherit;border-radius:14px;padding:10px 4px;font:inherit;cursor:pointer}.gx-it i{font-style:normal;font-size:30px}.gx-it small{opacity:.8;font-size:11px}.gx-it.own{border-color:#16a34a66}.gx-it.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.gx-coin{background:linear-gradient(135deg,#fde68a,#f59e0b);color:#422006;border-radius:14px;padding:10px;text-align:center;font-weight:700}
+.gx-map{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.gx-node{border-radius:14px;padding:10px 4px;text-align:center;background:var(--surface-2,#f4f6fb);border:2px solid transparent}.gx-node.done{background:#16a34a22}.gx-node.cur{border-color:var(--accent);animation:gxB 1.6s infinite}.gx-node.lock{opacity:.55}.gx-node b{font-size:22px;display:block}.gx-node small{display:block;opacity:.7;font-size:10.5px}
+.gx-q{text-align:center;background:var(--surface-2,#f4f6fb);border-radius:14px;padding:14px;margin:8px 0}.gx-q small{display:block;opacity:.6}.gx-q div{font-size:28px;font-weight:800}
+.gx-wa{flex:1;text-align:center;background:#25d366;color:#fff;border-radius:12px;padding:9px;text-decoration:none;font-weight:700}
+.gx-ch{display:flex;gap:6px;align-items:flex-end;height:140px;margin:10px 0}.gx-ch div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-size:10px}.gx-ch i{display:block;width:100%;background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 50%,#fff));border-radius:6px 6px 0 0;min-height:2px}
+.gx-dr{background:var(--surface-2,#f4f6fb);border-radius:10px;padding:8px;font-size:13px}
+.gx-r{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 0;border-bottom:1px solid var(--line,#dde3ee);font-size:13px}.gx-r span{flex:1 1 140px}.gx-n{width:80px;padding:6px;border-radius:8px;border:1px solid var(--line,#dde3ee);background:var(--surface-2,#f4f6fb);color:inherit;font:inherit}
+.gx-title{background:var(--accent);color:var(--fxon,#fff);border-radius:99px;padding:2px 10px;font-size:12px;margin-inline-start:6px}
+html[data-gxframe="gold"] .hubav,html[data-gxframe="gold"] #fxProfC{box-shadow:0 0 0 3px #f5b400,0 0 12px #f5b400}html[data-gxframe="neon"] .hubav,html[data-gxframe="neon"] #fxProfC{box-shadow:0 0 0 3px #c026d3,0 0 16px #22d3ee}html[data-gxframe="rb"] .hubav,html[data-gxframe="rb"] #fxProfC{box-shadow:0 0 0 3px #f43f5e,0 0 0 6px #facc15,0 0 0 9px #22c55e}
+html[data-gxbg="sun"] #sxHub{background:linear-gradient(160deg,#fde68a,#fb923c 55%,#be185d)!important}html[data-gxbg="sea"] #sxHub{background:linear-gradient(160deg,#a5f3fc,#0ea5e9 55%,#1e3a8a)!important}html[data-gxbg="night"] #sxHub{background:linear-gradient(160deg,#312e81,#1e1b4b 55%,#020617)!important}
+html.gx-night{--bg:#14161d;--surface:#1c1f29;--surface-2:#252936;--ink:#e6e1d6;--ink-soft:#aaa597;--line:#343949}html.gx-night body{background:#14161d!important;color:#e6e1d6}html.gx-night .math-bg,html.gx-night [class*=deco]{display:none!important}html.gx-night *{animation:none!important;transition:none!important}
+.gx-fc{text-align:center;background:linear-gradient(145deg,var(--accent),color-mix(in srgb,var(--accent) 60%,#000));color:var(--fxon,#fff);border-radius:18px;padding:26px 14px;margin:10px 0;box-shadow:0 8px 20px #0004;min-height:110px}.gx-fc.bk{background:var(--surface-2,#f4f6fb);color:var(--ink)}.gx-fc small{display:block;opacity:.7}.gx-fc div{font-size:22px;font-weight:800}
+#gxOv .fxqb{--tn:color-mix(in srgb,var(--accent) 9%,var(--surface));background:var(--tn)!important;color:var(--ink)!important}#gxOv .fxx{background:var(--surface-2)!important;color:var(--ink)!important}
+.gx-sv{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px dashed var(--line,#dde3ee)}.gx-sv button,.gx-pin{border:0;border-radius:12px;background:var(--accent);color:var(--fxon,#fff);padding:8px 14px;font:inherit;font-weight:700;cursor:pointer}.gx-sv button:disabled{opacity:.6}.gx-pin{background:var(--surface-2,#f4f6fb);color:inherit;border:1px solid var(--line,#dde3ee);margin-inline-start:6px}
+.gx-lr{display:flex;align-items:center;gap:6px;background:var(--surface-2,#f4f6fb);border-radius:14px;padding:8px 10px;margin:6px 0}.gx-lr>div{flex:1;min-width:0}.gx-lr b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.gx-lr small{display:block;opacity:.7}.gx-lr button{border:1px solid var(--line,#dde3ee);background:var(--surface,#fff);color:inherit;border-radius:10px;padding:7px 10px;font:inherit;cursor:pointer}.gx-lr button.on{background:var(--accent);color:var(--fxon,#fff);border-color:transparent}.gx-doc{line-height:1.9;max-height:60vh;overflow:auto}
+.gx-card{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:1 1 100%;background:color-mix(in srgb,var(--accent) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line));border-radius:14px;padding:10px 12px;margin:4px 0}.gx-card b{display:block}.gx-card small{opacity:.7}.gx-card .fxgo{border:0;border-radius:10px;background:var(--accent);color:var(--fxon,#fff);padding:8px 14px;font:inherit;font-weight:700;cursor:pointer}
+.gx-x{border:0;background:transparent;color:inherit;opacity:.55;cursor:pointer;font-size:13px;padding:2px 4px}.gx-x:hover{opacity:1}.gx-prev{padding:10px;border-radius:12px;background:var(--surface-2,#f4f6fb)}
+</style>
+<script id="sxGrowth">
+/* ===== إضافات التحفيز: رحلة المستويات، الشخصية، المتجر، تحدي صديق، تحدي الشهر، المؤشر، اليوميات، الوضع الليلي + لوحة تحكم ===== */
+(function(SX){
+if(!SX || !SX.tools) return;
+const E = SX.E, $q = s => document.querySelector(s), today = () => new Date().toISOString().slice(0, 10);
+const L = (k, d) => { try{ const v = localStorage.getItem('gx_' + k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } }, W = (k, v) => { try{ localStorage.setItem('gx_' + k, JSON.stringify(v)); }catch(e){} };
+const adm = () => { try{ return !!isAdmin; }catch(e){ return false; } };
+const CFG = () => { try{ return (site.meta && site.meta.gx) || {}; }catch(e){ return {}; } };
+const saveCfg = c => { try{ site.meta = site.meta || {}; site.meta.gx = c; scheduleSave(); }catch(e){ SX.say('تعذّر الحفظ'); } };
+const xp = () => { try{ return Fun.lv().t || 0; }catch(e){ return 0; } };
+const coins = () => Math.max(0, xp() - L('spent', 0));
+const F = [['journey', '🏰', 'رحلة المستويات', 'خريطة مراحل بزعيم في كل مرحلة'], ['pet', '🐾', 'شخصيتي', 'كائن بيكبر معاك ويزعل لو غبت'], ['shop', '🎟', 'متجر النقاط', 'اشتري شخصيات وإكسسوارات وإطارات وألقاب'], ['friend', '🥊', 'تحدي صديق', 'لينك بنفس الأسئلة وقارنوا النتايج'], ['month', '📅', 'تحدي الشهر', 'هدف شهري وجايزة'], ['track', '📊', 'مؤشر مذاكرتي', 'وقت مذاكرتك كل يوم وأحسن ساعة'], ['diary', '📝', 'يوميات الدراسة', 'سطرين كل يوم'], ['night', '🌙', 'الوضع الليلي', 'ألوان هادية من غير حركة'], ['lib', '📚', 'مكتبة المذاكرة', 'محفوظاتك من أدوات المذاكرة ومنشورات الأقسام']];
+const isOn = id => !(CFG().off || {})[id], inBox = id => !(CFG().nobox || {})[id];
+const closeGx = () => { const o = $q('#gxOv'); if(o) o.remove(); };
+const css = s => { closeGx(); const o = document.createElement('div'); o.id = 'gxOv'; o.className = 'fxov'; o.innerHTML = `<div class="fxqb"><div class="fxqh"><b>🌟 الإضافات</b><button class="fxx" data-gxc type="button" aria-label="إغلاق">✕</button></div><div class="fxbody"><div class="gx">${s}</div></div></div>`; document.body.appendChild(o); o.addEventListener('click', e => { if(e.target === o || e.target.closest('[data-gxc]')) closeGx(); }); return o; };
+const bar = (p, t) => `<div class="gx-bar"><i style="width:${Math.min(100, Math.max(0, p))}%"></i><span>${t || ''}</span></div>`;
+/* ---------- نشاط ---------- */
+const act = () => { W('last', today()); const m = L('mon', {k:'', n:0}), k = today().slice(0, 7); if(m.k !== k){ m.k = k; m.n = 0; } W('mon', m); };
+const solved = () => { const m = L('mon', {k:'', n:0}), k = today().slice(0, 7); if(m.k !== k){ m.k = k; m.n = 0; } m.n++; W('mon', m); act(); };
+try{ const os = SX.stat; SX.stat = function(k, key, v){ try{ if(k === 'q' && v === 'ok') solved(); else act(); }catch(e){} return os.apply(this, arguments); }; }catch(e){}
+try{ const oa = Fun.award; Fun.award = function(){ try{ act(); }catch(e){} return oa.apply(this, arguments); }; }catch(e){}
+/* وقت المذاكرة التلقائي */
+let lastIn = Date.now(); ['pointerdown', 'keydown', 'touchstart'].forEach(e => document.addEventListener(e, () => { lastIn = Date.now(); }, {passive:true}));
+setInterval(() => { if(document.hidden || Date.now() - lastIn > 120000) return; const t = L('time', {}), h = L('hr', {}), d = today(), hr = new Date().getHours(); t[d] = (t[d] || 0) + .5; h[hr] = (h[hr] || 0) + .5; W('time', t); W('hr', h); }, 30000);
+/* ---------- أسئلة (تحدي/زعيم) ---------- */
+function quiz(seed, lv, type, n, title, done){
+  const qs = SX.makeQs(seed, n, lv, type); let i = 0, ok = 0; const m = css(`<h3>${E(title)}</h3><div class="gx-q"></div><input class="px-a" inputmode="numeric" placeholder="الإجابة"><div class="px-b"><button type="button" class="on">تأكيد</button></div>`), q = m.querySelector('.gx-q'), inp = m.querySelector('input');
+  const show = () => { q.innerHTML = '<small>' + (i + 1) + ' / ' + n + '</small><div dir="ltr">' + E(qs[i].t) + '</div>'; inp.value = ''; inp.focus(); };
+  const go = () => { const v = parseFloat(String(inp.value).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('−', '-')); if(isNaN(v)) return; if(Math.abs(v - qs[i].a) < 1e-6){ ok++; solved(); } i++; if(i >= n){ m.querySelector('.gx').innerHTML = `<h3>${ok >= n*.8 ? '🏆' : '💪'} ${ok} من ${n}</h3><div class="px-b"><button type="button" class="on" data-x>تمام</button></div>`; m.querySelector('[data-x]').onclick = SX.closeModal; done && done(ok); } else show(); };
+  m.querySelector('button').onclick = go; inp.addEventListener('keydown', e => { if(e.key === 'Enter') go(); }); show();
+}
+/* ---------- الشخصية + المتجر ---------- */
+const PETS = {plant:['🌰', '🌱', '🌿', '🌳', '🌸'], cat:['🥚', '🐾', '🐱', '😺', '🦁'], robot:['🔩', '🤖', '🦾', '🛸', '🚀'], dragon:['🥚', '🦎', '🐊', '🐲', '🐉']}, STG = [0, 40, 120, 260, 500], SN = ['بذرة', 'صغير', 'بيكبر', 'كبير', 'أسطورة'];
+const ITEMS = [{id:'p_cat', cat:'pet', icon:'🐱', name:'قطة', price:60, v:'cat'}, {id:'p_robot', cat:'pet', icon:'🤖', name:'روبوت', price:120, v:'robot'}, {id:'p_dragon', cat:'pet', icon:'🐲', name:'تنين', price:250, v:'dragon'},
+  {id:'h_cap', cat:'hat', icon:'🎓', name:'قبعة تخرج', price:40}, {id:'h_crown', cat:'hat', icon:'👑', name:'تاج', price:150}, {id:'h_hat', cat:'hat', icon:'🎩', name:'قبعة أنيقة', price:90}, {id:'h_glass', cat:'hat', icon:'😎', name:'نضارة', price:70},
+  {id:'f_gold', cat:'frame', icon:'🟡', name:'إطار ذهبي', price:80, v:'gold'}, {id:'f_neon', cat:'frame', icon:'🟣', name:'إطار نيون', price:120, v:'neon'}, {id:'f_rb', cat:'frame', icon:'🌈', name:'إطار قوس قزح', price:200, v:'rb'},
+  {id:'t_1', cat:'title', icon:'🏅', name:'مجتهد', price:30, v:'مجتهد'}, {id:'t_2', cat:'title', icon:'⭐', name:'نجم الفصل', price:90, v:'نجم الفصل'}, {id:'t_3', cat:'title', icon:'🧠', name:'عبقري', price:160, v:'عبقري'}, {id:'t_4', cat:'title', icon:'🚀', name:'صاروخ', price:220, v:'صاروخ'},
+  {id:'b_sun', cat:'bg', icon:'🌅', name:'خلفية غروب', price:70, v:'sun'}, {id:'b_sea', cat:'bg', icon:'🌊', name:'خلفية محيط', price:70, v:'sea'}, {id:'b_night', cat:'bg', icon:'🌌', name:'خلفية مجرّة', price:110, v:'night'}];
+const CATS = {pet:'🐾 شخصيات', hat:'🎩 إكسسوارات للشخصية', frame:'🖼 إطارات البروفايل', title:'🏷 ألقاب', bg:'🎨 خلفيات المركز'};
+const items = () => { const c = CFG(), pr = c.prices || {}; return ITEMS.concat(c.custom || []).filter(x => !(c.itemOff || {})[x.id]).map(x => Object.assign({}, x, {price:pr[x.id] != null ? +pr[x.id] : x.price})); };
+const eq = () => L('eq', {pet:'plant'});
+function applyEq(){ const e = eq(), r = document.documentElement; r.dataset.gxframe = e.frame || ''; r.dataset.gxbg = e.bg || ''; r.classList.toggle('gx-night', !!L('night', 0) && isOn('night')); }
+function petState(){ const p = eq().pet || 'plant', x = xp(); let st = 0; STG.forEach((t, i) => { if(x >= t) st = i; }); const away = Math.floor((new Date(today()) - new Date(L('last', today()))) / 864e5); return {p, st, x, away, mood:away <= 0 ? '😊' : away === 1 ? '😐' : '😢', next:STG[st + 1]}; }
+function petTool(){ const s = petState(), e = eq(), hat = (items().concat(ITEMS).find(i => i.id === e.hat) || {}).icon || '';
+  const m = css(`<h3>🐾 ${E(L('pname', 'صاحبي'))} <small>(${SN[s.st]})</small></h3><div class="gx-pet ${s.away > 1 ? 'sad' : ''}"><i class="hat">${hat}</i><b>${PETS[s.p][s.st]}</b><em>${s.mood}</em></div>${bar(s.next ? (s.x - STG[s.st]) / (s.next - STG[s.st])*100 : 100, s.next ? s.x + ' / ' + s.next + ' XP' : 'وصل لأعلى مرحلة 🎉')}
+    <p>${s.away <= 0 ? 'مبسوط إنك ذاكرت النهاردة!' : s.away === 1 ? 'مفتقدك… ذاكر النهاردة عشان ما يزعلش.' : 'غبت ' + s.away + ' يوم وهو زعلان 😢 — ذاكر أو أكّله.'}</p>
+    <div class="px-b"><button type="button" class="on" data-a="feed">🍎 أكّله (5 نقاط)</button><button type="button" data-a="name">✏️ غيّر الاسم</button><button type="button" data-a="shop">🎟 المتجر</button></div><small>رصيدك: ${coins()} نقطة</small>`);
+  m.addEventListener('click', e2 => { const a = (e2.target.closest('[data-a]') || {}).dataset; if(!a) return; if(a.a === 'feed'){ if(coins() < 5) return SX.say('محتاج 5 نقاط'); W('spent', L('spent', 0) + 5); act(); closeGx(); petTool(); } else if(a.a === 'name'){ const n = prompt('اسم شخصيتك:', L('pname', 'صاحبي')); if(n){ W('pname', n.slice(0, 14)); closeGx(); petTool(); } } else if(a.a === 'shop'){ closeGx(); shopTool(); } });
+}
+function shopTool(){ const own = L('own', {}), e = eq(), I = items();
+  const html = Object.keys(CATS).map(c => { const l = I.filter(i => i.cat === c); return l.length ? `<h4>${CATS[c]}</h4><div class="gx-sg">${l.map(i => `<button type="button" class="gx-it ${own[i.id] ? 'own' : ''} ${e[i.cat] === i.id || (i.cat === 'pet' && e.pet === i.v) ? 'on' : ''}" data-i="${i.id}"><i>${i.icon}</i><b>${E(i.name)}</b><small>${own[i.id] ? ((e[i.cat] === i.id || (i.cat === 'pet' && e.pet === i.v)) ? '✔ مفعّل' : 'ألبس / فعّل') : '💰 ' + i.price}</small></button>`).join('')}</div>` : ''; }).join('');
+  const m = css(`<h3>🎟 متجر النقاط</h3><div class="gx-coin">💰 رصيدك: <b>${coins()}</b> نقطة <small>(بتجمعها من المذاكرة واللعب)</small></div>${html}`);
+  m.addEventListener('click', ev => { const b = ev.target.closest('[data-i]'); if(!b) return; const it = I.find(i => i.id === b.dataset.i), o = L('own', {}), eqq = eq(); if(!o[it.id]){ if(coins() < it.price) return SX.say('نقاطك مش كفاية'); if(!confirm('تشتري «' + it.name + '» بـ ' + it.price + ' نقطة؟')) return; W('spent', L('spent', 0) + it.price); o[it.id] = 1; W('own', o); }
+    if(it.cat === 'pet') eqq.pet = it.v; else eqq[it.cat] = eqq[it.cat] === it.id ? '' : it.id; W('eq', eqq); applyEq(); closeGx(); shopTool(); });
+}
+/* ---------- رحلة المستويات ---------- */
+function journeyTool(){ const step = +CFG().jstep || 100, N = 8, x = xp(), cur = Math.min(N, Math.floor(x/step) + 1), clr = L('boss', {}), names = ['البداية', 'الغابة', 'الجبل', 'الصحراء', 'المحيط', 'القلعة', 'السحاب', 'القمة'];
+  const m = css(`<h3>🏰 رحلة المستويات</h3><div class="gx-map">${names.map((n, i) => `<div class="gx-node ${i + 1 < cur ? 'done' : i + 1 === cur ? 'cur' : 'lock'}"><b>${i + 1 < cur ? '✅' : i + 1 === cur ? '📍' : '🔒'}</b><span>${n}</span><small>${i*step} XP</small></div>`).join('')}</div>${bar((x % step)/step*100, x + ' XP')}
+    <p>المرحلة ${cur}: ${names[cur - 1]} ${clr[cur] ? '— الزعيم اتهزم ✅' : ''}</p><div class="px-b"><button type="button" class="on" data-a="boss" ${clr[cur] ? 'disabled' : ''}>⚔️ واجه الزعيم (5 أسئلة)</button></div>`);
+  m.addEventListener('click', e => { if(!e.target.closest('[data-a]')) return; closeGx(); quiz((Math.random()*4e9) >>> 0, Math.min(3, 1 + Math.floor(cur/3)), 'mix', 5, '⚔️ زعيم مرحلة ' + cur, ok => { if(ok >= 4){ const c = L('boss', {}); c[cur] = 1; W('boss', c); try{ Fun.award('gx_boss_' + cur, 30, 'هزمت الزعيم'); Fun.confetti(120); }catch(e){} } else SX.say('قرّبت! جرّب تاني'); }); });
+}
+/* ---------- تحدي صديق / الشهر ---------- */
+function friendTool(){ const seed = (Math.random()*9e8 | 0) + 1e8, url = location.origin + location.pathname + '?gx=' + seed + '&lv=2', txt = encodeURIComponent('🥊 تحداك في 8 أسئلة ماث! شوف هتجيب كام:\n' + url);
+  const m = css(`<h3>🥊 تحدي صديق</h3><p>العب الـ8 أسئلة وابعت اللينك لصاحبك — هيلاقي نفس الأسئلة بالظبط ويقارن نتيجته بنتيجتك.</p><div class="px-b"><button type="button" class="on" data-a="play">▶ العب الأول</button><a class="gx-wa" target="_blank" rel="noopener" href="https://wa.me/?text=${txt}">📲 ابعت اللينك</a></div>`);
+  m.addEventListener('click', e => { if(e.target.closest('[data-a]')){ closeGx(); runChallenge(seed, 2); } });
+}
+function runChallenge(seed, lv){ quiz(+seed, +lv || 2, 'mix', 8, '🥊 تحدي صديق', ok => { const txt = encodeURIComponent('🥊 جبت ' + ok + '/8 في التحدي! جرّب تغلبني:\n' + location.origin + location.pathname + '?gx=' + seed + '&lv=' + lv); setTimeout(() => css(`<h3>نتيجتك ${ok}/8</h3><a class="gx-wa" target="_blank" rel="noopener" href="https://wa.me/?text=${txt}">📲 ابعت نتيجتك لصاحبك</a>`), 400); }); }
+function monthTool(){ const g = +CFG().mgoal || 200, m = L('mon', {k:'', n:0}), n = m.k === today().slice(0, 7) ? m.n : 0, got = L('mclaim', '') === today().slice(0, 7);
+  const mm = css(`<h3>📅 تحدي الشهر</h3><p>${E(CFG().mtitle || 'حلّ ' + g + ' سؤال صح الشهر ده')}</p>${bar(n/g*100, n + ' / ' + g)}<div class="px-b"><button type="button" class="on" data-a="c" ${n < g || got ? 'disabled' : ''}>${got ? '✅ استلمت الجايزة' : '🎁 استلم الجايزة'}</button></div><small>بيتحسب من الأسئلة اللي بتحلها في الألعاب والتحديات.</small>`);
+  mm.addEventListener('click', e => { if(e.target.closest('[data-a]')){ W('mclaim', today().slice(0, 7)); W('spent', Math.min(L('spent', 0), L('spent', 0)) - 0); try{ Fun.award('gx_m_' + today().slice(0, 7), 100, 'تحدي الشهر'); Fun.confetti(160); }catch(_){} closeGx(); } });
+}
+/* ---------- المؤشر + اليوميات + الليلي ---------- */
+function trackTool(){ const t = L('time', {}), days = Array.from({length:7}, (_, i) => { const d = new Date(Date.now() - (6 - i)*864e5).toISOString().slice(0, 10); return [d.slice(5), Math.round(t[d] || 0)]; }), mx = Math.max(10, ...days.map(d => d[1])), h = L('hr', {}), bh = Object.keys(h).sort((a, b) => h[b] - h[a])[0], tot = Object.values(t).reduce((a, b) => a + b, 0);
+  css(`<h3>📊 مؤشر مذاكرتي</h3><div class="gx-ch">${days.map(d => `<div><i style="height:${d[1]/mx*100}%"></i><b>${d[1]}د</b><small>${d[0]}</small></div>`).join('')}</div><p>إجمالي وقتك: <b>${Math.round(tot/60*10)/10} ساعة</b>${bh != null ? ' • أحسن ساعة تركيز: <b>' + bh + ':00</b>' : ''}</p><small>بيتحسب تلقائي وانت بتتصفح الموقع.</small>`);
+}
+function diaryTool(){ const d = L('diary', {}), k = today(), list = Object.keys(d).sort().reverse().slice(0, 6);
+  const m = css(`<h3>📝 يوميات الدراسة</h3><label class="px-l">إيه اللي فهمته النهاردة؟ وإيه اللي صعب عليك؟<textarea id="gxD" rows="4" class="px-a" style="direction:rtl;font:inherit">${E(d[k] || '')}</textarea></label><div class="px-b"><button type="button" class="on" data-a="s">💾 حفظ</button></div><h4>آخر يومياتك</h4>${list.filter(x => x !== k).map(x => `<p class="gx-dr"><b>${x}</b><br>${E(d[x])}</p>`).join('') || '<small>لسه مفيش.</small>'}`);
+  m.addEventListener('click', e => { if(e.target.closest('[data-a]')){ d[k] = m.querySelector('#gxD').value.slice(0, 500); W('diary', d); act(); SX.say('✅ اتحفظت'); } });
+}
+function nightTool(){ W('night', L('night', 0) ? 0 : 1); applyEq(); SX.say(L('night', 0) ? '🌙 الوضع الليلي اتفعّل' : '☀️ رجعت للوضع العادي'); }
+/* ---------- لوحة التحكم (أدمن) ---------- */
+function adminTool(){ const c = CFG(), I = ITEMS.concat(c.custom || []);
+  const m = css(`<h3>🎛 إدارة الإضافات</h3><h4>📦 مكان أيقونة الإضافات</h4><div class="px-b"><button type="button" data-pl="box" class="${place() === 'box' ? 'on' : ''}">📦 في البوكس</button><button type="button" data-pl="hidden" class="${place() === 'hidden' ? 'on' : ''}">🚫 مخفية</button></div><h4>الميزات</h4>${F.map(f => `<div class="gx-r"><span>${f[1]} ${f[2]}</span><label><input type="checkbox" data-on="${f[0]}" ${isOn(f[0]) ? 'checked' : ''}> شغّال</label><label><input type="checkbox" data-bx="${f[0]}" ${inBox(f[0]) ? 'checked' : ''}> ظاهرة في النافذة</label></div>`).join('')}
+    <h4>🧩 أدوات المذاكرة (من مركز التحدّي)</h4><small>علّم اللي عايزه يظهر هنا، وعلّم «إخفاء» لو عايزه يتشال من مركز التحدّي.</small>${tools().map(t => `<div class="gx-r"><span>${t.icon} ${E(t.name)}</span><label><input type="checkbox" data-ex="${t.id}" ${(c.extra || {})[t.id] ? 'checked' : ''}> هنا</label><label><input type="checkbox" data-hh="${t.id}" ${(c.hideHub || {})[t.id] ? 'checked' : ''}> إخفاء من المركز</label></div>`).join('')}<h4>إعدادات</h4><label class="px-l">XP لكل مرحلة في الرحلة<input type="number" id="gxJ" value="${+c.jstep || 100}" class="px-a"></label><label class="px-l">هدف تحدي الشهر (عدد أسئلة)<input type="number" id="gxM" value="${+c.mgoal || 200}" class="px-a"></label><label class="px-l">نص التحدي<input id="gxT" value="${E(c.mtitle || '')}" class="px-a" style="direction:rtl;font:inherit"></label>
+    <h4>المتجر (السعر / إخفاء)</h4>${I.map(i => `<div class="gx-r"><span>${i.icon} ${E(i.name)}</span><input type="number" data-pr="${i.id}" value="${(c.prices || {})[i.id] != null ? c.prices[i.id] : i.price}" class="gx-n"><label><input type="checkbox" data-io="${i.id}" ${(c.itemOff || {})[i.id] ? '' : 'checked'}> ظاهر</label>${i.custom ? `<button type="button" data-del="${i.id}">🗑</button>` : ''}</div>`).join('')}
+    <h4>➕ لقب / عنصر جديد</h4><div class="gx-r"><input id="gxNI" placeholder="الاسم" class="gx-n" style="width:36%"><input id="gxNE" placeholder="🏆" class="gx-n" style="width:16%"><input id="gxNP" type="number" placeholder="السعر" class="gx-n" style="width:22%"><button type="button" data-add>إضافة لقب</button></div>
+    <div class="px-b"><button type="button" class="on" data-save>💾 حفظ للموقع كله</button></div>`);
+  const collect = () => { const n = Object.assign({}, CFG(), {off:{}, nobox:{}, extra:{}, hideHub:{}, prices:{}, itemOff:{}, jstep:+m.querySelector('#gxJ').value || 100, mgoal:+m.querySelector('#gxM').value || 200, mtitle:m.querySelector('#gxT').value});
+    m.querySelectorAll('[data-on]').forEach(x => { if(!x.checked) n.off[x.dataset.on] = 1; }); m.querySelectorAll('[data-bx]').forEach(x => { if(!x.checked) n.nobox[x.dataset.bx] = 1; }); m.querySelectorAll('[data-ex]').forEach(x => { if(x.checked) n.extra[x.dataset.ex] = 1; }); m.querySelectorAll('[data-hh]').forEach(x => { if(x.checked) n.hideHub[x.dataset.hh] = 1; }); m.querySelectorAll('[data-pr]').forEach(x => { n.prices[x.dataset.pr] = +x.value; }); m.querySelectorAll('[data-io]').forEach(x => { if(!x.checked) n.itemOff[x.dataset.io] = 1; }); return n; };
+  m.addEventListener('click', e => { const pb = e.target.closest('[data-pl]'); if(pb){ try{ FXDN.set({gx:pb.dataset.pl}); }catch(_){} m.querySelectorAll('[data-pl]').forEach(x => x.classList.toggle('on', x === pb)); return; }
+    if(e.target.closest('[data-save]')){ saveCfg(collect()); applyEq(); SX.say('✅ اتحفظ'); }
+    else if(e.target.closest('[data-add]')){ const n = collect(), nm = m.querySelector('#gxNI').value.trim(); if(!nm) return; n.custom = (n.custom || []).concat([{id:'c_' + Date.now(), cat:'title', icon:m.querySelector('#gxNE').value || '🏆', name:nm, price:+m.querySelector('#gxNP').value || 50, v:nm, custom:1}]); saveCfg(n); closeGx(); adminTool(); }
+    else if(e.target.closest('[data-del]')){ const n = collect(); n.custom = (n.custom || []).filter(x => x.id !== e.target.closest('[data-del]').dataset.del); saveCfg(n); closeGx(); adminTool(); } });
+}
+/* ---------- نافذة الإضافات + أيقونة البوكس ---------- */
+const OPEN = {journey:journeyTool, pet:petTool, shop:shopTool, friend:friendTool, month:monthTool, track:trackTool, diary:diaryTool, night:nightTool, lib:libTool};
+const place = () => { try{ return FXDN.get('gx') === 'hidden' ? 'hidden' : 'box'; }catch(e){ return 'box'; } };
+const tools = () => (SX.tools || []).filter(t => !/^gx_/.test(t.id));
+function openHome(){ const c = CFG(), mine = F.filter(f => isOn(f[0]) && inBox(f[0])).map(f => ({id:f[0], icon:f[1], name:f[2], mine:1})), ex = tools().filter(t => (c.extra || {})[t.id]).map(t => ({id:t.id, icon:t.icon, name:t.name}));
+  const m = css(`<h3>🌟 الإضافات</h3>${adm() ? '<div class="px-b"><button type="button" data-set>⚙️ إعدادات الإضافات</button></div>' : ''}<div class="gx-sg">${mine.concat(ex).map(i => `<button type="button" class="gx-it" data-o="${i.id}" data-m="${i.mine ? 1 : 0}"><i>${i.icon}</i><b>${E(i.name)}</b></button>`).join('') || '<small>مفيش إضافات مفعّلة.</small>'}</div>`);
+  m.addEventListener('click', e => { if(e.target.closest('[data-set]')) return adminTool(); const b = e.target.closest('[data-o]'); if(!b) return; closeGx(); if(b.dataset.m === '1') OPEN[b.dataset.o](); else { const t = tools().find(x => x.id === b.dataset.o); if(t) t.open(); } });
+}
+window.GXOPEN = openHome; window.GXHIDE = id => !!(CFG().hideHub || {})[id];
+/* ---------- ربط أي حاجة بأي قسم رئيسي ---------- */
+const attach = sid => (CFG().attach || {})[sid] || [];
+function flash(cards, name){ let i = 0, f = false; const m = css(`<h3>🃏 ${E(name)}</h3><div class="gx-fc"></div><div class="px-b"><button type="button" data-a="p">▶ السابق</button><button type="button" class="on" data-a="f">اقلب</button><button type="button" data-a="n">التالي ◀</button></div>`), box = m.querySelector('.gx-fc');
+  const draw = () => { box.innerHTML = '<small>' + (i + 1) + ' / ' + cards.length + '</small><div>' + E(f ? cards[i].b : cards[i].f) + '</div>'; box.classList.toggle('bk', f); }; draw();
+  m.addEventListener('click', e => { const a = (e.target.closest('[data-a]') || {}).dataset; if(!a) return; if(a.a === 'f') f = !f; else { f = false; i = (i + (a.a === 'n' ? 1 : -1) + cards.length) % cards.length; } draw(); }); }
+function secAdd(sid){ const c = CFG(), cur = attach(sid), decks = (() => { try{ return JSON.parse(localStorage.getItem('sx_decks') || '[]'); }catch(e){ return []; } })();
+  const m = css(`<h3>➕ إضافة للقسم</h3><h4>🧩 أدوات</h4>${tools().concat(F.map(f => ({id:f[0], icon:f[1], name:f[2]}))).map(t => `<label class="gx-r"><input type="checkbox" data-t="${t.id}" ${cur.some(x => x.k === 't' && x.id === t.id) ? 'checked' : ''}> ${t.icon} ${E(t.name)}</label>`).join('')}<h4>🃏 مجموعات الفلاش كاردز بتاعتي</h4>${decks.map(d => `<label class="gx-r"><input type="checkbox" data-d="${d.id}" ${cur.some(x => x.k === 'd' && x.did === d.id) ? 'checked' : ''}> ${E(d.name)} (${d.cards.length} كارت)</label>`).join('') || '<small>مفيش مجموعات — اعمل من «مجموعاتي» في مركز التحدّي.</small>'}<div class="px-b"><button type="button" class="on" data-ok>💾 حفظ للقسم</button></div>`);
+  m.addEventListener('click', e => { if(!e.target.closest('[data-ok]')) return; const list = []; m.querySelectorAll('[data-t]:checked').forEach(x => { const t = tools().find(y => y.id === x.dataset.t) || F.map(f => ({id:f[0], icon:f[1], name:f[2]})).find(y => y.id === x.dataset.t); list.push({k:'t', id:x.dataset.t, icon:t.icon, name:t.name}); });
+    m.querySelectorAll('[data-d]:checked').forEach(x => { const d = decks.find(y => y.id === x.dataset.d); list.push({k:'d', did:d.id, name:d.name, cards:d.cards.map(z => ({f:z.f, b:z.b}))}); });
+    const n = Object.assign({}, CFG()); n.attach = Object.assign({}, n.attach || {}); n.attach[sid] = list; saveCfg(n); closeGx(); refreshSecs(); SX.say('✅ اتحفظت للقسم'); }); }
+function secBtns(s){ const id = E(s.id), A = adm(), X = (k, extra) => A ? `<button type="button" class="gx-x" data-gxs="${k}" ${extra} title="${k === 'ed' ? 'تعديل الاسم والشكل' : 'شيل من القسم'}">${k === 'ed' ? '✏️' : '✕'}</button>` : '';
+  const at = attach(s.id).map((x, i) => `<button type="button" class="sx-btn" data-gxs="run" data-sid="${id}" data-i="${i}">${x.k === 'd' ? '🃏 ' : (x.icon || '🧩') + ' '}${E(x.name)}</button>${X('rmt', 'data-sid="' + id + '" data-i="' + i + '"')}`).join('');
+  const lb = siteLib().filter(x => x.sec === s.id).map(x => stOf(x) === 'card' ? `<div class="gx-card"><div><b>${x.k === 'd' ? '🃏' : '📄'} ${E(x.title)}</b><small>${x.k === 'd' ? x.cards.length + ' كارت' : 'محتوى مذاكرة'}</small></div><span><button type="button" class="fxgo" data-gxs="lib" data-lid="${E(x.id)}">ابدأ ▶</button>${X('ed', 'data-lid="' + E(x.id) + '"')}${X('rm', 'data-lid="' + E(x.id) + '"')}</span></div>` : `<button type="button" class="sx-btn" data-gxs="lib" data-lid="${E(x.id)}">${x.k === 'd' ? '🃏' : '📄'} ${E(x.title)}</button>${X('ed', 'data-lid="' + E(x.id) + '"')}${X('rm', 'data-lid="' + E(x.id) + '"')}`).join('');
+  return `<span data-gxsw="${id}" style="display:contents">${at}${lb}${A ? `<button type="button" class="sx-btn" data-gxs="add" data-sid="${id}">➕ إضافة للقسم</button>` : ''}</span>`; }
+window.GXSEC = {btns:secBtns};
+document.addEventListener('click', e => { const b = e.target.closest('[data-gxs]'); if(!b) return;
+  if(b.dataset.gxs === 'ed'){ const x = siteLib().find(y => y.id === b.dataset.lid); if(x) editItem(x); return; }
+  if(b.dataset.gxs === 'rm'){ if(!confirm('تشيل العنصر ده من الموقع؟')) return; const n = Object.assign({}, CFG()); n.lib = siteLib().filter(y => y.id !== b.dataset.lid); saveCfg(n); refreshSecs(); return; }
+  if(b.dataset.gxs === 'rmt'){ const n = Object.assign({}, CFG()); n.attach = Object.assign({}, n.attach || {}); n.attach[b.dataset.sid] = attach(b.dataset.sid).filter((y, i) => i !== +b.dataset.i); saveCfg(n); refreshSecs(); return; }
+  if(b.dataset.gxs === 'lib'){ const x = siteLib().find(y => y.id === b.dataset.lid); if(x) viewItem(x); return; } if(b.dataset.gxs === 'add') return secAdd(b.dataset.sid); const x = attach(b.dataset.sid)[+b.dataset.i]; if(!x) return;
+  if(x.k === 'd') flash(x.cards, x.name); else if(OPEN[x.id]) OPEN[x.id](); else { const t = tools().find(y => y.id === x.id); if(t) t.open(); } });
+
+/* ---------- مكتبة المذاكرة: حفظ ناتج أي أداة + تثبيته في أي قسم ---------- */
+const siteLib = () => CFG().lib || [], myLib = () => L('lib', []);
+const secList = () => { try{ return flatSecs().map(r => ({id:r.s.id, title:r.s.title, label:(r.path && r.path.length ? r.path.join(' › ') + ' › ' : '') + r.s.title})); }catch(e){ return []; } };
+const refreshSecs = () => document.querySelectorAll('[data-gxsw]').forEach(w => { w.outerHTML = secBtns({id:w.dataset.gxsw}); });
+const secName = id => (secList().find(s => s.id === id) || {}).title || '';
+const clean = h => { const d = document.createElement('div'); d.innerHTML = h; d.querySelectorAll('script,style,iframe,object,embed,link').forEach(x => x.remove()); d.querySelectorAll('*').forEach(x => [...x.attributes].forEach(a => { if(/^on/i.test(a.name) || /javascript:/i.test(a.value)) x.removeAttribute(a.name); })); return d.innerHTML; };
+function viewItem(x){ if(x.k === 'd') return flash(x.cards, x.title); css(`<h3>📄 ${E(x.title)}</h3><div class="sh-doc gx-doc">${clean(x.html)}</div>`); }
+const stOf = x => x.style === 'card' ? 'card' : 'pill';
+const pv = (x, st) => st === 'card' ? `<div class="gx-card"><div><b>${x.k === 'd' ? '🃏' : '📄'} ${E(x.title)}</b><small>${x.k === 'd' ? x.cards.length + ' كارت' : 'محتوى مذاكرة'}</small></div><span class="fxgo">ابدأ ▶</span></div>` : `<span class="sx-btn">${x.k === 'd' ? '🃏' : '📄'} ${E(x.title)}</span>`;
+function editItem(it, cb){ let st = stOf(it); const m = css(`<h3>✏️ ${it.pub ? 'تعديل' : 'نشر'}: ${E(it.title)}</h3><label class="px-l">الاسم اللي يظهر<input id="gxPT" class="px-a" style="direction:rtl;font:inherit" value="${E(it.title)}"></label><label class="px-l">القسم اللي يظهر فيه<select id="gxPS"><option value="">(بدون قسم — في مكتبة الموقع بس)</option>${secList().map(s => `<option value="${E(s.id)}" ${s.id === it.sec ? 'selected' : ''}>${E(s.label)}</option>`).join('')}</select></label>
+  <div class="px-l">الشكل جوه القسم</div><div class="px-b"><button type="button" data-st="pill" class="${st === 'pill' ? 'on' : ''}">🔘 زرار صغير (زي أزرار القسم)</button><button type="button" data-st="card" class="${st === 'card' ? 'on' : ''}">🗂 كارت زي الكويزات</button></div><div class="px-l">معاينة:</div><div class="gx-prev sec-actions" id="gxPV"></div><div class="px-b"><button type="button" class="on" data-ok>💾 حفظ ${it.pub ? '' : 'ونشر للكل'}</button></div>`);
+  const draw = () => { const t = m.querySelector('#gxPT').value.trim() || it.title; m.querySelector('#gxPV').innerHTML = pv(Object.assign({}, it, {title:t}), st); m.querySelectorAll('[data-st]').forEach(b => b.classList.toggle('on', b.dataset.st === st)); }; draw();
+  m.querySelector('#gxPT').addEventListener('input', draw); m.addEventListener('click', e => { const b = e.target.closest('[data-st]'); if(b){ st = b.dataset.st; draw(); } });
+  m.querySelector('[data-ok]').onclick = () => { const n = Object.assign({}, CFG()), t = m.querySelector('#gxPT').value.trim() || it.title, sec = m.querySelector('#gxPS').value; n.lib = (n.lib || []).filter(x => x.id !== it.id).concat([Object.assign({}, it, {title:t, sec, style:st, pub:1})]); saveCfg(n); closeGx(); SX.say('✅ اتحفظ' + (sec ? ' في قسم «' + secName(sec) + '»' : ' في مكتبة الموقع')); refreshSecs(); if(cb) cb(); }; }
+const publish = it => editItem(it);
+function libTool(){ const mine = myLib(), site = siteLib(), A = adm();
+  const row = (x, own) => `<div class="gx-lr"><div><b>${E(x.title)}</b><small>${x.k === 'd' ? '🃏 ' + x.cards.length + ' كارت' : '📄 نص'}${x.sec ? ' · 📍 ' + E(secName(x.sec)) : ''}${own ? ' · على جهازك' : ''}</small></div><button type="button" class="on" data-v="${E(x.id)}" data-o="${own ? 'm' : 's'}">فتح ▶</button>${A ? `<button type="button" data-p="${E(x.id)}" data-o="${own ? 'm' : 's'}" title="${own ? 'انشر / ثبّت في قسم' : 'تعديل الاسم والقسم والشكل'}">${own ? '📌' : '✏️'}</button>` : ''}${own || A ? `<button type="button" data-d="${E(x.id)}" data-o="${own ? 'm' : 's'}">🗑</button>` : ''}</div>`;
+  const m = css(`<h3>📚 مكتبة المذاكرة</h3><small>أي ناتج من أدوات المذاكرة الذكية تقدر تحفظه هنا (زرار 💾 تحت الناتج)${A ? '، وتثبّته في أي قسم بـ 📌' : ''}.</small><h4>🌐 منشورة في الموقع (${site.length})</h4>${site.map(x => row(x, 0)).join('') || '<small>مفيش.</small>'}<h4>💾 محفوظاتي (${mine.length})</h4>${mine.map(x => row(x, 1)).join('') || '<small>مفيش — افتح أي أداة مذاكرة واحفظ الناتج.</small>'}`);
+  m.addEventListener('click', e => { const b = e.target.closest('button[data-o]'); if(!b) return; const own = b.dataset.o === 'm', id = b.dataset.v || b.dataset.p || b.dataset.d, list = own ? myLib() : siteLib(), x = list.find(y => y.id === id); if(!x) return;
+    if(b.dataset.v) viewItem(x); else if(b.dataset.p) publish(x); else if(b.dataset.d){ if(!confirm('تمسح «' + x.title + '»؟')) return; if(own) W('lib', list.filter(y => y.id !== id)); else { const n = Object.assign({}, CFG()); n.lib = list.filter(y => y.id !== id); saveCfg(n); refreshSecs(); } libTool(); } }); }
+let sv = 0;
+const mo = new MutationObserver(() => { if(sv) return; sv = requestAnimationFrame(() => { sv = 0; const m = $q('#sxModal .sxm-in'); if(!m) return;
+  if(m.querySelector('.st-h') && m.querySelector('.sh-doc,[data-tx],[data-tm],[data-es]') && !m.querySelector('.gx-sv,[data-fc],.qz-nav,.dk')) m.insertAdjacentHTML('beforeend', '<div class="gx-sv"><button type="button" data-gxsv="me">💾 احفظ في مكتبتي</button>' + (adm() ? '<button type="button" data-gxsv="pin">📌 ثبّت في قسم</button>' : '') + '</div>');
+  m.querySelectorAll('.dk:not([data-gxd])').forEach(d => { d.dataset.gxd = 1; const id = (d.querySelector('[data-id]') || {dataset:{}}).dataset.id; if(id && adm()) d.insertAdjacentHTML('beforeend', '<button type="button" class="gx-pin" data-gxdk="' + E(id) + '" title="ثبّت في قسم">📌</button>'); }); }); });
+mo.observe(document.body, {childList:true, subtree:true});
+document.addEventListener('click', e => { const b = e.target.closest('[data-gxsv],[data-gxdk]'); if(!b) return; e.stopPropagation();
+  if(b.dataset.gxdk){ let D = []; try{ D = JSON.parse(localStorage.getItem('sx_decks') || '[]'); }catch(_){} const d = D.find(x => x.id === b.dataset.gxdk); if(d) publish({id:'d_' + d.id, k:'d', title:d.name, cards:d.cards.map(c => ({f:c.f, b:c.b}))}); return; }
+  const m = b.closest('.sxm-in'), c = m.cloneNode(true); c.querySelectorAll('.gx-sv,.sxm-x,.qz-end,button,input,textarea,select,script,style').forEach(x => x.remove()); const title = ((m.querySelector('.st-h b') || {}).textContent || 'ناتج مذاكرة').trim(), it = {id:'h_' + Date.now(), k:'h', title, html:clean(c.innerHTML), at:Date.now()};
+  if(b.dataset.gxsv === 'pin') return publish(it); const l = myLib(); l.unshift(it); W('lib', l.slice(0, 40)); b.textContent = '✅ اتحفظ في مكتبتي'; b.disabled = true; }, true);
+/* ألقاب + تطبيق + لينك التحدي */
+setInterval(() => { const h = $q('#sxHub .sxh-nm'); if(!h) return; const e = eq(), t = ITEMS.concat(CFG().custom || []).find(i => i.id === e.title); let b = h.parentElement.querySelector('.gx-title'); if(!t){ if(b) b.remove(); return; } if(!b){ b = document.createElement('span'); b.className = 'gx-title'; h.after(b); } b.textContent = t.icon + ' ' + t.v; }, 1500);
+applyEq();
+try{ const q = new URLSearchParams(location.search), g = q.get('gx'); if(g){ history.replaceState(null, '', location.pathname); setTimeout(() => { try{ SX.openHub('study'); }catch(e){} setTimeout(() => runChallenge(g, q.get('lv')), 300); }, 1500); } }catch(e){}
 })(window.SX);
 </script>
 <script id="fxJs2">
@@ -13579,12 +13835,12 @@ if(edit){if(edit.src==='my')saveItems(myItems().map(z=>z.id===o.id?o:z));else sa
 const pb=$('[data-fp]',fm);if(pb&&pb.checked&&ADM())savePR({athkar:(PR().athkar||[]).concat([o])});else saveItems(myItems().concat([o]));OPEN.add(cat);formFor=cat;tt('✅ اتضاف — كمّل اللي بعده');return render()}};
 render()}
 /* ---------- إعدادات الظهور (مواقيت / أذكار / مصحف) ---------- */
-const DEF={pr:'page',az:'page',qr:'page',layout:'row',size:'m',azopen:'inline',cd:true,order:['pr','az','qr']};
-const PLACES={pr:[['page','📊 بار على الواجهة'],['box','📦 في البوكس'],['both','📊+📦 بار وبوكس'],['float','🔘 أيقونة عايمة'],['hidden','🚫 مخفية']],az:[['page','📊 بار على الواجهة'],['box','📦 في البوكس'],['both','📊+📦 بار وبوكس'],['hidden','🚫 مخفية']],qr:[['page','📊 بار على الواجهة'],['box','📦 في البوكس'],['both','📊+📦 بار وبوكس'],['hidden','🚫 مخفية']]};
+const DEF={gx:'box',pr:'page',az:'page',qr:'page',layout:'row',size:'m',azopen:'inline',cd:true,order:['pr','az','qr']};
+const PLACES={pr:[['page','📊 بار على الواجهة'],['box','📦 في البوكس'],['both','📊+📦 بار وبوكس'],['float','🔘 أيقونة عايمة'],['hidden','🚫 مخفية']],az:[['page','📊 بار على الواجهة'],['box','📦 في البوكس'],['both','📊+📦 بار وبوكس'],['hidden','🚫 مخفية']],qr:[['page','📊 بار على الواجهة'],['box','📦 في البوكس'],['both','📊+📦 بار وبوكس'],['hidden','🚫 مخفية']],gx:[['box','📦 في البوكس'],['hidden','🚫 مخفية']]};
 const LEG=()=>{const m=LSg('fx_pr_mode','')||PR().mode||'';return m==='box'?{pr:'box',az:'box'}:m==='float'?{pr:'float',az:'hidden'}:m==='hidden'?{pr:'hidden',az:'hidden'}:{}};
 const siteDn=()=>{try{return site.meta.fx.dn||{}}catch(e){return{}}};
 const perDn=()=>({});
-function cfg(){const c=Object.assign({},DEF,LEG(),siteDn(),perDn());const o=(Array.isArray(c.order)?c.order:[]).filter(k=>DEF.order.includes(k));DEF.order.forEach(k=>{if(!o.includes(k))o.push(k)});c.order=o;['pr','az','qr'].forEach(k=>{if(!PLACES[k].some(p=>p[0]===c[k]))c[k]=DEF[k]});return c}
+function cfg(){const c=Object.assign({},DEF,LEG(),siteDn(),perDn());const o=(Array.isArray(c.order)?c.order:[]).filter(k=>DEF.order.includes(k));DEF.order.forEach(k=>{if(!o.includes(k))o.push(k)});c.order=o;['pr','az','qr','gx'].forEach(k=>{if(!PLACES[k].some(p=>p[0]===c[k]))c[k]=DEF[k]});return c}
 function setP(patch){if(!ADM())return;try{site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{dn:Object.assign({},siteDn(),patch)});scheduleSave()}catch(e){tt('تعذّر الحفظ')}apply()}
 const onPage=k=>{const p=cfg()[k];return p==='page'||p==='both'},inBox=k=>{const p=cfg()[k];return p==='box'||p==='both'};
 function apply(){try{syncRow();syncIcons();if(window.FXMUSH&&window.FXMUSH.sync)window.FXMUSH.sync()}catch(e){}}
@@ -13594,6 +13850,7 @@ host.innerHTML=`<div class="dn-set"><h4>📐 شكل العرض في الصفحة
 <h4>${NM.pr}</h4>${seg('pr',PLACES.pr,c.pr)}<label class="dn-chk"><input type="checkbox" data-cd ${c.cd?'checked':''}> إظهار العدّاد للصلاة الجاية في الخانة</label>
 <h4>${NM.az}</h4>${seg('az',PLACES.az,c.az)}<small>طريقة فتح الأذكار</small>${seg('azopen',[['inline','▾ تتفتح تحت الخانة'],['window','🗔 في نافذة']],c.azopen)}
 <h4>${NM.qr}</h4>${seg('qr',PLACES.qr,c.qr)}
+<h4>🌟 الإضافات (متجر / شخصيتي / تحديات…)</h4>${seg('gx',PLACES.gx,c.gx)}
 <h4>👤 البروفايل في الشريط</h4>${seg('prof',[['center','⭕ في نص الشريط'],['box','📦 في البوكس'],['hidden','🚫 مخفي']],(c.prof||'center'))}
 <h4>↕️ ترتيب الخانات</h4>${c.order.map((k,i)=>`<div class="dn-ord"><span>${NM[k]}</span><button class="az-btn" data-up="${i}" type="button" ${i?'':'disabled'}>▲</button><button class="az-btn" data-dn2="${i}" type="button" ${i<c.order.length-1?'':'disabled'}>▼</button></div>`).join('')}
 <div class="az-tools" style="margin-top:12px"><button class="az-btn" data-reset type="button">↺ رجّع الافتراضي للكل</button></div><small>أي تعديل هنا بيتحفظ في الموقع ويظهر لكل الزوار — وانت بس اللي تشوف الإعدادات دي.</small></div>`;
@@ -13609,8 +13866,8 @@ function settings(){if(!ADM()){tt('الإعدادات للأدمن بس');return
 function autoLeft(b){if(!b.classList.contains('fxtbi')&&!b.hidden){let mx=0;$$('.top-ico').forEach(z=>{if(z!==b&&!z.hidden&&z.offsetParent!==null){const r=z.getBoundingClientRect();if(r.top<110)mx=Math.max(mx,r.right)}});if(mx)b.style.left=(mx+6)+'px'}}
 function boxBtn(id,title,html,ord){let b=$('#'+id);if(!b){if(!($('#sxTopBtn')||$('#gamesTopBtn')))return;b=document.createElement('button');b.className='top-ico';b.id=id;b.type='button';b.title=title;b.setAttribute('aria-label',title);b.textContent=html;document.body.appendChild(b);b.dataset.fxo=ord}
 const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));if(window.FXTB)FXTB.adopt(b);autoLeft(b)}
-function syncIcons(){if(inBox('az'))boxBtn('fxAzBtn','الأذكار','📿',6.45);else{const e=$('#fxAzBtn');if(e)e.remove()}}
-document.addEventListener('click',e=>{if(e.target.closest('#fxAzBtn')&&window.FXPR)window.FXPR.open('az')});
+function syncIcons(){if(inBox('gx'))boxBtn('gxTopBtn','الإضافات','🌟',6.6);else{const g=$('#gxTopBtn');if(g)g.remove()}if(inBox('az'))boxBtn('fxAzBtn','الأذكار','📿',6.45);else{const e=$('#fxAzBtn');if(e)e.remove()}}
+document.addEventListener('click',e=>{if(e.target.closest('#fxAzBtn')&&window.FXPR)window.FXPR.open('az');if(e.target.closest('#gxTopBtn')&&window.GXOPEN)window.GXOPEN()});
 /* ---------- صف الصفحة ---------- */
 let pd=null,pf=0;
 function syncRow(){const c=cfg(),host=$('#sections'),keys=c.order.filter(onPage);let r=$('#fxDeen');const old=$('#fxPrCard');if(old)old.remove();
@@ -13626,7 +13883,7 @@ if(k==='set')settings();else if(k==='pr'&&window.FXPR)window.FXPR.open();else if
 else if(k==='az'){if(cfg().azopen==='window'){if(window.FXPR)window.FXPR.open('az');return}const w=$('#fxDeenAz',r),l=$('#fxDeenAzList',r),o2=!w.classList.contains('open');if(o2&&!l.dataset.m){l.dataset.m=1;mount(l)}w.classList.toggle('open',o2);b.classList.toggle('open',o2)}})}
 if(keys.includes('pr')&&window.FXPR){if(!pd&&!pf){pf=1;window.FXPR.timings().then(d=>{pd=d}).catch(()=>{pf=0})}const N=$('#dnN',r),C=$('#dnC',r);if(pd&&N){const n=window.FXPR.nextP(pd);N.textContent=n.x[1]+' '+window.FXPR.f12(pd.t[n.x[0]]);if(C)C.textContent=window.FXPR.cdf(n.ms)}}}
 window.FXAZ={mount};window.FXDEEN={sync:syncRow};
-window.FXDN={get:k=>cfg()[k],cfg,settings,panel,apply,prIcon:()=>{const p=cfg().pr;return p==='box'||p==='both'?'box':p==='float'?'float':'hidden'}};
+window.FXDN={get:k=>cfg()[k],set:setP,cfg,settings,panel,apply,prIcon:()=>{const p=cfg().pr;return p==='box'||p==='both'?'box':p==='float'?'float':'hidden'}};
 setInterval(()=>{try{syncRow();syncIcons()}catch(e){}},1000);
 })();
 </script>
