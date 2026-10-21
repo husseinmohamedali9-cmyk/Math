@@ -2215,7 +2215,7 @@ button.pc.no{opacity:.5}
 <div class="intro-logo">∑</div>
 </div>
 <svg class="intro-draw" viewBox="0 0 220 60" aria-hidden="true"><path class="intro-draw-path" d="M6 30 Q 32 -6 58 30 T 110 30 T 162 30 T 214 30" /><circle class="intro-draw-dot" cx="214" cy="30" r="4" /></svg>
-<h1 class="intro-title" id="introBrand">منصّة المحتوى</h1>
+<h1 class="intro-title" id="introBrand">أهلاً نورين</h1>
 <p class="intro-sub">أهلاً بيك في مساحتك الرياضية ✨</p>
 <div class="intro-bar"><span></span></div><div class="ni-bar"><i></i></div>
 </div>
@@ -4454,7 +4454,7 @@ function render(){
     else { logoEl.removeAttribute('src'); logoEl.hidden = true; }
     const tb = document.getElementById('topbar'); if(tb) tb.classList.toggle('has-logo', !!site.meta.logo);
   }
-  const introBrand = $('#introBrand'); if(introBrand) introBrand.textContent = site.meta.title || 'منصّة المحتوى';
+  const introBrand = $('#introBrand'); if(introBrand) introBrand.textContent = site.meta.introTitle || 'أهلاً نورين';
   $('#heroTitle').textContent = site.meta.heroTitle || '';
   $('#heroSub').textContent = site.meta.heroSub || '';
   $('#heroTitle').style.color = site.meta.heroColor || '';
