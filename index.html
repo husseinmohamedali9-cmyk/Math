@@ -5371,8 +5371,8 @@ document.addEventListener('click', async e=>{
   }
   if(act==='toggle-mode'){
     const root = document.documentElement;
-    const next = effectiveMode(site.theme) === 'dark' ? 'light' : 'dark';
-    const swap = ()=>{ setUserMode(next); applyTheme(site.theme); };
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    const swap = ()=>{ setUserMode(next); applyTheme(site.theme); try{ if(typeof Plus !== 'undefined') Plus.applyPreset(); }catch(e){} };
     const done = ()=>root.classList.remove('theme-switching');
     root.classList.add('theme-switching');
     const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -8961,17 +8961,20 @@ FEATURES.push(['sec_hideint','🙈 إخفاء الكويز والفلاش كار
   Object.keys(NEWP).forEach(k=>{ const p = NEWP[k]; Plus.PRESETS[k] = {n:p.n, m:p.m, c:p.c}; });
   const KEYS = {bg:'--bg',surface:'--surface',surface2:'--surface-2',ink:'--ink',inkSoft:'--ink-soft',line:'--line',accent:'--accent',gold:'--gold'};
   let busy = false;
+  const pMode = P => { try{ const u = userMode(); if(u) return u; if(autoDarkNow()) return 'dark'; }catch(e){} return P.m; };
+  const pCols = (P, M) => { try{ const pal = presetPalettes({mode:P.m, colors:P.c}); return (M === 'dark' ? pal.dark : pal.light) || P.c; }catch(e){ return P.c; } };
   Plus.applyPreset = function(){
     if(busy) return; busy = true;
     try{
       const r = document.documentElement, id = lsGet('plus_preset',''), P = this.PRESETS[id];
       Object.keys(this.PRESETS).forEach(k=>r.classList.remove('plus-'+k));
       if(!P || !this.on('plus_themes') || (this.cfg().presetsOff||{})[id]){ if(r.classList.contains('has-preset')){ r.classList.remove('has-preset'); r.style.removeProperty('color-scheme'); } return; }
-      r.setAttribute('data-theme', P.m); r.style.colorScheme = P.m; r.classList.remove('has-grad'); r.classList.add('has-preset','plus-'+id);
-      for(const k in KEYS) r.style.setProperty(KEYS[k], P.c[k]);
-      r.style.setProperty('--accent-soft','color-mix(in srgb,'+P.c.accent+' 16%,transparent)');
-      r.style.setProperty('--box-bg','color-mix(in srgb,'+P.c.accent+' 8%,'+P.c.surface+')');
-      r.style.setProperty('--danger', P.m==='dark' ? '#f87171' : '#dc2626');
+      const M = pMode(P), C = pCols(P, M);
+      r.setAttribute('data-theme', M); r.style.colorScheme = M; r.classList.remove('has-grad'); r.classList.add('has-preset','plus-'+id);
+      for(const k in KEYS) r.style.setProperty(KEYS[k], C[k]);
+      r.style.setProperty('--accent-soft','color-mix(in srgb,'+C.accent+' 16%,transparent)');
+      r.style.setProperty('--box-bg','color-mix(in srgb,'+C.accent+' 8%,'+C.surface+')');
+      r.style.setProperty('--danger', M==='dark' ? '#f87171' : '#dc2626');
     } finally { busy = false; }
   };
   /* أي حاجة في الموقع تحاول تغيّر الألوان (لون مادة، تبديل وضع، إعادة رسم) الثيم يرجّعها */
@@ -8979,7 +8982,8 @@ FEATURES.push(['sec_hideint','🙈 إخفاء الكويز والفلاش كار
     if(busy) return; const now = Date.now(); if(now - (Plus._t0||0) > 1000){ Plus._t0 = now; Plus._n = 0; } if(++Plus._n > 6) return;
     const id = lsGet('plus_preset',''), P = Plus.PRESETS[id]; if(!P) return;
     const r = document.documentElement;
-    if(r.getAttribute('data-theme')!==P.m || r.style.getPropertyValue('--accent')!==P.c.accent || !r.classList.contains('has-preset') || r.classList.contains('has-grad')) Plus.applyPreset();
+    const M = pMode(P), C = pCols(P, M);
+    if(r.getAttribute('data-theme')!==M || r.style.getPropertyValue('--accent')!==C.accent || !r.classList.contains('has-preset') || r.classList.contains('has-grad')) Plus.applyPreset();
   }).observe(document.documentElement, {attributes:true, attributeFilter:['style','class','data-theme']});
   Plus.applyPreset();
 })();
@@ -9987,8 +9991,6 @@ function wrapBare(t, mx){
     flush(); return out + sp;
   }).join('\n');
 }
-function cleanLeft(t){ const M = {infty:'∞',cup:'∪',cap:'∩',implies:'⟹',iff:'⟺',quad:' ',qquad:'  ',cdot:'·',times:'×',pm:'±',leq:'≤',geq:'≥',neq:'≠',le:'≤',ge:'≥',setminus:'∖',in:'∈',rightarrow:'→',Rightarrow:'⇒',forall:'∀',exists:'∃',subset:'⊂',subseteq:'⊆',emptyset:'∅',pi:'π',theta:'θ',alpha:'α',beta:'β',Delta:'Δ',lambda:'λ',sigma:'σ',omega:'ω',ldots:'…',dots:'…'};
-  return t.replace(/\\mathbb\{R\}/g, 'ℝ').replace(/\\sqrt\{([^{}]*)\}/g, '√($1)').replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, '($1)/($2)').replace(/\\text\{([^{}]*)\}/g, '$1').replace(/\\([a-zA-Z]+)/g, (m, c)=>M[c] !== undefined ? M[c] : m).replace(/\$\$?(?!\d)/g, ''); }
 function fmt(t, live){
   t = String(t == null ? '' : t); const st = [], keep = h => { st.push(h); return '\u0001' + (st.length - 1) + '\u0002'; };
   t = t.replace(/```([\w-]*)[^\S\n]*\n?([\s\S]*?)(```|$)/g, (m, lang, code, close)=>{
@@ -10009,7 +10011,6 @@ function fmt(t, live){
   t = t.replace(/\$\$([\s\S]+?)\$\$/g, (m, x)=>mx(x, 1, m)).replace(/\\\[([\s\S]+?)\\\]/g, (m, x)=>mx(x, 1, m)).replace(/\\\(([\s\S]+?)\\\)/g, (m, x)=>mx(x, 0, m))
        .replace(/\$([^$\n\s](?:[^$\n]*?[^$\n\s])?)\$/g, (m, x)=>mx(x, 0, m));
   t = wrapBare(t, mx);
-  t = cleanLeft(t);
   t = esc(t);
   t = t.replace(/!\[([^\]]*)\]\((https:\/\/[^\s)]+|data:image\/(?:png|jpe?g|webp|gif);base64,[A-Za-z0-9+\/=]+)\)/g, (m, a, u)=>'<img class="mb-img" loading="lazy" referrerpolicy="no-referrer" alt="' + a + '" src="' + u + '">');
   t = t.replace(/\[([^\]\n]+)\]\((https:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
@@ -10071,12 +10072,12 @@ function loadPdfJs(){
   return pdfjsP;
 }
 async function extractPdf(buf){
-  const lib = await loadPdfJs(), doc = await lib.getDocument({data:new Uint8Array(buf)}).promise, n = Math.min(doc.numPages, 1500); let out = '', cut = n < doc.numPages;
+  const lib = await loadPdfJs(), doc = await lib.getDocument({data:new Uint8Array(buf)}).promise, n = Math.min(doc.numPages, 250); let out = '', cut = n < doc.numPages;
   for(let p = 1; p <= n; p++){
     const pg = await doc.getPage(p), tc = await pg.getTextContent(); let line = '';
     for(const it of tc.items){ line += it.str + (it.hasEOL ? '\n' : ' '); }
     out += '\n[صفحة ' + p + ']\n' + line.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
-    if(out.length > 480000){ cut = true; out = out.slice(0, 480000); break; }
+    if(out.length > 120000){ cut = true; out = out.slice(0, 120000); break; }
   }
   return {text:out.trim(), pages:doc.numPages, cut};
 }
@@ -11691,18 +11692,18 @@ SX.games.g48 = {id:'g48', icon:'🔢', name:'2048 تحدّي', desc:'نفس تر
 /* ===== أدوات المذاكرة الذكية (AI): كويز، فلاش كاردز، امتحان تجريبي، خطة، ورقة غش، شفوي، معدل، مليونير ===== */
 const RETRY_S = [429, 500, 502, 503, 504];
 const aiUrl = () => (typeof MathBot !== 'undefined' && MathBot.url) ? MathBot.url() : '';
-let CUR_IMGS = null, CUR_FILES = null;   // صور صفحات PDF الممسوح ضوئياً
+let CUR_IMGS = null;   // صور صفحات PDF الممسوح ضوئياً
 const AI_CACHE = new Map(), AI_FLY = new Map();
-const aiShrink = p => String(p).slice(0, 480000);
+const aiShrink = p => { p = String(p); if(p.length < 9000) return p; const i = p.indexOf('"""'), j = p.lastIndexOf('"""'); if(i < 0 || j <= i) return p.slice(0, 9000); return p.slice(0, i + 4) + p.slice(i + 4, j).slice(0, 6500) + '\n…\n' + p.slice(j); };
 async function aiAsk(prompt, o){
   o = o || {}; const u = aiUrl(); if(!u) throw new Error('no-server');
-  prompt = aiShrink(prompt); const imgs = o.images || CUR_IMGS, files = o.files || CUR_FILES, key = ((imgs && imgs.length) || files) ? '' : (o.json ? 'j' : 't') + '|' + prompt;
+  prompt = aiShrink(prompt); const imgs = o.images || CUR_IMGS, key = (imgs && imgs.length) ? '' : (o.json ? 'j' : 't') + '|' + prompt;
   if(key && AI_CACHE.has(key)) return AI_CACHE.get(key);
   if(key && AI_FLY.has(key)) return AI_FLY.get(key);
   const run = (async () => {
-    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), prompt.length > 30000 || (imgs && imgs.length) || CUR_FILES ? 170000 : 60000);
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 50000);
     try{
-      const msg = {role:'user', content:prompt}; if(imgs && imgs.length) msg.images = imgs; if(files) msg.files = files; let r;
+      const msg = {role:'user', content:prompt}; if(imgs && imgs.length) msg.images = imgs; let r;
       for(let n = 0; n < 2; n++){
         r = await fetch(u, {method:'POST', headers:{'Content-Type':'application/json', 'apikey':(typeof CONFIG !== 'undefined' && CONFIG.QA && CONFIG.QA.anonKey) || ''}, body:JSON.stringify({messages:[msg], stream:false, json:!!o.json}), signal:ctl.signal});
         if(r.ok || RETRY_S.indexOf(r.status) < 0) break; await sleep(250);
@@ -11723,10 +11724,10 @@ function parseJson(t){
   throw new Error('bad-json');
 }
 const aiErr = e => { const m = String(e && e.message || e); return m === 'no-server' ? 'الروبوت الذكي مش مفعّل لسه — لازم الأدمن يحط رابط السيرفر (⚙️ في البوت).' : m === 'bad-json' ? 'الذكاء الاصطناعي رجّع رد مش مفهوم — جرّب تاني.' : 'السيرفر مشغول دلوقتي — جرّب تاني بعد ثواني.'; };
-SX.aiAsk = aiAsk; SX.runQuiz = (qs, o) => runQuiz(qs, o);
+SX.aiAsk = aiAsk;
 const clip = (t, n) => { t = String(t || '').replace(/\n{3,}/g, '\n\n').trim(); return t.length > n ? t.slice(0, n) + '\n…' : t; };
 const busy = m => `<div class="st-busy"><div class="st-spin"></div><p>${E(m || 'الذكاء الاصطناعي بيجهّز…')}</p></div>`;
-const big = html => { CUR_IMGS = null; CUR_FILES = null; return SX.modal('<button type="button" class="sxm-x" data-st="close">✕</button>' + html, 'sxm-big'); };
+const big = html => { CUR_IMGS = null; return SX.modal('<button type="button" class="sxm-x" data-st="close">✕</button>' + html, 'sxm-big'); };
 const body = () => $q('#sxModal .sxm-in');
 const setBody = html => { const b = body(); if(b) b.innerHTML = '<button type="button" class="sxm-x" data-st="close">✕</button>' + html; };
 
@@ -11741,7 +11742,7 @@ function sectionInView(){
 SX.sectionInView = sectionInView;
 
 /* ---------------- اختيار المصدر ---------------- */
-const PDF_MAX = 450000;
+const PDF_MAX = 14000;
 const GEN_RULES = 'مهم: اعتمد على المحتوى المرفق فقط مهما كان مجاله أو لغته (مش بالضرورة رياضيات) وماتفترضش تخصص معين. لو المحتوى جاي كصور مرفقة اقراها واعتمد عليها. أي رموز أو معادلات اكتبها بنص عادي من غير LaTeX.';
 function pdfPagesOf(text){ const parts = String(text || '').split(/\[صفحة (\d+)\]\n?/), out = []; for(let k = 1; k < parts.length; k += 2) out.push({p:+parts[k], t:(parts[k + 1] || '').trim()}); return out; }
 async function pdfPagesToImages(buf, from, to, max){
@@ -11762,12 +11763,12 @@ function pickSource(title, cb, opt){
     <div class="st-pane" data-p="pdf" hidden><input type="file" id="stPdf" accept="application/pdf,.pdf"><small id="stPdfSt">اختار ملف PDF (بنقراه على جهازك).</small>
       <div class="st-rng" id="stRng" hidden><label>من صفحة <input type="number" id="stPf" min="1" value="1"></label><label>إلى صفحة <input type="number" id="stPt" min="1" value="1"></label><small id="stRngI"></small></div></div>
     ${opt.extra || ''}<button type="button" class="st-go" data-st="srcgo">التالي ▶</button>`);
-  CUR_IMGS = null; CUR_FILES = null;
+  CUR_IMGS = null;
   let tab = 'sec', pdf = null;
   const m = $q('#sxModal');
   const rng = () => { const n = pdf ? pdf.pages : 1, a = Math.max(1, Math.min(n, parseInt($q('#stPf', m).value, 10) || 1)), b = Math.max(a, Math.min(n, parseInt($q('#stPt', m).value, 10) || n)); return [a, b]; };
   const pdfText = () => { if(!pdf) return ''; const r = rng(); return pdf.list.filter(x => x.p >= r[0] && x.p <= r[1]).map(x => '[صفحة ' + x.p + ']\n' + x.t).join('\n\n'); };
-  const info = () => { if(!pdf) return; const r = rng(), el = $q('#stRngI', m), t = pdfText(); el.textContent = pdf.scanned ? '🖼 ملف ممسوح ضوئياً — هيتبعت الملف كله للذكاء الاصطناعي يقراه (لحد 12MB).' : (t.length > PDF_MAX ? '⚠️ النطاق كبير (' + t.length + ' حرف) — هيتاخد أول ' + PDF_MAX + ' حرف بس، صغّر النطاق للتركيز.' : '✅ ' + t.length + ' حرف من صفحات ' + r[0] + ' – ' + r[1]); };
+  const info = () => { if(!pdf) return; const r = rng(), el = $q('#stRngI', m), t = pdfText(); el.textContent = pdf.scanned ? '🖼 ملف ممسوح ضوئياً — هتتبعت أول 4 صفحات من النطاق كصور للذكاء الاصطناعي.' : (t.length > PDF_MAX ? '⚠️ النطاق كبير (' + t.length + ' حرف) — هيتاخد أول ' + PDF_MAX + ' حرف بس، صغّر النطاق للتركيز.' : '✅ ' + t.length + ' حرف من صفحات ' + r[0] + ' – ' + r[1]); };
   m.addEventListener('click', e => { const t = e.target.closest('.st-tabs button'); if(t){ tab = t.dataset.t; $qa('.st-tabs button', m).forEach(b => b.classList.toggle('on', b === t)); $qa('.st-pane', m).forEach(p => { p.hidden = p.dataset.p !== tab; }); } });
   m.addEventListener('input', e => { if(e.target.id === 'stPf' || e.target.id === 'stPt') info(); });
   m.addEventListener('change', async e => { if(e.target.id !== 'stPdf' || !e.target.files[0]) return; const f = e.target.files[0], st = $q('#stPdfSt', m); st.textContent = '⏳ بقرا الملف…'; pdf = null; $q('#stRng', m).hidden = true;
@@ -11781,7 +11782,7 @@ function pickSource(title, cb, opt){
     if(tab === 'sec'){ const id = $q('#stSec', m).value, s = SecTools.find(id); if(!s) return say('اختار قسم'); text = secText(s); ttl = s.title; }
     else if(tab === 'txt'){ text = $q('#stTxt', m).value.trim(); ttl = text.slice(0, 40); }
     else { if(!pdf) return say('اختار ملف PDF الأول'); ttl = pdf.name; const r = rng();
-      if(pdf.scanned){ say('⏳ بجهّز الملف كله…'); if(pdf.buf.byteLength <= 12*1024*1024){ try{ const u8 = new Uint8Array(pdf.buf); let bin = ''; for(let k = 0; k < u8.length; k += 32768) bin += String.fromCharCode.apply(null, u8.subarray(k, k + 32768)); CUR_FILES = [{name:pdf.name, mime:'application/pdf', data:btoa(bin)}]; }catch(_){ CUR_FILES = null; } } if(CUR_FILES) text = 'ملف PDF ممسوح ضوئياً مرفق كامل (' + pdf.name + ') — اقرأ كل صفحاته واشتغل على الصفحات من ' + r[0] + ' إلى ' + r[1] + ' بالكامل.'; else { try{ CUR_IMGS = await pdfPagesToImages(pdf.buf, r[0], r[1], 12); }catch(_){ return say('تعذّر تجهيز صفحات الملف'); } text = 'ملف PDF ممسوح ضوئياً (' + pdf.name + ') — المحتوى كله في الصور المرفقة (صفحات ' + r[0] + ' إلى ' + Math.min(r[1], r[0] + CUR_IMGS.length - 1) + ').'; } }
+      if(pdf.scanned){ say('⏳ بجهّز صفحات الملف كصور…'); try{ CUR_IMGS = await pdfPagesToImages(pdf.buf, r[0], r[1], 4); }catch(_){ return say('تعذّر تجهيز صفحات الملف'); } text = 'ملف PDF ممسوح ضوئياً (' + pdf.name + ') — المحتوى كله في الصور المرفقة (صفحات ' + r[0] + ' إلى ' + Math.min(r[1], r[0] + CUR_IMGS.length - 1) + ').'; }
       else text = pdfText(); }
     if(text.replace(/\s/g, '').length < (tab === 'txt' ? 3 : 12)) return say('المحتوى قليل أوي — زوّد شوية');
     cb({title:ttl || 'موضوع', text:clip(text, PDF_MAX)}, m);
@@ -11801,7 +11802,7 @@ ${src}
 """`;
   const j = parseJson(await aiAsk(p, {json:true})), arr = Array.isArray(j) ? j : (j.questions || []);
   const need = tf ? 2 : 4, out = arr.filter(q => q && q.q && Array.isArray(q.options) && q.options.length === need && Number.isInteger(+q.answer) && +q.answer >= 0 && +q.answer < need).map(q => ({q:String(q.q), o:q.options.map(String), a:+q.answer, x:String(q.explain || ''), t:String(q.topic || '').slice(0, 30)}));
-  if(!out.length) throw new Error('bad-json'); SX.lastGen = {k:'q', qs:out, at:Date.now()}; return out;
+  if(!out.length) throw new Error('bad-json'); return out;
 }
 async function genCards(src, n){
   const p = `أنت مدرّس خبير في مجال المحتوى المرفق. اعمل ${n} فلاش كاردز للمذاكرة من المحتوى التالي فقط (مفاهيم، تعريفات، قوانين أو خطوات لو موجودة، أخطاء شائعة، أمثلة صغيرة).
@@ -11812,7 +11813,7 @@ ${GEN_RULES} والوش مش أطول من سطرين والضهر مش أطول
 ${src}
 """`;
   const j = parseJson(await aiAsk(p, {json:true})), arr = Array.isArray(j) ? j : (j.cards || []);
-  const out = arr.filter(c => c && c.front && c.back).map(c => ({f:String(c.front), b:String(c.back)})); if(!out.length) throw new Error('bad-json'); SX.lastGen = {k:'d', cards:out, at:Date.now()}; return out;
+  const out = arr.filter(c => c && c.front && c.back).map(c => ({f:String(c.front), b:String(c.back)})); if(!out.length) throw new Error('bad-json'); return out;
 }
 const recTopic = (t, ok) => { if(!t) return; const S = lsGet('sx_topics', {}); const o = S[t] = S[t] || {ok:0, no:0}; ok ? o.ok++ : o.no++; lsSet('sx_topics', S); };
 const recQuiz = (title, sc, tot) => { const h = lsGet('sx_quizlog', []); h.push({t:title, s:sc, n:tot, d:Date.now()}); lsSet('sx_quizlog', h.slice(-40)); };
@@ -13106,11 +13107,11 @@ function nightTool(){ W('night', L('night', 0) ? 0 : 1); applyEq(); SX.say(L('ni
 /* ---------- لوحة التحكم (أدمن) ---------- */
 function adminTool(){ const c = CFG(), I = ITEMS.concat(c.custom || []);
   const m = css(`<h3>🎛 إدارة الإضافات</h3><h4>📦 مكان أيقونة الإضافات</h4><div class="px-b"><button type="button" data-pl="box" class="${place() === 'box' ? 'on' : ''}">📦 في البوكس</button><button type="button" data-pl="hidden" class="${place() === 'hidden' ? 'on' : ''}">🚫 مخفية</button></div><h4>الميزات</h4>${F.map(f => `<div class="gx-r"><span>${f[1]} ${f[2]}</span><label><input type="checkbox" data-on="${f[0]}" ${isOn(f[0]) ? 'checked' : ''}> شغّال</label><label><input type="checkbox" data-bx="${f[0]}" ${inBox(f[0]) ? 'checked' : ''}> ظاهرة في النافذة</label></div>`).join('')}
-    <h4>🎚 التحكم في الظهور</h4><div class="gx-r"><span>➕ زرار «إضافة للقسم» (ليك كأدمن بس)</span><label><input type="checkbox" id="gxSA" ${c.showAdd ? 'checked' : ''}> يظهر</label></div><div class="gx-r"><span>🙋 محفوظات الطلاب في المكتبة</span><label><input type="checkbox" id="gxSM" ${c.hideMine ? '' : 'checked'}> ظاهرة (الإخفاء مش بيمسح حاجة)</label></div><div class="gx-r"><span>📝 أيقونة الكويزات في الموقع (الأدمن بيشوفها دايماً)</span><label><input type="checkbox" id="gxQZ" ${c.hideQz ? '' : 'checked'}> ظاهرة للزوار</label></div><div class="gx-r"><span>🧰 الشنطة الحمرا (أدوات الطالب)</span><label><input type="checkbox" id="gxBG" ${c.hideBag ? '' : 'checked'}> ظاهرة</label></div><div class="gx-r"><span>🔒 زرار القفل</span><select id="gxLK"><option value="show" ${c.lockBox ? '' : 'selected'}>ظاهر زي ما هو</option><option value="box" ${c.lockBox ? 'selected' : ''}>جوه الصندوق ▾</option></select></div><div class="px-b"><button type="button" class="on" data-secctl>🎛 تحكم في كل قسم (كويز / فلاش / أدوات / محتوى)</button></div><h4>🧩 أدوات المذاكرة (من مركز التحدّي)</h4><small>علّم اللي عايزه يظهر هنا، وعلّم «إخفاء» لو عايزه يتشال من مركز التحدّي.</small>${tools().map(t => `<div class="gx-r"><span>${t.icon} ${E(t.name)}</span><label><input type="checkbox" data-ex="${t.id}" ${(c.extra || {})[t.id] ? 'checked' : ''}> هنا</label><label><input type="checkbox" data-hh="${t.id}" ${(c.hideHub || {})[t.id] ? 'checked' : ''}> إخفاء من المركز</label></div>`).join('')}<h4>إعدادات</h4><label class="px-l">XP لكل مرحلة في الرحلة<input type="number" id="gxJ" value="${+c.jstep || 100}" class="px-a"></label><label class="px-l">هدف تحدي الشهر (عدد أسئلة)<input type="number" id="gxM" value="${+c.mgoal || 200}" class="px-a"></label><label class="px-l">نص التحدي<input id="gxT" value="${E(c.mtitle || '')}" class="px-a" style="direction:rtl;font:inherit"></label>
+    <h4>🎚 التحكم في الظهور</h4><div class="gx-r"><span>➕ زرار «إضافة للقسم» (ليك كأدمن بس)</span><label><input type="checkbox" id="gxSA" ${c.showAdd ? 'checked' : ''}> يظهر</label></div><div class="gx-r"><span>🙋 محفوظات الطلاب في المكتبة</span><label><input type="checkbox" id="gxSM" ${c.hideMine ? '' : 'checked'}> ظاهرة (الإخفاء مش بيمسح حاجة)</label></div><div class="px-b"><button type="button" class="on" data-secctl>🎛 تحكم في كل قسم (كويز / فلاش / أدوات / محتوى)</button></div><h4>🧩 أدوات المذاكرة (من مركز التحدّي)</h4><small>علّم اللي عايزه يظهر هنا، وعلّم «إخفاء» لو عايزه يتشال من مركز التحدّي.</small>${tools().map(t => `<div class="gx-r"><span>${t.icon} ${E(t.name)}</span><label><input type="checkbox" data-ex="${t.id}" ${(c.extra || {})[t.id] ? 'checked' : ''}> هنا</label><label><input type="checkbox" data-hh="${t.id}" ${(c.hideHub || {})[t.id] ? 'checked' : ''}> إخفاء من المركز</label></div>`).join('')}<h4>إعدادات</h4><label class="px-l">XP لكل مرحلة في الرحلة<input type="number" id="gxJ" value="${+c.jstep || 100}" class="px-a"></label><label class="px-l">هدف تحدي الشهر (عدد أسئلة)<input type="number" id="gxM" value="${+c.mgoal || 200}" class="px-a"></label><label class="px-l">نص التحدي<input id="gxT" value="${E(c.mtitle || '')}" class="px-a" style="direction:rtl;font:inherit"></label>
     <h4>المتجر (السعر / إخفاء)</h4>${I.map(i => `<div class="gx-r"><span>${i.icon} ${E(i.name)}</span><input type="number" data-pr="${i.id}" value="${(c.prices || {})[i.id] != null ? c.prices[i.id] : i.price}" class="gx-n"><label><input type="checkbox" data-io="${i.id}" ${(c.itemOff || {})[i.id] ? '' : 'checked'}> ظاهر</label>${i.custom ? `<button type="button" data-del="${i.id}">🗑</button>` : ''}</div>`).join('')}
     <h4>➕ لقب / عنصر جديد</h4><div class="gx-r"><input id="gxNI" placeholder="الاسم" class="gx-n" style="width:36%"><input id="gxNE" placeholder="🏆" class="gx-n" style="width:16%"><input id="gxNP" type="number" placeholder="السعر" class="gx-n" style="width:22%"><button type="button" data-add>إضافة لقب</button></div>
     <div class="px-b"><button type="button" class="on" data-save>💾 حفظ للموقع كله</button></div>`);
-  const collect = () => { const n = Object.assign({}, CFG(), {off:{}, nobox:{}, extra:{}, hideHub:{}, prices:{}, itemOff:{}, jstep:+m.querySelector('#gxJ').value || 100, mgoal:+m.querySelector('#gxM').value || 200, mtitle:m.querySelector('#gxT').value, showAdd:m.querySelector('#gxSA').checked, hideMine:!m.querySelector('#gxSM').checked, hideQz:!m.querySelector('#gxQZ').checked, hideBag:!m.querySelector('#gxBG').checked, lockBox:m.querySelector('#gxLK').value === 'box'});
+  const collect = () => { const n = Object.assign({}, CFG(), {off:{}, nobox:{}, extra:{}, hideHub:{}, prices:{}, itemOff:{}, jstep:+m.querySelector('#gxJ').value || 100, mgoal:+m.querySelector('#gxM').value || 200, mtitle:m.querySelector('#gxT').value, showAdd:m.querySelector('#gxSA').checked, hideMine:!m.querySelector('#gxSM').checked});
     m.querySelectorAll('[data-on]').forEach(x => { if(!x.checked) n.off[x.dataset.on] = 1; }); m.querySelectorAll('[data-bx]').forEach(x => { if(!x.checked) n.nobox[x.dataset.bx] = 1; }); m.querySelectorAll('[data-ex]').forEach(x => { if(x.checked) n.extra[x.dataset.ex] = 1; }); m.querySelectorAll('[data-hh]').forEach(x => { if(x.checked) n.hideHub[x.dataset.hh] = 1; }); m.querySelectorAll('[data-pr]').forEach(x => { n.prices[x.dataset.pr] = +x.value; }); m.querySelectorAll('[data-io]').forEach(x => { if(!x.checked) n.itemOff[x.dataset.io] = 1; }); return n; };
   m.addEventListener('click', e => { if(e.target.closest('[data-secctl]')){ saveCfg(collect()); closeGx(); secCtl(); return; } const pb = e.target.closest('[data-pl]'); if(pb){ try{ FXDN.set({gx:pb.dataset.pl}); }catch(_){} m.querySelectorAll('[data-pl]').forEach(x => x.classList.toggle('on', x === pb)); return; }
     if(e.target.closest('[data-save]')){ saveCfg(collect()); applyEq(); SX.say('✅ اتحفظ'); }
@@ -13139,21 +13140,19 @@ function secAdd(sid){ const c = CFG(), cur = attach(sid), decks = (() => { try{ 
 const runT = t => { try{ const h = document.getElementById('sxHub'); if((!h || h.hidden) && SX.openHub) SX.openHub('study'); }catch(e){} try{ t.open(); }catch(e){ SX.say('تعذّر فتح الأداة'); } };
 function secBtns(s){ const id = E(s.id), A = adm(), X = (k, extra, hid) => A ? `<button type="button" class="gx-x" data-gxs="${k}" ${extra} title="${k === 'ed' ? 'تعديل الاسم والشكل' : k === 'eye' ? (hid ? 'مخفي عن الزوار — دوس عشان يظهر' : 'ظاهر للزوار — دوس عشان تخفيه (من غير ما يتمسح)') : 'شيل من القسم'}">${k === 'ed' ? '✏️' : k === 'eye' ? (hid ? '🙈' : '👁') : '✕'}</button>` : '';
   const at = attach(s.id).map((x, i) => (x.hide && !A) ? '' : `<button type="button" class="sx-btn${x.hide ? ' gx-off' : ''}" data-gxs="run" data-sid="${id}" data-i="${i}">${x.k === 'd' ? '🃏 ' : (x.icon || '🧩') + ' '}${E(x.name)}</button>${X('eye', 'data-sid="' + id + '" data-i="' + i + '"', x.hide)}${X('rmt', 'data-sid="' + id + '" data-i="' + i + '"')}`).join('');
-  const lb = siteLib().filter(x => x.sec === s.id && (A || !x.hide)).map(x => stOf(x) === 'card' ? `<div class="gx-card${x.hide ? ' gx-off' : ''}"><div><b>${(x.k === 'd' ? '🃏' : x.k === 'q' ? '📝' : '📄')} ${E(x.title)}</b><small>${(x.k === 'd' ? x.cards.length + ' كارت' : x.k === 'q' ? x.qs.length + ' سؤال' : 'محتوى مذاكرة')}</small></div><span><button type="button" class="fxgo" data-gxs="lib" data-lid="${E(x.id)}">ابدأ ▶</button>${X('eye', 'data-lid="' + E(x.id) + '"', x.hide)}${X('ed', 'data-lid="' + E(x.id) + '"')}${X('rm', 'data-lid="' + E(x.id) + '"')}</span></div>` : `<button type="button" class="sx-btn${x.hide ? ' gx-off' : ''}" data-gxs="lib" data-lid="${E(x.id)}">${(x.k === 'd' ? '🃏' : x.k === 'q' ? '📝' : '📄')} ${E(x.title)}</button>${X('eye', 'data-lid="' + E(x.id) + '"', x.hide)}${X('ed', 'data-lid="' + E(x.id) + '"')}${X('rm', 'data-lid="' + E(x.id) + '"')}`).join('');
+  const lb = siteLib().filter(x => x.sec === s.id && (A || !x.hide)).map(x => stOf(x) === 'card' ? `<div class="gx-card${x.hide ? ' gx-off' : ''}"><div><b>${x.k === 'd' ? '🃏' : '📄'} ${E(x.title)}</b><small>${x.k === 'd' ? x.cards.length + ' كارت' : 'محتوى مذاكرة'}</small></div><span><button type="button" class="fxgo" data-gxs="lib" data-lid="${E(x.id)}">ابدأ ▶</button>${X('eye', 'data-lid="' + E(x.id) + '"', x.hide)}${X('ed', 'data-lid="' + E(x.id) + '"')}${X('rm', 'data-lid="' + E(x.id) + '"')}</span></div>` : `<button type="button" class="sx-btn${x.hide ? ' gx-off' : ''}" data-gxs="lib" data-lid="${E(x.id)}">${x.k === 'd' ? '🃏' : '📄'} ${E(x.title)}</button>${X('eye', 'data-lid="' + E(x.id) + '"', x.hide)}${X('ed', 'data-lid="' + E(x.id) + '"')}${X('rm', 'data-lid="' + E(x.id) + '"')}`).join('');
   return `<span data-gxsw="${id}" style="display:contents">${at}${lb}${A && CFG().showAdd ? `<button type="button" class="sx-btn" data-gxs="add" data-sid="${id}">➕ إضافة للقسم</button>` : ''}</span>`; }
 window.GXSEC = {btns:secBtns};
-setInterval(() => { try{ const c = CFG(), r = document.documentElement; r.toggleAttribute('data-gxnobag', !!c.hideBag); const f = document.getElementById('fab'); if(f){ if(c.lockBox){ const md = r.dataset.fxtb; if(window.FXTB && md && md !== 'default') FXTB.adopt(f); } else if(f.classList.contains('fxtbi')){ f.classList.remove('fxtbi'); document.body.appendChild(f); } } }catch(e){} }, 800);
 /* ---------- تحكم في ظهور كل حاجة في كل قسم (بيخفي بس — مفيش حاجة بتتمسح) ---------- */
 (function(){ const st = document.createElement('style'); st.textContent = '.gx-off{opacity:.45}.gx-sc{border:1px solid var(--line);border-radius:12px;margin:8px 0;padding:6px 10px}.gx-sc summary{cursor:pointer;font-weight:700;padding:6px 0}'; document.head.appendChild(st);
-  const _bt = SecTools.btns; SecTools.btns = function(s){ let h = _bt.apply(this, arguments); try{ const v = (CFG().secVis || {})[s.id] || {}; { const d = document.createElement('div'); d.innerHTML = h; [['q', 'quiz'], ['c', 'cards'], ['m', 'match'], ['n', 'note']].forEach(k => { if(v[k[0]] !== 1) d.querySelectorAll('.sx-btn[data-sxt="' + k[1] + '"]').forEach(x => x.remove()); }); h = d.innerHTML; } }catch(e){} return h; };
+  const _bt = SecTools.btns; SecTools.btns = function(s){ let h = _bt.apply(this, arguments); try{ const v = (CFG().secVis || {})[s.id]; if(v){ const d = document.createElement('div'); d.innerHTML = h; [['q', 'quiz'], ['c', 'cards'], ['m', 'match'], ['n', 'note']].forEach(k => { if(v[k[0]] === 0) d.querySelectorAll('.sx-btn[data-sxt="' + k[1] + '"]').forEach(x => x.remove()); }); h = d.innerHTML; } }catch(e){} return h; };
 })();
 function secCtl(){ const c = CFG(), V = c.secVis || {}, T = tools().concat(F.map(f => ({id:f[0], icon:f[1], name:f[2]}))), B = [['q', '📝 اختبار'], ['c', '🃏 فلاش كاردز'], ['m', '🧩 لعبة المطابقة'], ['n', '📝 ملاحظاتي']];
   const body = secList().map(s => { const v = V[s.id] || {}, at = attach(s.id), lb = siteLib().filter(x => x.sec === s.id);
-    return `<details class="gx-sc" data-s="${E(s.id)}"><summary>${E(s.label)}</summary><b>أزرار القسم</b>${B.map(b => `<label class="gx-r"><input type="checkbox" data-b="${b[0]}" ${v[b[0]] === 1 ? 'checked' : ''}> ${b[1]}</label>`).join('')}<b>أدوات المذاكرة الذكية</b>${T.map(t => { const a = at.find(x => x.k === 't' && x.id === t.id); return `<label class="gx-r"><input type="checkbox" data-t="${E(t.id)}" ${a && !a.hide ? 'checked' : ''}> ${t.icon} ${E(t.name)}</label>`; }).join('')}${at.map((x, i) => x.k === 'd' ? `<label class="gx-r"><input type="checkbox" data-ad="${i}" ${x.hide ? '' : 'checked'}> 🃏 ${E(x.name)}</label>` : '').join('')}${lb.length ? '<b>محتوى متسيف في القسم</b>' + lb.map(x => `<label class="gx-r"><input type="checkbox" data-l="${E(x.id)}" ${x.hide ? '' : 'checked'}> ${(x.k === 'd' ? '🃏' : x.k === 'q' ? '📝' : '📄')} ${E(x.title)}</label>`).join('') : ''}</details>`; }).join('');
-  const m = css(`<h3>🎛 التحكم في كل قسم</h3><small>علّم اللي عايزه يظهر في القسم. اللي مش معلّم بيتخفى بس، ومحتواه بيفضل متسيف ومش بيتمسح. أي حاجة جديدة بتبقى مخفية لحد ما تفعّلها هنا.</small><div class="px-b"><button type="button" data-all="1">✅ إظهار الكل</button><button type="button" data-all="0">🚫 إخفاء الكل</button></div>${body || '<small>مفيش أقسام.</small>'}<div class="px-b"><button type="button" class="on" data-ok>💾 حفظ</button></div>`);
-  m.addEventListener('click', e => { const a = e.target.closest('[data-all]'); if(a) m.querySelectorAll('details[data-s] input[type=checkbox]').forEach(i => { i.checked = a.dataset.all === '1'; }); });
+    return `<details class="gx-sc" data-s="${E(s.id)}"><summary>${E(s.label)}</summary><b>أزرار القسم</b>${B.map(b => `<label class="gx-r"><input type="checkbox" data-b="${b[0]}" ${v[b[0]] === 0 ? '' : 'checked'}> ${b[1]}</label>`).join('')}<b>أدوات المذاكرة الذكية</b>${T.map(t => { const a = at.find(x => x.k === 't' && x.id === t.id); return `<label class="gx-r"><input type="checkbox" data-t="${E(t.id)}" ${a && !a.hide ? 'checked' : ''}> ${t.icon} ${E(t.name)}</label>`; }).join('')}${at.map((x, i) => x.k === 'd' ? `<label class="gx-r"><input type="checkbox" data-ad="${i}" ${x.hide ? '' : 'checked'}> 🃏 ${E(x.name)}</label>` : '').join('')}${lb.length ? '<b>محتوى متسيف في القسم</b>' + lb.map(x => `<label class="gx-r"><input type="checkbox" data-l="${E(x.id)}" ${x.hide ? '' : 'checked'}> ${x.k === 'd' ? '🃏' : '📄'} ${E(x.title)}</label>`).join('') : ''}</details>`; }).join('');
+  const m = css(`<h3>🎛 التحكم في كل قسم</h3><small>علّم اللي عايزه يظهر في القسم. اللي مش معلّم بيتخفى بس، ومحتواه بيفضل متسيف ومش بيتمسح.</small>${body || '<small>مفيش أقسام.</small>'}<div class="px-b"><button type="button" class="on" data-ok>💾 حفظ</button></div>`);
   m.querySelector('[data-ok]').onclick = () => { const n = Object.assign({}, CFG()); n.secVis = {}; n.attach = Object.assign({}, n.attach || {}); n.lib = siteLib().map(x => Object.assign({}, x));
-    m.querySelectorAll('details[data-s]').forEach(d => { const sid = d.dataset.s, v = {}; d.querySelectorAll('[data-b]').forEach(i => { if(i.checked) v[i.dataset.b] = 1; }); if(Object.keys(v).length) n.secVis[sid] = v;
+    m.querySelectorAll('details[data-s]').forEach(d => { const sid = d.dataset.s, v = {}; d.querySelectorAll('[data-b]').forEach(i => { if(!i.checked) v[i.dataset.b] = 0; }); if(Object.keys(v).length) n.secVis[sid] = v;
       const list = attach(sid).map(x => Object.assign({}, x));
       d.querySelectorAll('[data-ad]').forEach(i => { const a = list[+i.dataset.ad]; if(a) a.hide = i.checked ? 0 : 1; });
       d.querySelectorAll('[data-t]').forEach(i => { const id = i.dataset.t, a = list.find(x => x.k === 't' && x.id === id), t = T.find(y => y.id === id); if(a) a.hide = i.checked ? 0 : 1; else if(i.checked && t) list.push({k:'t', id, icon:t.icon, name:t.name}); });
@@ -13174,9 +13173,9 @@ const secList = () => { try{ return flatSecs().map(r => ({id:r.s.id, title:r.s.t
 const refreshSecs = () => document.querySelectorAll('[data-gxsw]').forEach(w => { w.outerHTML = secBtns({id:w.dataset.gxsw}); });
 const secName = id => (secList().find(s => s.id === id) || {}).title || '';
 const clean = h => { const d = document.createElement('div'); d.innerHTML = h; d.querySelectorAll('script,style,iframe,object,embed,link').forEach(x => x.remove()); d.querySelectorAll('*').forEach(x => [...x.attributes].forEach(a => { if(/^on/i.test(a.name) || /javascript:/i.test(a.value)) x.removeAttribute(a.name); })); return d.innerHTML; };
-function viewItem(x){ if(x.k === 'd') return flash(x.cards, x.title); if(x.k === 'q'){ try{ SX.modal('<button type="button" class="sxm-x" data-st="close">✕</button>', 'sxm-big'); SX.runQuiz(x.qs, {title:x.title}); }catch(e){ SX.say('تعذّر فتح الكويز'); } return; } css(`<h3>📄 ${E(x.title)}</h3><div class="sh-doc gx-doc">${clean(x.html)}</div>`); }
+function viewItem(x){ if(x.k === 'd') return flash(x.cards, x.title); css(`<h3>📄 ${E(x.title)}</h3><div class="sh-doc gx-doc">${clean(x.html)}</div>`); }
 const stOf = x => x.style === 'card' ? 'card' : 'pill';
-const pv = (x, st) => st === 'card' ? `<div class="gx-card"><div><b>${(x.k === 'd' ? '🃏' : x.k === 'q' ? '📝' : '📄')} ${E(x.title)}</b><small>${(x.k === 'd' ? x.cards.length + ' كارت' : x.k === 'q' ? x.qs.length + ' سؤال' : 'محتوى مذاكرة')}</small></div><span class="fxgo">ابدأ ▶</span></div>` : `<span class="sx-btn">${(x.k === 'd' ? '🃏' : x.k === 'q' ? '📝' : '📄')} ${E(x.title)}</span>`;
+const pv = (x, st) => st === 'card' ? `<div class="gx-card"><div><b>${x.k === 'd' ? '🃏' : '📄'} ${E(x.title)}</b><small>${x.k === 'd' ? x.cards.length + ' كارت' : 'محتوى مذاكرة'}</small></div><span class="fxgo">ابدأ ▶</span></div>` : `<span class="sx-btn">${x.k === 'd' ? '🃏' : '📄'} ${E(x.title)}</span>`;
 function editItem(it, cb){ let st = stOf(it); const m = css(`<h3>✏️ ${it.pub ? 'تعديل' : 'نشر'}: ${E(it.title)}</h3><label class="px-l">الاسم اللي يظهر<input id="gxPT" class="px-a" style="direction:rtl;font:inherit" value="${E(it.title)}"></label><label class="px-l">القسم اللي يظهر فيه<select id="gxPS"><option value="">(بدون قسم — في مكتبة الموقع بس)</option>${secList().map(s => `<option value="${E(s.id)}" ${s.id === it.sec ? 'selected' : ''}>${E(s.label)}</option>`).join('')}</select></label>
   <div class="px-l">الشكل جوه القسم</div><div class="px-b"><button type="button" data-st="pill" class="${st === 'pill' ? 'on' : ''}">🔘 زرار صغير (زي أزرار القسم)</button><button type="button" data-st="card" class="${st === 'card' ? 'on' : ''}">🗂 كارت زي الكويزات</button></div><div class="px-l">معاينة:</div><div class="gx-prev sec-actions" id="gxPV"></div><div class="px-b"><button type="button" class="on" data-ok>💾 حفظ ${it.pub ? '' : 'ونشر للكل'}</button></div>`);
   const draw = () => { const t = m.querySelector('#gxPT').value.trim() || it.title; m.querySelector('#gxPV').innerHTML = pv(Object.assign({}, it, {title:t}), st); m.querySelectorAll('[data-st]').forEach(b => b.classList.toggle('on', b.dataset.st === st)); }; draw();
@@ -13184,24 +13183,19 @@ function editItem(it, cb){ let st = stOf(it); const m = css(`<h3>✏️ ${it.pub
   m.querySelector('[data-ok]').onclick = () => { const n = Object.assign({}, CFG()), t = m.querySelector('#gxPT').value.trim() || it.title, sec = m.querySelector('#gxPS').value; n.lib = (n.lib || []).filter(x => x.id !== it.id).concat([Object.assign({}, it, {title:t, sec, style:st, pub:1})]); saveCfg(n); closeGx(); SX.say('✅ اتحفظ' + (sec ? ' في قسم «' + secName(sec) + '»' : ' في مكتبة الموقع')); refreshSecs(); if(cb) cb(); }; }
 const publish = it => editItem(it);
 function libTool(){ const A = adm(), mine = (CFG().hideMine && !A) ? [] : myLib(), site = siteLib().filter(x => A || !x.hide);
-  const row = (x, own) => `<div class="gx-lr"><div><b>${E(x.title)}</b><small>${(x.k === 'd' ? '🃏 ' + x.cards.length + ' كارت' : x.k === 'q' ? '📝 ' + x.qs.length + ' سؤال' : '📄 نص')}${x.sec ? ' · 📍 ' + E(secName(x.sec)) : ''}${own ? ' · على جهازك' : ''}</small></div><button type="button" class="on" data-v="${E(x.id)}" data-o="${own ? 'm' : 's'}">فتح ▶</button>${A ? `<button type="button" data-p="${E(x.id)}" data-o="${own ? 'm' : 's'}" title="${own ? 'انشر / ثبّت في قسم' : 'تعديل الاسم والقسم والشكل'}">${own ? '📌' : '✏️'}</button>` : ''}${own ? `<button type="button" data-r="${E(x.id)}" data-o="m" title="تعديل الاسم">✏️</button>` : ''}${own || A ? `<button type="button" data-d="${E(x.id)}" data-o="${own ? 'm' : 's'}">🗑</button>` : ''}</div>`;
+  const row = (x, own) => `<div class="gx-lr"><div><b>${E(x.title)}</b><small>${x.k === 'd' ? '🃏 ' + x.cards.length + ' كارت' : '📄 نص'}${x.sec ? ' · 📍 ' + E(secName(x.sec)) : ''}${own ? ' · على جهازك' : ''}</small></div><button type="button" class="on" data-v="${E(x.id)}" data-o="${own ? 'm' : 's'}">فتح ▶</button>${A ? `<button type="button" data-p="${E(x.id)}" data-o="${own ? 'm' : 's'}" title="${own ? 'انشر / ثبّت في قسم' : 'تعديل الاسم والقسم والشكل'}">${own ? '📌' : '✏️'}</button>` : ''}${own || A ? `<button type="button" data-d="${E(x.id)}" data-o="${own ? 'm' : 's'}">🗑</button>` : ''}</div>`;
   const m = css(`<h3>📚 مكتبة المذاكرة</h3><small>أي ناتج من أدوات المذاكرة الذكية تقدر تحفظه هنا (زرار 💾 تحت الناتج)${A ? '، وتثبّته في أي قسم بـ 📌' : ''}.</small><h4>🌐 منشورة في الموقع (${site.length})</h4>${site.map(x => row(x, 0)).join('') || '<small>مفيش.</small>'}<h4>💾 محفوظاتي (${mine.length})</h4>${mine.map(x => row(x, 1)).join('') || '<small>مفيش — افتح أي أداة مذاكرة واحفظ الناتج.</small>'}`);
-  m.addEventListener('click', e => { const b = e.target.closest('button[data-o]'); if(!b) return; const own = b.dataset.o === 'm', id = b.dataset.v || b.dataset.p || b.dataset.d || b.dataset.r, list = own ? myLib() : siteLib(), x = list.find(y => y.id === id); if(!x) return;
-    if(b.dataset.r){ const nn = prompt('الاسم الجديد', x.title); if(nn && nn.trim()){ x.title = nn.trim(); W('lib', list); libTool(); } return; }
+  m.addEventListener('click', e => { const b = e.target.closest('button[data-o]'); if(!b) return; const own = b.dataset.o === 'm', id = b.dataset.v || b.dataset.p || b.dataset.d, list = own ? myLib() : siteLib(), x = list.find(y => y.id === id); if(!x) return;
     if(b.dataset.v) viewItem(x); else if(b.dataset.p) publish(x); else if(b.dataset.d){ if(!confirm('تمسح «' + x.title + '»؟')) return; if(own) W('lib', list.filter(y => y.id !== id)); else { const n = Object.assign({}, CFG()); n.lib = list.filter(y => y.id !== id); saveCfg(n); refreshSecs(); } libTool(); } }); }
 let sv = 0;
 const mo = new MutationObserver(() => { if(sv) return; sv = requestAnimationFrame(() => { sv = 0; const m = $q('#sxModal .sxm-in'); if(!m) return;
-  if(m.querySelector('.st-h,.qz-top,[data-fc]') && m.querySelector('.sh-doc,[data-tx],[data-tm],[data-es],[data-fc],.qz-top,.qz-end') && !m.querySelector('.gx-sv,.st-busy,.st-tabs,.dk')) { m.insertAdjacentHTML('beforeend', '<div class="gx-sv"><button type="button" data-gxsv="ask">💾 حفظ</button></div>'); const hb = m.querySelector('.st-h b'); if(hb && !m.querySelector('.gx-ren')) hb.insertAdjacentHTML('afterend', '<button type="button" class="gx-ren" data-gxren="1" title="عدّل الاسم">✏️</button>'); }
+  if(m.querySelector('.st-h') && m.querySelector('.sh-doc,[data-tx],[data-tm],[data-es]') && !m.querySelector('.gx-sv,[data-fc],.qz-nav,.dk')) m.insertAdjacentHTML('beforeend', '<div class="gx-sv"><button type="button" data-gxsv="me">💾 احفظ في مكتبتي</button>' + (adm() ? '<button type="button" data-gxsv="pin">📌 ثبّت في قسم</button>' : '') + '</div>');
   m.querySelectorAll('.dk:not([data-gxd])').forEach(d => { d.dataset.gxd = 1; const id = (d.querySelector('[data-id]') || {dataset:{}}).dataset.id; if(id && adm()) d.insertAdjacentHTML('beforeend', '<button type="button" class="gx-pin" data-gxdk="' + E(id) + '" title="ثبّت في قسم">📌</button>'); }); }); });
 mo.observe(document.body, {childList:true, subtree:true});
-document.addEventListener('click', e => { const rn = e.target.closest('[data-gxren]'); if(rn){ const hb = rn.parentNode.querySelector('.st-h b') || rn.previousElementSibling; if(hb){ const v = prompt('الاسم الجديد', hb.textContent.trim()); if(v && v.trim()) hb.textContent = v.trim(); } e.stopPropagation(); return; } const b = e.target.closest('[data-gxsv],[data-gxdk]'); if(!b) return; e.stopPropagation();
+document.addEventListener('click', e => { const b = e.target.closest('[data-gxsv],[data-gxdk]'); if(!b) return; e.stopPropagation();
   if(b.dataset.gxdk){ let D = []; try{ D = JSON.parse(localStorage.getItem('sx_decks') || '[]'); }catch(_){} const d = D.find(x => x.id === b.dataset.gxdk); if(d) publish({id:'d_' + d.id, k:'d', title:d.name, cards:d.cards.map(c => ({f:c.f, b:c.b}))}); return; }
-  const m = b.closest('.sxm-in'); if(!m) return; let title = ((m.querySelector('.st-h b,.qz-top b') || {}).textContent || 'ناتج مذاكرة').trim(), G = SX.lastGen; let it;
-  if(m.querySelector('[data-fc]') && G && G.k === 'd') it = {id:'d_' + Date.now(), k:'d', title, cards:G.cards, at:Date.now()};
-  else if(m.querySelector('.qz-top,.qz-end') && G && G.k === 'q') it = {id:'q_' + Date.now(), k:'q', title, qs:G.qs, at:Date.now()};
-  else { const c = m.cloneNode(true); c.querySelectorAll('.gx-sv,.sxm-x,.qz-end,button,input,textarea,select,script,style').forEach(x => x.remove()); it = {id:'h_' + Date.now(), k:'h', title, html:clean(c.innerHTML), at:Date.now()}; }
-  const w = css('<h3>💾 تحفظ فين؟</h3><label class="px-l">الاسم<input id="gxNm" class="px-a" style="direction:rtl;font:inherit" value="' + E(title) + '"></label><div class="px-b"><button type="button" class="on" data-gxc2="me">📚 مكتبة المذاكرة (على جهازك)</button>' + (adm() ? '<button type="button" data-gxc2="pin">📌 قسم معين في الموقع</button>' : '') + '</div>');
-  w.addEventListener('click', ev => { const x = ev.target.closest('[data-gxc2]'); if(!x) return; const nn = (w.querySelector('#gxNm').value || '').trim(); if(nn) it.title = nn; if(x.dataset.gxc2 === 'pin'){ closeGx(); return publish(it); } const l = myLib(); l.unshift(it); W('lib', l.slice(0, 60)); closeGx(); SX.say('✅ اتحفظ في مكتبة المذاكرة'); }); }, true);
+  const m = b.closest('.sxm-in'), c = m.cloneNode(true); c.querySelectorAll('.gx-sv,.sxm-x,.qz-end,button,input,textarea,select,script,style').forEach(x => x.remove()); const title = ((m.querySelector('.st-h b') || {}).textContent || 'ناتج مذاكرة').trim(), it = {id:'h_' + Date.now(), k:'h', title, html:clean(c.innerHTML), at:Date.now()};
+  if(b.dataset.gxsv === 'pin') return publish(it); const l = myLib(); l.unshift(it); W('lib', l.slice(0, 40)); b.textContent = '✅ اتحفظ في مكتبتي'; b.disabled = true; }, true);
 /* ألقاب + تطبيق + لينك التحدي */
 setInterval(() => { const h = $q('#sxHub .sxh-nm'); if(!h) return; const e = eq(), t = ITEMS.concat(CFG().custom || []).find(i => i.id === e.title); let b = h.parentElement.querySelector('.gx-title'); if(!t){ if(b) b.remove(); return; } if(!b){ b = document.createElement('span'); b.className = 'gx-title'; h.after(b); } b.textContent = t.icon + ' ' + t.v; }, 1500);
 applyEq();
@@ -13284,7 +13278,7 @@ o.body.innerHTML=`<p>👥 <b>${U.length}</b> مستخدم · 🔁 <b>${tv}</b> �
 document.addEventListener('click',e=>{if(e.target.closest('#fxUnS'))askName(false);if(e.target.closest('#fxStB'))stats();if(e.target.closest('#fxQzBtn'))hub()});
 window.FXQ={name,askName};
 /* ===== أيقونة الكويزات ===== */
-function qzBtn(){try{if(site.meta&&site.meta.gx&&site.meta.gx.hideQz&&!isAdmin){const x=$('#fxQzBtn');if(x)x.remove();return}}catch(e){} let b=$('#fxQzBtn');if(!b){const ref=$('#sxTopBtn')||$('#gamesTopBtn');b=document.createElement('button');b.className='top-ico';b.id='fxQzBtn';b.type='button';b.title='الكويزات';b.setAttribute('aria-label','الكويزات');b.textContent='📝';if(ref&&ref.parentNode)ref.parentNode.insertBefore(b,ref.nextSibling);else document.body.appendChild(b)}
+function qzBtn(){let b=$('#fxQzBtn');if(!b){const ref=$('#sxTopBtn')||$('#gamesTopBtn');b=document.createElement('button');b.className='top-ico';b.id='fxQzBtn';b.type='button';b.title='الكويزات';b.setAttribute('aria-label','الكويزات');b.textContent='📝';if(ref&&ref.parentNode)ref.parentNode.insertBefore(b,ref.nextSibling);else document.body.appendChild(b)}
 const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));if(window.FXTB)FXTB.adopt(b);
 if(!b.classList.contains('fxtbi')&&!b.hidden){let mx=0;document.querySelectorAll('.top-ico').forEach(z=>{if(z!==b&&!z.hidden&&z.offsetParent!==null){const r=z.getBoundingClientRect();if(r.top<110)mx=Math.max(mx,r.right)}});if(mx)b.style.left=(mx+6)+'px'}}
 /* ===== ألعاب 4 لاعبين ===== */
@@ -13572,7 +13566,7 @@ function syncProf(){const md=pMode(),rm=id=>{const e=$('#'+id);if(e)e.remove()};
 if(md!=='box')rm('fxProfBtn');if(md!=='center')rm('fxProfC');
 if(md==='box'){boxBtn('fxProfBtn','بروفايلي — '+pName(),`<img class="fxav" alt="" src="${E(pImg())}">`,6.4)}
 if(md==='center'){let c=$('#fxProfC');if(!c){c=document.createElement('button');c.id='fxProfC';c.type='button';c.setAttribute('aria-label','بروفايلي');document.body.appendChild(c)}
-const sp=$('#trackSplash');c.hidden=!!(sp&&!sp.classList.contains('hide'));const g=gData(),h=`<img alt="" src="${E(pImg())}"><span><b>${E(pName())}</b></span>`;if(c.dataset.h!==h){c.innerHTML=h;c.dataset.h=h}c.title='بروفايلي — '+pName();try{placePill(c)}catch(e){}}
+const sp=$('#trackSplash');c.hidden=!!(sp&&!sp.classList.contains('hide'));const g=gData(),h=`<img alt="" src="${E(pImg())}"><span><b>${E(pName())}</b><i>⭐ مستوى ${g.L.L||1}</i></span>`;if(c.dataset.h!==h){c.innerHTML=h;c.dataset.h=h}c.title='بروفايلي — '+pName();try{placePill(c)}catch(e){}}
 const nm=$('#sxHub .sxh-nm');if(nm){let a=$('.hubav',nm);if(!a){a=document.createElement('img');a.className='fxav hubav';a.alt='';nm.insertBefore(a,nm.firstChild)}if(a.getAttribute('src')!==pImg())a.src=pImg()}}
 addEventListener('resize',()=>{try{syncProf()}catch(e){}});
 function shrink(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onerror=rej;fr.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{const S=256,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d'),m=Math.min(im.width,im.height),sx=(im.width-m)/2,sy=(im.height-m)/2;x.fillStyle='#fff';x.fillRect(0,0,S,S);x.drawImage(im,sx,sy,m,m,0,0,S,S);res(c.toDataURL('image/jpeg',.82))};im.src=fr.result};fr.readAsDataURL(file)})}
@@ -13590,7 +13584,7 @@ o.el.addEventListener('click',e=>{const t=e.target;if(t.id==='fxPfUp')$('#fxPfF'
 else if(t.id==='fxPfDn'){o.el.remove();if(window.FXDN)window.FXDN.settings()}else if(t.id==='fxPfNm'){o.el.remove();try{FXQ.askName(false)}catch(_){tt('تعذّر فتح تغيير الاسم')}}
 else if(t.dataset&&t.dataset.pm){LSs('fx_prof_mode',t.dataset.pm);syncProf();draw();tt('✅ اتغيّر المكان')}});
 o.el.addEventListener('change',async e=>{if(e.target.id!=='fxPfF')return;const f=e.target.files&&e.target.files[0];if(!f)return;if(!/^image\//.test(f.type))return tt('اختار ملف صورة');try{const d=await shrink(f);LSs('fx_prof_img',d);syncProf();draw();tt('✅ اتحفظت صورتك')}catch(err){tt('مقدرتش أقرا الصورة')}})}
-document.addEventListener('click',e=>{const pc=e.target.closest('#fxProfC');if(pc){if(pc._d){clearTimeout(pc._d);pc._d=0;clearTimeout(pc._t);pc.classList.remove('sh');profile();return}pc._d=setTimeout(()=>{pc._d=0;pc.classList.add('sh');clearTimeout(pc._t);pc._t=setTimeout(()=>pc.classList.remove('sh'),3500)},260);return}if(e.target.closest('#fxProfBtn,.hubav'))profile()});
+document.addEventListener('click',e=>{if(e.target.closest('#fxProfBtn,#fxProfC,.hubav'))profile()});
 /* ===== المصحف ===== */
 const SN='الفاتحة،البقرة،آل عمران،النساء،المائدة،الأنعام،الأعراف،الأنفال،التوبة،يونس،هود،يوسف،الرعد،إبراهيم،الحجر،النحل،الإسراء،الكهف،مريم،طه،الأنبياء،الحج،المؤمنون،النور،الفرقان،الشعراء،النمل،القصص،العنكبوت،الروم،لقمان،السجدة،الأحزاب،سبأ،فاطر،يس،الصافات،ص،الزمر،غافر،فصلت،الشورى،الزخرف،الدخان،الجاثية،الأحقاف،محمد،الفتح،الحجرات،ق،الذاريات،الطور،النجم،القمر،الرحمن،الواقعة،الحديد،المجادلة،الحشر،الممتحنة،الصف،الجمعة،المنافقون،التغابن،الطلاق،التحريم،الملك،القلم،الحاقة،المعارج،نوح،الجن،المزمل،المدثر،القيامة،الإنسان،المرسلات،النبأ،النازعات،عبس،التكوير،الانفطار،المطففين،الانشقاق،البروج،الطارق،الأعلى،الغاشية،الفجر،البلد،الشمس،الليل،الضحى،الشرح،التين،العلق،القدر،البينة،الزلزلة،العاديات،القارعة،التكاثر،العصر،الهمزة،الفيل،قريش،الماعون،الكوثر،الكافرون،النصر،المسد،الإخلاص،الفلق،الناس'.split('،');
 const SP=[1,2,50,77,106,128,151,177,187,208,221,235,249,255,262,267,282,293,305,312,322,332,342,350,359,367,377,385,396,404,411,415,418,428,434,440,446,453,458,467,477,483,489,496,499,502,507,511,515,518,520,523,526,528,531,534,537,542,545,549,551,553,554,556,558,560,562,564,566,568,570,572,574,575,577,578,580,582,583,585,586,587,587,589,590,591,591,592,593,594,595,595,596,596,597,597,598,598,599,599,600,600,601,601,601,602,602,602,603,603,603,604,604,604];
@@ -14171,13 +14165,68 @@ let tries=0;const iv=setInterval(()=>{if(reg()&&++tries>3)clearInterval(iv)},800
 })();
 
 </script>
-<style id="fxProfSolo">
-#fxProfC{left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:46px!important;min-width:46px!important;max-width:46px!important;height:46px!important;padding:0!important;gap:0!important;border-radius:50%!important;overflow:visible!important;display:block!important;justify-content:center}
-#fxProfC[hidden]{display:none!important}
-#fxProfC img{width:100%!important;height:100%!important;border-radius:50%;object-fit:cover;display:block}
-#fxProfC span{display:none!important;position:absolute;top:calc(100% + 7px);left:50%;transform:translateX(-50%);background:var(--surface);color:var(--ink);border:2px solid var(--gold);border-radius:12px;padding:3px 12px;box-shadow:0 4px 12px #0003;white-space:nowrap;text-align:center}
-#fxProfC.sh span{display:block!important}
-#fxProfC span b{font-size:13px;max-width:60vw;overflow:hidden;text-overflow:ellipsis;display:block}
-</style>
-<style id="gxBagCss">html[data-gxnobag] #readTools{display:none!important}.gx-ren{border:0;background:none;cursor:pointer;font-size:15px;padding:0 6px}#fab.fxtbi{border-radius:12px}</style>
+<script id="backNavJs">
+/* زرار/سحب الرجوع في الأندرويد: بيقفل آخر حاجة اتفتحت (نافذة / قائمة / قسم…) ويرجّعك للي قبلها، ولما توصل للرئيسية بيطلّعك */
+(function(){
+  'use strict';
+  const $ = s => document.querySelector(s), ok = f => { try{ return !!f(); }catch(e){ return false; } };
+  const on = (s, c) => () => { const e = $(s); return !!e && e.classList.contains(c); };
+  const off = (s, c) => () => { const e = $(s); if(e) e.classList.remove(c); };
+  const L = [
+    ['gx',     () => !!$('#gxOv'),                         () => { const e = $('#gxOv'); if(e) e.remove(); }],
+    ['hubm',   () => !!$('#sxModal'),                      () => SX.closeModal()],
+    ['hub',    () => { const h = $('#sxHub'); return !!h && !h.hidden; }, () => document.dispatchEvent(new KeyboardEvent('keydown', {key:'Escape', bubbles:true}))],
+    ['sxt',    on('#sxtBox', 'on'),                        () => SecTools.close()],
+    ['plus',   on('#plusBox', 'on'),                       off('#plusBox', 'on')],
+    ['fun',    on('#funHub', 'on'),                        () => Fun.close()],
+    ['lect',   on('#lectBox', 'on'),                       () => Lect.close()],
+    ['poster', on('#posterBox', 'on'),                     off('#posterBox', 'on')],
+    ['light',  on('#lightbox', 'on'),                      off('#lightbox', 'on')],
+    ['search', on('#searchBox', 'on'),                     off('#searchBox', 'on')],
+    ['favs',   on('#favBox', 'on'),                        off('#favBox', 'on')],
+    ['mb',     () => { const p = $('#mbPanel'); return !!p && !p.hidden; }, () => MathBot.toggle()],
+    ['modal',  () => { const o = $('#overlay'); return !!o && o.classList.contains('open') && !o.classList.contains('closing'); }, () => closeModal()],
+    ['notif',  on('#notifDrawer', 'open'),                 () => closeNotifDrawer()],
+    ['menu',   on('#topMenu', 'open'),                     () => closeMenu()],
+    ['brand',  on('#brandWrap', 'open'),                   () => closeBrandMenu()]
+  ];
+  const secEl = k => document.getElementById('sec-' + k.slice(4));
+  const isOpen = k => { if(k.indexOf('sec:') === 0){ const e = secEl(k); return !!e && e.classList.contains('open'); } const o = L.find(x => x[0] === k); return !!o && ok(o[1]); };
+  const closeKey = k => {
+    if(k.indexOf('sec:') === 0){ const e = secEl(k); try{ openSections.delete(k.slice(4)); }catch(_){} if(e){ e.classList.remove('open'); const b = e.querySelector('[data-act="sec-toggle"]'); if(b) b.setAttribute('aria-expanded', 'false'); } return; }
+    const o = L.find(x => x[0] === k); if(o) ok(o[2]);
+  };
+  const stack = []; let silent = false;
+  const push = () => { try{ history.pushState({sx:stack.length}, ''); }catch(e){} };
+  const back = n => { if(n < 1) return; silent = true; try{ history.go(-n); }catch(e){ silent = false; } setTimeout(() => { silent = false; }, 600); };
+  function cleanup(){ let n = 0; while(stack.length && !isOpen(stack[stack.length - 1])){ stack.pop(); n++; } back(n); }
+  function sync(){
+    L.forEach(o => { if(ok(o[1]) && stack.indexOf(o[0]) < 0){ stack.push(o[0]); push(); } });
+    cleanup();
+  }
+  let q = 0; const later = () => { if(q) return; q = requestAnimationFrame(() => { q = 0; sync(); }); };
+  function regSec(id){ const k = 'sec:' + id; if(isOpen(k) && stack.indexOf(k) < 0){ stack.push(k); push(); } }
+
+  /* بداية نظيفة: لو الصفحة اتعملها ريفرش وهي واقفة على خطوة قديمة، ارجع لأول خطوة */
+  try{ const st = history.state; if(st && st.sx > 0){ silent = true; history.go(-st.sx); setTimeout(() => { silent = false; try{ history.replaceState({sx:0}, ''); }catch(e){} }, 400); } else history.replaceState({sx:0}, ''); }catch(e){}
+  /* أي replaceState في الموقع (زي فتح قسم بـ #) ما يمسحش رقم الخطوة */
+  const _rs = history.replaceState.bind(history);
+  history.replaceState = function(st, t, u){ const cur = history.state, keep = cur && cur.sx != null ? {sx:cur.sx} : {}; return _rs(Object.assign({}, st || {}, keep), t, u); };
+
+  window.addEventListener('popstate', e => {
+    if(silent){ silent = false; return; }
+    const sx = e.state && e.state.sx;
+    if(sx != null && sx > stack.length){ back(1); return; }          /* تقدّم للأمام: تجاهله */
+    const k = stack.pop(); if(k === undefined) return;
+    closeKey(k);
+    setTimeout(() => { cleanup(); sync(); }, 80);
+  });
+
+  new MutationObserver(later).observe(document.body, {subtree:true, attributes:true, attributeFilter:['class', 'hidden'], childList:true});
+  /* فتح قسم بالضغط عليه أو من القائمة = خطوة جديدة */
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-act="sec-toggle"]'); if(b){ const id = b.dataset.id; setTimeout(() => { regSec(id); later(); }, 30); } }, true);
+  try{ const _g = window.menuGoto; if(typeof _g === 'function') window.menuGoto = function(id){ const r = _g.apply(this, arguments); setTimeout(() => regSec(id), 60); return r; }; }catch(e){}
+  setTimeout(sync, 1500);
+})();
+</script>
 </body>
