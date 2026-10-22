@@ -14249,4 +14249,161 @@ let tries=0;const iv=setInterval(()=>{if(reg()&&++tries>3)clearInterval(iv)},800
   setTimeout(sync, 1500);
 })();
 </script>
+<!-- ===== 🕌 أيقونة "الدين" الموحّدة + ترتيب أيقونات البوكس ===== -->
+<style>
+#fxPrBtn,#fxAzBtn,#fxQrBtn{display:none!important}
+#fxDeenMenu{position:fixed;z-index:9996;direction:rtl;display:none;gap:8px;padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 36px #0006;font-family:inherit}
+#fxDeenMenu.open{display:flex;animation:fxDeenIn .22s cubic-bezier(.22,1,.36,1)}
+@keyframes fxDeenIn{from{opacity:0;transform:translateY(-8px) scale(.94)}to{opacity:1;transform:none}}
+#fxDeenMenu button{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:76px;padding:10px 8px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2,var(--surface));color:var(--ink);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+#fxDeenMenu button span{font-size:26px;line-height:1}
+#fxDeenMenu button:hover{border-color:var(--accent)}
+#fxDeenMenu button:active{transform:scale(.95)}
+#fxOrdBar{position:fixed;z-index:9990;direction:rtl;display:none;align-items:center;gap:6px;padding:6px 8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 20px #0004;font-size:13px;color:var(--ink)}
+#fxOrdBar.show{display:flex}
+#fxOrdBar b{cursor:pointer;padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2,var(--surface));font-weight:600;user-select:none}
+#fxOrdBar b:hover{border-color:var(--accent)}
+#fxOrdBar small{color:var(--ink-soft)}
+#fxTbPanel.fx-ord .fxtbi{animation:fxWig .5s ease-in-out infinite alternate}
+@keyframes fxWig{from{transform:rotate(-2deg)!important}to{transform:rotate(2deg)!important}}
+#fxTbPanel.fx-ord .fxtbi.fx-sel{outline:3px solid var(--accent);outline-offset:2px;animation:none}
+</style>
+<script>
+(function(){
+const $=(q,r)=>(r||document).querySelector(q);
+const ID='fxDeenBtn';
+const ITEMS=[['t','🕌','الصلاة',()=>window.FXPR&&window.FXPR.open('t')],
+             ['az','📿','الأذكار',()=>window.FXPR&&window.FXPR.open('az')],
+             ['qr','📖','المصحف',()=>window.FXMUSH&&window.FXMUSH.open()]];
+let menu,bar,ord=false,sel=null;
+
+/* ---------- الأيقونة الموحّدة ---------- */
+function ensureHub(){
+  let b=document.getElementById(ID);
+  if(!b){
+    if(!($('#sxTopBtn')||$('#gamesTopBtn')))return;
+    b=document.createElement('button');b.className='top-ico';b.id=ID;b.type='button';
+    b.title='الصلاة والأذكار والمصحف';b.setAttribute('aria-label','الصلاة والأذكار والمصحف');
+    b.textContent='🕌';b.dataset.fxo='6.4';document.body.appendChild(b);
+  }
+  const sp=$('#trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));
+  if(window.FXTB)FXTB.adopt(b);
+}
+function buildMenu(){
+  if(menu)return;
+  menu=document.createElement('div');menu.id='fxDeenMenu';
+  menu.innerHTML=ITEMS.map(i=>`<button type="button" data-deen="${i[0]}"><span>${i[1]}</span>${i[2]}</button>`).join('');
+  document.body.appendChild(menu);
+}
+function closeMenu(){if(menu)menu.classList.remove('open')}
+function openMenu(b){
+  buildMenu();
+  const r=b.getBoundingClientRect();
+  menu.classList.add('open');
+  const w=menu.offsetWidth;
+  menu.style.top=(r.bottom+8)+'px';
+  menu.style.left=Math.max(8,Math.min(r.left,innerWidth-w-8))+'px';
+}
+
+/* ---------- ترتيب أيقونات البوكس ---------- */
+function panel(){return document.getElementById('fxTbPanel')}
+function isAdm(){try{return typeof isAdmin!=='undefined'&&!!isAdmin}catch(e){return false}}
+function vis(el){return el.id&&getComputedStyle(el).display!=='none'}
+function save(ids){
+  if(!isAdm())return;
+  const v=JSON.stringify(ids);
+  try{localStorage.setItem('fx_tbord',v)}catch(e){}
+  try{
+    if(typeof site!=='undefined'&&site){
+      site.meta=site.meta||{};
+      site.meta.fx=Object.assign({},site.meta.fx,{tbord:v});
+      if(typeof scheduleSave==='function')scheduleSave();
+    }
+  }catch(e){}
+}
+function move(dir){
+  if(!isAdm())return;
+  const p=panel();if(!p||!sel)return;
+  const kids=[...p.children].filter(e=>e.id);
+  const a=kids.findIndex(e=>e.id===sel);if(a<0)return;
+  let b=a+dir;while(b>=0&&b<kids.length&&!vis(kids[b]))b+=dir;
+  if(b<0||b>=kids.length)return;
+  const A=kids[a],B=kids[b];
+  if(dir<0)p.insertBefore(A,B);else p.insertBefore(B,A);
+  const ids=[...p.children].filter(e=>e.id).map(e=>e.id);
+  ids.forEach((id,i)=>{const e=document.getElementById(id);if(e)e.dataset.fxo=i});
+  save(ids);
+}
+function setOrd(on){
+  if(on&&!isAdm())return;
+  ord=on;sel=null;
+  const p=panel();if(p){p.classList.toggle('fx-ord',on);p.querySelectorAll('.fx-sel').forEach(e=>e.classList.remove('fx-sel'))}
+  drawBar();
+}
+function drawBar(){
+  if(!bar){bar=document.createElement('div');bar.id='fxOrdBar';document.body.appendChild(bar)}
+  bar.innerHTML=ord
+    ?'<b data-o="L">◀</b><b data-o="R">▶</b><b data-o="done">✔ تم</b><small>'+(sel?'حرّكها بالأسهم':'اختار أيقونة')+'</small>'
+    :'<b data-o="on">⇅ ترتيب الأيقونات</b>';
+}
+function placeBar(){
+  const p=panel();if(!p){if(bar)bar.classList.remove('show');return}
+  const open=p.classList.contains('open');
+  if(!isAdm()){if(ord)setOrd(false);if(bar)bar.classList.remove('show');if(!open)closeMenu();return}
+  if(!open){if(ord)setOrd(false);if(bar)bar.classList.remove('show');closeMenu();return}
+  if(!bar)drawBar();
+  const r=p.getBoundingClientRect();
+  bar.classList.add('show');
+  bar.style.top=(r.bottom+8)+'px';
+  bar.style.left=Math.max(8,Math.min(r.left,innerWidth-bar.offsetWidth-8))+'px';
+}
+
+/* ---------- الأحداث ---------- */
+document.addEventListener('click',e=>{
+  const t=e.target;
+  /* وضع الترتيب: اختيار أيقونة بدل تشغيلها */
+  if(ord){
+    const ic=t.closest&&t.closest('#fxTbPanel .fxtbi');
+    if(ic){
+      e.preventDefault();e.stopImmediatePropagation();
+      sel=ic.id;
+      panel().querySelectorAll('.fx-sel').forEach(x=>x.classList.remove('fx-sel'));
+      ic.classList.add('fx-sel');drawBar();return;
+    }
+  }
+},true);
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const o=t.closest&&t.closest('#fxOrdBar [data-o]');
+  if(o){
+    e.stopPropagation();
+    const k=o.dataset.o;
+    if(k==='on')setOrd(true);
+    else if(k==='done')setOrd(false);
+    else if(k==='L')move(-1);   /* اللوحة LTR: يسار = قبل */
+    else if(k==='R')move(1);
+    if(k==='L'||k==='R')drawBar();
+    return;
+  }
+  const hub=t.closest&&t.closest('#'+ID);
+  if(hub){
+    if(ord)return;
+    e.stopPropagation();
+    if(menu&&menu.classList.contains('open'))closeMenu();else openMenu(hub);
+    return;
+  }
+  const d=t.closest&&t.closest('#fxDeenMenu [data-deen]');
+  if(d){
+    const it=ITEMS.find(i=>i[0]===d.dataset.deen);
+    closeMenu();
+    try{it&&it[3]()}catch(err){}
+    return;
+  }
+  if(menu&&menu.classList.contains('open')&&!t.closest('#fxDeenMenu'))closeMenu();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();if(ord)setOrd(false)}});
+
+setInterval(()=>{try{ensureHub();placeBar()}catch(e){}},400);
+})();
+</script>
 </body>
