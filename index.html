@@ -4090,6 +4090,32 @@ function purgeMath1(){
    إضافات: إعلان، عدّاد تنازلي، روابط التذييل، أدوات القراءة، لون شريط المتصفح
    ======================================================================= */
 /* عدّاد تنازلي حيّ في الشريط العلوي (بيدور على أكتر من حدث لو فيه) */
+const DZK = ['annText','annKind','annLink','annMode','annAlign','annMarquee','cdLabel','cdDate','cdMore','infoMore'];
+function dzKey(){ return window.__fxSkin==='pm' ? 'pm' : (window.__fxDesign==='nd' ? 'nd' : 'classic'); }
+function dzTrack(){
+  try{ if(window.__fxDesign==='nd' && window.ND && window.ND.view) return window.ND.view==='home' ? null : (window.ND.track || null); }catch(e){}
+  return (currentTrack==='math1' || currentTrack==='math2' || currentTrack==='math3') ? currentTrack : null;
+}
+/* البيانات: dz2[الديزاين][المكان: all | math1 | math2 | math3] = {الحقول} */
+function dz2(){
+  const m = site.meta = site.meta || {};
+  if(!m.dz2){
+    m.dz2 = {};
+    if(m.dz){ for(const d in m.dz) m.dz2[d] = { math2: m.dz[d] }; }
+    else { const o = {}; let any = false; DZK.forEach(k=>{ if(m[k] != null && m[k] !== '' && m[k] !== false){ o[k] = m[k]; any = true; } }); if(any) m.dz2[dzKey()] = { all: o }; }
+  }
+  return m.dz2;
+}
+function dzMeta(){
+  const m = site.meta || {}, base = Object.assign({}, m); DZK.forEach(x=>{ delete base[x]; });
+  const D = dz2()[dzKey()] || {}, A = D.all || {}, tk = dzTrack(), T = tk ? (D[tk] || {}) : {};
+  const o = {};
+  const ann = T.annText ? T : A; ['annText','annKind','annLink','annMode','annAlign','annMarquee'].forEach(k=>{ o[k] = ann[k]; });
+  const cd = (T.cdLabel && T.cdDate) ? T : A; o.cdLabel = cd.cdLabel; o.cdDate = cd.cdDate;
+  o.cdMore = [A.cdMore, T.cdMore].filter(Boolean).join('\n');
+  o.infoMore = [A.infoMore, T.infoMore].filter(Boolean).join('\n');
+  return Object.assign(base, o);
+}
 let __cdTimer = null, __cdRot = null, __cdList = [], __cdIdx = 0, __cdTarget = 0;
 function cdParse(m){
   const out = [];
@@ -4097,6 +4123,30 @@ function cdParse(m){
   add(m.cdLabel, m.cdDate);
   String(m.cdMore||'').split('\n').forEach(x=>{ const a = x.split('|'); if(a.length >= 2) add(a[0], a[1]); });
   return out.sort((a,b)=>a.t-b.t);
+}
+function pmDates(m){
+  const root = document.documentElement; m = m || {};
+  if(m.pmCols) root.setAttribute('data-pmcols', m.pmCols); else root.removeAttribute('data-pmcols');
+  let box = document.getElementById('pmDates');
+  const ann = document.getElementById('siteAnn'); if(!ann) return;
+  if(!box){ box = document.createElement('div'); box.id = 'pmDates'; ann.insertAdjacentElement('afterend', box); }
+  const list = cdParse(m), t0 = new Date(); t0.setHours(0,0,0,0);
+  const infos = String(m.infoMore || '').split('\n').map(x=>x.trim()).filter(Boolean);
+  if(!list.length && !infos.length){
+    box.innerHTML = (document.body.classList.contains('admin') && dzTrack())
+      ? '<div class="pmd-empty">📅 لسه مفيش مواعيد أو معلومات للمادة دي (الطلبة مش شايفين الشريط ده). <button type="button" class="btn sm primary" data-act="settings">➕ ضيف ميعاد أو معلومة</button></div>'
+      : '';
+    return;
+  }
+  const PAL = [['#00b894','#0984e3'],['#fd9644','#ff5c9a'],['#0984e3','#6c4cff'],['#e17055','#d63031'],['#a55eea','#4b7bec'],['#00b894','#6c4cff']];
+  let i = 0; const g = ()=>{ const c = PAL[i++ % PAL.length]; return '--g1:' + c[0] + ';--g2:' + c[1]; };
+  const cards = infos.map(x=>'<div class="pmb" style="' + g() + '" role="status"><span>📌 ' + esc(x) + '</span></div>').concat(list.map(it=>{
+    const d = Math.round((it.t - t0.getTime())/86400000);
+    const n = d <= 0 ? 'النهاردة 🔥' : d === 1 ? 'بكرة ⏰' : d === 2 ? 'بعد يومين' : 'باقي ' + d + ' يوم';
+    const dt = new Date(it.t).toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'});
+    return '<div class="pmb" style="' + g() + '" role="status"><span>📅 ' + esc(it.l) + ' — ' + esc(dt) + '</span><span class="pmb-n">' + n + '</span></div>';
+  }));
+  box.innerHTML = cards.join('');
 }
 function setupCountdown(m){
   const el = document.getElementById('topCd'); if(!el) return;
@@ -4393,15 +4443,14 @@ function featuresModal(){
     <hr class="sep">
     <div class="field"><label for="f-daily">💡 قائمة "معادلة / سؤال اليوم" (سطر لكل يوم، بيتبدّل لوحده كل يوم)</label>
       <textarea id="f-daily" style="min-height:90px" placeholder="مثلاً: $\\int_0^1 x^2 dx$ تساوي كام؟">${esc(m.dailyList||'')}</textarea></div>
-    <div class="field"><label for="f-more">⏳ عدّادات إضافية (بتتبدّل مع الأساسي في الشريط العلوي كل 6 ثواني)</label>
-      <textarea id="f-more" style="min-height:70px" placeholder="كالكولس | 2026-12-20&#10;ديناميكا | 2026-12-27">${esc(m.cdMore||'')}</textarea><p class="hint">سطر لكل حدث بالشكل: الاسم | التاريخ (سنة-شهر-يوم)</p></div>
+    
     <div class="field"><label for="f-maint">🛠️ رسالة وضع الصيانة</label><input id="f-maint" value="${esc(m.maintMsg||'')}" placeholder="الموقع في تحديث بسيط دلوقتي…"></div>
     <div class="field"><label>🌙 ساعات الوضع الليلي التلقائي</label>
       <div style="display:flex;gap:8px;align-items:center">من <input type="number" id="f-adf" min="0" max="23" value="${m.adFrom==null?20:m.adFrom}" style="width:80px"> إلى <input type="number" id="f-adt" min="0" max="23" value="${m.adTo==null?6:m.adTo}" style="width:80px"></div></div>`,
     footSave(), ()=>{
       m.feat = m.feat || {};
       document.querySelectorAll('[data-fk]').forEach(c=>{ m.feat[c.dataset.fk] = c.checked; });
-      m.dailyList = $('#f-daily').value; m.cdMore = $('#f-more').value; m.maintMsg = $('#f-maint').value.trim();
+      m.dailyList = $('#f-daily').value; m.maintMsg = $('#f-maint').value.trim();
       m.adFrom = +$('#f-adf').value; m.adTo = +$('#f-adt').value;
       commit(); applyTheme(site.theme);
     });
@@ -4459,7 +4508,7 @@ document.addEventListener('keydown', e=>{
 });
 function safeUrl(u){ u=String(u||'').trim(); return /^https?:\/\//i.test(u) ? u : ''; }
 function renderExtras(){
-  const m = site.meta || {};
+  const m = dzMeta();
   const box = document.getElementById('siteAnn'); let html = '';
   const hidden = (()=>{ try{ return sessionStorage.getItem('site_ann_hide') === m.annText; }catch(e){ return false; } })();
   if(m.annText && !hidden){
@@ -4467,6 +4516,7 @@ function renderExtras(){
     html += `<div class="ann ann-${esc(m.annKind||'info')} ann-${m.annMode==='bar'?'bar':'pill'}${m.annMarquee?' ann-mq':''}" role="status"><span class="ann-t">📢 ${esc(m.annText)}</span>${u?`<a href="${esc(u)}" target="_blank" rel="noopener">فتح ↗</a>`:''}<button type="button" data-ann-x aria-label="إغلاق الإعلان">✕</button></div>`;
   }
   setupCountdown(m);
+  try{ pmDates(m); }catch(e){}
   try{ Decor.apply(); }catch(e){}
   if(box){ box.innerHTML = html; box.dataset.al = m.annAlign || 'center'; }
   const fl = document.getElementById('footLinks');
@@ -4486,7 +4536,7 @@ function renderExtras(){
   const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); if(/^#[0-9a-f]{3,8}$/i.test(bg)) tc.content = bg;
 }
 document.addEventListener('click', e=>{
-  if(e.target.closest('[data-ann-x]')){ try{ sessionStorage.setItem('site_ann_hide', site.meta.annText||''); }catch(_){} renderExtras(); }
+  if(e.target.closest('[data-ann-x]')){ try{ sessionStorage.setItem('site_ann_hide', dzMeta().annText||''); }catch(_){} renderExtras(); }
   const rb = e.target.closest('#readTools button[data-d]'); if(rb){
     let ua = parseFloat(localStorage.getItem('site_ua')) || 1; ua = Math.min(1.5, Math.max(.8, Math.round((ua + .1*(+rb.dataset.d))*10)/10));
     try{ localStorage.setItem('site_ua', String(ua)); }catch(_){} document.documentElement.style.setProperty('--ua', ua);
@@ -4806,7 +4856,7 @@ function askPassword(){
       const h = await hashPass(val);
       if(!site.auth.passHash){ site.auth.passHash = await hashPass(CONFIG.DEFAULT_PASSWORD); }
       if(h === site.auth.passHash){
-        isAdmin = true; document.body.classList.add('admin'); try{localStorage.setItem('site_no_count','1');}catch(e){} $('#fab').textContent='🔓'; renderQA();
+        isAdmin = true; document.body.classList.add('admin'); try{localStorage.setItem('site_no_count','1');}catch(e){} $('#fab').textContent='🔓'; renderQA(); try{ pmDates(dzMeta()); }catch(e){}
         closeModal(); toast('وضع التحرير مفعّل'); setStatus(Store.mode==='local'?'حفظ محلي':'جاهز');
       } else { toast('كلمة المرور غير صحيحة'); }
       return false;
@@ -5302,6 +5352,10 @@ document.addEventListener('input', e=>{
   if(id==='g2c' || id==='g3c'){ const cb = document.getElementById(id+'on'); if(cb) cb.checked = true; }
 });
 function settingsModal(){
+  const DZ = JSON.parse(JSON.stringify(dz2())); let dzCur = dzKey(), dtCur = dzTrack() || 'all';
+  const dv = k => (((DZ[dzCur] || {})[dtCur]) || {})[k];
+  const readDz = ()=>({annText:$('#g-ann').value.trim(), annKind:$('#g-annk').value, annLink:$('#g-annl').value.trim(), annMode:$('#g-annm').value, annAlign:$('#g-anna').value, annMarquee:$('#g-annmq').checked, cdLabel:$('#g-cdl').value.trim(), cdDate:$('#g-cdd').value, cdMore:$('#g-cdm').value, infoMore:$('#g-info').value});
+  const writeDz = ()=>{ const d = ((DZ[dzCur] || {})[dtCur]) || {}; $('#g-ann').value = d.annText||''; $('#g-annk').value = d.annKind||'info'; $('#g-annl').value = d.annLink||''; $('#g-annm').value = d.annMode||'pill'; $('#g-anna').value = d.annAlign||'center'; $('#g-annmq').checked = !!d.annMarquee; $('#g-cdl').value = d.cdLabel||''; $('#g-cdd').value = d.cdDate||''; $('#g-cdm').value = d.cdMore||''; $('#g-info').value = d.infoMore||''; };
   openModal('إعدادات الموقع', `
     <div class="field"><label for="g1">اسم الموقع (أعلى الصفحة)</label><input id="g1" value="${esc(site.meta.title)}"></div>
     <div class="field"><label for="g2">العنوان الرئيسي</label><input id="g2" value="${esc(site.meta.heroTitle)}">
@@ -5327,18 +5381,31 @@ function settingsModal(){
     </div>
     <div class="field"><label for="g5">نص التذييل</label><input id="g5" value="${esc(site.meta.footer||'')}"></div>
     <hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
+    <div class="field" style="background:var(--accent-soft);border-radius:12px;padding:10px 12px"><label for="g-dt">📍 الإعلان والمواعيد اللي تحت دي تظهر فين؟</label>
+      <select id="g-dt">${[['math1','Math 1 — الأولى'],['math2','Math 2 — التانية'],['math3','Math 3 — التالتة'],['all','🌍 كل المواد (بيظهر في الواجهة كمان)']].map(([v,l])=>`<option value="${v}" ${dtCur===v?'selected':''}>${l}</option>`).join('')}</select>
+      <label for="g-dz" style="margin-top:8px;display:block">🎨 في أنهي ديزاين؟</label>
+      <select id="g-dz">${[['classic','الديزاين الأول'],['nd','الديزاين الثاني'],['pm','الديزاين الثالث (ماث)']].map(([v,l])=>`<option value="${v}" ${dzCur===v?'selected':''}>${l}</option>`).join('')}</select>
+      <p class="hint">اللي تكتبه تحت بيظهر جوا المادة اللي تختارها بس، ومش بيظهر برا في الواجهة. بدّل بين المواد والديزاينات من هنا وانت بتكتب وبعدين دوس حفظ مرة واحدة.</p></div>
     <div class="field"><label for="g-ann">📢 إعلان أعلى الصفحة (اتركه فارغاً لإخفائه)</label>
-      <input id="g-ann" value="${esc(site.meta.annText||'')}" placeholder="مثلاً: تم رفع محاضرات الأسبوع الجديد">
-      <div style="display:flex;gap:8px;margin-top:8px"><select id="g-annk" style="flex:1">${[['info','🔵 معلومة'],['ok','🟢 خبر حلو'],['warn','🟠 تنبيه'],['accent','🎨 بلون المظهر']].map(([v,l])=>`<option value="${v}" ${(site.meta.annKind||'info')===v?'selected':''}>${l}</option>`).join('')}</select>
-      <input id="g-annl" value="${esc(site.meta.annLink||'')}" placeholder="رابط (اختياري) https://…" style="flex:2"></div>
+      <input id="g-ann" value="${esc(dv('annText')||'')}" placeholder="مثلاً: تم رفع محاضرات الأسبوع الجديد">
+      <div style="display:flex;gap:8px;margin-top:8px"><select id="g-annk" style="flex:1">${[['info','🔵 معلومة'],['ok','🟢 خبر حلو'],['warn','🟠 تنبيه'],['accent','🎨 بلون المظهر']].map(([v,l])=>`<option value="${v}" ${(dv('annKind')||'info')===v?'selected':''}>${l}</option>`).join('')}</select>
+      <input id="g-annl" value="${esc(dv('annLink')||'')}" placeholder="رابط (اختياري) https://…" style="flex:2"></div>
       <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-        <select id="g-annm" style="flex:1;min-width:130px">${[['pill','💊 كبسولة (على قد الكلام)'],['bar','▬ شريط بعرض الصفحة']].map(([v,l])=>`<option value="${v}" ${(site.meta.annMode||'pill')===v?'selected':''}>${l}</option>`).join('')}</select>
-        <select id="g-anna" style="flex:1;min-width:130px">${[['center','↔ في النص'],['start','⇥ يمين'],['end','⇤ يسار']].map(([v,l])=>`<option value="${v}" ${(site.meta.annAlign||'center')===v?'selected':''}>${l}</option>`).join('')}</select></div>
-      <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin-top:8px"><input type="checkbox" id="g-annmq" ${site.meta.annMarquee?'checked':''} style="width:auto"> 🎞️ نص متحرّك (شريط أخبار بيمشي)</label>
+        <select id="g-annm" style="flex:1;min-width:130px">${[['pill','💊 كبسولة (على قد الكلام)'],['bar','▬ شريط بعرض الصفحة']].map(([v,l])=>`<option value="${v}" ${(dv('annMode')||'pill')===v?'selected':''}>${l}</option>`).join('')}</select>
+        <select id="g-anna" style="flex:1;min-width:130px">${[['center','↔ في النص'],['start','⇥ يمين'],['end','⇤ يسار']].map(([v,l])=>`<option value="${v}" ${(dv('annAlign')||'center')===v?'selected':''}>${l}</option>`).join('')}</select></div>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;margin-top:8px"><input type="checkbox" id="g-annmq" ${dv('annMarquee')?'checked':''} style="width:auto"> 🎞️ نص متحرّك (شريط أخبار بيمشي)</label>
       <p class="hint">الطالب يقدر يقفل الإعلان لحد ما يفتح الموقع تاني.</p></div>
-    <div class="field"><label for="g-cdl">⏳ عدّاد تنازلي في الشريط العلوي (امتحان / ميعاد تسليم)</label>
-      <div style="display:flex;gap:8px"><input id="g-cdl" value="${esc(site.meta.cdLabel||'')}" placeholder="اسم الحدث: الميدترم" style="flex:2"><input type="date" id="g-cdd" value="${esc(site.meta.cdDate||'')}" style="flex:1"></div>
+    <div class="field"><label for="g-cdl">⏳ ميعاد الكويز / الامتحان القادم (عدّاد تنازلي)</label>
+      <div style="display:flex;gap:8px"><input id="g-cdl" value="${esc(dv('cdLabel')||'')}" placeholder="اسم الحدث: أول كويز تفاضل وتكامل" style="flex:2"><input type="date" id="g-cdd" value="${esc(dv('cdDate')||'')}" style="flex:1"></div>
       <p class="hint">بيظهر اسم الحدث وجنبه أيام/ساعات/دقايق/ثواني متبقية في الشريط العلوي لكل الطلبة، وبيقول "النهاردة" يوم الحدث وبيختفي بعده.</p></div>
+    <div class="field"><label for="g-cdm">📅 مواعيد مهمة تانية (كويزات / تسليمات / امتحانات)</label>
+      <textarea id="g-cdm" style="min-height:96px" placeholder="كويز جبر|2026-11-08&#10;تسليم التكليف|2026-11-12&#10;الميدترم|15/12/2026">${esc(dv('cdMore')||'')}</textarea>
+      <p class="hint">سطر لكل ميعاد بالشكل: الاسم | التاريخ (2026-11-08 أو 8/11/2026). الميعاد اللي فوق + المواعيد دي بتظهر كلها مترتبة بالأقرب في شريط «📅 المواعيد المهمة» أعلى الصفحة في الديزاين التالت، وبتختفي لوحدها بعد يومها.</p></div>
+    <div class="field"><label for="g-info">📌 معلومة أو ميعاد من غير تايمر (مجرد خبر فوق الصفحة)</label>
+      <textarea id="g-info" style="min-height:80px" placeholder="أول كويز في تفاضل وتكامل يوم الأحد القادم&#10;تسليم التكليف يوم الخميس">${esc(dv('infoMore')||'')}</textarea>
+      <p class="hint">سطر لكل معلومة. بتظهر كارت بنفس شكل كروت المواعيد، من غير عدّاد، وتفضل ظاهرة لحد ما تمسحها.</p></div>
+    <div class="field"><label for="g-pmc">🧱 عدد الأقسام جنب بعض جوا المادة (الديزاين التالت)</label>
+      <select id="g-pmc">${[['','تلقائي (2 على الموبايل / 3 على الشاشة الكبيرة)'],['2','2 جنب بعض دايماً'],['3','3 جنب بعض دايماً']].map(([v,l])=>`<option value="${v}" ${(site.meta.pmCols||'')===v?'selected':''}>${l}</option>`).join('')}</select></div>
     <div class="field"><label for="g-intro">👋 جملة شاشة الترحيب</label><input id="g-intro" value="${esc(site.meta.introSub||'')}" placeholder="أهلاً بيك في مساحتك الرياضية ✨"></div>
     <div class="field"><label for="g-links">🔗 روابط التواصل في التذييل</label>
       <textarea id="g-links" style="min-height:76px" placeholder="واتساب | https://wa.me/20...&#10;تليجرام | https://t.me/...">${esc(site.meta.footLinks||'')}</textarea>
@@ -5356,8 +5423,8 @@ function settingsModal(){
     site.meta.heroColor = $('#g2con').checked ? $('#g2c').value : '';
     site.meta.heroSubColor = $('#g3con').checked ? $('#g3c').value : '';
     site.meta.footer=$('#g5').value.trim();
-    site.meta.annText=$('#g-ann').value.trim(); site.meta.annKind=$('#g-annk').value; site.meta.annLink=$('#g-annl').value.trim(); site.meta.annMode=$('#g-annm').value; site.meta.annAlign=$('#g-anna').value; site.meta.annMarquee=$('#g-annmq').checked; site.meta.shareBtn=$('#g-share').checked;
-    site.meta.cdLabel=$('#g-cdl').value.trim(); site.meta.cdDate=$('#g-cdd').value;
+    site.meta.shareBtn=$('#g-share').checked;
+    (DZ[dzCur]=DZ[dzCur]||{})[dtCur]=readDz(); site.meta.dz2=DZ; site.meta.pmCols=$('#g-pmc').value;
     site.meta.introSub=$('#g-intro').value.trim(); site.meta.footLinks=$('#g-links').value;
     site.meta.showUpd=$('#g-upd').checked; site.meta.readerTools=$('#g-reader').checked;
     const p1=$('#p1').value, p2=$('#p2').value;
@@ -5368,6 +5435,7 @@ function settingsModal(){
     }
     commit();
   });
+  const dzSel=$('#g-dz'), dtSel=$('#g-dt'); const dzSw=()=>{ (DZ[dzCur]=DZ[dzCur]||{})[dtCur]=readDz(); dzCur=dzSel.value; dtCur=dtSel.value; writeDz(); }; if(dzSel) dzSel.addEventListener('change',dzSw); if(dtSel) dtSel.addEventListener('change',dzSw);
   const logoFile = $('#g6f');
   if(logoFile) logoFile.addEventListener('change', e=>{
     const f=e.target.files[0]; if(!f) return;
@@ -5614,7 +5682,7 @@ document.addEventListener('click', async e=>{
       break;
     }
     case 'logout':
-      isAdmin=false; document.body.classList.remove('admin'); $('#fab').textContent='🔒'; renderQA(); toast('تم الخروج من وضع التحرير'); break;
+      isAdmin=false; document.body.classList.remove('admin'); $('#fab').textContent='🔒'; renderQA(); try{ pmDates(dzMeta()); }catch(e){} toast('تم الخروج من وضع التحرير'); break;
     case 'export': {
       const blob = new Blob([JSON.stringify(site,null,2)],{type:'application/json'});
       const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
@@ -15279,9 +15347,10 @@ footer{border-top:0!important;margin-top:36px!important;padding:0 0 30px!importa
 (function(){ if(window.__fxDesign!=='nd')return;
   var YEARS = [['math1','Math 1','السنة الأولى','∑'],['math2','Math 2','السنة الثانية','∫'],['math3','Math 3','السنة الثالثة','∂']];
   var DEF_TITLE = 'مساحة لعرض ما يستحق أن يُقرأ', DEF_SUB_START = 'أقسام تنظّمها كما تريد';
-  var HERO_T = 'أهلاً بيك في عالم الرياضيات';
-  var HERO_S = 'كل المواد هتلاقيها جوا';
-  var TYPES = {all:'الكل', video:'فيديوهات', pdf:'ملفات PDF', link:'لينكات'};
+  var HERO_T = window.__fxSkin==='pm' ? 'كل مواد دفعتنا في مكان واحد' : 'أهلاً بيك في عالم الرياضيات';
+  var HERO_S = window.__fxSkin==='pm' ? 'ملخصات، محاضرات، امتحانات سنين فاتت وفيديوهات شرح. دوّر واختار مادتك وذاكر بسهولة.' : 'كل المواد هتلاقيها جوا';
+  var TYPES = window.__fxSkin==='pm' ? {all:'🌈 الكل', sum:'📝 ملخصات', lec:'📚 محاضرات', exam:'🧪 امتحانات', video:'🎬 فيديوهات'} : {all:'الكل', video:'فيديوهات', pdf:'ملفات PDF', link:'لينكات'};
+  var PMKW = {sum:/ملخص|مذكر|summar/, lec:/محاضر|lecture|شرح/, exam:/امتحان|اختبار|سنين|exam|quiz|كويز/};
   var $i = function(id){ return document.getElementById(id); };
   var yOf = function(k){ for(var i=0;i<YEARS.length;i++) if(YEARS[i][0]===k) return YEARS[i]; return null; };
   var E = function(s){ return esc(s); };
@@ -15393,7 +15462,7 @@ footer{border-top:0!important;margin-top:36px!important;padding:0 0 30px!importa
       } else this.fFold = 'all';
       var q = this.fq, ty = this.fType;
       var ok = function(s){
-        if(ty!=='all' && !kinds(s)[ty]) return false;
+        if(ty!=='all'){ if(PMKW[ty] && window.__fxSkin==='pm'){ if(!PMKW[ty].test(deepText(s))) return false; } else if(!kinds(s)[ty]) return false; }
         if(q && deepText(s).indexOf(q) < 0) return false;
         return true;
       };
@@ -15724,6 +15793,59 @@ html.fx-skin-pm #ndSub .linkbtn:hover{border-color:var(--accent);transform:trans
 
 html.fx-skin-pm .qa-section>.wrap{border-radius:24px}
 html.fx-skin-pm footer{text-align:center}
+/* ===== ديزاين ماث: مواعيد مهمة + أقسام المادة جنب بعض ===== */
+#pmDates{margin:14px 0 4px}
+#pmDates:empty{display:none}
+.pmd-h{font-weight:800;font-size:14px;margin:0 2px 8px;color:var(--ink-soft)}
+.pmd-row{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.pmd{flex:0 0 auto;min-width:150px;max-width:240px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:14px;padding:10px 14px;box-shadow:var(--shadow)}
+.pmd b{display:block;font-size:14px;color:var(--ink)}
+.pmd small{display:block;color:var(--ink-soft);font-size:12px;margin-top:2px}
+.pmd-n{display:inline-block;margin-top:6px;font-weight:800;font-size:13px;background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:2px 10px}
+.pmd-empty{background:var(--surface);border:1px dashed var(--accent);border-radius:14px;padding:12px 14px;font-size:13px;color:var(--ink-soft);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pmd.urgent{border-top-color:var(--danger)}
+.pmd.urgent .pmd-n{background:color-mix(in srgb,var(--danger) 16%,transparent);color:var(--danger)}
+html.fx-skin-pm .nd-group{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(min-width:640px){html.fx-skin-pm .nd-group{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}}
+html.fx-skin-pm[data-pmcols="2"] .nd-group{grid-template-columns:repeat(2,minmax(0,1fr))}
+html.fx-skin-pm[data-pmcols="3"] .nd-group{grid-template-columns:repeat(3,minmax(0,1fr))}
+html.fx-skin-pm .nd-group .nd-item{height:100%;box-sizing:border-box}
+@media(max-width:639px){
+  html.fx-skin-pm .nd-group .nd-item{padding:14px 12px;border-radius:16px}
+  html.fx-skin-pm .nd-group .nd-badge{font-size:30px}
+  html.fx-skin-pm .nd-group .nd-item .t{font-size:14px;line-height:1.5;margin-top:4px;overflow-wrap:anywhere}
+  html.fx-skin-pm .nd-group .pm-dr{font-size:12px}
+  html.fx-skin-pm .nd-group .pm-cnt span{font-size:11px;padding:2px 7px}
+}
+#pmDates .pmd.info,.pmd.info{min-width:180px;max-width:320px;display:flex;align-items:center}
+.pmd.info b{font-size:14px;line-height:1.6}
+#pmDates{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+#pmDates:empty{display:none}
+.pmb{display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%;box-sizing:border-box;padding:16px 20px;border-radius:18px;color:#fff;font-weight:600;font-size:15px;line-height:1.7;background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:var(--shadow)}
+.pmb-n{margin-inline-start:auto;background:rgba(255,255,255,.22);padding:3px 12px;border-radius:99px;font-weight:800;font-size:13px}
+/* ===== ديزاين ماث: شكل الصفحة زي المرجع (هيرو + بانر + بحث + فلاتر) ===== */
+html.fx-skin-pm #topCd{display:none!important}
+html.fx-skin-pm .nd-hero{padding:30px 0 18px}
+html.fx-skin-pm .nd-hero h1{background:none!important;color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important;animation:none!important;font-size:clamp(34px,7vw,64px);margin:0 0 12px}
+html.fx-skin-pm .nd-hero h1::after{content:" ✨";-webkit-text-fill-color:initial}
+html.fx-skin-pm .nd-hero h1 .pm-g1,html.fx-skin-pm .nd-hero h1 .pm-g2{-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent!important}
+html.fx-skin-pm .nd-hero h1 .pm-g1{background-image:linear-gradient(90deg,#6c4cff,#a55eea)}
+html.fx-skin-pm .nd-hero h1 .pm-g2{background-image:linear-gradient(90deg,#ff5c9a,#ff9f43)}
+html.fx-skin-pm .nd-hero p{max-width:560px;line-height:1.9}
+html.fx-skin-pm #siteAnn{margin-top:14px}
+html.fx-skin-pm #siteAnn .ann{width:100%;max-width:100%;justify-content:flex-start;text-align:start;font-size:15px;padding:16px 20px!important;border-radius:18px!important}
+html.fx-skin-pm #siteAnn .ann button{margin-inline-start:auto}
+.pmd{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:0;border-radius:16px;padding:12px 16px}
+.pmd b,.pmd small{color:#fff}
+.pmd small{opacity:.85}
+.pmd-n,.pmd.urgent .pmd-n{background:rgba(255,255,255,.22);color:#fff}
+.pmd.urgent{box-shadow:0 0 0 2px rgba(255,255,255,.55),var(--shadow)}
+html.fx-skin-pm #ndYear .nd-yhead{display:none}
+html.fx-skin-pm #ndYear .nd-back{margin-top:4px}
+html.fx-skin-pm .nd-tools{display:block;margin:14px 0 6px}
+html.fx-skin-pm .nd-search{width:100%;box-sizing:border-box;padding:18px 20px;font-size:16px;border-radius:16px}
+html.fx-skin-pm .nd-chips{margin-top:14px}
+html.fx-skin-pm .nd-chip{padding:12px 20px;border-radius:999px;font-size:15px}
 .pm-conf{position:fixed;font-size:22px;pointer-events:none;z-index:99999;animation:pmCf 1s ease-out forwards}
 @media(prefers-reduced-motion:reduce){html.fx-skin-pm *,#pmFx *{animation:none!important;transition:none!important}}
 </style>
@@ -15733,6 +15855,20 @@ html.fx-skin-pm footer{text-align:center}
 (function(){ if(window.__fxSkin!=='pm'||!window.ND)return;
   var ND=window.ND, $i=function(id){return document.getElementById(id)};
   var esc2=function(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+
+  /* الهيرو (العنوان + الكلام + المعادلة) يبقى فوق كل الصفحات، وبعده البانر والمواعيد ثم البحث */
+  (function(){
+    var hero=document.querySelector('#ndHome .nd-hero'), wrap=document.querySelector('#ndApp .nd-wrap');
+    if(hero&&wrap) wrap.insertBefore(hero,wrap.firstChild);
+    var q=$i('ndQ'); if(q) q.placeholder='🔍 دوّر على مادة أو دكتور...';
+    function styleTitle(){
+      var h=$i('heroTitle'); if(!h||h.querySelector('.pm-g1'))return;
+      var w=h.textContent.trim().split(/\s+/); if(w.length<2)return;
+      var b=w.pop(), a=w.pop();
+      h.innerHTML=(w.length?esc2(w.join(' '))+' ':'')+'<span class="pm-g1">'+esc2(a)+'</span> <span class="pm-g2">'+esc2(b)+'</span>';
+    }
+    var h0=$i('heroTitle'); if(h0){ new MutationObserver(styleTitle).observe(h0,{childList:true,characterData:true,subtree:true}); styleTitle(); }
+  })();
 
   /* رموز طايرة */
   if(!$i('pmFx')){
@@ -15952,13 +16088,13 @@ function setTx(o){
 function applyTx(){
   const t=tx();
   const put=(sel,v)=>{if(!v)return;document.querySelectorAll(sel).forEach(e=>{if(e.textContent!==v)e.textContent=v})};
-  put('#ndHome #heroTitle,#trackSplash.fxh .nd-hero h1',t.ndTitle);
-  put('#ndHome #heroSub,#trackSplash.fxh .nd-hero p',t.ndSub);
+  put('#heroTitle',window.__fxSkin==='pm'?t.pmTitle:t.ndTitle);put('#trackSplash.fxh .nd-hero h1',t.ndTitle);
+  put('#heroSub',window.__fxSkin==='pm'?t.pmSub:t.ndSub);put('#trackSplash.fxh .nd-hero p',t.ndSub);
   put('#trackSplash:not(.fxh) .ts-title',t.clTitle);
   put('#trackSplash:not(.fxh) .ts-sub',t.clSub);
 }
 try{if(window.ND&&ND.paintHome){const _ph=ND.paintHome;ND.paintHome=function(){const r=_ph.apply(this,arguments);try{applyTx()}catch(e){}return r}}}catch(e){}
-const TXF=[['clTitle','عنوان واجهة الدخول الأولى','Math'],['clSub','الكلام تحت العنوان (الأولى)','أهلاً بيك! اختار المادة اللي عايز تشوفها.'],['ndTitle','عنوان واجهة الدخول الثانية','أهلاً بيك في عالم الرياضيات'],['ndSub','الكلام تحت العنوان (الثانية)','كل المواد هتلاقيها جوا']];
+const TXF=[['clTitle','عنوان واجهة الدخول الأولى','Math'],['clSub','الكلام تحت العنوان (الأولى)','أهلاً بيك! اختار المادة اللي عايز تشوفها.'],['ndTitle','العنوان الكبير — الديزاين التاني','أهلاً بيك في عالم الرياضيات'],['ndSub','الكلام تحت العنوان — الديزاين التاني','كل المواد هتلاقيها جوا'],['pmTitle','العنوان الكبير — الديزاين التالت (ماث)','كل مواد دفعتنا في مكان واحد'],['pmSub','الكلام تحت العنوان — الديزاين التالت (ماث)','ملخصات، محاضرات، امتحانات سنين فاتت وفيديوهات شرح…']];
 function txHtml(){
   const t=tx();
   return '<h4>✍️ الكلام اللي بيظهر في واجهة الدخول</h4><small>اكتب اللي إنت عايزه. اترك الخانة فاضية عشان ترجع للكلام الافتراضي.</small>'
@@ -16005,4 +16141,5 @@ function ensureBtn(){
 setInterval(()=>{try{follow();ensureBtn();updBtn();applyTx();layerApply();if(!ADM()&&pan)pan.classList.remove('open')}catch(e){}},600);
 })();
 </script>
+<script>(function(){ if(!window.ND||!ND.show)return; var o=ND.show,last=null; ND.show=function(v){ var r=o.apply(this,arguments); var k=(v==='home')?'':(ND.track||''); if(k!==last){ last=k; setTimeout(function(){ try{ renderExtras(); }catch(e){} },0); } return r; }; })();</script>
 </body>
