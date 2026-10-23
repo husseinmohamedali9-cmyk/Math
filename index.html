@@ -5,7 +5,7 @@
 <link rel="apple-touch-icon" href="./logo.png">
 <link rel="manifest" href="./manifest.json">
 <meta charset="utf-8">
-<script>try{var _d=localStorage.getItem('fx_design'),_e=localStorage.getItem('fx_entry');window.__fxDesign=_d==='nd'?'nd':'classic';window.__fxEntry=_e==='nd'?'nd':'classic';var _h=document.documentElement;_h.classList.add('fx-design-'+__fxDesign,'fx-entry-'+__fxEntry);try{var _ly=JSON.parse(localStorage.getItem('fx_layer')||'null');if(!(_ly&&_ly.v==='front'))_h.classList.add('fx-layer-back')}catch(_x){_h.classList.add('fx-layer-back')}if(__fxDesign==='nd'||__fxEntry==='nd'){var _l=document.createElement('link');_l.rel='stylesheet';_l.href='https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&display=swap';document.head.appendChild(_l)}}catch(e){window.__fxDesign='classic';window.__fxEntry='classic'}</script>
+<script>try{var _d=localStorage.getItem('fx_design'),_e=localStorage.getItem('fx_entry');window.__fxSkin=(_d==='pm')?'pm':'';window.__fxDesign=(_d==='nd'||_d==='pm')?'nd':'classic';window.__fxEntry=_e==='nd'?'nd':'classic';var _h=document.documentElement;_h.classList.add('fx-design-'+__fxDesign,'fx-entry-'+__fxEntry);if(__fxSkin==='pm')_h.classList.add('fx-skin-pm');try{var _ly=JSON.parse(localStorage.getItem('fx_layer')||'null');if(!(_ly&&_ly.v==='front'))_h.classList.add('fx-layer-back')}catch(_x){_h.classList.add('fx-layer-back')}if(__fxDesign==='nd'||__fxEntry==='nd'){var _l=document.createElement('link');_l.rel='stylesheet';_l.href='https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700'+(__fxSkin==='pm'?'&family=Cairo:wght@400;600;800':'')+'&display=swap';document.head.appendChild(_l)}}catch(e){window.__fxDesign='classic';window.__fxEntry='classic'}</script>
 <script>try{window.__fxSimple=(localStorage.getItem('fx_themeview')==='simple')}catch(e){}</script>
 <script>try{var __m=localStorage.getItem('site_mode_pref')||localStorage.getItem('site_mode_last');if(__m==='dark'||__m==='light')document.documentElement.setAttribute('data-theme',__m);}catch(e){}</script>
 <script>try{if(window.__fxSimple)throw 0;var __c=JSON.parse(localStorage.getItem('site_theme_cache')||'null');if(__c&&__c.cols&&__c.mode===document.documentElement.getAttribute('data-theme')){var __r=document.documentElement,__V={boxBg:'--box-bg',bg:'--bg',surface:'--surface',surface2:'--surface-2',ink:'--ink',inkSoft:'--ink-soft',line:'--line',accent:'--accent',gold:'--gold',danger:'--danger',bgA:'--bg-a',bgB:'--bg-b'};for(var k in __V){if(__c.cols[k])__r.style.setProperty(__V[k],__c.cols[k]);}if(__c.cols.bgA||__c.cols.bgB)__r.classList.add('has-grad');if(__c.font)__r.style.setProperty('--font-head',__c.font);}}catch(e){}</script>
@@ -15619,12 +15619,206 @@ html.fx-design-classic #sections:not(.fx-subj-open):not(.fx-grp-open):has(>.fxg-
 #fxDzPanel .cur{margin:8px 0 0;padding:8px 10px;border-radius:12px;background:var(--surface-2,var(--surface));border:1px dashed var(--line);font-size:13px}
 #fxSubjHead.fx-top1{display:none!important}
 </style>
+<style id="pm-style">
+/* ===================== PM: ديزاين «ماث — مركز المواد» (نفس شكل وانيميشن صفحة ماث تانية تربية) ===================== */
+html.fx-skin-pm:root{
+  --bg:#f6f4ff!important;--surface:#ffffff!important;--surface-2:#efecff!important;--box-bg:#ffffff!important;
+  --ink:#1d1a33!important;--ink-soft:#6b6788!important;--ink-faint:#8f8bad!important;
+  --line:#e4e0f7!important;--accent:#6c4cff!important;--accent-soft:rgba(108,76,255,.12)!important;--accent-2:#ff5c9a!important;
+  --gold:#fd9644!important;--danger:#ff5c9a!important;--radius:20px!important;
+  --shadow:0 10px 30px rgba(80,60,200,.12)!important;--shadow-lg:0 14px 40px rgba(80,60,200,.22)!important;
+  --hero-bg:#6c4cff!important;--hero-ink:#ffffff!important;
+  --font-head:'Cairo',Tahoma,Arial,sans-serif!important;--font-body:'Cairo',Tahoma,Arial,sans-serif!important;
+  --nd-grid:transparent;--nd-video:#ff5c9a;--nd-pdf:#fd9644;--nd-link:#6c4cff;
+}
+html.fx-skin-pm[data-theme="dark"]:root{
+  --bg:#12101f!important;--surface:#1c1930!important;--surface-2:#252142!important;--box-bg:#1c1930!important;
+  --ink:#f1eeff!important;--ink-soft:#a29fc0!important;--ink-faint:#8581a8!important;
+  --line:#2f2b4d!important;--accent:#8a70ff!important;--accent-soft:rgba(138,112,255,.18)!important;--accent-2:#ff6fa6!important;
+  --shadow:0 10px 30px rgba(0,0,0,.4)!important;--shadow-lg:0 14px 40px rgba(0,0,0,.5)!important;
+}
+html.fx-skin-pm,html.fx-skin-pm body{scroll-behavior:smooth}
+html.fx-skin-pm body{background-image:none!important;background-color:var(--bg)!important;font-family:'Cairo',Tahoma,Arial,sans-serif!important;overflow-x:hidden}
+html.fx-skin-pm.pm-lock body{overflow:hidden}
+html.fx-skin-pm .nd-sym{display:none!important}
+
+/* رموز طايرة في الخلفية */
+#pmFx{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+#pmFx span{position:absolute;bottom:-60px;color:var(--accent);opacity:.14;font-weight:800;animation:pmUp linear infinite}
+html:not(.fx-skin-pm) #pmFx{display:none}
+@keyframes pmUp{to{transform:translateY(-115vh) rotate(360deg)}}
+@keyframes pmWob{50%{transform:rotate(-8deg) scale(1.08)}}
+@keyframes pmSh{to{background-position:200%}}
+@keyframes pmPop{from{opacity:0;transform:translateY(24px) scale(.95)}}
+@keyframes pmFi{from{opacity:0}}
+@keyframes pmSl{from{transform:translateY(60px) scale(.96);opacity:0}}
+@keyframes pmCf{to{transform:translate(var(--dx),var(--dy)) rotate(360deg);opacity:0}}
+
+/* الشريط العلوي */
+html.fx-skin-pm #topbar .brand{font-family:'Cairo',Tahoma,sans-serif!important;font-weight:800;font-size:16px!important;color:var(--ink)}
+html.fx-skin-pm #topbar .brand::before{content:"∑";display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-radius:12px;padding:2px 10px;margin-inline-end:8px;animation:pmWob 3s ease-in-out infinite}
+html.fx-skin-pm #topbar .brand-caret{color:var(--accent-2)}
+
+/* الرئيسية */
+html.fx-skin-pm .nd-hero{padding:36px 0 22px}
+html.fx-skin-pm .nd-hero h1{font-weight:800;line-height:1.3;background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--accent));background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent;animation:pmSh 4s linear infinite}
+html.fx-skin-pm .nd-hero p{color:var(--ink-soft);max-width:520px;font-size:16px}
+html.fx-skin-pm .nd-formula{background:var(--surface);border:1px dashed var(--accent);color:var(--ink);font-family:Georgia,serif;transition:.3s;cursor:pointer;user-select:none}
+html.fx-skin-pm .nd-formula:hover{transform:scale(1.07)}
+html.fx-skin-pm #siteAnn .ann{background:linear-gradient(135deg,var(--accent),var(--accent-2))!important;color:#fff!important;border:0!important;border-radius:16px!important;padding:10px 16px!important;box-shadow:var(--shadow)}
+html.fx-skin-pm #siteAnn .ann *{color:#fff!important}
+
+/* كروت (السنين + المواد) زي كروت ماث */
+html.fx-skin-pm .nd-years,html.fx-skin-pm .nd-group{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+html.fx-skin-pm .nd-group{margin-bottom:6px}
+html.fx-skin-pm .nd-group h3{grid-column:1/-1;margin:18px 0 2px;font-weight:800}
+html.fx-skin-pm .nd-years>:nth-child(7n+1),html.fx-skin-pm .nd-group>:nth-child(7n+2){--k:#6c4cff}
+html.fx-skin-pm .nd-years>:nth-child(7n+2),html.fx-skin-pm .nd-group>:nth-child(7n+3){--k:#ff5c9a}
+html.fx-skin-pm .nd-years>:nth-child(7n+3),html.fx-skin-pm .nd-group>:nth-child(7n+4){--k:#00b894}
+html.fx-skin-pm .nd-years>:nth-child(7n+4),html.fx-skin-pm .nd-group>:nth-child(7n+5){--k:#fd9644}
+html.fx-skin-pm .nd-years>:nth-child(7n+5),html.fx-skin-pm .nd-group>:nth-child(7n+6){--k:#0984e3}
+html.fx-skin-pm .nd-years>:nth-child(7n+6),html.fx-skin-pm .nd-group>:nth-child(7n+7){--k:#a55eea}
+html.fx-skin-pm .nd-years>:nth-child(7n+7),html.fx-skin-pm .nd-group>:nth-child(7n+8){--k:#e17055}
+html.fx-skin-pm .nd-year,html.fx-skin-pm .nd-item{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow);cursor:pointer;animation:pmPop .5s both;transition:transform .25s,box-shadow .25s}
+html.fx-skin-pm .nd-year::before,html.fx-skin-pm .nd-item::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:var(--k,var(--accent))}
+html.fx-skin-pm .nd-year:hover,html.fx-skin-pm .nd-item:hover{transform:translateY(-8px) rotate(-1deg);border-color:var(--line)}
+html.fx-skin-pm .nd-years>:nth-child(2){animation-delay:.06s}html.fx-skin-pm .nd-years>:nth-child(3){animation-delay:.12s}html.fx-skin-pm .nd-years>:nth-child(n+4){animation-delay:.18s}
+html.fx-skin-pm .nd-year .g{display:inline-block;align-self:flex-start;font-size:46px;color:var(--k,var(--accent));transition:.3s}
+html.fx-skin-pm .nd-year:hover .g{transform:scale(1.25) rotate(12deg)}
+html.fx-skin-pm .nd-year b{font-size:18px;margin-top:6px}
+html.fx-skin-pm .nd-item{flex-direction:column;align-items:flex-start;gap:2px;margin:0}
+html.fx-skin-pm .nd-badge{width:auto;height:auto;background:none;border-radius:0;font-size:38px;display:inline-block;transition:.3s;line-height:1.2}
+html.fx-skin-pm .nd-item:hover .nd-badge{transform:scale(1.25) rotate(12deg)}
+html.fx-skin-pm .nd-item .t{flex:none;font-size:18px;font-weight:700;margin-top:6px}
+html.fx-skin-pm .nd-item .go{display:none}
+html.fx-skin-pm .pm-dr{color:var(--ink-soft);font-size:13px}
+html.fx-skin-pm .pm-cnt{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+html.fx-skin-pm .pm-cnt span{font-size:12px;background:var(--bg);border-radius:99px;padding:3px 9px;color:var(--ink)}
+html.fx-skin-pm .nd-arow{margin:0}
+html.fx-skin-pm .nd-arow .nd-item{margin-bottom:6px}
+
+/* البحث والفلاتر */
+html.fx-skin-pm .nd-search{padding:12px 16px;border-radius:14px;outline:none;transition:.2s}
+html.fx-skin-pm .nd-search:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+html.fx-skin-pm .nd-chip{padding:8px 14px;font-size:14px;transition:.2s}
+html.fx-skin-pm .nd-chip:hover{transform:translateY(-2px)}
+html.fx-skin-pm .nd-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+html.fx-skin-pm .nd-back{transition:.2s}
+html.fx-skin-pm .nd-yhead .g{color:var(--accent)}
+
+/* محتوى المادة كنافذة منبثقة (Bottom Sheet) */
+html.fx-skin-pm #ndApp[data-view="year"] #ndSub{display:none}
+html.fx-skin-pm #ndApp[data-view="sub"] #ndYear{display:block}
+html.fx-skin-pm #ndApp[data-view="sub"] #ndSub{display:flex!important;position:fixed;inset:0;z-index:70;background:rgba(10,8,25,.6);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;padding:0;animation:pmFi .25s!important}
+html.fx-skin-pm .pm-sheet{background:var(--surface);color:var(--ink);width:100%;max-width:780px;max-height:88vh;overflow:auto;border-radius:24px 24px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom,0px));animation:pmSl .35s cubic-bezier(.2,1.2,.4,1)}
+@media(min-width:700px){html.fx-skin-pm #ndApp[data-view="sub"] #ndSub{align-items:center;padding:20px}html.fx-skin-pm .pm-sheet{border-radius:24px}}
+html.fx-skin-pm .pm-sheet .nd-back{display:none}
+html.fx-skin-pm .pm-sheet .nd-yhead{margin:0 0 14px;align-items:flex-start}
+html.fx-skin-pm .pm-sheet .nd-yhead .g{font-size:38px}
+html.fx-skin-pm .pm-sheet .nd-yhead h2{font-size:24px;font-weight:800}
+html.fx-skin-pm .pm-x{margin-inline-start:auto;flex:none;border:0;background:var(--bg);color:var(--ink);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;transition:.3s}
+html.fx-skin-pm .pm-x:hover{transform:rotate(90deg)}
+html.fx-skin-pm #ndSub .section.nd-cur>.wrap>.sec-collapse>div>.sec-inner{padding:4px 0!important;background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important}
+html.fx-skin-pm #ndSub .linkbtn,html.fx-skin-pm #ndSub .pdf-card{transition:.2s}
+html.fx-skin-pm #ndSub .linkbtn:hover{border-color:var(--accent);transform:translateX(-6px)}
+
+html.fx-skin-pm .qa-section>.wrap{border-radius:24px}
+html.fx-skin-pm footer{text-align:center}
+.pm-conf{position:fixed;font-size:22px;pointer-events:none;z-index:99999;animation:pmCf 1s ease-out forwards}
+@media(prefers-reduced-motion:reduce){html.fx-skin-pm *,#pmFx *{animation:none!important;transition:none!important}}
+</style>
+
+<script id="pm-script">
+/* ===== PM: تشغيل ديزاين «ماث — مركز المواد» فوق نفس طبقة ND (نفس البيانات ونفس الماتريال بالكامل) ===== */
+(function(){ if(window.__fxSkin!=='pm'||!window.ND)return;
+  var ND=window.ND, $i=function(id){return document.getElementById(id)};
+  var esc2=function(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+
+  /* رموز طايرة */
+  if(!$i('pmFx')){
+    var fx=document.createElement('div');fx.id='pmFx';fx.setAttribute('aria-hidden','true');
+    var sy='∑ ∫ π √ ∞ θ Δ ≈ ± ÷ x² λ ∂ ∈'.split(' ');
+    for(var i=0;i<22;i++){var s=document.createElement('span');s.textContent=sy[i%sy.length];
+      s.style.cssText='left:'+(Math.random()*100)+'%;font-size:'+(18+Math.random()*34)+'px;animation-duration:'+(14+Math.random()*18)+'s;animation-delay:-'+(Math.random()*20)+'s';fx.appendChild(s)}
+    document.body.insertBefore(fx,document.body.firstChild);
+  }
+
+  /* لفّ محتوى المادة جوا Bottom Sheet (نفس العناصر بنفس الـ ids) */
+  var sub=$i('ndSub');
+  if(sub&&!sub.querySelector('.pm-sheet')){
+    var sh=document.createElement('div');sh.className='pm-sheet';
+    while(sub.firstChild)sh.appendChild(sub.firstChild);
+    sub.appendChild(sh);
+    var yh=sh.querySelector('.nd-yhead');
+    if(yh){var x=document.createElement('button');x.type='button';x.className='pm-x';x.setAttribute('aria-label','إغلاق');x.textContent='✕';yh.appendChild(x)}
+  }
+  var closeSheet=function(){ if(ND.view==='sub') ND.go('year',ND.track) };
+  document.addEventListener('click',function(e){
+    if(e.target.closest('.pm-x')||e.target===$i('ndSub')) closeSheet();
+  });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&ND.view==='sub'&&!document.querySelector('#overlay.open')) closeSheet(); });
+
+  /* عدّاد المحتوى لكل مادة */
+  function hid(s){try{return !isAdmin&&secHidden(s)}catch(e){return false}}
+  function cnt(s,a){
+    (s.blocks||[]).forEach(function(b){
+      if(b.type==='spacer'||b.type==='divider')return;
+      if(b.type==='video')a.video++;
+      else if(b.type==='pdf')a.pdf++;
+      else if(b.type==='links')a.link+=Math.max(1,(b.items||[]).length);
+      else if(b.type==='button'||b.type==='embed')a.link++;
+      else if(b.type==='filelist'){String(b.text||'').split('\n').filter(function(x){return x.trim()}).forEach(function(r){
+        if(/youtu|vimeo|\.(mp4|mov|mkv|webm)\b/i.test(r))a.video++;else if(/pdf/i.test(r))a.pdf++;else a.link++})}
+    });
+    (s.children||[]).forEach(function(c){if(!hid(c))cnt(c,a)});
+    return a;
+  }
+  function decYear(){
+    var n=0;
+    document.querySelectorAll('#ndList .nd-item').forEach(function(a){
+      var m=(a.getAttribute('href')||'').match(/^#([^/]+)\/(.+)$/);if(!m)return;
+      var s=null;try{s=findSec(m[2])}catch(e){}
+      var card=a.closest('.nd-group>*')||a;card.style.animationDelay=(n++*60)+'ms';
+      if(!s||a.querySelector('.pm-cnt'))return;
+      if(s.desc){var d=document.createElement('small');d.className='pm-dr';d.textContent=s.desc;a.appendChild(d)}
+      var k=cnt(s,{video:0,pdf:0,link:0}),sc=(s.children||[]).filter(function(c){return !hid(c)}).length,h='';
+      if(k.video)h+='<span>🎬 '+k.video+'</span>';
+      if(k.pdf)h+='<span>📄 '+k.pdf+'</span>';
+      if(k.link)h+='<span>🔗 '+k.link+'</span>';
+      if(sc)h+='<span>📂 '+sc+'</span>';
+      if(h){var c=document.createElement('div');c.className='pm-cnt';c.innerHTML=h;a.appendChild(c)}
+    });
+  }
+  var _py=ND.paintYear;ND.paintYear=function(){var r=_py.apply(this,arguments);try{decYear()}catch(e){}return r};
+  var _sync=ND.sync;ND.sync=function(){var r=_sync.apply(this,arguments);try{if(this.view==='sub'&&this.track)this.paintYear()}catch(e){}return r};
+  var _show=ND.show;ND.show=function(v){
+    var prev=this.view,y=window.scrollY,r=_show.apply(this,arguments);
+    document.documentElement.classList.toggle('pm-lock',v==='sub');
+    if((prev==='year'&&v==='sub')||(prev==='sub'&&v==='year'))window.scrollTo(0,y);
+    return r;
+  };
+  document.documentElement.classList.toggle('pm-lock',ND.view==='sub');
+
+  /* كونفيتي لما تضغط على المعادلة */
+  document.addEventListener('click',function(e){
+    var q=e.target.closest('.nd-formula');if(!q||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+    var r=q.getBoundingClientRect(),em=['🎉','✨','π','∑','⭐','💜'];
+    for(var i=0;i<14;i++){var c=document.createElement('div');c.className='pm-conf';c.textContent=em[i%6];
+      c.style.left=(r.left+r.width/2)+'px';c.style.top=r.top+'px';
+      c.style.setProperty('--dx',((Math.random()-.5)*300)+'px');c.style.setProperty('--dy',(Math.random()*-220-30)+'px');
+      document.body.appendChild(c);(function(el){setTimeout(function(){el.remove()},1000)})(c)}
+  });
+
+  ND.sync();
+})();
+</script>
+
 <script id="fxDzJs">
 /* ===== 🎨 الديزاين + واجهة الدخول: كل واحد فيهم (الأول / الثاني) من لوحة الأدمن ===== */
 (function(){
 const ADM=()=>{try{return typeof isAdmin!=='undefined'&&!!isAdmin}catch(e){return false}};
 const KEYS={design:'fx_design',entry:'fx_entry'};
-const cur=()=>({design:window.__fxDesign||'classic',entry:window.__fxEntry||'classic'});
+const cur=()=>({design:window.__fxSkin==='pm'?'pm':(window.__fxDesign||'classic'),entry:window.__fxEntry||'classic'});
 /* واجهة الدخول الجديدة داخل الديزاين الأول: نفس شاشة اختيار السنة بشكل الرئيسية الجديدة */
 (function(){
   if(window.__fxDesign==='nd'||window.__fxEntry!=='nd')return;
@@ -15638,7 +15832,7 @@ const cur=()=>({design:window.__fxDesign||'classic',entry:window.__fxEntry||'cla
 /* تفعيل ستايل الديزاين الثاني */
 if(window.__fxDesign==='nd')['nd-style','cleanCss','adminNdCss'].forEach(i=>{const s=document.getElementById(i);if(s)s.media='all'});
 /* زوّار الموقع: لو الأدمن غيّر الاختيار، بنطبّقه (إعادة تحميل مرة واحدة) */
-function want(k){let v=null,t=0;try{v=site.meta.fx[k];t=+site.meta.fx.dzTs||0}catch(e){}let l=0;try{l=+localStorage.getItem('fx_dz_ts')||0}catch(e){}return (t>l&&(v==='nd'||v==='classic'))?v:null}
+function want(k){let v=null,t=0;try{v=site.meta.fx[k];t=+site.meta.fx.dzTs||0}catch(e){}let l=0;try{l=+localStorage.getItem('fx_dz_ts')||0}catch(e){}return (t>l&&(v==='nd'||v==='classic'||v==='pm'))?v:null}
 function follow(){
   if(window.__fxBusy)return;
   const c=cur(),d=want('design'),e=want('entry');
@@ -15657,7 +15851,7 @@ function save(k,v){
   clearTimeout(save.t);save.t=setTimeout(()=>{try{sessionStorage.removeItem('fx_dz_rl')}catch(e){}location.reload()},1900);
 }
 let pan;
-const DEF={design:{classic:'الديزاين الأول',nd:'الديزاين الثاني'},entry:{classic:'واجهة الدخول الأولى',nd:'واجهة الدخول الثانية'}};
+const DEF={design:{classic:'الديزاين الأول',nd:'الديزاين الثاني',pm:'الديزاين الثالث (ماث)'},entry:{classic:'واجهة الدخول الأولى',nd:'واجهة الدخول الثانية'}};
 function names(){let a=null,l=null;try{a=site.meta.fx.dzNames}catch(e){}try{l=JSON.parse(localStorage.getItem('fx_dz_names'))}catch(e){}return (a&&(!l||(+a.t||0)>=(+l.t||0)))?a:(l||{})}
 const nm=(k,v)=>{const n=names();return (n[k]&&n[k][v])||DEF[k][v]};
 const E2=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -15686,6 +15880,7 @@ function draw(){
   +'<h4>🎨 الديزاين</h4><small>الشكل والخلفية والتقسيم. اضغط ✏️ لتغيير الاسم.</small>'
   +OPT('design','classic','الموقع زي ما هو: نفس الشكل والخلفيات والثيمات.')
   +OPT('design','nd','صفحات سنة ← مواد ← محتوى، بخلفية مربعات وتصميم نظيف.')
+  +OPT('design','pm','ديزاين «ماث — مركز المواد»: كروت ملونة متحركة، رموز رياضية طايرة، ومحتوى المادة في نافذة منبثقة. نفس الماتريال بالكامل.')
   +'<h4>🚪 واجهة الدخول</h4><small>اللي بيظهر للزائر أول ما يدخل ويختار منه السنة.</small>'
   +OPT('entry','classic','شاشة الترحيب المتحركة ثم نافذة اختيار المادة.')
   +OPT('entry','nd','صفحة رئيسية بكروت السنين (Math 1 / 2 / 3) من غير شاشة ترحيب.')
@@ -15793,7 +15988,7 @@ function openPanel(){
       const rn=t.closest('[data-rn]');if(rn){startRename(rn);return}
       if(t.closest('.rn-in'))return;
       const o=t.closest('[data-v]');if(o&&o.dataset.v!==cur()[o.dataset.k]){save(o.dataset.k,o.dataset.v);
-        if(o.dataset.k==='design')window.__fxDesign=o.dataset.v;else window.__fxEntry=o.dataset.v;draw()}
+        if(o.dataset.k==='design'){window.__fxSkin=o.dataset.v==='pm'?'pm':'';window.__fxDesign=o.dataset.v==='classic'?'classic':'nd'}else window.__fxEntry=o.dataset.v;draw()}
     });
   }
   draw();pan.classList.add('open');
