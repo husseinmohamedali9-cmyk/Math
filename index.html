@@ -14782,14 +14782,29 @@ try{place()}catch(e){}
 </script>
 
 <script id="fxMathAllDevices">
-/* تأثير «رموز رياضية» (∑ ∫ π ÷ ...) يشتغل على كل الأجهزة حتى لو متظبط «كمبيوتر بس» أو «مرة واحدة» */
+/* تأثير الرموز الرياضية (∑ ∫ π ÷ ...): يشتغل على كل الأجهزة، وميتأثرش بحد الـ70 عنصر على الموبايل اللي بيمليه الثلج والمطر */
 (function(){
   try{
     if(typeof Decor==='undefined'||Decor.__mathAll)return;
     Decor.__mathAll=true;
-    const dk=Decor.deviceOk,sk=Decor.seenOk,isMath=f=>!!f&&f.preset==='math';
+    const MATH=/[∑∫π√∞θΔ≈±÷]/;
+    const isMath=f=>!!f&&(f.preset==='math'||MATH.test(String(f.items||'')));
+    const dk=Decor.deviceOk,sk=Decor.seenOk,sp=Decor.spawn;
     Decor.deviceOk=function(f){return isMath(f)?true:dk.call(this,f)};
     Decor.seenOk=function(f){return isMath(f)?true:sk.call(this,f)};
+    Decor.spawn=function(f){
+      if(!isMath(f))return sp.call(this,f);
+      const host=this.host();if(!host)return;
+      const lim=innerWidth<700?24:140;
+      if(host.querySelectorAll('.dx-math').length>=lim)return;
+      const lv=this.live,n0=host.childElementCount;
+      this.live=0;                       /* نتخطى حد العناصر العام */
+      try{sp.call(this,f)}finally{
+        const added=host.childElementCount>n0;
+        this.live=lv+(added?1:0);
+        if(added)host.lastElementChild.classList.add('dx-math');
+      }
+    };
     setTimeout(function(){try{Decor.apply(true)}catch(e){}},1200);
   }catch(e){}
 })();
