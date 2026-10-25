@@ -16,7 +16,7 @@ html:not(.fx-boot) body{transition:opacity .5s ease}
 #fxXfade .xf i{width:42px;height:42px;border-radius:50%;border:4px solid color-mix(in srgb,var(--accent,#8b8dff) 25%,transparent);border-top-color:var(--accent,#8b8dff);animation:fxXs .9s linear infinite}
 @keyframes fxXs{to{transform:rotate(360deg)}}
 </style>
-<script>try{var _hh=document.documentElement;_hh.classList.add('fx-boot');try{if(sessionStorage.getItem('fx_xfade')){sessionStorage.removeItem('fx_xfade');_hh.classList.add('fx-xin')}}catch(_){}setTimeout(function(){_hh.classList.remove('fx-boot')},2600)}catch(e){}</script>
+<script>try{var _hh=document.documentElement;_hh.classList.add('fx-boot');try{if(sessionStorage.getItem('fx_xfade')){sessionStorage.removeItem('fx_xfade');_hh.classList.add('fx-xin')}}catch(_){}setTimeout(function(){_hh.classList.remove('fx-boot')},1800)}catch(e){}</script>
 <script>try{window.__fxSimple=(localStorage.getItem('fx_themeview')==='simple')}catch(e){}</script>
 <script>try{var __m=localStorage.getItem('site_mode_pref')||localStorage.getItem('site_mode_last');if(__m==='dark'||__m==='light')document.documentElement.setAttribute('data-theme',__m);}catch(e){}</script>
 <script>try{if(window.__fxSimple)throw 0;var __c=JSON.parse(localStorage.getItem('site_theme_cache')||'null');if(__c&&__c.cols&&__c.mode===document.documentElement.getAttribute('data-theme')){var __r=document.documentElement,__V={boxBg:'--box-bg',bg:'--bg',surface:'--surface',surface2:'--surface-2',ink:'--ink',inkSoft:'--ink-soft',line:'--line',accent:'--accent',gold:'--gold',danger:'--danger',bgA:'--bg-a',bgB:'--bg-b'};for(var k in __V){if(__c.cols[k])__r.style.setProperty(__V[k],__c.cols[k]);}if(__c.cols.bgA||__c.cols.bgB)__r.classList.add('has-grad');if(__c.font)__r.style.setProperty('--font-head',__c.font);}}catch(e){}</script>
@@ -16438,21 +16438,30 @@ const cur=()=>({design:window.__fxSkin==='pm'?'pm':(window.__fxDesign||'classic'
 /* تفعيل ستايل الديزاين الثاني */
 if(window.__fxDesign==='nd')['nd-style','cleanCss','adminNdCss'].forEach(i=>{const s=document.getElementById(i);if(s)s.media='all'});
 /* زوّار الموقع: لو الأدمن غيّر الاختيار، بنطبّقه (إعادة تحميل مرة واحدة) */
-function want(k){let v=null,t=0;try{v=site.meta.fx[k];t=+site.meta.fx.dzTs||0}catch(e){}const ok=k==='design'?(v==='nd'||v==='classic'||v==='pm'):(v==='nd'||v==='classic');if(!ok)return null;if(ADM()){let l=0;try{l=+localStorage.getItem('fx_dz_ts')||0}catch(e){}return t>l?v:null}return v}
-/* انتقال ناعم بين الديزاينات: Fade للصفحة وبعدين إعادة تحميل، والصفحة الجديدة بتظهر بـ Fade بدل ما تفضل معلّقة */
+function want(k){let v=null,t=0;try{v=site.meta.fx[k];t=+site.meta.fx.dzTs||0}catch(e){}
+  const ok=k==='design'?(v==='nd'||v==='classic'||v==='pm'):(v==='nd'||v==='classic');if(!ok)return null;
+  let l=0;try{l=+localStorage.getItem('fx_dz_ts')||0}catch(e){}
+  /* بنتبع السيرفر بس لو اختياره أحدث من اللي عندنا (أو لو أول زيارة) — عشان قيمة قديمة ما ترجّعش الاختيار الجديد */
+  return (t>l||(l===0&&t===0))?v:null}
+/* انتقال ناعم بين الديزاينات: Fade للصفحة وبعدين إعادة تحميل، والصفحة الجديدة بتظهر بـ Fade */
 function smoothReload(waitSave){
   window.__fxBusy=true;
   const h=document.documentElement,boot=h.classList.contains('fx-boot'),t0=Date.now();
   const go=()=>{try{sessionStorage.setItem('fx_xfade','1')}catch(e){}location.reload()};
+  let o=null;
   if(!boot){
-    let o=document.getElementById('fxXfade');
+    o=document.getElementById('fxXfade');
     if(!o){o=document.createElement('div');o.id='fxXfade';o.innerHTML='<div class="xf"><i></i><span>جاري تطبيق الشكل الجديد…</span></div>';document.body.appendChild(o)}
     void o.offsetWidth;o.classList.add('on');
   }
+  /* شبكة أمان: لو الصفحة ما اتعملهاش تحميل خلال 9 ثواني، بنشيل الغطا ونرجّع الصفحة تشتغل عادي (مفيش تعليق) */
+  setTimeout(()=>{try{if(o)o.remove()}catch(e){}window.__fxBusy=false},9000);
   const minMs=waitSave?900:(boot?0:420);
   setTimeout(function chk(){
     let busy=false;try{busy=!!saving}catch(e){}
-    if(waitSave&&busy&&Date.now()-t0<6500)return setTimeout(chk,150);
+    if(waitSave&&busy&&Date.now()-t0<3500)return setTimeout(chk,150);
+    let failed=false;try{failed=!!waitSave&&saveRetries>0}catch(e){}
+    if(failed){try{typeof toast==='function'&&toast('الديزاين اتغيّر عندك، بس الحفظ على السيرفر فشل — الزوار مش هيشوفوه لحد ما الحفظ ينجح')}catch(e){}return setTimeout(go,1600)}
     go();
   },minMs);
 }
@@ -16462,7 +16471,11 @@ function follow(){
   const c=cur(),d=want('design'),e=want('entry');
   if((d&&d!==c.design)||(e&&e!==c.entry)){
     const tag=(d||c.design)+'|'+(e||c.entry);
-    try{if(sessionStorage.getItem('fx_dz_rl')===tag)return false;sessionStorage.setItem('fx_dz_rl',tag)}catch(_){return false}
+    try{
+      if(sessionStorage.getItem('fx_dz_rl')===tag)return false;
+      if(Date.now()-(+sessionStorage.getItem('fx_dz_rt')||0)<20000)return false; /* حماية من إعادة التحميل المتكررة */
+      sessionStorage.setItem('fx_dz_rl',tag);sessionStorage.setItem('fx_dz_rt',String(Date.now()));
+    }catch(_){return false}
     try{if(d)localStorage.setItem(KEYS.design,d);if(e)localStorage.setItem(KEYS.entry,e);localStorage.setItem('fx_dz_ts',String(+site.meta.fx.dzTs||0))}catch(_){}
     smoothReload(false);return true;
   }
@@ -16472,19 +16485,19 @@ function save(k,v){
   window.__fxBusy=true;
   const ts=Date.now();try{localStorage.setItem(KEYS[k],v);localStorage.setItem('fx_dz_ts',String(ts))}catch(e){}
   try{if(ADM()&&typeof site!=='undefined'&&site){site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{[k]:v,dzTs:ts});if(typeof scheduleSave==='function')scheduleSave()}}catch(e){}
-  try{sessionStorage.removeItem('fx_dz_rl')}catch(e){}
+  try{sessionStorage.removeItem('fx_dz_rl');sessionStorage.setItem('fx_dz_rt',String(Date.now()))}catch(e){}
   try{typeof toast==='function'&&toast('تم الحفظ، بيتم تطبيق الشكل الجديد…')}catch(e){}
   try{if(pan)pan.classList.remove('open')}catch(e){}
   smoothReload(true);
 }
-/* أول ما الموقع يفتح: مش بنعرض الصفحة إلا بعد ما نتأكد إن الديزاين هو اللي الأدمن اختاره (من غير وميض للقديم) */
+/* أول ما الموقع يفتح: بنخبّي الصفحة لحظة لحد ما نتأكد من الديزاين (من غير وميض للقديم)، وبحد أقصى قصير عشان ما تعلقش */
 (function(){
   const h=document.documentElement;if(!h.classList.contains('fx-boot'))return;
   const quick=h.classList.contains('fx-xin');let waited=0,okc=0;
   const iv=setInterval(()=>{
     waited+=100;let ok=false;try{ok=!!Store.ready}catch(e){}
     okc=ok?okc+1:0;
-    if(okc>=2||waited>=(quick?700:2400)){
+    if(okc>=2||waited>=(quick?500:1300)){
       clearInterval(iv);let rl=false;try{rl=follow()}catch(e){}
       if(!rl)h.classList.remove('fx-boot');
     }
