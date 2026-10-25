@@ -14697,6 +14697,319 @@ setInterval(()=>{try{applyHide();ensureBtn();if(!ADM()&&pan)pan.classList.remove
 })();
 </script>
 
+<style id="fxHideTypesCss">
+/* إخفاء فلاتر النوع (الكل / ملخصات / محاضرات / امتحانات / فيديوهات) — امسح الستايل ده لو عايزها ترجع */
+#ndTypes{display:none!important}
+</style>
+<style id="fxPmMvCss">
+#pmDates .pmd-mv{display:none}
+body.admin #pmDates .pmd-mv{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--surface);border:1px dashed var(--accent);border-radius:14px;padding:6px 10px;font-size:13px;color:var(--ink-soft)}
+#pmDates .pmd-mv span{flex:1;min-width:120px}
+#pmDates .pmd-mv button{border:1px solid var(--line);background:var(--surface-2,var(--surface));color:var(--ink);border-radius:10px;padding:6px 12px;font:inherit;font-weight:700;cursor:pointer}
+#pmDates .pmd-mv button:disabled{opacity:.4;cursor:default}
+</style>
+<script>
+/* ===== التحكم في مكان شريط المعلومات/المواعيد (#pmDates) ===== */
+(function(){
+const SLOTS=[
+ ['top','أعلى الصفحة','#siteAnn'],
+ ['hero','بعد الغلاف','#ndHome .nd-hero, section.hero'],
+ ['years','بعد اختيار السنة','#ndYears'],
+ ['list','بعد قايمة المواد','#ndList'],
+ ['prog','بعد شريط التقدّم','#progBox'],
+ ['daily','بعد حاجة اليوم','#dailyBox'],
+ ['fun','بعد المرح والتحفيز','#funBox'],
+ ['qa','أسفل الصفحة','#qa-section']
+];
+const ADM=()=>{try{return typeof isAdmin!=='undefined'&&!!isAdmin}catch(e){return false}};
+function getKey(){
+  try{const v=site.meta.fx.pmpos;if(v!==undefined&&v!==null&&v!=='')return String(v)}catch(e){}
+  try{return localStorage.getItem('fx_pmpos')||'top'}catch(e){return 'top'}
+}
+function setKey(k){
+  try{localStorage.setItem('fx_pmpos',k)}catch(e){}
+  try{
+    if(ADM()&&typeof site!=='undefined'&&site){
+      site.meta=site.meta||{};
+      site.meta.fx=Object.assign({},site.meta.fx,{pmpos:k});
+      if(typeof scheduleSave==='function')scheduleSave();
+    }
+  }catch(e){}
+}
+function vis(){
+  const box=document.getElementById('pmDates'),out=[];
+  SLOTS.forEach(s=>{
+    const el=document.querySelector(s[2]);
+    if(!el||(box&&(el===box||box.contains(el))))return;
+    if(s[0]!=='top'&&!el.getClientRects().length)return;
+    out.push({k:s[0],l:s[1],el:el});
+  });
+  out.sort((a,b)=>a.el===b.el?0:(a.el.compareDocumentPosition(b.el)&4?-1:1));
+  return out;
+}
+function bar(box,list,s){
+  let b=box.querySelector(':scope>.pmd-mv');
+  const has=box.querySelector('.pmb,.pmd-empty');
+  if(!ADM()||!has){if(b)b.remove();return}
+  if(!b){
+    b=document.createElement('div');b.className='pmd-mv';
+    b.innerHTML='<span></span><button type="button" data-d="-1">⬆ اطلّع</button><button type="button" data-d="1">⬇ نزّل</button>';
+  }
+  if(b!==box.firstChild)box.insertBefore(b,box.firstChild);
+  const i=list.indexOf(s);
+  b.querySelector('span').textContent='↕ مكان الشريط: '+s.l;
+  b.querySelector('[data-d="-1"]').disabled=i<=0;
+  b.querySelector('[data-d="1"]').disabled=i>=list.length-1;
+}
+function place(){
+  const box=document.getElementById('pmDates');if(!box)return;
+  const list=vis(),k=getKey();
+  const s=list.find(x=>x.k===k)||list.find(x=>x.k==='top');
+  if(!s)return;
+  if(box.previousElementSibling!==s.el)s.el.insertAdjacentElement('afterend',box);
+  bar(box,list,s);
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('#pmDates .pmd-mv button');
+  if(!b||!ADM())return;
+  const list=vis(),k=getKey();let i=list.findIndex(x=>x.k===k);if(i<0)i=0;
+  const j=Math.max(0,Math.min(list.length-1,i+(+b.dataset.d)));
+  if(j!==i){setKey(list[j].k);place()}
+});
+setInterval(()=>{try{place()}catch(e){}},600);
+try{place()}catch(e){}
+})();
+</script>
+
+<script id="fxMathAllDevices">
+/* تأثير «رموز رياضية» (∑ ∫ π ÷ ...) يشتغل على كل الأجهزة حتى لو متظبط «كمبيوتر بس» أو «مرة واحدة» */
+(function(){
+  try{
+    if(typeof Decor==='undefined'||Decor.__mathAll)return;
+    Decor.__mathAll=true;
+    const dk=Decor.deviceOk,sk=Decor.seenOk,isMath=f=>!!f&&f.preset==='math';
+    Decor.deviceOk=function(f){return isMath(f)?true:dk.call(this,f)};
+    Decor.seenOk=function(f){return isMath(f)?true:sk.call(this,f)};
+    setTimeout(function(){try{Decor.apply(true)}catch(e){}},1200);
+  }catch(e){}
+})();
+</script>
+<style id="fxDescCss">
+#fxDescPanel{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:#0008;padding:16px;direction:rtl}
+#fxDescPanel.open{display:flex}
+#fxDescPanel .fxd-box{width:min(460px,100%);max-height:86vh;overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 50px #0006;padding:16px}
+#fxDescPanel .fxd-h{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+#fxDescPanel .fxd-h b{flex:1;font-size:17px}
+#fxDescPanel .fxd-x{border:1px solid var(--line);background:var(--surface-2,var(--surface));color:var(--ink);border-radius:10px;padding:6px 10px;cursor:pointer;font:inherit}
+#fxDescPanel small{display:block;color:var(--ink-soft);margin-bottom:10px;line-height:1.6}
+#fxDescPanel .fxd-all{display:flex;gap:8px;margin-bottom:12px}
+#fxDescPanel .fxd-all button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2,var(--surface));color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+#fxDescPanel .fxd-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:13px;margin-bottom:8px;background:var(--surface-2,var(--surface))}
+#fxDescPanel .fxd-row .tx{flex:1;min-width:0}
+#fxDescPanel .fxd-row .tx b{display:block;font-size:15px}
+#fxDescPanel .fxd-row .tx i{display:block;font-style:normal;font-size:12.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#fxDescPanel .fxd-row.off .tx i{text-decoration:line-through;opacity:.6}
+#fxDescPanel .fxd-sw{flex:0 0 auto;width:46px;height:26px;border-radius:999px;border:0;background:var(--line);position:relative;cursor:pointer;transition:background .2s;padding:0}
+#fxDescPanel .fxd-sw::after{content:'';position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:inset-inline-start .2s;box-shadow:0 1px 3px #0004}
+#fxDescPanel .fxd-sw.on{background:var(--accent)}
+#fxDescPanel .fxd-sw.on::after{inset-inline-start:23px}
+</style>
+<style id="fxDescVis"></style>
+<script>
+/* ===== التحكم في الوصف اللي تحت اسم كل مادة (كله / ولا حاجة / مواد معينة) ===== */
+(function(){
+const DEF={base:'show',ex:[]};
+const ADM=()=>{try{return typeof isAdmin!=='undefined'&&!!isAdmin}catch(e){return false}};
+function get(){
+  let v=null;
+  try{v=site.meta.fx.descSet}catch(e){}
+  if(v===undefined||v===null){try{v=localStorage.getItem('fx_descset')}catch(e){}}
+  try{if(typeof v==='string')v=JSON.parse(v)}catch(e){v=null}
+  const o=Object.assign({},DEF,(v&&typeof v==='object')?v:{});
+  if(o.base!=='hide')o.base='show';
+  if(!Array.isArray(o.ex))o.ex=[];
+  return o;
+}
+function save(o){
+  const v=JSON.stringify(o);
+  try{localStorage.setItem('fx_descset',v)}catch(e){}
+  try{
+    if(ADM()&&typeof site!=='undefined'&&site){
+      site.meta=site.meta||{};
+      site.meta.fx=Object.assign({},site.meta.fx,{descSet:v});
+      if(typeof scheduleSave==='function')scheduleSave();
+    }
+  }catch(e){}
+  apply();
+}
+const q=x=>String(x).replace(/\\/g,'\\\\').replace(/"/g,'\\"');
+const vis=document.getElementById('fxDescVis');let last='';
+function apply(){
+  const o=get(),sel='#ndList .nd-item',tail=' .pm-dr';
+  let css='';
+  if(o.base==='hide'){
+    css=sel+tail+'{display:none!important}'+o.ex.map(id=>sel+'[href$="/'+q(id)+'"]'+tail+'{display:block!important}').join('');
+  }else{
+    css=o.ex.map(id=>sel+'[href$="/'+q(id)+'"]'+tail+'{display:none!important}').join('');
+  }
+  if(css!==last){last=css;vis.textContent=css}
+}
+function secs(){
+  try{return (site.sections||[]).filter(s=>s&&s.id&&String(s.desc||'').trim())}catch(e){return[]}
+}
+const YN={math1:'Math 1',math2:'Math 2',math3:'Math 3'};
+let pan;
+function shown(o,id){return o.base==='show'?o.ex.indexOf(id)<0:o.ex.indexOf(id)>=0}
+function esc(t){return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function draw(){
+  const o=get(),list=secs();
+  pan.querySelector('.fxd-list').innerHTML=list.length?list.map(s=>{
+    const on=shown(o,s.id),tr=(s.track&&s.track!=='all')?(YN[s.track]||s.track):'كل السنين';
+    return '<div class="fxd-row '+(on?'':'off')+'"><div class="tx"><b>'+esc((s.icon||'📚')+' '+(s.title||''))+' <small style="display:inline;margin:0">· '+esc(tr)+'</small></b><i>'+esc(String(s.desc).trim())+'</i></div><button type="button" class="fxd-sw '+(on?'on':'')+'" data-id="'+esc(s.id)+'" aria-pressed="'+on+'"></button></div>';
+  }).join(''):'<small>مفيش مواد ليها وصف لسه.</small>';
+}
+function openPanel(){
+  if(!ADM())return;
+  if(!pan){
+    pan=document.createElement('div');pan.id='fxDescPanel';
+    pan.innerHTML='<div class="fxd-box"><div class="fxd-h"><b>📝 الوصف تحت المواد</b><button type="button" class="fxd-x" data-close>✕</button></div><small>الوصف هو الكلام الصغير اللي تحت اسم كل مادة في الكارت. شغّل المفتاح عشان الوصف يظهر للمادة، أو اقفله عشان يختفي. التغيير بيظهر لكل الزوار.</small><div class="fxd-all"><button type="button" data-all="show">👁 إظهار الكل</button><button type="button" data-all="hide">🙈 إخفاء الكل</button></div><div class="fxd-list"></div></div>';
+    document.body.appendChild(pan);
+    pan.addEventListener('click',e=>{
+      const t=e.target;
+      if(t===pan||t.closest('[data-close]')){pan.classList.remove('open');return}
+      const a=t.closest('[data-all]');
+      if(a){save({base:a.dataset.all,ex:[]});draw();return}
+      const sw=t.closest('.fxd-sw');
+      if(sw){
+        const o=get(),id=sw.dataset.id,i=o.ex.indexOf(id);
+        if(i>=0)o.ex.splice(i,1);else o.ex.push(id);
+        save(o);draw();
+      }
+    });
+  }
+  draw();pan.classList.add('open');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&pan)pan.classList.remove('open')});
+function ensureBtn(){
+  const host=document.getElementById('adminbarIn');
+  if(!host||document.getElementById('fxDescBtn'))return;
+  const b=document.createElement('button');b.type='button';b.className='btn';b.id='fxDescBtn';b.textContent='📝 الوصف تحت المواد';
+  b.addEventListener('click',openPanel);
+  const ref=document.getElementById('fxExBtn')||document.getElementById('fxUiBtn');
+  if(ref&&ref.nextSibling)host.insertBefore(b,ref.nextSibling);else host.insertBefore(b,host.firstChild);
+}
+apply();
+setInterval(()=>{try{apply();ensureBtn();if(!ADM()&&pan)pan.classList.remove('open')}catch(e){}},600);
+})();
+</script>
+
+<style id="fxExtrasCss">
+#fxExPanel{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:#0008;padding:16px;direction:rtl}
+#fxExPanel.open{display:flex}
+#fxExPanel .fxe-box{width:min(440px,100%);max-height:86vh;overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 50px #0006;padding:16px}
+#fxExPanel .fxe-h{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+#fxExPanel .fxe-h b{flex:1;font-size:17px}
+#fxExPanel .fxe-x{border:1px solid var(--line);background:var(--surface-2,var(--surface));color:var(--ink);border-radius:10px;padding:6px 10px;cursor:pointer;font:inherit}
+#fxExPanel small{display:block;color:var(--ink-soft);margin-bottom:10px;line-height:1.6}
+#fxExPanel h4{margin:14px 0 8px;font-size:14px;color:var(--ink-soft)}
+#fxExPanel .fxe-row{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:13px;margin-bottom:8px;background:var(--surface-2,var(--surface))}
+#fxExPanel .fxe-row span{flex:1;font-size:15px}
+#fxExPanel .fxe-sw{flex:0 0 auto;width:46px;height:26px;border-radius:999px;border:0;background:var(--line);position:relative;cursor:pointer;transition:background .2s;padding:0}
+#fxExPanel .fxe-sw::after{content:'';position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:inset-inline-start .2s;box-shadow:0 1px 3px #0004}
+#fxExPanel .fxe-sw.on{background:var(--accent)}
+#fxExPanel .fxe-sw.on::after{inset-inline-start:23px}
+#fxExPanel .fxe-pos{display:block;width:100%;text-align:start;padding:11px 12px;border:1px solid var(--line);border-radius:13px;margin-bottom:8px;background:var(--surface-2,var(--surface));color:var(--ink);font:inherit;font-size:15px;cursor:pointer}
+#fxExPanel .fxe-pos.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset;font-weight:700}
+#fxExPanel .fxe-foot{display:flex;gap:8px;margin-top:10px}
+#fxExPanel .fxe-foot button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2,var(--surface));color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+</style>
+<style id="fxExtrasVis"></style>
+<script>
+/* ===== مكان وظهور المربعات (شريط التقدّم + العدّاد + زرار المذاكرة = #ndExtras) ===== */
+(function(){
+const SLOTS=[
+ ['A','أعلى الصفحة (قبل الغلاف)','#ndHome','beforebegin'],
+ ['B','بعد الغلاف واختيار السنة','#ndHome','afterend'],
+ ['C','بعد قايمة المواد','#ndYear','afterend'],
+ ['D','آخر المحتوى (الوضع الأصلي)','#ndSub','afterend'],
+ ['E','آخر الصفحة (بعد الأسئلة)','#ndTail','afterend']
+];
+const DEF={pos:'D',home:false,year:true};
+const ADM=()=>{try{return typeof isAdmin!=='undefined'&&!!isAdmin}catch(e){return false}};
+function get(){
+  let v=null;
+  try{v=site.meta.fx.exSet}catch(e){}
+  if(v===undefined||v===null){try{v=localStorage.getItem('fx_exset')}catch(e){}}
+  try{if(typeof v==='string')v=JSON.parse(v)}catch(e){v=null}
+  return Object.assign({},DEF,(v&&typeof v==='object')?v:{});
+}
+function save(o){
+  const v=JSON.stringify(o);
+  try{localStorage.setItem('fx_exset',v)}catch(e){}
+  try{
+    if(ADM()&&typeof site!=='undefined'&&site){
+      site.meta=site.meta||{};
+      site.meta.fx=Object.assign({},site.meta.fx,{exSet:v});
+      if(typeof scheduleSave==='function')scheduleSave();
+    }
+  }catch(e){}
+  apply();
+}
+const vis=document.getElementById('fxExtrasVis');
+let lastCss='';
+function apply(){
+  const o=get();
+  const css='#ndApp[data-view="home"] #ndExtras{display:'+(o.home?'block':'none')+'!important}'
+           +'#ndApp[data-view="year"] #ndExtras{display:'+(o.year?'block':'none')+'!important}';
+  if(css!==lastCss){lastCss=css;vis.textContent=css}
+  const ex=document.getElementById('ndExtras');if(!ex)return;
+  const s=SLOTS.find(x=>x[0]===o.pos)||SLOTS[3],a=document.querySelector(s[2]);
+  if(!a)return;
+  const ok=s[3]==='afterend'?a.nextElementSibling===ex:a.previousElementSibling===ex;
+  if(!ok)a.insertAdjacentElement(s[3],ex);
+}
+let pan;
+function draw(){
+  const o=get();
+  pan.querySelector('.fxe-list').innerHTML=
+    '<h4>تظهر في أنهي صفحة؟</h4>'
+    +[['home','🏠 الصفحة الرئيسية (اختيار السنة)'],['year','📚 صفحة السنة (قايمة المواد)']].map(r=>
+      '<div class="fxe-row"><span>'+r[1]+'</span><button type="button" class="fxe-sw '+(o[r[0]]?'on':'')+'" data-v="'+r[0]+'" aria-pressed="'+!!o[r[0]]+'"></button></div>').join('')
+    +'<h4>مكانها في الصفحة</h4>'
+    +SLOTS.map(x=>'<button type="button" class="fxe-pos '+(o.pos===x[0]?'on':'')+'" data-p="'+x[0]+'">'+(o.pos===x[0]?'✅ ':'')+x[1]+'</button>').join('');
+}
+function openPanel(){
+  if(!ADM())return;
+  if(!pan){
+    pan=document.createElement('div');pan.id='fxExPanel';
+    pan.innerHTML='<div class="fxe-box"><div class="fxe-h"><b>📍 مكان وظهور المربعات</b><button type="button" class="fxe-x" data-close>✕</button></div><small>المربعات = شريط التقدّم (الشرارة والمستوى) + عدّاد الميديتيرم + زرار «مذاكره او لعب». التغيير بيظهر لكل الزوار.</small><div class="fxe-list"></div><div class="fxe-foot"><button type="button" data-reset>↺ الرجوع للوضع الافتراضي</button></div></div>';
+    document.body.appendChild(pan);
+    pan.addEventListener('click',e=>{
+      const t=e.target;
+      if(t===pan||t.closest('[data-close]')){pan.classList.remove('open');return}
+      const sw=t.closest('.fxe-sw');
+      if(sw){const o=get();o[sw.dataset.v]=!o[sw.dataset.v];save(o);draw();return}
+      const ps=t.closest('.fxe-pos');
+      if(ps){const o=get();o.pos=ps.dataset.p;save(o);draw();return}
+      if(t.closest('[data-reset]')){save(Object.assign({},DEF));draw()}
+    });
+  }
+  draw();pan.classList.add('open');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&pan)pan.classList.remove('open')});
+function ensureBtn(){
+  const host=document.getElementById('adminbarIn');
+  if(!host||document.getElementById('fxExBtn'))return;
+  const b=document.createElement('button');b.type='button';b.className='btn';b.id='fxExBtn';b.textContent='📍 مكان المربعات';
+  b.addEventListener('click',openPanel);
+  const ref=document.getElementById('fxUiBtn');
+  if(ref&&ref.nextSibling)host.insertBefore(b,ref.nextSibling);else host.insertBefore(b,host.firstChild);
+}
+apply();
+setInterval(()=>{try{apply();ensureBtn();if(!ADM()&&pan)pan.classList.remove('open')}catch(e){}},600);
+})();
+</script>
+
 <style id="fxNavCss">
 /* ===== صفحات (مجموعة / مادة / معلومة) + عناوين المجموعات ===== */
 #sections:not(.fx-subj-open)>.section[data-depth="0"]>.wrap>.sec-collapse{display:none!important}
