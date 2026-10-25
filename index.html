@@ -15550,6 +15550,43 @@ apply();
 setInterval(()=>{try{apply();ensureBtn();if(!ADM()&&pan)pan.classList.remove('open')}catch(e){}},500);
 })();
 </script>
+<style id="fxPmFxCss">
+/* الرموز الطايرة في ديزاين pm تفضل شغالة على الموبايل حتى لو «تقليل الحركة» مفعّل في الجهاز (إلا لو الموقع متظبط يحترمه) */
+@media (prefers-reduced-motion:reduce){html.fx-skin-pm #pmFx span{animation:pmUp var(--pd,20s) linear var(--pl,0s) infinite!important}}
+</style>
+<style id="fxThemeBgCss">
+/* خلفية «المظهر والألوان» تظهر في أي ديزاين (كلاسيك / nd / pm) */
+html.fx-themebg:not(.fx-simple) body{background-color:var(--fx-tbg,var(--bg))!important}
+html.fx-themebg.has-grad:not(.fx-simple) body{background-color:transparent!important}
+</style>
+<script>
+(function(){
+const root=document.documentElement;
+let lastT=null;
+function want(t){
+  if(!t)return{on:false,bg:''};
+  const mode=root.getAttribute('data-theme')==='dark'?'dark':'light';
+  const cols=(mode==='dark'?t.colorsDark:t.colors)||{};
+  const pat=t.bgPattern;
+  const on=!!((pat&&pat!=='dots')||cols.bg||cols.bgA||cols.bgB);
+  return{on:on,bg:cols.bg||''};
+}
+function sync(t){
+  const w=want(t||lastT||(typeof site!=='undefined'&&site?site.theme:null));
+  const on=w.on&&!root.classList.contains('fx-simple');
+  if(root.classList.contains('fx-themebg')!==on)root.classList.toggle('fx-themebg',on);
+  const cur=root.style.getPropertyValue('--fx-tbg');
+  if(on&&w.bg){if(cur!==w.bg)root.style.setProperty('--fx-tbg',w.bg)}
+  else if(cur)root.style.removeProperty('--fx-tbg');
+}
+try{
+  const _at=applyTheme;
+  applyTheme=function(t){lastT=t||lastT;const r=_at.apply(this,arguments);try{sync(t)}catch(e){}return r};
+}catch(e){}
+setInterval(()=>{try{sync()}catch(e){}},600);
+try{sync()}catch(e){}
+})();
+</script>
 <style id="nd-style" media="not all">
 /* ===================== ND: تصميم «سكاشن الرياضيات» ===================== */
 html:root{
@@ -15574,10 +15611,12 @@ html[data-theme="dark"]{
   --nd-grid:rgba(214,235,245,.06); --nd-video:#ff7a8a; --nd-pdf:#f2b64a; --nd-link:#8fa9e8;
 }
 body{background-color:var(--bg)!important;
-  background-image:linear-gradient(var(--nd-grid) 1px,transparent 1px),linear-gradient(90deg,var(--nd-grid) 1px,transparent 1px)!important;
-  background-size:32px 32px!important;background-attachment:scroll!important;
   font-family:var(--font-body)!important;color:var(--ink);line-height:1.7}
-body::before,body::after{display:none!important}
+/* لو اخترت خلفية من «المظهر والألوان» (html.fx-themebg) بنسيبها تظهر بدل شبكة الديزاين */
+html:where(:not(.fx-themebg)) body{
+  background-image:linear-gradient(var(--nd-grid) 1px,transparent 1px),linear-gradient(90deg,var(--nd-grid) 1px,transparent 1px)!important;
+  background-size:32px 32px!important;background-attachment:scroll!important}
+html:where(:not(.fx-themebg)) body::before,html:where(:not(.fx-themebg)) body::after{display:none!important}
 .math-bg{display:none!important}
 html.fx-entry-nd #trackSplash,html.fx-entry-nd #introSplash{display:none!important}
 
@@ -16035,7 +16074,8 @@ html.fx-skin-pm[data-theme="dark"]:root{
   --shadow:0 10px 30px rgba(0,0,0,.4)!important;--shadow-lg:0 14px 40px rgba(0,0,0,.5)!important;
 }
 html.fx-skin-pm,html.fx-skin-pm body{scroll-behavior:smooth}
-html.fx-skin-pm body{background-image:none!important;background-color:var(--bg)!important;font-family:'Cairo',Tahoma,Arial,sans-serif!important;overflow-x:hidden}
+html.fx-skin-pm body{background-color:var(--bg)!important;font-family:'Cairo',Tahoma,Arial,sans-serif!important;overflow-x:hidden}
+html.fx-skin-pm:where(:not(.fx-themebg)) body{background-image:none!important}
 html.fx-skin-pm.pm-lock body{overflow:hidden}
 html.fx-skin-pm .nd-sym{display:none!important}
 
@@ -16175,7 +16215,10 @@ html.fx-skin-pm .nd-search{width:100%;box-sizing:border-box;padding:18px 20px;fo
 html.fx-skin-pm .nd-chips{margin-top:14px}
 html.fx-skin-pm .nd-chip{padding:12px 20px;border-radius:999px;font-size:15px}
 .pm-conf{position:fixed;font-size:22px;pointer-events:none;z-index:99999;animation:pmCf 1s ease-out forwards}
-@media(prefers-reduced-motion:reduce){html.fx-skin-pm *,#pmFx *{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){html.fx-skin-pm *{animation:none!important;transition:none!important}}
+/* الرموز الطايرة (pmFx) شغالة دايماً على الموبايل والكمبيوتر، حتى لو «تقليل الحركة» مفعّل أو «احترام تقليل الحركة» شغّال */
+html.fx-skin-pm #pmFx{display:block!important;visibility:visible!important;height:100vh;height:100dvh}
+html.fx-skin-pm #pmFx span{animation-name:pmUp!important;animation-timing-function:linear!important;animation-iteration-count:infinite!important;animation-duration:var(--pd,20s)!important;animation-delay:var(--pl,0s)!important;animation-play-state:running!important;will-change:transform;-webkit-transform:translateZ(0);transform:translateZ(0)}
 </style>
 
 <script id="pm-script">
@@ -16203,7 +16246,7 @@ html.fx-skin-pm .nd-chip{padding:12px 20px;border-radius:999px;font-size:15px}
     var fx=document.createElement('div');fx.id='pmFx';fx.setAttribute('aria-hidden','true');
     var sy='∑ ∫ π √ ∞ θ Δ ≈ ± ÷ x² λ ∂ ∈'.split(' ');
     for(var i=0;i<22;i++){var s=document.createElement('span');s.textContent=sy[i%sy.length];
-      s.style.cssText='left:'+(Math.random()*100)+'%;font-size:'+(18+Math.random()*34)+'px;animation-duration:'+(14+Math.random()*18)+'s;animation-delay:-'+(Math.random()*20)+'s';fx.appendChild(s)}
+      s.style.cssText='left:'+(Math.random()*100)+'%;font-size:'+(18+Math.random()*34)+'px;--pd:'+(14+Math.random()*18)+'s;--pl:-'+(Math.random()*20)+'s;animation-duration:var(--pd);animation-delay:var(--pl)';fx.appendChild(s)}
     document.body.insertBefore(fx,document.body.firstChild);
   }
 
