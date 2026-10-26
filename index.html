@@ -5,7 +5,7 @@
 <link rel="apple-touch-icon" href="./logo.png">
 <link rel="manifest" href="./manifest.json">
 <meta charset="utf-8">
-<script>try{var _d=localStorage.getItem('fx_design'),_e=localStorage.getItem('fx_entry');window.__fxSkin=(_d==='pm')?'pm':'';window.__fxDesign=(_d==='nd'||_d==='pm')?'nd':'classic';window.__fxEntry=_e==='nd'?'nd':'classic';var _h=document.documentElement;_h.classList.add('fx-design-'+__fxDesign,'fx-entry-'+__fxEntry);if(__fxSkin==='pm')_h.classList.add('fx-skin-pm');try{var _ly=JSON.parse(localStorage.getItem('fx_layer')||'null');if(!(_ly&&_ly.v==='front'))_h.classList.add('fx-layer-back')}catch(_x){_h.classList.add('fx-layer-back')}if(__fxDesign==='nd'||__fxEntry==='nd'){var _l=document.createElement('link');_l.rel='stylesheet';_l.href='https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700'+(__fxSkin==='pm'?'&family=Cairo:wght@400;600;800':'')+'&display=swap';document.head.appendChild(_l)}}catch(e){window.__fxDesign='classic';window.__fxEntry='classic'}</script>
+<script>try{var _d=localStorage.getItem('fx_design'),_e=localStorage.getItem('fx_entry');window.__fxSkin=(_d==='pm')?'pm':'';window.__fxDesign=(_d==='nd'||_d==='pm')?'nd':'classic';window.__fxEntry=_e==='nd'?'nd':((_e==='ra'||_e==='lg')?_e:'classic');var _h=document.documentElement;_h.classList.add('fx-design-'+__fxDesign,'fx-entry-'+__fxEntry);if(__fxSkin==='pm')_h.classList.add('fx-skin-pm');try{var _ly=JSON.parse(localStorage.getItem('fx_layer')||'null');if(!(_ly&&_ly.v==='front'))_h.classList.add('fx-layer-back')}catch(_x){_h.classList.add('fx-layer-back')}if(__fxDesign==='nd'||__fxEntry==='nd'){var _l=document.createElement('link');_l.rel='stylesheet';_l.href='https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700'+(__fxSkin==='pm'?'&family=Cairo:wght@400;600;800':'')+'&display=swap';document.head.appendChild(_l)}}catch(e){window.__fxDesign='classic';window.__fxEntry='classic'}</script>
 <style id="fxBootCss">
 html.fx-boot{background:var(--bg,#0a0d1c)}
 html.fx-boot body{opacity:0}
@@ -20,7 +20,7 @@ html:not(.fx-boot) body{transition:opacity .5s ease}
 <script id="fxEarly">
 /* بنسأل السيرفر بسرعة على الديزاين اللي الأدمن اختاره (طلب صغير جداً) من غير ما نستنى تحميل بيانات الموقع كلها */
 (function(){try{
-  var c=new AbortController(),to=setTimeout(function(){c.abort()},4000),K='sb_publishable_YgeD7rPEYjExOi0hdNY4hA_ZyMI5_WL';
+  var c=new AbortController(),to=setTimeout(function(){c.abort()},2500),K='sb_publishable_YgeD7rPEYjExOi0hdNY4hA_ZyMI5_WL';
   fetch('https://jlpwwxmdyvgfizvjidug.supabase.co/rest/v1/site_content?id=eq.main&select=fx:data->meta->fx',{headers:{apikey:K,Authorization:'Bearer '+K},cache:'no-store',signal:c.signal})
   .then(function(r){return r.ok?r.json():null}).then(function(j){var f=j&&j[0]&&j[0].fx;if(f&&typeof f==='object')window.__fxEarlyFx=f}).catch(function(){}).then(function(){clearTimeout(to);window.__fxEarlyDone=true});
 }catch(e){window.__fxEarlyDone=true}})();
@@ -2597,7 +2597,7 @@ function playIntro(){
   return new Promise(resolve=>{
     const el = $('#introSplash');
     const pageIn = ()=>document.body.classList.add('page-in');
-    if(!el || window.__fxEntry==='nd'){ if(el) el.remove(); pageIn(); resolve(); return; }
+    if(!el || window.__fxEntry==='nd' || window.__fxEntry==='ra' || window.__fxEntry==='lg'){ if(el) el.remove(); pageIn(); resolve(); return; }
     try{ const sb = localStorage.getItem('site_intro_sub'); const is = el.querySelector('.intro-sub'); if(sb && is) is.textContent = sb; }catch(e){}
     let introMs = 2200;
     try{ const c = JSON.parse(localStorage.getItem('site_theme_cache')||'null'); if(c && c.introMs!=null) introMs = +c.introMs; }catch(e){}
@@ -16144,6 +16144,87 @@ html[data-theme="dark"] #trackSplash.fxh{--bg:#10202b;--surface:#16293a;--ink:#e
 #trackSplash.fxh .fxh-sym span{position:absolute;font-family:"Cambria Math","Times New Roman",serif;color:var(--accent);opacity:.1;font-size:56px}
 #trackSplash.fxh .fxh-wrap{position:relative;max-width:980px;margin:0 auto;padding:8px 18px 30px}
 #trackSplash.fxh .nd-hero{text-align:center;padding:56px 0 34px}#trackSplash.fxh .nd-hero h1{font-family:var(--font-head);font-size:clamp(30px,6vw,52px);margin:0 0 10px;font-weight:700;line-height:1.3;color:var(--ink)}#trackSplash.fxh .nd-hero p{margin:0 auto;max-width:460px;color:var(--ink-soft);font-size:17px;font-weight:400}#trackSplash.fxh .nd-formula{display:inline-block;margin-top:18px;padding:6px 16px;border:1px dashed var(--line);border-radius:999px;font-family:"Cambria Math","Times New Roman",serif;direction:ltr;color:var(--accent);font-size:17px}#trackSplash.fxh .nd-years{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:20px}#trackSplash.fxh .nd-year{font:inherit;color:inherit;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:26px 22px;text-align:right;   box-shadow:var(--shadow);transition:transform .2s,border-color .2s;display:flex;flex-direction:column;gap:6px}#trackSplash.fxh .nd-year:hover{transform:translateY(-4px);border-color:var(--accent)}#trackSplash.fxh .nd-year .g{font-family:"Cambria Math","Times New Roman",serif;font-size:76px;line-height:1;color:var(--accent);direction:ltr;text-align:right}#trackSplash.fxh .nd-year b{font-size:24px}#trackSplash.fxh .nd-year small{color:var(--ink-soft);font-size:14px}
+#trackSplash.ra{--ra-bg:#f3f6fb;--ra-ink:#0b1224;--ra-muted:#55627d;--ra-card:#fff;--ra-line:#d5deec;--ra-b:#f59e0b;background:var(--ra-bg);color:var(--ra-ink);display:block;overflow-x:hidden;overflow-y:auto;font-family:"Tajawal",system-ui,sans-serif;line-height:1.7;font-size:17px;transition:opacity .4s ease,visibility 0s}
+html[data-theme="dark"] #trackSplash.ra{--ra-bg:#0b1224;--ra-ink:#eef3fc;--ra-muted:#9aa9c6;--ra-card:#121c38;--ra-line:#24325a}
+#trackSplash.ra.hide{display:block!important;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .4s ease,visibility 0s .4s}
+#trackSplash.ra .ra-intro{position:fixed;inset:0;z-index:3;background:#0b1224;color:#eef3fc;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .35s ease,transform .35s ease;background-image:radial-gradient(60% 50% at 50% 38%,#15264d 0%,#0b1224 70%)}
+#trackSplash.ra .ra-intro.out{opacity:0;transform:scale(1.06);pointer-events:none}
+#trackSplash.ra .ra-cv{width:min(760px,92vw);height:min(300px,38vh);display:block}
+#trackSplash.ra .ra-title{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:clamp(56px,13vw,128px);line-height:1;letter-spacing:-2px;direction:ltr;display:flex;gap:.18em;margin-top:8px}
+#trackSplash.ra .ra-title span{display:inline-block;opacity:0;transform:translateY(24px);animation:raUp .4s cubic-bezier(.2,.8,.2,1) forwards}
+#trackSplash.ra .ra-title .n{color:#ffb547}
+@keyframes raUp{to{opacity:1;transform:none}}
+#trackSplash.ra .ra-tag{margin-top:14px;font-size:20px;color:#9fb0d0;direction:ltr;opacity:0;animation:raUp .4s .45s forwards}
+#trackSplash.ra .ra-bar{width:min(260px,60vw);height:4px;border-radius:4px;background:#1f2e57;margin-top:30px;overflow:hidden}
+#trackSplash.ra .ra-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#5eead4,#ffb547)}
+#trackSplash.ra .ra-skip{position:absolute;bottom:calc(22px + env(safe-area-inset-bottom,0px));inset-inline-end:22px;font:inherit;font-weight:500;color:#eef3fc;background:transparent;border:1.5px solid #3a4c7e;border-radius:999px;padding:7px 20px;cursor:pointer}
+#trackSplash.ra .ra-skip:hover{background:#1b2b55}
+#trackSplash.ra .ra-app{opacity:0;visibility:hidden;transition:opacity .4s .05s}
+#trackSplash.ra .ra-app.on{opacity:1;visibility:visible}
+#trackSplash.ra .ra-head{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;max-width:1040px;margin:0 auto}
+#trackSplash.ra .ra-logo{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:22px;direction:ltr}
+#trackSplash.ra .ra-logo b{color:var(--ra-b)}
+#trackSplash.ra .ra-theme{border:1.5px solid var(--ra-line);background:var(--ra-card);color:var(--ra-ink);border-radius:10px;width:40px;height:40px;cursor:pointer;font:inherit}
+#trackSplash.ra .ra-hero{max-width:1040px;margin:0 auto;padding:36px 22px 24px;text-align:start}
+#trackSplash.ra .ra-hero h1{font-family:inherit;font-size:clamp(32px,6vw,58px);line-height:1.25;margin:0;font-weight:700;max-width:14em;color:var(--ra-ink)}
+#trackSplash.ra .ra-hero p{color:var(--ra-muted);margin:12px 0 0;max-width:32em}
+#trackSplash.ra .ra-grid{max-width:1040px;margin:0 auto;padding:16px 22px 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:820px){#trackSplash.ra .ra-grid{grid-template-columns:1fr}}
+#trackSplash.ra .ra-card{appearance:none;font:inherit;text-align:start;width:100%;position:relative;overflow:hidden;background:var(--ra-card);color:var(--ra-ink);border:1.5px solid var(--ra-line);border-radius:20px;padding:24px;min-height:210px;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;transition:transform .2s,border-color .2s}
+#trackSplash.ra .ra-card:hover{transform:translateY(-4px);border-color:var(--c)}
+#trackSplash.ra .ra-card .s{position:absolute;top:6px;inset-inline-start:18px;font-family:"Space Grotesk",sans-serif;font-size:110px;line-height:1;color:var(--c);opacity:.22;direction:ltr}
+#trackSplash.ra .ra-card h2{font-family:"Space Grotesk",sans-serif;font-size:30px;margin:0;direction:ltr;text-align:start;color:var(--ra-ink)}
+#trackSplash.ra .ra-card p{color:var(--ra-muted);margin:4px 0 14px;font-size:15px}
+#trackSplash.ra .ra-card .go{font-weight:700;color:var(--c)}
+#trackSplash.ra .ra-card:nth-child(1){--c:#7c6cf6}#trackSplash.ra .ra-card:nth-child(2){--c:#0fb5a3}#trackSplash.ra .ra-card:nth-child(3){--c:#f59e0b}
+@media(prefers-reduced-motion:reduce){#trackSplash.ra *{transition:none!important;animation-duration:.01s!important}}
+#overlay.fx-lg{background-color:#f4f8fb;background-image:linear-gradient(#d6e2ec 1px,transparent 1px),linear-gradient(90deg,#d6e2ec 1px,transparent 1px);background-size:32px 32px;-webkit-backdrop-filter:none;backdrop-filter:none}
+html[data-theme="dark"] #overlay.fx-lg{background-color:#0f1a30;background-image:linear-gradient(#1b2c4a 1px,transparent 1px),linear-gradient(90deg,#1b2c4a 1px,transparent 1px)}
+#overlay.fx-lg .modal{--lg-ink:#12254a;--lg-paper:#f4f8fb;--lg-card:#fff;--lg-muted:#52627d;--lg-hl:#ffd23f;--lg-teal:#0e8f82;background:var(--lg-card);color:var(--lg-ink);border:2px solid var(--lg-ink);border-radius:14px;box-shadow:6px 6px 0 var(--lg-ink);max-width:420px;width:calc(100% - 32px);font-family:"Tajawal",system-ui,sans-serif}
+html[data-theme="dark"] #overlay.fx-lg .modal{--lg-ink:#eaf1fb;--lg-paper:#0f1a30;--lg-card:#16264a;--lg-muted:#9db0cc;--lg-teal:#3cc7b7}
+#overlay.fx-lg .modal-h{display:none}
+#overlay.fx-lg .modal-b{padding:24px 24px 8px;background:transparent}
+#overlay.fx-lg .lg-logo{font-family:"Reem Kufi",sans-serif;font-weight:700;font-size:22px;display:flex;align-items:center;gap:10px;margin-bottom:16px}
+#overlay.fx-lg .lg-logo i{font-style:normal;background:var(--lg-hl);color:#12254a;border:2px solid var(--lg-ink);border-radius:8px;padding:0 8px}
+#overlay.fx-lg .lg-h{font-family:"Reem Kufi","Tajawal",sans-serif;font-size:24px;margin:0;line-height:1.3;color:var(--lg-ink)}
+#overlay.fx-lg .lg-p{color:var(--lg-muted);margin:6px 0 4px;font-size:15px}
+#overlay.fx-lg .field label{color:var(--lg-ink);font-weight:700;font-size:15px}
+#overlay.fx-lg .field .hint{color:var(--lg-muted)}
+#overlay.fx-lg .field code{background:var(--lg-paper);color:var(--lg-ink);border:1px solid var(--lg-ink);border-radius:6px;padding:0 6px}
+#overlay.fx-lg .lg-in{position:relative}
+#overlay.fx-lg .lg-in input{width:100%;font:inherit;padding:10px 12px 10px 64px;border:2px solid var(--lg-ink);border-radius:10px;background:var(--lg-paper);color:var(--lg-ink);direction:ltr}
+#overlay.fx-lg .lg-in input:focus{border-color:var(--lg-teal);outline:none}
+#overlay.fx-lg .lg-eye{position:absolute;top:0;bottom:0;left:6px;border:0;background:none;color:var(--lg-muted);cursor:pointer;font:inherit;font-size:14px;padding:0 8px}
+#overlay.fx-lg .modal-f{padding:0 24px 24px;display:flex;flex-direction:column;gap:10px;background:transparent;border:0}
+#overlay.fx-lg .modal-f .btn{width:100%;font:inherit;justify-content:center}
+#overlay.fx-lg .modal-f .btn.primary{font-weight:700;font-size:18px;padding:11px;border:2px solid var(--lg-ink);border-radius:10px;background:var(--lg-hl);color:#12254a;box-shadow:4px 4px 0 var(--lg-ink);transition:transform .12s,box-shadow .12s}
+#overlay.fx-lg .modal-f .btn.primary:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--lg-ink)}
+#overlay.fx-lg .modal-f .btn.ghost{background:transparent;border:0;color:var(--lg-muted);box-shadow:none}
+html.fx-entry-lg #overlay{z-index:300}html.fx-entry-lg .toast{z-index:301}
+#trackSplash.lg{--paper:#f4f8fb;--grid:#d6e2ec;--ink:#12254a;--muted:#52627d;--hl:#ffd23f;--teal:#0e8f82;--card:#fff;--err:#d64545;display:block;overflow-x:hidden;overflow-y:auto;padding:0;font-family:"Tajawal",system-ui,sans-serif;color:var(--ink);line-height:1.7;font-size:17px;background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:32px 32px}
+html[data-theme="dark"] #trackSplash.lg{--paper:#0f1a30;--grid:#1b2c4a;--ink:#eaf1fb;--muted:#9db0cc;--teal:#3cc7b7;--card:#16264a}
+#trackSplash.lg.hide{display:block!important}
+#trackSplash.lg .lgn-theme{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));inset-inline-end:14px;border:2px solid var(--ink);background:var(--card);color:var(--ink);border-radius:8px;width:38px;height:38px;cursor:pointer;font:inherit;z-index:2}
+#trackSplash.lg .lgn-page{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr;max-width:1060px;margin:0 auto;align-items:center;gap:40px;padding:32px 20px}
+@media(max-width:860px){#trackSplash.lg .lgn-page{grid-template-columns:1fr;gap:24px}#trackSplash.lg .lgn-side{display:none}}
+#trackSplash.lg .lgn-logo{font-family:"Reem Kufi",sans-serif;font-weight:700;font-size:22px;display:flex;align-items:center;gap:10px;margin-bottom:24px}
+#trackSplash.lg .lgn-logo i{font-style:normal;background:var(--hl);color:#12254a;border:2px solid var(--ink);border-radius:8px;padding:0 8px}
+#trackSplash.lg .lgn-side h1{font-family:"Reem Kufi","Tajawal",sans-serif;font-size:clamp(34px,5vw,52px);line-height:1.3;margin:0;color:var(--ink)}
+#trackSplash.lg .lgn-side h1 mark{background:linear-gradient(transparent 55%,var(--hl) 55%);color:inherit}
+#trackSplash.lg .lgn-side p{color:var(--muted);max-width:26em;margin:14px 0 26px}
+#trackSplash.lg .lgn-eqs{display:grid;gap:10px;direction:ltr;font-family:"Reem Kufi",sans-serif;font-size:24px;max-width:340px}
+#trackSplash.lg .lgn-eqs div{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:6px 16px;box-shadow:4px 4px 0 var(--ink)}
+#trackSplash.lg .lgn-eqs div:nth-child(2){margin-inline-start:28px}#trackSplash.lg .lgn-eqs div:nth-child(3){margin-inline-start:56px}
+#trackSplash.lg .lgn-box{background:var(--card);border:2px solid var(--ink);border-radius:14px;box-shadow:6px 6px 0 var(--ink);padding:24px;width:100%;max-width:420px;justify-self:center}
+#trackSplash.lg .lgn-box h2{font-family:"Reem Kufi","Tajawal",sans-serif;font-size:24px;margin:0 0 6px;line-height:1.3;color:var(--ink)}
+#trackSplash.lg .lgn-f label{display:block;font-weight:700;margin:14px 0 4px;font-size:15px;color:var(--ink)}
+#trackSplash.lg .lgn-f input,#trackSplash.lg .lgn-f select{width:100%;font:inherit;padding:10px 12px;border:2px solid var(--ink);border-radius:10px;background:var(--paper);color:var(--ink)}
+#trackSplash.lg .lgn-f input:focus,#trackSplash.lg .lgn-f select:focus{border-color:var(--teal);outline:none}
+#trackSplash.lg .lgn-go{width:100%;margin-top:18px;font:inherit;font-weight:700;font-size:18px;padding:11px;border:2px solid var(--ink);border-radius:10px;background:var(--hl);color:#12254a;box-shadow:4px 4px 0 var(--ink);cursor:pointer;transition:transform .12s,box-shadow .12s}
+#trackSplash.lg .lgn-go:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+#trackSplash.lg .lgn-msg{min-height:26px;margin-top:12px;font-weight:700;font-size:15px}
+#trackSplash.lg .lgn-msg.e{color:var(--err)}#trackSplash.lg .lgn-msg.o{color:var(--teal)}
+#trackSplash.lg .lgn-adm{display:inline-block;margin-top:6px;color:var(--teal);font-weight:700;font-size:14px}
 #fxDzPanel{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:#0008;padding:16px;direction:rtl}
 #fxDzPanel.open{display:flex}
 #fxDzPanel .v-box{width:min(480px,100%);max-height:90vh;overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 50px #0006;padding:16px}
@@ -16536,12 +16617,117 @@ const cur=()=>({design:window.__fxSkin==='pm'?'pm':(window.__fxDesign||'classic'
    +'<div class="fxh-wrap"><div class="nd-hero"><h1>أهلاً بيك في عالم الرياضيات</h1><p>كل المواد هتلاقيها جوا</p><div class="nd-formula">e<sup>iπ</sup> + 1 = 0</div></div>'
    +'<div class="nd-years">'+Y.map(y=>'<button class="nd-year" type="button" data-act="choose-track" data-track="'+y[0]+'"><span class="g">'+y[3]+'</span><b>'+y[1]+'</b><small>'+y[2]+'</small></button>').join('')+'</div></div>';
 })();
+/* واجهة الدخول الثالثة (Road to A): انترو موجات مرة في الجلسة + كروت المواد */
+(function(){
+  if(window.__fxEntry!=='ra')return;
+  const sp=document.getElementById('trackSplash');if(!sp)return;
+  try{if(!document.getElementById('fxRaFont')){['https://fonts.googleapis.com','https://fonts.gstatic.com'].forEach(u=>{const p=document.createElement('link');p.rel='preconnect';p.href=u;if(u.indexOf('gstatic')>0)p.crossOrigin='';document.head.appendChild(p)});const l=document.createElement('link');l.id='fxRaFont';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap';document.head.appendChild(l)}}catch(e){}
+  const Y=[['math1','Math 1','السنة الأولى','∑'],['math2','Math 2','السنة الثانية','∫'],['math3','Math 3','السنة الثالثة','∂']];
+  let seen=false;try{seen=!!sessionStorage.getItem('fx_ra_intro')}catch(e){}
+  sp.classList.add('ra');
+  sp.innerHTML=(seen?'':'<div class="ra-intro" id="raIntro" aria-hidden="true"><canvas class="ra-cv" id="raCv"></canvas><div class="ra-title" id="raTtl"></div><div class="ra-tag">Road to A</div><div class="ra-bar"><i id="raFill"></i></div><button class="ra-skip" id="raSkip" type="button">تخطي</button></div>')
+   +'<div class="ra-app'+(seen?' on':'')+'" id="raApp"><div class="ra-head"><div class="ra-logo">Math<b>.</b>hub</div><button class="ra-theme" type="button" data-act="toggle-mode" aria-label="تغيير الوضع">◐</button></div>'
+   +'<div class="ra-hero"><h1>كل مواد دفعتنا في مكان واحد</h1><p>اختار المادة وابدأ: شرح، ملخصات، وتمارين محلولة.</p></div>'
+   +'<div class="ra-grid">'+Y.map(y=>'<button class="ra-card" type="button" data-act="choose-track" data-track="'+y[0]+'"><div class="s" aria-hidden="true">'+y[3]+'</div><h2>'+y[1]+'</h2><p>'+y[2]+'</p><span class="go">ادخل المادة ←</span></button>').join('')+'</div></div>';
+  if(seen)return;
+  let started=false;
+  const iv=setInterval(()=>{if(started||sp.classList.contains('hide'))return;started=true;clearInterval(iv);run()},50);
+  function run(){
+    const $=id=>document.getElementById(id),intro=$('raIntro');if(!intro)return;
+    const TITLE='Math 2',DUR=2000,ttl=$('raTtl');
+    [...TITLE].forEach((ch,i)=>{const s=document.createElement('span');s.textContent=ch===' '?'\u00A0':ch;if(/\d/.test(ch))s.className='n';s.style.animationDelay=(.1+i*.05)+'s';ttl.append(s)});
+    const cv=$('raCv'),ctx=cv.getContext('2d');let W,H,dpr;
+    const size=()=>{dpr=devicePixelRatio||1;W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)};
+    size();addEventListener('resize',size);
+    const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+    let t0=performance.now(),done=false;
+    const onK=e=>{if(e.key==='Escape'||e.key==='Enter')finish()};
+    addEventListener('keydown',onK);
+    function finish(){
+      if(done)return;done=true;removeEventListener('resize',size);removeEventListener('keydown',onK);
+      intro.classList.add('out');$('raApp').classList.add('on');
+      try{sessionStorage.setItem('fx_ra_intro','1')}catch(e){}
+      setTimeout(()=>{try{intro.remove()}catch(e){}},450);
+    }
+    $('raSkip').onclick=finish;
+    function frame(now){
+      if(done)return;
+      const t=(now-t0)/1000,p=Math.min((now-t0)/DUR,1);
+      $('raFill').style.width=(p*100)+'%';
+      ctx.clearRect(0,0,W,H);
+      const mid=H/2,amp=H*.34;
+      ctx.strokeStyle='rgba(158,176,208,.25)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(0,mid);ctx.lineTo(W,mid);ctx.stroke();
+      const reveal=reduce?1:Math.min(t/0.8,1);
+      [['#5eead4',1,0],['#ffb547',-1,0],['rgba(94,234,212,.35)',.55,1.3]].forEach(([c,k,ph])=>{
+        ctx.strokeStyle=c;ctx.lineWidth=3.2;ctx.lineCap='round';ctx.shadowColor=c;ctx.shadowBlur=14;
+        ctx.beginPath();const end=W*reveal;
+        for(let x=0;x<=end;x+=3){const u=x/W,y=mid+k*amp*Math.sin(u*Math.PI*4+t*1.4+ph)*Math.sin(u*Math.PI);x?ctx.lineTo(x,y):ctx.moveTo(x,y)}
+        ctx.stroke();
+      });
+      ctx.shadowBlur=0;
+      if(p>=1)finish();else requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+})();
+/* واجهة الدخول الرابعة: صفحة بشكل تسجيل الدخول (الاسم + السنة) */
+(function(){
+  if(window.__fxEntry!=='lg')return;
+  const sp=document.getElementById('trackSplash');if(!sp)return;
+  try{if(!document.getElementById('fxLgFont')){const l=document.createElement('link');l.id='fxLgFont';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Reem+Kufi:wght@500;700&display=swap';document.head.appendChild(l)}}catch(e){}
+  const Y=[['math1','السنة الأولى — Math 1'],['math2','السنة الثانية — Math 2'],['math3','السنة الثالثة — Math 3']];
+  let nm='',last='math1';try{nm=localStorage.getItem('fx_uname')||'';last=localStorage.getItem('fx_lgn_track')||'math1'}catch(e){}
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  sp.classList.add('lg');
+  sp.innerHTML='<button class="lgn-theme" type="button" data-act="toggle-mode" aria-label="تغيير الوضع">◐</button>'
+   +'<div class="lgn-page"><div class="lgn-side"><div class="lgn-logo"><i>∑</i> منصة الرياضيات</div>'
+   +'<h1>أهلاً بيك، يلا <mark>نكمل</mark> من حيث وقفت</h1><p>ادخل اسمك واختار سنتك عشان تتابع دروسك وتمارينك في مكان واحد.</p>'
+   +'<div class="lgn-eqs"><div>x² − 5x + 6 = 0</div><div>∫ 2x dx = x² + C</div><div>sin²θ + cos²θ = 1</div></div></div>'
+   +'<div class="lgn-box"><h2>ادخل للمنصة</h2>'
+   +'<form class="lgn-f" novalidate><label>الاسم</label><input class="lgn-nm" autocomplete="name" value="'+esc(nm)+'" placeholder="اكتب اسمك">'
+   +'<label>السنة</label><select class="lgn-yr">'+Y.map(y=>'<option value="'+y[0]+'"'+(y[0]===last?' selected':'')+'>'+y[1]+'</option>').join('')+'</select>'
+   +'<button class="lgn-go" type="submit">دخول</button><div class="lgn-msg" aria-live="polite"></div>'
+   +'<a href="#" class="lgn-adm">دخول الأدمن (وضع التحرير)</a></form>'
+   +'<button class="lgn-hid" type="button" data-act="choose-track" data-track="math1" hidden></button></div></div>';
+  const q=c=>sp.querySelector(c),f=q('.lgn-f'),inp=q('.lgn-nm'),sel=q('.lgn-yr'),msg=q('.lgn-msg'),hid=q('.lgn-hid');
+  const say=(t,c)=>{msg.textContent=t;msg.className='lgn-msg '+c};
+  f.addEventListener('submit',e=>{e.preventDefault();
+    const n=inp.value.trim();
+    if(n.length<2)return say('اكتب اسمك (حرفين على الأقل).','e');
+    try{localStorage.setItem('fx_uname',n);localStorage.setItem('fx_lgn_track',sel.value)}catch(_){}
+    try{if(typeof lsSet==='function'){lsSet('plus_name',n);lsSet('sx_pname',n)}}catch(_){}
+    if(busy)return;busy=true;
+    hid.dataset.track=sel.value;
+    welcome(n,()=>hid.click());
+  });
+  /* بوستر الترحيب (ثانيتين) بعد التسجيل: أهلاً بيك يا + الاسم */
+  let busy=false;
+  function welcome(n,done){
+    if(!document.getElementById('lgWelCss')){const st=document.createElement('style');st.id='lgWelCss';
+      st.textContent='#lgWel{position:fixed;inset:0;z-index:2147482000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center;color:#eef3fc;background:#0b1224 radial-gradient(60% 50% at 50% 38%,#15264d 0%,#0b1224 70%);font-family:Tajawal,\"Reem Kufi\",sans-serif;opacity:0;transition:opacity .3s ease}'
+      +'#lgWel.on{opacity:1}'
+      +'#lgWel .w1{font-size:clamp(26px,6vw,46px);font-weight:500;color:#9fb0d0;opacity:0;transform:translateY(18px);animation:lgWUp .5s .1s cubic-bezier(.2,.8,.2,1) forwards}'
+      +'#lgWel .w2{font-size:clamp(44px,12vw,104px);font-weight:700;line-height:1.2;max-width:92vw;overflow-wrap:anywhere;background:linear-gradient(90deg,#5eead4,#ffb547);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0;transform:translateY(18px) scale(.94);animation:lgWUp .6s .35s cubic-bezier(.2,.8,.2,1) forwards}'
+      +'#lgWel .w3{font-size:clamp(40px,9vw,64px);opacity:0;animation:lgWUp .5s .7s forwards}'
+      +'@keyframes lgWUp{to{opacity:1;transform:none}}';
+      document.head.appendChild(st)}
+    const o=document.createElement('div');o.id='lgWel';o.setAttribute('role','status');
+    const a=document.createElement('div');a.className='w1';a.textContent='أهلاً بيك يا';
+    const b=document.createElement('div');b.className='w2';b.textContent=n;
+    const c=document.createElement('div');c.className='w3';c.textContent='👋';
+    o.append(a,b,c);document.body.appendChild(o);
+    void o.offsetWidth;o.classList.add('on');
+    setTimeout(()=>{try{done()}catch(_){}o.classList.remove('on');setTimeout(()=>{try{o.remove()}catch(_){}busy=false},350)},1700);
+  }
+  q('.lgn-adm').addEventListener('click',e=>{e.preventDefault();try{askPassword()}catch(_){}});
+})();
 /* تفعيل ستايل الديزاين الثاني */
 if(window.__fxDesign==='nd')['nd-style','cleanCss','adminNdCss'].forEach(i=>{const s=document.getElementById(i);if(s)s.media='all'});
 /* زوّار الموقع: لو الأدمن غيّر الاختيار، بنطبّقه (إعادة تحميل مرة واحدة) */
 function FXS(){let a=null;const b=window.__fxEarlyFx||null;try{a=site.meta.fx}catch(e){}if(a&&b)return (+b.dzTs||0)>(+a.dzTs||0)?b:a;return a||b||{}}
 function want(k){let v=null,t=0;try{const F=FXS();v=F[k];t=+F.dzTs||0}catch(e){}
-  const ok=k==='design'?(v==='nd'||v==='classic'||v==='pm'):(v==='nd'||v==='classic');if(!ok)return null;
+  const ok=k==='design'?(v==='nd'||v==='classic'||v==='pm'):(v==='nd'||v==='classic'||v==='ra'||v==='lg');if(!ok)return null;
   let l=0;try{l=+localStorage.getItem('fx_dz_ts')||0}catch(e){}
   /* بنتبع السيرفر بس لو اختياره أحدث من اللي عندنا (أو لو أول زيارة) — عشان قيمة قديمة ما ترجّعش الاختيار الجديد */
   return (t>l||(l===0&&t===0))?v:null}
@@ -16596,22 +16782,22 @@ function save(k,v){
 (function(){
   const h=document.documentElement;if(!h.classList.contains('fx-boot'))return;
   /* شاشة الدخول الأولى (الانترو) مغطّية الصفحة بالكامل، فمفيش داعي نخبّي الصفحة ونضيّع وقتها */
-  try{let on=window.__fxEntry!=='nd'&&!!document.getElementById('introSplash');if(on){const c=JSON.parse(localStorage.getItem('site_theme_cache')||'null');if(c&&c.introMs!=null&&+c.introMs<=0)on=false}if(on)h.classList.remove('fx-boot')}catch(e){}
+  try{let on=window.__fxEntry!=='nd'&&window.__fxEntry!=='ra'&&window.__fxEntry!=='lg'&&!!document.getElementById('introSplash');if(on){const c=JSON.parse(localStorage.getItem('site_theme_cache')||'null');if(c&&c.introMs!=null&&+c.introMs<=0)on=false}if(on)h.classList.remove('fx-boot')}catch(e){}
   let waited=0,okc=0,early=false;
   const iv=setInterval(()=>{
     waited+=100;
     /* رد السيرفر السريع على الديزاين: لو مختلف بنحوّل فوراً وإحنا لسه مخبّيين الصفحة */
     if(!early&&window.__fxEarlyFx){early=true;let rl=false;try{rl=follow()}catch(e){}if(rl){clearInterval(iv);return}}
-    let ready=false;try{ready=!!window.__fxR1&&document.readyState!=='loading'&&(!!window.__fxEarlyDone||waited>=1500)}catch(e){}
+    const _ra=window.__fxEntry==='ra';let ready=false;try{ready=!!window.__fxR1&&document.readyState!=='loading'&&(!!window.__fxEarlyDone||waited>=(_ra?600:1500))}catch(e){}
     okc=ready?okc+1:0;
-    if(okc>=3||waited>=3600){
+    if(okc>=(_ra?2:3)||waited>=(_ra?2000:3600)){
       clearInterval(iv);let rl=false;try{rl=follow()}catch(e){}
       if(!rl){requestAnimationFrame(()=>requestAnimationFrame(()=>h.classList.remove('fx-boot')))}
     }
   },100);
 })();
 let pan;
-const DEF={design:{classic:'الديزاين الأول',nd:'الديزاين الثاني',pm:'الديزاين الثالث (ماث)'},entry:{classic:'واجهة الدخول الأولى',nd:'واجهة الدخول الثانية'}};
+const DEF={design:{classic:'الديزاين الأول',nd:'الديزاين الثاني',pm:'الديزاين الثالث (ماث)'},entry:{classic:'واجهة الدخول الأولى',nd:'واجهة الدخول الثانية',ra:'واجهة الدخول الثالثة (Road to A)',lg:'واجهة الدخول الرابعة (تسجيل الدخول)'}};
 function names(){let a=null,l=null;try{a=site.meta.fx.dzNames}catch(e){}try{l=JSON.parse(localStorage.getItem('fx_dz_names'))}catch(e){}return (a&&(!l||(+a.t||0)>=(+l.t||0)))?a:(l||{})}
 const nm=(k,v)=>{const n=names();return (n[k]&&n[k][v])||DEF[k][v]};
 const E2=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -16644,7 +16830,9 @@ function draw(){
   +'<h4>🚪 واجهة الدخول</h4><small>اللي بيظهر للزائر أول ما يدخل ويختار منه السنة.</small>'
   +OPT('entry','classic','شاشة الترحيب المتحركة ثم نافذة اختيار المادة.')
   +OPT('entry','nd','صفحة رئيسية بكروت السنين (Math 1 / 2 / 3) من غير شاشة ترحيب.')
-  +pmsubHtml()+txHtml()+layerHtml()+editHtml();
+  +OPT('entry','ra','شاشة افتتاحية متحركة (موجات + Math 2 + شريط تحميل) بتشتغل مرة في الجلسة، وبعدها صفحة كروت المواد بتاعة Road to A.')
+  +OPT('entry','lg','صفحة بشكل «تسجيل الدخول | منصة الرياضيات»: ترحيب ومعادلات على جنب، وكارت فيه الاسم واختيار السنة وزرار دخول (وفيه رابط دخول الأدمن).')
+  +pmsubHtml()+lgHtml()+txHtml()+layerHtml()+editHtml();
 }
 const LY=()=>{let a=null,l=null;try{a=site.meta.fx.dzLayer}catch(e){}try{l=JSON.parse(localStorage.getItem('fx_layer'))}catch(e){}const b=(a&&(!l||(+a.t||0)>=(+l.t||0)))?a:l;return b&&b.v==='front'?'front':'back'};
 function layerApply(){document.documentElement.classList.toggle('fx-layer-back',LY()==='back')}
@@ -16654,6 +16842,35 @@ function layerHtml(){const v=LY();
   return '<h4>❄️ التلج والمطر والتأثيرات</h4><small>تظهر ورا الكلام والشاشة أو قدامهم.</small>'
   +'<button type="button" class="v-opt '+(v==='back'?'on':'')+'" data-ly="back"><b>ورا الكلام'+(v==='back'?'<em>✓ مختار</em>':'')+'</b><span>التأثيرات في الخلفية ومش بتغطي على الكلام.</span></button>'
   +'<button type="button" class="v-opt '+(v==='front'?'on':'')+'" data-ly="front"><b>قدام الكلام'+(v==='front'?'<em>✓ مختار</em>':'')+'</b><span>التأثيرات فوق الشاشة كلها زي الأول.</span></button>'}
+/* ===== 🔐 شكل شاشة تسجيل الدخول (نافذة كلمة مرور وضع التحرير) ===== */
+function LGS(){try{return site.meta.fx.lgst==='math'?'math':''}catch(e){return ''}}
+function lgSet(v){try{if(ADM()&&typeof site!=='undefined'&&site){site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{lgst:v});if(typeof scheduleSave==='function')scheduleSave()}}catch(e){}try{typeof toast==='function'&&toast('تم تغيير شكل شاشة الدخول')}catch(e){}}
+function lgHtml(){const v=LGS(),O=[['','الافتراضية','نافذة كلمة المرور العادية بتاعة الموقع.'],['math','🔐 منصة الرياضيات','كارت بخلفية ورق مربعات وحدود سميكة وظل صلب وزرار أصفر، بشكل صفحة تسجيل الدخول الجديدة (ليلي ونهاري).']];
+  return '<h4>🔐 شكل شاشة تسجيل الدخول</h4><small>الشاشة اللي بتظهر لما تدوس على 🔒 لدخول وضع التحرير.</small>'
+  +O.map(o=>'<button type="button" class="v-opt '+(v===o[0]?'on':'')+'" data-lgs="'+o[0]+'"><b>'+o[1]+(v===o[0]?'<em>✓ مختار</em>':'')+'</b><span>'+o[2]+'</span></button>').join('')}
+(function(){
+  let _om,_ap;try{_om=openModal;_ap=askPassword}catch(e){return}
+  if(typeof _om!=='function'||typeof _ap!=='function')return;
+  try{
+  openModal=function(){try{const ov=document.getElementById('overlay');if(ov)ov.classList.remove('fx-lg')}catch(e){}return _om.apply(this,arguments)};
+  askPassword=function(){
+    const r=_ap.apply(this,arguments);
+    try{if(LGS()!=='math')return r;
+      const ov=document.getElementById('overlay'),b=document.getElementById('mBody'),pw=document.getElementById('pw');if(!ov||!b||!pw)return r;
+      if(!document.getElementById('fxLgFont')){const l=document.createElement('link');l.id='fxLgFont';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Reem+Kufi:wght@500;700&display=swap';document.head.appendChild(l)}
+      ov.classList.add('fx-lg');
+      const wrap=document.createElement('div');wrap.className='lg-in';pw.parentNode.insertBefore(wrap,pw);wrap.appendChild(pw);
+      const eye=document.createElement('button');eye.type='button';eye.className='lg-eye';eye.textContent='إظهار';
+      eye.onclick=()=>{const sh=pw.type==='password';pw.type=sh?'text':'password';eye.textContent=sh?'إخفاء':'إظهار'};wrap.appendChild(eye);
+      const head=document.createElement('div');head.innerHTML='<div class="lg-logo"><i>∑</i> منصة الرياضيات</div><h2 class="lg-h">سجّل دخولك</h2><p class="lg-p">ادخل كلمة مرور وضع التحرير عشان تتحكم في الموقع.</p>';
+      b.insertBefore(head,b.firstChild);
+      pw.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const sv=document.querySelector('#mFoot [data-act="modal-save"]');if(sv)sv.click()}});
+      pw.focus();
+    }catch(e){}
+    return r;
+  };
+  }catch(e){}
+})();
 /* ===== طريقة عرض المحتوى: من تحت / في النص / صفحة لوحدها (بتتغير فوراً عند الكل) ===== */
 function PS(){try{return String(site.meta.fx.pmsub||'')}catch(e){return ''}}
 function pmsubSet(v){try{if(ADM()&&typeof site!=='undefined'&&site){site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{pmsub:v});if(typeof scheduleSave==='function')scheduleSave()}}catch(e){}try{typeof toast==='function'&&toast('تم تغيير طريقة العرض')}catch(e){}}
@@ -16725,9 +16942,10 @@ function applyTx(){
   put('#heroSub',window.__fxSkin==='pm'?t.pmSub:t.ndSub);put('#trackSplash.fxh .nd-hero p',t.ndSub);
   put('#trackSplash:not(.fxh) .ts-title',t.clTitle);
   put('#trackSplash:not(.fxh) .ts-sub',t.clSub);
+  put('#trackSplash.ra .ra-hero h1',t.raTitle);put('#trackSplash.ra .ra-hero p',t.raSub);
 }
 try{if(window.ND&&ND.paintHome){const _ph=ND.paintHome;ND.paintHome=function(){const r=_ph.apply(this,arguments);try{applyTx()}catch(e){}return r}}}catch(e){}
-const TXF=[['clTitle','عنوان واجهة الدخول الأولى','Math'],['clSub','الكلام تحت العنوان (الأولى)','أهلاً بيك! اختار المادة اللي عايز تشوفها.'],['ndTitle','العنوان الكبير — الديزاين التاني','أهلاً بيك في عالم الرياضيات'],['ndSub','الكلام تحت العنوان — الديزاين التاني','كل المواد هتلاقيها جوا'],['pmTitle','العنوان الكبير — الديزاين التالت (ماث)','كل مواد دفعتنا في مكان واحد'],['pmSub','الكلام تحت العنوان — الديزاين التالت (ماث)','ملخصات، محاضرات، امتحانات سنين فاتت وفيديوهات شرح…']];
+const TXF=[['clTitle','عنوان واجهة الدخول الأولى','Math'],['clSub','الكلام تحت العنوان (الأولى)','أهلاً بيك! اختار المادة اللي عايز تشوفها.'],['ndTitle','العنوان الكبير — الديزاين التاني','أهلاً بيك في عالم الرياضيات'],['ndSub','الكلام تحت العنوان — الديزاين التاني','كل المواد هتلاقيها جوا'],['pmTitle','العنوان الكبير — الديزاين التالت (ماث)','كل مواد دفعتنا في مكان واحد'],['pmSub','الكلام تحت العنوان — الديزاين التالت (ماث)','ملخصات، محاضرات، امتحانات سنين فاتت وفيديوهات شرح…'],['raTitle','العنوان الكبير — واجهة الدخول الثالثة (Road to A)','كل مواد دفعتنا في مكان واحد'],['raSub','الكلام تحت العنوان — واجهة الدخول الثالثة (Road to A)','اختار المادة وابدأ: شرح، ملخصات، وتمارين محلولة.']];
 function txHtml(){
   const t=tx();
   return '<h4>✍️ الكلام اللي بيظهر في واجهة الدخول</h4><small>اكتب اللي إنت عايزه. اترك الخانة فاضية عشان ترجع للكلام الافتراضي.</small>'
@@ -16753,6 +16971,7 @@ function openPanel(){
       if(t.closest('[data-txsave]')){saveTx();return}
       const ly=t.closest('[data-ly]');if(ly){layerSet(ly.dataset.ly);draw();return}
       const ps=t.closest('[data-ps]');if(ps){pmsubSet(ps.dataset.ps);draw();return}
+      const lgx=t.closest('[data-lgs]');if(lgx){lgSet(lgx.dataset.lgs);draw();return}
       if(t.closest('[data-edtx]')){setEdit(true);return}
       if(t.closest('.tx-i'))return;
       const rn=t.closest('[data-rn]');if(rn){startRename(rn);return}
