@@ -16746,11 +16746,12 @@ const cur=()=>({design:window.__fxSkin==='pm'?'pm':(window.__fxDesign||'classic'
 /* تفعيل ستايل الديزاين الثاني */
 if(window.__fxDesign==='nd')['nd-style','cleanCss','adminNdCss'].forEach(i=>{const s=document.getElementById(i);if(s)s.media='all'});
 /* زوّار الموقع: لو الأدمن غيّر الاختيار، بنطبّقه (إعادة تحميل مرة واحدة) */
-function FXS(){let a=null;const b=window.__fxEarlyFx||null;try{a=site.meta.fx}catch(e){}if(a&&b)return (+b.dzTs||0)>(+a.dzTs||0)?b:a;return a||b||{}}
+function FXS(){let a=null;const b=window.__fxEarlyFx||null;try{a=site.meta.fx}catch(e){}if(a&&b)return (+b.dzTs||0)>=(+a.dzTs||0)?b:a;return a||b||{}}
 function want(k){let v=null,t=0;try{const F=FXS();v=F[k];t=+F.dzTs||0}catch(e){}
   const ok=k==='design'?(v==='nd'||v==='classic'||v==='pm'):(v==='nd'||v==='classic'||v==='ra'||v==='lg');if(!ok)return null;
   let l=0;try{l=+localStorage.getItem('fx_dz_ts')||0}catch(e){}
   /* بنتبع السيرفر بس لو اختياره أحدث من اللي عندنا (أو لو أول زيارة) — عشان قيمة قديمة ما ترجّعش الاختيار الجديد */
+  if(!ADM())return v; /* الزائر بيتبع السيرفر دايماً */
   return (t>l||(l===0&&t===0))?v:null}
 /* انتقال ناعم بين الديزاينات: Fade للصفحة وبعدين إعادة تحميل، والصفحة الجديدة بتظهر بـ Fade */
 function smoothReload(waitSave){
@@ -16819,6 +16820,24 @@ function save(k,v){
   },100);
 })();
 let pan;
+/* مزامنة الديزاين والواجهة من السيرفر للزوار: كل 15 ثانية + أول ما الزائر يرجع للصفحة (من غير ما يحتاج يعمل ريفرش) */
+(function(){
+  const K='sb_publishable_YgeD7rPEYjExOi0hdNY4hA_ZyMI5_WL',U='https://jlpwwxmdyvgfizvjidug.supabase.co/rest/v1/site_content?id=eq.main&select=fx:data->meta->fx';
+  let inflight=false;
+  function pull(){
+    if(inflight||document.hidden||ADM())return;
+    inflight=true;
+    const c=new AbortController(),to=setTimeout(()=>c.abort(),6000);
+    fetch(U,{headers:{apikey:K,Authorization:'Bearer '+K},cache:'no-store',signal:c.signal})
+      .then(r=>r.ok?r.json():null)
+      .then(j=>{const f=j&&j[0]&&j[0].fx;if(f&&typeof f==='object'){window.__fxEarlyFx=f;try{follow()}catch(e){}}})
+      .catch(()=>{})
+      .then(()=>{clearTimeout(to);inflight=false});
+  }
+  setInterval(pull,15000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
+  window.addEventListener('focus',pull);
+})();
 const DEF={design:{classic:'الديزاين الأول',nd:'الديزاين الثاني',pm:'الديزاين الثالث (ماث)'},entry:{classic:'واجهة الدخول الأولى',nd:'واجهة الدخول الثانية',ra:'واجهة الدخول الثالثة (Road to A)',lg:'واجهة الدخول الرابعة (تسجيل الدخول)'}};
 function names(){let a=null,l=null;try{a=site.meta.fx.dzNames}catch(e){}try{l=JSON.parse(localStorage.getItem('fx_dz_names'))}catch(e){}return (a&&(!l||(+a.t||0)>=(+l.t||0)))?a:(l||{})}
 const nm=(k,v)=>{const n=names();return (n[k]&&n[k][v])||DEF[k][v]};
