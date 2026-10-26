@@ -5866,7 +5866,7 @@ window.addEventListener('resize', syncTopbarHeight);
   syncTopbarHeight();
 
   currentTrack = loadTrack();
-  if(currentTrack){ setTrack(currentTrack, {silent:true}); closeSplash(); if(window.__fxDesign!==window.__fxEntry && !location.hash.slice(1)) openSplash(); }
+  if(currentTrack){ setTrack(currentTrack, {silent:true}); closeSplash(); if(window.__fxEntry==='lg'){ let _lm='always',_un=''; try{ const _f=(site.meta&&site.meta.fx)||{},_e=window.__fxEarlyFx||{},_v=_f.lgmode!=null?_f.lgmode:_e.lgmode; _lm=_v==='first'?'first':'always'; }catch(e){} try{ _un=localStorage.getItem('fx_uname')||''; }catch(e){} if(_lm!=='first'||!_un) openSplash(); } else if(window.__fxDesign!==window.__fxEntry && !location.hash.slice(1)) openSplash(); }
   else { openSplash(); }
 
   try{ Poster.maybeShow(); }catch(e){ console.warn('poster', e); }
@@ -16832,7 +16832,7 @@ function draw(){
   +OPT('entry','nd','صفحة رئيسية بكروت السنين (Math 1 / 2 / 3) من غير شاشة ترحيب.')
   +OPT('entry','ra','شاشة افتتاحية متحركة (موجات + Math 2 + شريط تحميل) بتشتغل مرة في الجلسة، وبعدها صفحة كروت المواد بتاعة Road to A.')
   +OPT('entry','lg','صفحة بشكل «تسجيل الدخول | منصة الرياضيات»: ترحيب ومعادلات على جنب، وكارت فيه الاسم واختيار السنة وزرار دخول (وفيه رابط دخول الأدمن).')
-  +pmsubHtml()+lgHtml()+txHtml()+layerHtml()+editHtml();
+  +pmsubHtml()+lgHtml()+lgmHtml()+txHtml()+layerHtml()+editHtml();
 }
 const LY=()=>{let a=null,l=null;try{a=site.meta.fx.dzLayer}catch(e){}try{l=JSON.parse(localStorage.getItem('fx_layer'))}catch(e){}const b=(a&&(!l||(+a.t||0)>=(+l.t||0)))?a:l;return b&&b.v==='front'?'front':'back'};
 function layerApply(){document.documentElement.classList.toggle('fx-layer-back',LY()==='back')}
@@ -16844,7 +16844,7 @@ function layerHtml(){const v=LY();
   +'<button type="button" class="v-opt '+(v==='front'?'on':'')+'" data-ly="front"><b>قدام الكلام'+(v==='front'?'<em>✓ مختار</em>':'')+'</b><span>التأثيرات فوق الشاشة كلها زي الأول.</span></button>'}
 /* ===== 🔐 شكل شاشة تسجيل الدخول (نافذة كلمة مرور وضع التحرير) ===== */
 function LGS(){try{return site.meta.fx.lgst==='math'?'math':''}catch(e){return ''}}
-function lgSet(v){try{if(ADM()&&typeof site!=='undefined'&&site){site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{lgst:v});if(typeof scheduleSave==='function')scheduleSave()}}catch(e){}try{typeof toast==='function'&&toast('تم تغيير شكل شاشة الدخول')}catch(e){}}
+function LGM(){try{return site.meta.fx.lgmode==='first'?'first':'always'}catch(e){return 'always'}}function lgmSet(v){try{if(ADM()&&typeof site!=='undefined'&&site){site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{lgmode:v});if(typeof scheduleSave==='function')scheduleSave()}}catch(e){}try{typeof toast==='function'&&toast(v==='first'?'شاشة التسجيل هتظهر أول مرة بس':'شاشة التسجيل هتظهر كل ما حد يدخل')}catch(e){}}function lgmHtml(){const v=LGM(),O=[['always','🔁 كل ما حد يدخل','شاشة التسجيل (الاسم + السنة) بتظهر لكل زائر في كل مرة يفتح فيها الموقع.'],['first','1️⃣ أول مرة بس','شاشة التسجيل بتظهر مرة واحدة، وبعد ما الزائر يسجل بيدخل على طول في المرات الجاية.']];return '<h4>👋 ظهور شاشة التسجيل (واجهة الدخول الرابعة)</h4><small>بتتحكم هل شاشة التسجيل بتظهر كل مرة ولا أول مرة بس. بوستر «أهلاً بيك» بيظهر بعد كل تسجيل.</small>'+O.map(o=>'<button type="button" class="v-opt '+(v===o[0]?'on':'')+'" data-lgm="'+o[0]+'"><b>'+o[1]+(v===o[0]?'<em>✓ مختار</em>':'')+'</b><span>'+o[2]+'</span></button>').join('')}function lgSet(v){try{if(ADM()&&typeof site!=='undefined'&&site){site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{lgst:v});if(typeof scheduleSave==='function')scheduleSave()}}catch(e){}try{typeof toast==='function'&&toast('تم تغيير شكل شاشة الدخول')}catch(e){}}
 function lgHtml(){const v=LGS(),O=[['','الافتراضية','نافذة كلمة المرور العادية بتاعة الموقع.'],['math','🔐 منصة الرياضيات','كارت بخلفية ورق مربعات وحدود سميكة وظل صلب وزرار أصفر، بشكل صفحة تسجيل الدخول الجديدة (ليلي ونهاري).']];
   return '<h4>🔐 شكل شاشة تسجيل الدخول</h4><small>الشاشة اللي بتظهر لما تدوس على 🔒 لدخول وضع التحرير.</small>'
   +O.map(o=>'<button type="button" class="v-opt '+(v===o[0]?'on':'')+'" data-lgs="'+o[0]+'"><b>'+o[1]+(v===o[0]?'<em>✓ مختار</em>':'')+'</b><span>'+o[2]+'</span></button>').join('')}
@@ -16972,6 +16972,7 @@ function openPanel(){
       const ly=t.closest('[data-ly]');if(ly){layerSet(ly.dataset.ly);draw();return}
       const ps=t.closest('[data-ps]');if(ps){pmsubSet(ps.dataset.ps);draw();return}
       const lgx=t.closest('[data-lgs]');if(lgx){lgSet(lgx.dataset.lgs);draw();return}
+      const lgm=t.closest('[data-lgm]');if(lgm){lgmSet(lgm.dataset.lgm);draw();return}
       if(t.closest('[data-edtx]')){setEdit(true);return}
       if(t.closest('.tx-i'))return;
       const rn=t.closest('[data-rn]');if(rn){startRename(rn);return}
