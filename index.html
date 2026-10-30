@@ -17139,4 +17139,105 @@ html[data-pmsub=page].pm-subopen :is(#topbar,#fxProfC,#fxFab,#fxTbBtn,#fxTbar,#f
   setInterval(apply,300);apply();
 })();
 </script>
+<style id="fxPinKeepOpenCss">
+/* ===== القسم المثبّت: مفتوح ومتشاف دايماً في أي تصميم ===== */
+#sections .section.pinned>.wrap>.sec-collapse,
+#sections:not(.fx-subj-open)>.section.pinned[data-depth="0"]>.wrap>.sec-collapse,
+#sections .fx-sub-page .section.pinned.nested[id]:not(.fx-anc):not(.fx-tgt)>.wrap>.sec-collapse{display:grid!important;grid-template-rows:1fr!important}
+#sections .section.pinned>.wrap>.sec-collapse>div{visibility:visible!important;opacity:1!important;transform:none!important;overflow:visible}
+#sections .section.pinned>.wrap>.sec-head .sec-head-static{display:flex!important}
+#sections>.section.pinned.fx-ghide{display:block!important}
+</style>
+<script id="fxPinKeepOpenJs">
+(function(){
+  function keep(el){
+    try{
+      if(!el.classList.contains('open')) el.classList.add('open');
+      if(el.id && el.id.indexOf('sec-')===0 && typeof openSections!=='undefined') openSections.add(el.id.slice(4));
+    }catch(e){}
+  }
+  function sweep(){ try{ document.querySelectorAll('.section.pinned').forEach(keep); }catch(e){} }
+  var t=null;
+  function later(){ clearTimeout(t); t=setTimeout(sweep,0); }
+  try{
+    new MutationObserver(function(ms){
+      for(var i=0;i<ms.length;i++){
+        var m=ms[i];
+        if(m.type==='attributes'){ var el=m.target; if(el.classList && el.classList.contains('section') && el.classList.contains('pinned') && !el.classList.contains('open')){ keep(el); } }
+        else if(m.type==='childList'){ later(); }
+      }
+    }).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class'],childList:true});
+  }catch(e){}
+  document.addEventListener('click',later,true);
+  window.addEventListener('popstate',later);
+  window.addEventListener('hashchange',later);
+  sweep();
+})();
+</script>
+<style id="fxPinInlineCss">
+/* ===== الديزاين الثاني والثالث: محتوى القسم المثبّت يظهر لوحده في صفحة المواد ===== */
+#ndPinned:empty{display:none}
+#ndPinned{margin:6px 0 20px}
+#ndPinned .nd-pinned{margin-bottom:14px}
+#ndPinned .section{padding:0;border:0;margin:0}
+#ndPinned .section>.wrap{max-width:none;padding:0}
+#ndPinned .sec-collapse{display:grid!important;grid-template-rows:1fr!important}
+#ndPinned .sec-collapse>div{visibility:visible!important;opacity:1!important;transform:none!important;overflow:visible}
+#ndPinned .sec-head-static{display:flex!important}
+</style>
+<script id="fxPinInlineJs">
+(function(){
+  var sig='';
+  function pinnedFor(t){
+    return (site.sections||[]).filter(function(s){
+      return s.pinned && (!s.track||s.track==='all'||s.track===t) && (isAdmin||!secHidden(s));
+    });
+  }
+  function host(){
+    var y=document.getElementById('ndYear'); if(!y) return null;
+    var h=document.getElementById('ndPinned');
+    if(!h){
+      h=document.createElement('div'); h.id='ndPinned';
+      var tl=y.querySelector('.nd-tools');
+      if(tl&&tl.parentNode) tl.parentNode.insertBefore(h,tl); else y.appendChild(h);
+    }
+    return h;
+  }
+  function paint(force){
+    try{
+      if(!window.ND||!ND.track) return;
+      var h=host(); if(!h) return;
+      var list=pinnedFor(ND.track);
+      var s2=ND.track+'|'+JSON.stringify(list)+'|'+(isAdmin?1:0);
+      if(force||s2!==sig||!h.firstChild&&list.length){
+        sig=s2;
+        h.innerHTML=list.map(function(s){
+          return '<div class="nd-pinned">'+renderSection(s,0,list,0).replace(/\sid="[^"]*"/g,'')+'</div>';
+        }).join('');
+      }
+      /* نخفي كارت المادة المثبّتة من القائمة (الأدمن يفضل شايفه عشان أدواته) */
+      if(!isAdmin){
+        list.forEach(function(s){
+          document.querySelectorAll('#ndList a.nd-item').forEach(function(a){
+            var hr=a.getAttribute('href')||''; if(hr.slice(-(s.id.length+1))==='/'+s.id) a.style.display='none';
+          });
+        });
+        document.querySelectorAll('#ndList .nd-group').forEach(function(g){
+          var vis=[].some.call(g.querySelectorAll('a.nd-item'),function(a){return a.style.display!=='none'});
+          g.style.display=vis?'':'none';
+        });
+      }
+    }catch(e){}
+  }
+  function hook(){
+    if(!window.ND||!ND.paintYear||ND.__pinHook) return !!(window.ND&&ND.__pinHook);
+    ND.__pinHook=1;
+    var o=ND.paintYear;
+    ND.paintYear=function(){var r=o.apply(this,arguments);sig='';paint(true);return r};
+    return true;
+  }
+  hook();
+  setInterval(function(){ hook(); if(window.ND&&(ND.view==='year'||ND.view==='sub')) paint(false); },700);
+})();
+</script>
 </body>
