@@ -18438,6 +18438,26 @@ html.fx-skin-zn .zch::after{content:"❦";display:block;text-align:center;color:
 #znR .zch .zch{margin:24px 0 0;padding-inline-start:16px;border-inline-start:3px solid color-mix(in srgb,var(--c) 45%,transparent)}
 html.fx-skin-zn .zch .zch::after{display:none}
 #mt .m-ch .m-ch{margin:20px 0 0}
+/* --- الأقسام الفرعية بستايل مختلف عن الرئيسية في كل ديزاين --- */
+/* الرفّ: بطاقة ملحوظة في الكتاب بعلامة § وحافة جلد */
+#znR .zch.z-sub{margin:22px 0 0;padding:10px 18px 14px;background:rgba(160,106,53,.09);border:1px solid rgba(160,106,53,.28);border-inline-start:5px solid #a06a35;border-radius:12px}
+#znR .z-sub>.zch-hd{margin:0 0 4px}
+#znR .z-sub>.zch-hd .zfa{width:28px;height:28px;font-size:12px;flex:none}
+#znR .z-sub>.zch-hd .zch-h{font-size:clamp(17px,2.8vw,21px);font-weight:700;color:#7a4e22}
+html.fx-skin-zn[data-theme="dark"] #znR .z-sub>.zch-hd .zch-h{color:#E7C48F}
+#znR .z-sub>.zch-hd .zch-h::before{content:"§ ";color:#a06a35;font-weight:800}
+#znR .z-sub .z-sub{background:rgba(160,106,53,.06);border-radius:10px}
+/* المترو: فرع من الخط — خط جانبي بنقطة محطة وعنوان كحبّة صغيرة */
+#mt .m-ch.m-sub{position:relative;margin:22px 0 0;margin-inline-start:14px;padding-inline-start:20px;border-inline-start:4px solid var(--lc)}
+#mt .m-ch.m-sub::before{content:"";position:absolute;inset-inline-start:-11px;top:14px;width:14px;height:14px;box-sizing:border-box;border-radius:50%;background:var(--mp);border:3px solid var(--lc)}
+#mt .m-sub>.m-chhd{background:transparent;border:2px solid var(--lc);border-inline-start:2px solid var(--lc);border-radius:999px;padding:4px 12px;margin:0 0 8px}
+#mt .m-sub>.m-chhd .m-fa{width:26px;height:26px;font-size:11px;flex:none}
+#mt .m-sub>.m-chhd .m-chh{font-size:clamp(16px,2.6vw,20px)}
+/* المجرّة: قمر صغير — إطار متقطع كمدار، نقطة مضيئة قبل العنوان */
+#cs .m-ch.m-sub{background:rgba(124,80,255,.07);border:1px dashed color-mix(in srgb,var(--lc) 55%,var(--ml));border-radius:22px;padding:4px 16px 14px;margin:16px 0 0}
+#cs .m-sub>.m-chhd .m-fa{width:28px;height:28px;font-size:12px;flex:none}
+#cs .m-sub>.m-chhd .m-chh{font-size:clamp(16px,2.5vw,19px);font-weight:700}
+#cs .m-sub>.m-chhd .m-chh::before{content:"";display:inline-block;width:10px;height:10px;margin-inline-end:10px;border-radius:50%;background:var(--lc);box-shadow:0 0 10px var(--lc)}
 </style>
 <script id="csJs">
 (function(){
