@@ -18049,7 +18049,7 @@ function paintReader(keep){
  var ord=[];L.forEach(function(l){ord=ord.concat(l.books)});var n=ord.indexOf(s),ch=chapters(s,0,[]),top=keep?r.scrollTop:0,ln=L[li]?L[li].name:'';
  r.style.setProperty('--lc',LC[li%7]);
  var nb=function(x,lb){return x?'<button type="button" class="m-nb" data-mt-open="'+E(x.id)+'"><small>'+lb+'</small>'+E(x.title)+'</button>':''};
- r.innerHTML='<div class="m-rt"><button type="button" class="m-x" data-mt="close" aria-label="رجوع للخريطة">✕</button></div>'
+ r.innerHTML='<div class="m-rt"><button type="button" class="m-back" data-mt="close">← الخريطة</button><span class="m-rbadge">'+(li+1)+'</span><span class="m-rn">'+E(s.title)+'</span>'+foldBar(ch)+'</div>'
  +'<div class="m-cover"><div><small>'+E(ln||'خط '+(li+1))+' · محطة '+(bi+1)+'</small><h1>'+E(s.title)+'</h1>'+(s.desc?'<p>'+E(s.desc)+'</p>':'')+(s.icon?'<span class="m-ric">'+E(s.icon)+'</span>':'')+'</div></div>'
  +'<div class="m-rb"><nav class="m-idx" aria-label="فهرس المحطة">'+ch.map(function(c,i){return'<button type="button" class="'+(i?'':'on')+'" style="--d:'+c.d+'" data-mt-go="mtc-'+E(c.s.id)+'">'+E(c.s.title)+'</button>'}).join('')+'</nav>'
  +'<div class="m-doc">'+mHtml(s,0)
@@ -18848,8 +18848,8 @@ html[data-theme="dark"] #fxEI.ei-mp{background:#0B1220;color:#EAF0FA}
 #cs .cs-sol.spin .cs-rot{animation:csRot var(--sp) linear infinite;will-change:transform}
 #cs .cs-sol.spin .cs-orb{animation:csIn .9s calc(var(--i)*.15s) both}
 #cs .cs-pl,#cs .cs-sol.spin .cs-pl{animation:none}
-/* الكواكب من غير أي حركة خاصة بيها — بتلف مع المدار بس (أنيميشن واحد للمنظومة كلها) */
-#cs .cs-sol.spin .cs-pl{animation:none;will-change:auto}
+/* الكواكب بتلف في المدار، والكلام اللي تحتها ثابت: كل كوكب بيعاكس لفّة المدار بنفس السرعة بالظبط فبيفضل مستقيم */
+#cs .cs-sol.spin .cs-pl{animation:csRotU var(--sp) linear infinite;will-change:transform;backface-visibility:hidden}
 #cs .cs-sun{animation:csIn .8s both}
 html.cs-rd #cs .cs-rot,html.cs-rd #cs .cs-pl,html.cs-rd #cs::before{animation-play-state:paused!important}
 
@@ -18873,14 +18873,6 @@ html.cs-rd #cs .cs-rot,html.cs-rd #cs .cs-pl,html.cs-rd #cs::before{animation-pl
 #cs .cs-rot{border-radius:50%}
 #cs #csMap{overflow-x:clip}
 
-/* ===== الميترو: شاشة القراءة من غير شريط علوي — زرار ✕ بس على الشمال ===== */
-#mt .m-rt{position:sticky;top:0;height:0;padding:0;margin:0;gap:0;background:none;border:0;overflow:visible;z-index:20}
-#mt .m-rt::after{display:none}
-#mt .m-x{all:unset;box-sizing:border-box;position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 12px);width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font:700 20px/1 sans-serif;color:#fff;background:#0E1726;border:2px solid var(--lc,#fff);cursor:pointer;-webkit-tap-highlight-color:transparent}
-#mt .m-x:active{transform:scale(.92)}
-#mt .m-x:focus-visible{outline:3px solid var(--my);outline-offset:2px}
-#mt .m-idx{top:20px}
-@media (max-width:820px){#mt .m-idx{top:62px}}
 /* ===== شاشة القراءة: من غير شريط علوي — زرار ✕ بس على الشمال ===== */
 #cs .m-rt{position:sticky;top:0;height:0;padding:0;margin:0;gap:0;background:none;border:0;overflow:visible;z-index:20}
 #cs .m-rt::after{display:none}
