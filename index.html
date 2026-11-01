@@ -19579,7 +19579,11 @@ function setRot(){
  var land=innerWidth>=innerHeight;st.classList.toggle('rot',!land);
  if(!land){st.style.width=innerHeight+'px';st.style.height=innerWidth+'px'}else{st.style.width='';st.style.height=''}
 }
-function enterGame(){hideTL(1);
+var fsOff=false;
+function reqFs(){try{if(fsOff||document.fullscreenElement)return;var de=document.documentElement,rf=de.requestFullscreen||de.webkitRequestFullscreen;if(rf){var pr=rf.call(de);if(pr&&pr.catch)pr.catch(function(){})}}catch(e){}}
+document.addEventListener('fullscreenchange',function(){if(!document.fullscreenElement)fsOff=true});
+document.addEventListener('click',function(){if(document.documentElement.classList.contains('fx-skin-ab'))reqFs()},true);
+function enterGame(){hideTL(1);fsOff=false;reqFs();
  var st=$('abStage');if(!st||busy||isGm())return;
  st.classList.add('gm');document.documentElement.classList.add('ab-gm');document.body.style.overflow='hidden';
  
@@ -19591,7 +19595,7 @@ function exitGame(keepScroll){if(!openId&&isGm())hideTL(0);
  var st=$('abStage');if(!st||!st.classList.contains('gm'))return;
  st.classList.remove('gm','rot');st.style.width='';st.style.height='';document.documentElement.classList.remove('ab-gm');
  if(!openId)document.body.style.overflow='';
- try{if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen()}catch(e){}
+ 
  try{screen.orientation&&screen.orientation.unlock&&screen.orientation.unlock()}catch(e){}
  if(busy&&!keepScroll)busy=false;
  setTimeout(function(){try{layout();if(!keepScroll){var s=$('abStage');s&&s.scrollIntoView({block:'center'})}}catch(e){}},120);
