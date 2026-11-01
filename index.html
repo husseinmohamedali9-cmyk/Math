@@ -19066,7 +19066,7 @@ html.fx-skin-ab .overlay{z-index:80}html.fx-skin-ab .toast{z-index:90}
 #ab .m-cover h1{font:800 clamp(32px,6.5vw,66px)/1.2 var(--h);margin:0 0 10px}
 #ab .m-cover p{font:400 clamp(16px,2.3vw,20px)/1.9 var(--b);color:var(--mi2);margin:0;max-width:52ch}
 #ab .m-ric{position:absolute;inset-inline-end:clamp(16px,5vw,64px);top:50%;margin-top:-40px;width:80px;height:80px;border-radius:50%;border:12px solid var(--lc);display:grid;place-items:center;font-size:30px;background:var(--mb)}
-#ab .m-rb{display:grid;grid-template-columns:250px minmax(0,1fr);gap:clamp(20px,4vw,56px);max-width:1100px;margin:auto;padding:34px clamp(16px,5vw,64px) 90px;align-items:start}
+#ab .m-rb{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(20px,4vw,56px);max-width:1100px;margin:auto;padding:34px clamp(16px,5vw,64px) 90px;align-items:start}
 #ab .m-idx{position:sticky;top:76px;max-height:calc(100vh - 100px);overflow:auto;display:flex;flex-direction:column}
 #ab .m-idx button{all:unset;cursor:pointer;position:relative;box-sizing:border-box;padding:9px 38px 9px 6px;padding-inline-start:calc(6px + var(--d)*14px);padding-inline-end:38px;font:700 15px/1.5 var(--h);color:var(--mi2)}
 #ab .m-idx button::before{content:'';position:absolute;inset-inline-end:11px;top:0;bottom:0;width:6px;background:var(--ml)}
@@ -19241,7 +19241,7 @@ html.fx-skin-ab .sx-btn{background:#FFF3D0;border:2px solid #8a5a2a;color:#3B241
 @media (max-width:520px){#ab .ab-banner b{font-size:15px}#ab .ab-banner small{font-size:11px}#ab .ab-crate span{font-size:11.5px;padding:2px 4px}#ab .m-x{width:40px;height:40px}}
 
 /* — زرار العب + وضع اللعب بالعرض — */
-#ab .ab-play{all:unset;box-sizing:border-box;position:absolute;left:10px;top:10px;z-index:8;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:8px 16px 9px;border-radius:999px;background:linear-gradient(#9BEA5A,#43AD2C);border:3px solid #1f5a12;color:#fff;font:900 15px/1 var(--h);text-shadow:0 2px 0 #1f5a12;box-shadow:0 4px 0 #1f5a12;direction:rtl;-webkit-tap-highlight-color:transparent}
+#ab .ab-play{all:unset;box-sizing:border-box;position:absolute;left:10px;bottom:10px;z-index:8;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:8px 16px 9px;border-radius:999px;background:linear-gradient(#9BEA5A,#43AD2C);border:3px solid #1f5a12;color:#fff;font:900 15px/1 var(--h);text-shadow:0 2px 0 #1f5a12;box-shadow:0 4px 0 #1f5a12;direction:rtl;-webkit-tap-highlight-color:transparent}
 #ab .ab-play:active{transform:translateY(3px);box-shadow:0 1px 0 #1f5a12}
 #ab .ab-play:focus-visible{outline:3px solid #fff;outline-offset:2px}
 #ab .ab-exit{display:none}
@@ -19261,12 +19261,6 @@ html.fx-skin-ab .sx-btn{background:#FFF3D0;border:2px solid #8a5a2a;color:#3B241
 #ab .ab-crate.pop{animation:abPop .24s ease-out forwards;pointer-events:none}
 @keyframes abPop{40%{transform:scale(1.12) rotate(3deg)}100%{transform:scale(1.4);opacity:0}}
 html.ab-gm .fab,html.ab-gm [class*="chat"],html.ab-gm [id*="bot"],html.ab-gm [id*="Bot"]{display:none!important}
-/* وقت اللعب: نخبّي أيقونات الشريط العلوي (القايمة / الألوان / البروفايل وغيرها) */
-html.ab-gm #fxTbBtn,html.ab-gm #fxTbar,html.ab-gm #fxTbPanel,html.ab-gm #fxFab,html.ab-gm #fxProfL,html.ab-gm #fxProfC,html.ab-gm .notif-btn,html.ab-gm .mode-btn,html.ab-gm .poster-btn,html.ab-gm .top-ico,html.ab-gm .hamburger{display:none!important}
-/* المادة اللي السهم متصوّب عليها تنوّر أخضر */
-#ab .ab-crate.aim{z-index:5;filter:brightness(1.1) saturate(1.15);border-color:#2f9e1f;box-shadow:0 3px 0 rgba(60,30,8,.55),0 0 0 4px #5CFF3A,0 0 22px 8px rgba(92,255,58,.85);transition:box-shadow .08s}
-#ab .ab-crate.aim span{background:#E4FFD2;border-color:#2f9e1f;color:#12400a}
-#ab .ab-stage.nr:not(.gm) .ab-banner{top:56px}
 
 
 /* ===== واجهة الدخول «طيور المواد»: شاشة لعبة بزرار Continue ===== */
@@ -19432,17 +19426,7 @@ function showDots(x,y,vx,vy){
  for(var i=0;i<c.length;i++){var t=(i+1)*.075,px=x+vx*t,py=y+vy*t+.5*GRAV*t*t,ok=py<geo.gy&&px>-10&&px<geo.W+10&&py>-30;
   c[i].setAttribute('cx',px.toFixed(1));c[i].setAttribute('cy',py.toFixed(1));c[i].setAttribute('opacity',ok?(.95-i*.05).toFixed(2):0)}
 }
-function clearAim(){for(var i=0;i<tgt.length;i++){if(tgt[i].el)tgt[i].el.classList.remove('aim')}}
-function aimAt(x,y,vx,vy){
- var s={x:x,y:y,vx:vx,vy:vy},h=.008,hit=null;
- for(var i=0;i<900&&!hit;i++){
-  s.vy+=GRAV*h;s.x+=s.vx*h;s.y+=s.vy*h;hit=hitTest(s.x,s.y);
-  if(!hit&&s.y>=geo.gy&&s.vy>0){if(s.vy>150){s.y=geo.gy;s.vy=-s.vy*.38;s.vx*=.72}else break}
-  if(s.x<-80||s.x>geo.W+80||s.y<-160)break;
- }
- for(var j=0;j<tgt.length;j++){if(tgt[j].el)tgt[j].el.classList.toggle('aim',tgt[j]===hit)}
-}
-function hideDots(){clearAim();var d=$('abDots');if(!d)return;for(var i=0;i<d.childNodes.length;i++)d.childNodes[i].setAttribute('opacity',0)}
+function hideDots(){var d=$('abDots');if(!d)return;for(var i=0;i<d.childNodes.length;i++)d.childNodes[i].setAttribute('opacity',0)}
 function bannerHtml(M){
  if(sel<0||!M[sel])return'<b>اختار عصفور 🐦</b><small>كل عصفور جواه مجموعة مواد — دوس على عصفور تشوف مواده</small>';
  return'<b>'+E(lname(M[sel],sel))+'</b><small>'+M[sel].books.length+' مادة · '+(isGm()?'اسحب العصفور واضرب الصندوق 🎯':'دوس على المادة تفتح · أو دوس «العب 🎮» وصوّب')+'</small>';
@@ -19452,16 +19436,30 @@ function layout(){
  var books=(sel>=0&&M[sel])?M[sel].books:[],ch='';tgt=[];
  if(gmode){
   H=st.clientHeight||340;
-  var chh=44,gp=8,top0=50,fit=Math.max(1,Math.floor((H-top0-gr-12)/(chh+gp))),n=books.length,cols=Math.max(1,Math.ceil(n/fit)),regW=W*.68-14,cw=Math.max(96,Math.min(172,Math.floor((regW-(cols-1)*gp)/cols)));
-  books.forEach(function(b,k){
-   var c=Math.floor(k/fit),r=k%fit,x=W-14-cw-c*(cw+gp),y=top0+r*(chh+gp),rot=((hsh(b.id)%5)-2)*.8,big=kids(b).length;
-   tgt.push({id:b.id,x:x,y:y,w:cw,h:chh});
-   ch+='<button type="button" class="ab-crate'+(big?' big':'')+'" data-ab-shoot="'+E(b.id)+'" style="left:'+x.toFixed(1)+'px;top:'+y+'px;width:'+cw+'px;height:'+chh+'px;--i:'+k+';--r:'+rot+'deg" aria-label="'+E(b.title)+'"><span>'+(b.icon?E(b.icon)+' ':'')+E(b.title)+'</span>'+(big?'<i class="ab-star" title="فيها أقسام فرعية">★</i>':'')+'</button>';
-  });
+  var gp=8,n=books.length,bn=$('abBanner');if(bn)bn.innerHTML=bannerHtml(M);
+  var top0=Math.max(50,(bn?bn.offsetTop+bn.offsetHeight:44)+8),lim=H-gr-12,gapB=2*BRAD+8,xMin=Math.max(W*.3,150),xMax=W-14,best=null;
+  function crate(b,k,x,y,w,h){var rot=((hsh(b.id)%5)-2)*.8,big=kids(b).length;
+   tgt.push({id:b.id,x:x,y:y,w:w,h:h});
+   ch+='<button type="button" class="ab-crate'+(big?' big':'')+'" data-ab-shoot="'+E(b.id)+'" style="left:'+x.toFixed(1)+'px;top:'+y.toFixed(1)+'px;width:'+w+'px;height:'+h+'px;--i:'+k+';--r:'+rot+'deg" aria-label="'+E(b.title)+'"><span>'+(b.icon?E(b.icon)+' ':'')+E(b.title)+'</span>'+(big?'<i class="ab-star" title="فيها أقسام فرعية">★</i>':'')+'</button>'}
+  /* ترتيب على شكل L: عمود طويل على يمين الشاشة + صف بالعرض فوق — مفيش صندوق قدام صندوق، وبين الصف والعمود فتحة يعدّي منها العصفور */
+  for(var h0=44;h0>=34&&!best;h0-=4){
+   var capAll=Math.max(0,Math.floor((lim-top0+gp)/(h0+gp)));
+   if(n<=capAll){best={h:h0,nCol:n,nTop:0,colY:top0,cwC:Math.min(172,Math.max(110,Math.floor(W*.2)))};break}
+   var colY=top0+h0+gapB,cap=Math.max(0,Math.floor((lim-colY+gp)/(h0+gp))),nTop=n-cap,cwT=Math.min(150,Math.floor(((xMax-xMin)-(nTop-1)*gp)/nTop));
+   if(cwT>=84)best={h:h0,nCol:cap,nTop:nTop,colY:colY,cwT:cwT,cwC:cwT}
+  }
+  if(best){
+   var kk=0;
+   for(var a=0;a<best.nTop;a++,kk++)crate(books[kk],kk,xMax-best.cwT-a*(best.cwT+gp),top0,best.cwT,best.h);
+   for(var b2=0;b2<best.nCol;b2++,kk++)crate(books[kk],kk,xMax-best.cwC,best.colY+b2*(best.h+gp),best.cwC,best.h);
+  }else{
+   var chh=44,fit=Math.max(1,Math.floor((H-top0-gr-12)/(chh+gp))),cols=Math.max(1,Math.ceil(n/fit)),regW=W*.68-14,cw=Math.max(96,Math.min(172,Math.floor((regW-(cols-1)*gp)/cols)));
+   books.forEach(function(b,k){var c=Math.floor(k/fit),r=k%fit;crate(b,k,W-14-cw-c*(cw+gp),top0+r*(chh+gp),cw,chh)});
+  }
   geo={W:W,H:H,gr:gr,A:{x:Math.max(74,W*.13),y:H-gr-46},gy:H-gr+10};
  }else{
-  var cols2=W<430?3:(W<640?4:5),pad=12,gp2=8,cw2=Math.floor((W-2*pad-(cols2-1)*gp2)/cols2),chh2=W<430?56:60,rows=Math.ceil(books.length/cols2),nr=W<700,top1=sel>=0?(W<430?154:(nr?140:90)):0;
-  st.classList.toggle('nr',nr);H=Math.max(440,sel>=0?top1+rows*(chh2+gp2)+250+gr:440);st.style.height=H+'px';
+  var cols2=W<430?3:(W<640?4:5),pad=12,gp2=8,cw2=Math.floor((W-2*pad-(cols2-1)*gp2)/cols2),chh2=W<430?56:60,rows=Math.ceil(books.length/cols2),top1=sel>=0?(W<430?104:90):0;
+  H=Math.max(440,sel>=0?top1+rows*(chh2+gp2)+250+gr:440);st.style.height=H+'px';
   geo={W:W,H:H,gr:gr,A:{x:W/2,y:H-gr-46},gy:H-gr+10};
   books.forEach(function(b,k){
    var r=Math.floor(k/cols2),c=k%cols2,cnt=Math.min(cols2,books.length-r*cols2),rowW=cnt*cw2+(cnt-1)*gp2,x0=(W-rowW)/2,x=x0+(cnt-1-c)*(cw2+gp2),y=top1+r*(chh2+gp2),rot=((hsh(b.id)%5)-2)*.9,big=kids(b).length;
@@ -19499,7 +19497,7 @@ function setSel(i){
 }
 function pull(px,py){
  var A=geo.A,dx=px-A.x,dy=py-A.y,l=Math.hypot(dx,dy);if(l>MAXP){dx*=MAXP/l;dy*=MAXP/l;l=MAXP}
- cur={x:A.x+dx,y:A.y+dy,dx:dx,dy:dy,l:l};place(cur.x,cur.y,0);drawSling(cur.x,cur.y);showDots(cur.x,cur.y,-dx*KV,-dy*KV);aimAt(cur.x,cur.y,-dx*KV,-dy*KV);
+ cur={x:A.x+dx,y:A.y+dy,dx:dx,dy:dy,l:l};place(cur.x,cur.y,0);drawSling(cur.x,cur.y);showDots(cur.x,cur.y,-dx*KV,-dy*KV);
 }
 function onDown(e){
  var f=e.target.closest&&e.target.closest('#abFlyer');if(!f||busy||sel<0||!geo||e.button>0)return;
@@ -19557,7 +19555,7 @@ function fire(id){
   l=Math.min(MAXP,Math.hypot(vx,vy)/KV),ang=Math.atan2(-vy,-vx),px=A.x+Math.cos(ang)*l,py=A.y+Math.sin(ang)*l,t0=0;
  busy=true;
  requestAnimationFrame(function s(ts){if(!t0)t0=ts;var e=Math.min(1,(ts-t0)/260);e=1-Math.pow(1-e,3);
-  var x=A.x+(px-A.x)*e,y=A.y+(py-A.y)*e;place(x,y,0);drawSling(x,y);showDots(A.x,A.y,vx,vy);aimAt(A.x,A.y,vx,vy);
+  var x=A.x+(px-A.x)*e,y=A.y+(py-A.y)*e;place(x,y,0);drawSling(x,y);showDots(A.x,A.y,vx,vy);
   if(e<1)requestAnimationFrame(s);else{setTimeout(function(){launch(A.x,A.y,vx,vy)},90)}});
 }
 function openCrate(id){
@@ -19632,7 +19630,7 @@ function paintReader(keep){
  var nb=function(x,lb){return x?'<button type="button" class="m-nb" data-ab-open="'+E(x.id)+'"><small>'+lb+'</small>'+E(x.title)+'</button>':''};
  r.innerHTML='<div class="m-rt"><button type="button" class="m-x" data-ab="close" aria-label="رجوع للخريطة">✕</button></div>'
  +'<div class="m-cover"><div><small>'+E(ln||'خط '+(li+1))+' · محطة '+(bi+1)+'</small><h1>'+E(s.title)+'</h1>'+(s.desc?'<p>'+E(s.desc)+'</p>':'')+(s.icon?'<span class="m-ric">'+E(s.icon)+'</span>':'')+'</div></div>'
- +'<div class="m-rb"><nav class="m-idx" aria-label="فهرس المحطة">'+ch.map(function(c,i){return'<button type="button" class="'+(i?'':'on')+'" style="--d:'+c.d+'" data-ab-go="abc-'+E(c.s.id)+'">'+E(c.s.title)+'</button>'}).join('')+'</nav>'
+ +'<div class="m-rb">'
  +'<div class="m-doc">'+chHtml(s,0)
  +'<div class="m-next">'+nb(ord[n+1],'المحطة الجاية')+nb(ord[n-1],'المحطة اللي فاتت')+'</div></div></div>';
  r.scrollTop=top;
