@@ -2222,7 +2222,7 @@ if(v==='cs')el.innerHTML='<div class="ei-stars"></div><div class="ei-box"><div c
 if(v==='gx')el.innerHTML='<div class="ei-stars"></div><div class="ei-box"><div class="ei-gal"><i></i><i></i><i></i><b></b></div><h1>'+ttl.replace(/</g,'&lt;')+'</h1><p>بنفتح بوابة المجرّة…</p></div>';
 H.appendChild(el);
 var gone=false,out=function(){if(gone)return;gone=true;el.classList.add('out');setTimeout(function(){el.remove()},650)};
-el.addEventListener('click',out);setTimeout(out,calm?900:3300);setTimeout(function(){if(!gone)out()},6000);
+el.addEventListener('click',out);setTimeout(out,calm?900:5300);setTimeout(function(){if(!gone)out()},8000);
 }catch(e){}})();
 </script>
 <div id="decorBg" aria-hidden="true"></div><div id="decorFx" aria-hidden="true"></div>
@@ -2628,7 +2628,7 @@ function playIntro(){
     let introMs = 2200;
     try{ const c = JSON.parse(localStorage.getItem('site_theme_cache')||'null'); if(c && c.introMs!=null) introMs = +c.introMs; }catch(e){}
     if(introMs <= 0){ el.remove(); pageIn(); resolve(); return; }
-    introMs = 2000; /* شاشة الدخول بتاخد ثانيتين على كل الأجهزة (موبايل ولاب) */
+    introMs = 4000; /* شاشة الدخول بتاخد 4 ثواني على كل الأجهزة (موبايل ولاب) — زودنا ثانيتين */
     el.style.setProperty('--intro-ms', (introMs-250)+'ms');
     try{ sessionStorage.setItem(INTRO_KEY,'1'); }catch(e){}
     document.body.style.overflow = 'hidden';
@@ -18297,7 +18297,7 @@ html.fx-skin-cs body{background:radial-gradient(900px 500px at 85% -5%,rgba(124,
 @keyframes csIn{from{opacity:0;transform:scale(.6)}}
 @keyframes csPulse{50%{box-shadow:0 0 70px 8px rgba(255,160,60,.55),0 0 0 10px rgba(255,160,60,.1)}}
 @keyframes csBob{50%{scale:1.07}}
-#cs .cs-sol{position:relative;width:min(100%,880px);aspect-ratio:1;margin:6px auto 0}
+#cs .cs-sol{position:relative;width:min(100%,1040px);aspect-ratio:1;margin:6px auto 0}
 #cs .cs-orb{position:absolute;border-radius:50%;border:1.5px dashed color-mix(in srgb,var(--lc) 55%,transparent);box-shadow:inset 0 0 30px -14px var(--lc),0 0 30px -16px var(--lc);animation:csIn .9s calc(var(--i)*.15s) both}
 #cs .cs-on{position:absolute;left:50%;transform:translate(-50%,-135%);font:800 12px var(--h);padding:1px 10px;border-radius:999px;background:var(--lc);color:#071026;white-space:nowrap;z-index:2}
 #cs .cs-sun{position:absolute;left:50%;top:50%;width:17%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;text-align:center;background:radial-gradient(circle at 34% 30%,#fffbd0,#ffc14d 45%,#ff6a3d 100%);box-shadow:0 0 60px 4px rgba(255,160,60,.5);animation:csPulse 4s ease-in-out infinite,csIn .8s both;z-index:3}
@@ -18563,7 +18563,7 @@ function PH(){try{return matchMedia('(max-width:700px)').matches}catch(e){return
 function solar(M){
  var n=M.length,h='<div class="cs-sol'+(spinOn()?' spin':'')+'"><div class="cs-sun"><span>'+E(site.meta.heroTitle||site.meta.title||'')+'</span></div>',lb='';
  M.forEach(function(l,i){
-  var c=LC[i%7],t=n>1?i/(n-1):.5,r=PH()?.17+.21*t:.16+.27*t,w=(r*200).toFixed(2),o=(50-r*100).toFixed(2),k=l.books.length,pl='';
+  var c=LC[i%7],t=n>1?i/(n-1):.5,r=PH()?.21+.235*t:.18+.30*t,w=(r*200).toFixed(2),o=(50-r*100).toFixed(2),k=l.books.length,pl='';
   l.books.forEach(function(s,j){
    var a=(-90+360*(j+.5)/k)*Math.PI/180,x=50+50*Math.cos(a),y=50+50*Math.sin(a);
    pl+='<button type="button" class="cs-pl'+(kids(s).length?' big':'')+'" style="--i:'+(i+j*.3)+';left:'+x.toFixed(2)+'%;top:'+y.toFixed(2)+'%" data-cs-open="'+E(s.id)+'" data-id="'+E(s.id)+'" aria-label="'+E(s.title)+'"><i></i><span>'+(s.icon?E(s.icon)+' ':'')+E(s.title)+'</span></button>';
@@ -18830,6 +18830,22 @@ html[data-theme="dark"] #fxEI.ei-mp{background:#0B1220;color:#EAF0FA}
 #fxEI .ei-train::after{content:"";position:absolute;inset:5px 7px;border-radius:3px;background:repeating-linear-gradient(90deg,#FFD400 0 8px,transparent 8px 12px)}
 @keyframes eiGo{to{right:calc(100% - 46px)}}
 
+/* ===== المجرّة على الموبايل: تخفيف اللاج (بدون دوران/نبض/ضبابية تقيلة) ===== */
+@media (max-width:700px){
+ #cs .cs-sol.spin .cs-orb{animation:csIn .6s calc(var(--i)*.08s) both}
+ #cs .cs-sol.spin .cs-pl,#cs .cs-pl{animation:none}
+ #cs .cs-sun{animation:csIn .6s both;box-shadow:0 0 28px 2px rgba(255,160,60,.45)}
+ #cs .cs-orb{box-shadow:none}
+ #cs .cs-pl i{box-shadow:0 0 10px -2px var(--lc)}
+ #cs .cs-pl span{text-shadow:none}
+ #cs .m-h{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(11,16,48,.96)}
+ #cs .m-r{will-change:auto;background-attachment:scroll}
+ #cs .m-r::after{display:none}
+ #cs .m-ch,#cs .m-ch .m-ch{box-shadow:none}
+ #cs .m-ric{box-shadow:0 0 18px var(--lc)}
+ #cs .m-chh{text-shadow:none}
+}
+
 </style>
 <script id="csReadable">
 /* حارس وضوح النص في ديزاين المجرّة: أي نص لونه قريب من خلفيته يتظبط تلقائي ليبان ويريّح العين */
@@ -18873,14 +18889,15 @@ function fix(el){
  el.style.setProperty('color',bl>.45?'#161B33':'#EEF1FF','important');
  el.setAttribute('data-csg','1')}
 var q=[],busy=0,work=[],wi=0;
-function kick(){if(!busy){busy=1;setTimeout(step,300)}}
+var PHN=false;try{PHN=matchMedia('(max-width:700px)').matches}catch(e){}
+function kick(){if(!busy){busy=1;setTimeout(step,PHN?900:300)}}
 function step(){
  if(wi>=work.length){work=[];wi=0;var r;
   while((r=q.shift())){if(!r.isConnected)continue;work.push(r);var l=r.querySelectorAll('*');for(var i=0;i<l.length;i++)work.push(l[i])}
   if(!work.length){busy=0;return}}
- var end=Math.min(wi+80,work.length);
+ var end=Math.min(wi+(PHN?16:80),work.length);
  for(;wi<end;wi++){try{fix(work[wi])}catch(e){}}
- setTimeout(step,40)}
+ setTimeout(step,PHN?90:40)}
 try{new MutationObserver(function(ms){
  for(var i=0;i<ms.length;i++){var a=ms[i].addedNodes;for(var j=0;j<a.length;j++){var n=a[j];if(n.nodeType===1&&n.closest&&n.closest('#cs,#csR'))q.push(n)}}
  if(q.length)kick()}).observe(document.body,{childList:true,subtree:true})}catch(e){}
