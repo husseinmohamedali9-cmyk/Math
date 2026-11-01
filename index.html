@@ -18049,7 +18049,7 @@ function paintReader(keep){
  var ord=[];L.forEach(function(l){ord=ord.concat(l.books)});var n=ord.indexOf(s),ch=chapters(s,0,[]),top=keep?r.scrollTop:0,ln=L[li]?L[li].name:'';
  r.style.setProperty('--lc',LC[li%7]);
  var nb=function(x,lb){return x?'<button type="button" class="m-nb" data-mt-open="'+E(x.id)+'"><small>'+lb+'</small>'+E(x.title)+'</button>':''};
- r.innerHTML='<div class="m-rt"><button type="button" class="m-back" data-mt="close">← الخريطة</button><span class="m-rbadge">'+(li+1)+'</span><span class="m-rn">'+E(s.title)+'</span>'+foldBar(ch)+'</div>'
+ r.innerHTML='<div class="m-rt"><button type="button" class="m-x" data-mt="close" aria-label="رجوع للخريطة">✕</button></div>'
  +'<div class="m-cover"><div><small>'+E(ln||'خط '+(li+1))+' · محطة '+(bi+1)+'</small><h1>'+E(s.title)+'</h1>'+(s.desc?'<p>'+E(s.desc)+'</p>':'')+(s.icon?'<span class="m-ric">'+E(s.icon)+'</span>':'')+'</div></div>'
  +'<div class="m-rb"><nav class="m-idx" aria-label="فهرس المحطة">'+ch.map(function(c,i){return'<button type="button" class="'+(i?'':'on')+'" style="--d:'+c.d+'" data-mt-go="mtc-'+E(c.s.id)+'">'+E(c.s.title)+'</button>'}).join('')+'</nav>'
  +'<div class="m-doc">'+mHtml(s,0)
@@ -18532,7 +18532,7 @@ function lineOp(op,id,d){
  persist();paintMap();
 }
 function paintHead(){
- var b=$('brandName');$('csBrand').textContent=(b&&b.textContent)||site.meta.title||'';
+ applyAl();var b=$('brandName');$('csBrand').textContent=(b&&b.textContent)||site.meta.title||'';
  var lg=$('csLogo');if(site.meta.logo){lg.src=site.meta.logo;lg.hidden=false}else lg.hidden=true;
  $('csT').textContent=site.meta.heroTitle||site.meta.title||'';$('csS').textContent=site.meta.heroSub||'';
  $('csTr').innerHTML=[['math1','Math 1'],['math2','Math 2'],['math3','Math 3'],['both','الكل']].map(function(t){return'<button type="button" class="m-trb'+(currentTrack===t[0]?' on':'')+'" data-act="choose-track" data-track="'+t[0]+'">'+t[1]+'</button>'}).join('');
@@ -18543,8 +18543,8 @@ function paintTools(){
  if($('csTools').innerHTML!==h)$('csTools').innerHTML=h;
 }
 function paintEdit(){
- var eb=$('csEdit');if(!isAdmin)editing=false;eb.hidden=!isAdmin;
- eb.innerHTML=isAdmin?spinBtn()+'<button type="button" class="m-tb'+(editing?' on':'')+'" data-cs-edit="1">'+(editing?'✔ تم الترتيب':'✎ ترتيب الخطوط')+'</button>'+(editing?'<button type="button" class="m-tb" data-cs-add="1">＋ خط جديد</button><span class="m-eh">اسحب المحطات بين الخطوط أو استخدم الأسهم. التغييرات بتتحفظ للكل تلقائي.</span>':''):'';
+ var eb=$('csEdit');if(!isAdmin)editing=false;eb.hidden=!isAdmin;applyAl();
+ eb.innerHTML=isAdmin?spinBtn()+alBtns()+'<button type="button" class="m-tb'+(editing?' on':'')+'" data-cs-edit="1">'+(editing?'✔ تم الترتيب':'✎ ترتيب الخطوط')+'</button>'+(editing?'<button type="button" class="m-tb" data-cs-add="1">＋ خط جديد</button><span class="m-eh">اسحب المحطات بين الخطوط أو استخدم الأسهم. التغييرات بتتحفظ للكل تلقائي.</span>':''):'';
 }
 function paintMapList(){
  var secs=visibleSections(),qq=q.trim().toLowerCase();
@@ -18560,9 +18560,13 @@ function paintMapList(){
  if(!vi)h='<div class="m-empty">'+(qq?'مفيش نتيجة لـ «'+E(q)+'». جرّب كلمة تانية.':'لسه مفيش محطات في '+E(trackLabel(currentTrack))+'.')+'</div>';
  if(window.__csRet){window.__csRet=h;return}$('csMap').innerHTML=h;
 }
+var ALN={r:'يمين',c:'وسط',l:'شمال'};
+function alOf(k){var z=Z(),v=z&&z[k];return v==='c'||v==='l'||v==='r'?v:(k==='la'?'c':'r')}
+function applyAl(){try{root.setAttribute('data-ha',alOf('ha'));root.setAttribute('data-la',alOf('la'))}catch(e){}}
+function alBtns(){return '<button type="button" class="m-tb" data-cs-al="ha">↔ مكان العنوان الكبير: '+ALN[alOf('ha')]+'</button><button type="button" class="m-tb" data-cs-al="la">↔ مكان اسم الخط: '+ALN[alOf('la')]+'</button>'}
 function spinOn(){var z=Z();return !(z&&z.spin===false)}
 function spinBtn(){var o=spinOn();return '<button type="button" class="m-tb'+(o?' on':'')+'" data-cs-spin="1">🪐 دوران الكواكب: '+(o?'شغّال':'موقّف')+'</button>'}
-function toggleSpin(){var z=ensure();z.spin=!spinOn();persist();paintEdit();paintMap()}
+function toggleSpin(){var z=ensure();z.spin=!spinOn();persist();paintEdit();var on=spinOn();document.querySelectorAll('#cs .cs-sol').forEach(function(e){e.classList.toggle('spin',on)})}
 function PH(){try{return matchMedia('(max-width:700px)').matches}catch(e){return false}}
 function solar(M){
  var n=M.length,h='<div class="cs-sol'+(spinOn()?' spin':'')+'"><div class="cs-sun"><span>'+E(site.meta.heroTitle||site.meta.title||'')+'</span></div><div class="cs-rot">',lb='';
@@ -18573,7 +18577,7 @@ function solar(M){
    pl+='<button type="button" class="cs-pl'+(kids(s).length?' big':'')+'" style="--i:'+(i+j*.3)+';left:'+x.toFixed(2)+'%;top:'+y.toFixed(2)+'%" data-cs-open="'+E(s.id)+'" data-id="'+E(s.id)+'" aria-label="'+E(s.title)+'"><i></i><span>'+(s.icon?E(s.icon)+' ':'')+E(s.title)+'</span></button>';
   });
   h+='<div class="cs-orb" style="--lc:'+c+';--i:'+i+';--sp:60s;--dir:normal;width:'+w+'%;height:'+w+'%;left:'+o+'%;top:'+o+'%">'+pl+'</div>';
-  if(l.name)lb+='<span class="cs-on" style="--lc:'+c+';top:'+o+'%">'+E(l.name)+'</span>';
+  if(l.name){var la=alOf('la'),th=(la==='r'?38:la==='l'?-38:0)*Math.PI/180,px=(50+r*100*Math.sin(th)).toFixed(2),py=(50-r*100*Math.cos(th)).toFixed(2);lb+='<span class="cs-on" style="--lc:'+c+';top:'+py+'%;left:'+px+'%">'+E(l.name)+'</span>'}
  });
  return h+'</div>'+lb+'</div>';
 }
@@ -18644,8 +18648,9 @@ function onScroll(){
 }
 function go(v,fp){view=v;if(openId)closeSt(true);$('csHome').hidden=v!=='home';$('csAskV').hidden=v!=='ask';paintTools();window.scrollTo(0,0);if(!fp){if(v==='home')hLeave();else hEnter({fxm:'a'})}}
 root.addEventListener('click',function(e){
- var t=e.target.closest&&e.target.closest('[data-cs-open],[data-cs],[data-cs-go],[data-cs-mv],[data-cs-shmv],[data-cs-shdel],[data-cs-add],[data-cs-edit],[data-cs-fold],[data-cs-foldall],[data-cs-fdef],[data-cs-spin]');if(!t)return;
+ var t=e.target.closest&&e.target.closest('[data-cs-open],[data-cs],[data-cs-go],[data-cs-mv],[data-cs-shmv],[data-cs-shdel],[data-cs-add],[data-cs-edit],[data-cs-fold],[data-cs-foldall],[data-cs-fdef],[data-cs-spin],[data-cs-al]');if(!t)return;
  var d=t.dataset;
+ if(d.csAl){var z=ensure(),k=d.csAl==='la'?'la':'ha',o=['r','c','l'],c=alOf(k);z[k]=o[(o.indexOf(c)+1)%3];persist();paintEdit();if(k==='la')paintMap();return}
  if(d.csSpin){toggleSpin();return}
  if(d.csFold){toggleFold(d.csFold);return}
  if(d.csFoldall){foldAll();return}
@@ -18857,6 +18862,25 @@ html.cs-rd #cs .cs-rot,html.cs-rd #cs .cs-pl,html.cs-rd #cs::before{animation-pl
 #mt[data-la="c"] .m-lh{justify-content:center}
 #mt[data-la="l"] .m-lh{justify-content:flex-end}
 #mt[data-la="r"] .m-lh{justify-content:flex-start}
+
+/* ===== المجرّة: مكان العنوان الكبير (يمين/وسط/شمال) + منع أي تحرّك للصفحة وقت الدوران ===== */
+#cs[data-ha="c"] .m-board{text-align:center}
+#cs[data-ha="l"] .m-board{text-align:left}
+#cs[data-ha="c"] .m-board h1,#cs[data-ha="c"] .m-board p,#cs[data-ha="c"] .m-dots{margin-left:auto;margin-right:auto}
+#cs[data-ha="l"] .m-board h1,#cs[data-ha="l"] .m-board p,#cs[data-ha="l"] .m-dots{margin-left:0;margin-right:auto}
+#cs[data-ha="r"] .m-board h1,#cs[data-ha="r"] .m-board p,#cs[data-ha="r"] .m-dots{margin-left:auto;margin-right:0}
+#cs .cs-sol{overflow:clip;overflow-clip-margin:48px;contain:layout style}
+#cs .cs-rot{border-radius:50%}
+#cs #csMap{overflow-x:clip}
+
+/* ===== الميترو: شاشة القراءة من غير شريط علوي — زرار ✕ بس على الشمال ===== */
+#mt .m-rt{position:sticky;top:0;height:0;padding:0;margin:0;gap:0;background:none;border:0;overflow:visible;z-index:20}
+#mt .m-rt::after{display:none}
+#mt .m-x{all:unset;box-sizing:border-box;position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 12px);width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font:700 20px/1 sans-serif;color:#fff;background:#0E1726;border:2px solid var(--lc,#fff);cursor:pointer;-webkit-tap-highlight-color:transparent}
+#mt .m-x:active{transform:scale(.92)}
+#mt .m-x:focus-visible{outline:3px solid var(--my);outline-offset:2px}
+#mt .m-idx{top:20px}
+@media (max-width:820px){#mt .m-idx{top:62px}}
 /* ===== شاشة القراءة: من غير شريط علوي — زرار ✕ بس على الشمال ===== */
 #cs .m-rt{position:sticky;top:0;height:0;padding:0;margin:0;gap:0;background:none;border:0;overflow:visible;z-index:20}
 #cs .m-rt::after{display:none}
