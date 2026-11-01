@@ -2222,7 +2222,7 @@ if(v==='cs')el.innerHTML='<div class="ei-stars"></div><div class="ei-box"><div c
 if(v==='gx')el.innerHTML='<div class="ei-stars"></div><div class="ei-box"><div class="ei-gal"><i></i><i></i><i></i><b></b></div><h1>'+ttl.replace(/</g,'&lt;')+'</h1><p>بنفتح بوابة المجرّة…</p></div>';
 H.appendChild(el);
 var gone=false,out=function(){if(gone)return;gone=true;el.classList.add('out');setTimeout(function(){el.remove()},650)};
-el.addEventListener('click',out);setTimeout(out,calm?900:5300);setTimeout(function(){if(!gone)out()},8000);
+el.addEventListener('click',out);setTimeout(out,1000);setTimeout(function(){if(!gone)out()},2500);
 }catch(e){}})();
 </script>
 <div id="decorBg" aria-hidden="true"></div><div id="decorFx" aria-hidden="true"></div>
@@ -2628,7 +2628,7 @@ function playIntro(){
     let introMs = 2200;
     try{ const c = JSON.parse(localStorage.getItem('site_theme_cache')||'null'); if(c && c.introMs!=null) introMs = +c.introMs; }catch(e){}
     if(introMs <= 0){ el.remove(); pageIn(); resolve(); return; }
-    introMs = 4000; /* شاشة الدخول بتاخد 4 ثواني على كل الأجهزة (موبايل ولاب) — زودنا ثانيتين */
+    introMs = 1000; /* شاشة الدخول بتاخد ثانية واحدة على كل الأجهزة */
     el.style.setProperty('--intro-ms', (introMs-250)+'ms');
     try{ sessionStorage.setItem(INTRO_KEY,'1'); }catch(e){}
     document.body.style.overflow = 'hidden';
@@ -18319,7 +18319,6 @@ html.fx-skin-cs body{background:radial-gradient(900px 500px at 85% -5%,rgba(124,
 #cs .cs-sol.spin .cs-pl{animation:csBob 5s calc(var(--i)*.7s) ease-in-out infinite,csUn var(--sp) linear infinite;animation-direction:normal,var(--dir)}
 #cs .cs-orb{pointer-events:none}
 #cs .cs-pl{pointer-events:auto;cursor:pointer}
-#cs .cs-sol.spin .cs-orb:has(.cs-pl:hover),#cs .cs-sol.spin .cs-orb:has(.cs-pl:hover) .cs-pl{animation-play-state:paused}
 html.fx-skin-cs [data-act="toggle-mode"],html.fx-skin-cs #modeBtn,html.fx-skin-cs .mode-toggle{display:none!important}
 
 
@@ -18561,7 +18560,7 @@ function spinBtn(){var o=spinOn();return '<button type="button" class="m-tb'+(o?
 function toggleSpin(){var z=ensure();z.spin=!spinOn();persist();paintEdit();paintMap()}
 function PH(){try{return matchMedia('(max-width:700px)').matches}catch(e){return false}}
 function solar(M){
- var n=M.length,h='<div class="cs-sol'+(spinOn()?' spin':'')+'"><div class="cs-sun"><span>'+E(site.meta.heroTitle||site.meta.title||'')+'</span></div>',lb='';
+ var n=M.length,h='<div class="cs-sol'+(spinOn()?' spin':'')+'"><div class="cs-sun"><span>'+E(site.meta.heroTitle||site.meta.title||'')+'</span></div><div class="cs-rot">',lb='';
  M.forEach(function(l,i){
   var c=LC[i%7],t=n>1?i/(n-1):.5,r=PH()?.21+.235*t:.18+.30*t,w=(r*200).toFixed(2),o=(50-r*100).toFixed(2),k=l.books.length,pl='';
   l.books.forEach(function(s,j){
@@ -18571,7 +18570,7 @@ function solar(M){
   h+='<div class="cs-orb" style="--lc:'+c+';--i:'+i+';--sp:60s;--dir:normal;width:'+w+'%;height:'+w+'%;left:'+o+'%;top:'+o+'%">'+pl+'</div>';
   if(l.name)lb+='<span class="cs-on" style="--lc:'+c+';top:'+o+'%">'+E(l.name)+'</span>';
  });
- return h+lb+'</div>';
+ return h+'</div>'+lb+'</div>';
 }
 function paintMap(){
  if(editing){paintMapList();return}
@@ -18629,8 +18628,8 @@ function paintReader(keep){
  r.scrollTop=top;
 }
 var hist=0;function hEnter(st){try{if(hist)history.replaceState(st,'');else{history.pushState(st,'');hist=1}}catch(e){}}function hLeave(){if(hist){hist=0;try{history.back()}catch(e){}}}
-function openSt(id,fp){if(!fp)hEnter({fxm:'r',id:id});openId=id;ov={};var r=$('csR');paintReader(false);r.hidden=false;document.body.style.overflow='hidden';requestAnimationFrame(function(){requestAnimationFrame(function(){r.classList.add('on')})});onScroll()}
-function closeSt(fp){if(!fp)hLeave();var r=$('csR');openId=null;r.classList.remove('on');document.body.style.overflow='';setTimeout(function(){if(!openId)r.hidden=true},300)}
+function openSt(id,fp){if(!fp)hEnter({fxm:'r',id:id});openId=id;ov={};var r=$('csR');paintReader(false);r.hidden=false;document.documentElement.classList.add('cs-rd');document.body.style.overflow='hidden';requestAnimationFrame(function(){requestAnimationFrame(function(){r.classList.add('on')})});onScroll()}
+function closeSt(fp){if(!fp)hLeave();var r=$('csR');openId=null;r.classList.remove('on');document.documentElement.classList.remove('cs-rd');document.body.style.overflow='';setTimeout(function(){if(!openId)r.hidden=true},300)}
 function onScroll(){
  var r=$('csR');if(r.hidden||!openId)return;
  var max=r.scrollHeight-r.clientHeight;r.style.setProperty('--p',max>0?Math.min(1,r.scrollTop/max):0);
@@ -18831,6 +18830,17 @@ html[data-theme="dark"] #fxEI.ei-mp{background:#0B1220;color:#EAF0FA}
 @keyframes eiGo{to{right:calc(100% - 46px)}}
 
 
+
+/* ===== دوران سلس: المنظومة كلها بتلف كجسم واحد بنفس السرعة والاتجاه، والكواكب بتعاكس اللفّة عشان تفضل مستقيمة ===== */
+@keyframes csRot{to{transform:rotate(360deg)}}
+@keyframes csRotU{to{transform:rotate(-360deg)}}
+#cs .cs-rot{position:absolute;inset:0;pointer-events:none;--sp:80s}
+#cs .cs-sol.spin .cs-rot{animation:csRot var(--sp) linear infinite;will-change:transform}
+#cs .cs-sol.spin .cs-orb{animation:csIn .9s calc(var(--i)*.15s) both}
+#cs .cs-pl,#cs .cs-sol.spin .cs-pl{animation:none}
+#cs .cs-sol.spin .cs-pl{animation:csRotU var(--sp) linear infinite;will-change:transform}
+#cs .cs-sun{animation:csIn .8s both}
+html.cs-rd #cs .cs-rot,html.cs-rd #cs .cs-pl,html.cs-rd #cs::before{animation-play-state:paused!important}
 /* ===== شاشة القراءة: من غير شريط علوي — زرار ✕ بس على الشمال ===== */
 #cs .m-rt{position:sticky;top:0;height:0;padding:0;margin:0;gap:0;background:none;border:0;overflow:visible;z-index:20}
 #cs .m-rt::after{display:none}
