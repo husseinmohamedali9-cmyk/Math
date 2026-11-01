@@ -18849,7 +18849,7 @@ html[data-theme="dark"] #fxEI.ei-mp{background:#0B1220;color:#EAF0FA}
 #cs .cs-sol.spin .cs-orb{animation:csIn .9s calc(var(--i)*.15s) both}
 #cs .cs-pl,#cs .cs-sol.spin .cs-pl{animation:none}
 /* الكواكب بتلف في المدار، والكلام اللي تحتها ثابت: كل كوكب بيعاكس لفّة المدار بنفس السرعة بالظبط فبيفضل مستقيم */
-#cs .cs-sol.spin .cs-pl{animation:csRotU var(--sp) linear infinite;will-change:transform;backface-visibility:hidden}
+#cs .cs-sol.spin .cs-pl{animation:csRotU var(--sp) linear infinite!important;animation-direction:normal!important;will-change:transform;backface-visibility:hidden}
 #cs .cs-sun{animation:csIn .8s both}
 html.cs-rd #cs .cs-rot,html.cs-rd #cs .cs-pl,html.cs-rd #cs::before{animation-play-state:paused!important}
 
@@ -18879,7 +18879,7 @@ html.cs-rd #cs .cs-rot,html.cs-rd #cs .cs-pl,html.cs-rd #cs::before{animation-pl
 #cs .m-x{all:unset;box-sizing:border-box;position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 12px);width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:700 20px/1 sans-serif;color:#E8ECFF;background:rgba(11,16,48,.82);border:1px solid var(--lc,#8C7BFF);cursor:pointer;-webkit-tap-highlight-color:transparent}
 #cs .m-x:active{transform:scale(.92)}
 #cs .m-x:focus-visible{outline:3px solid var(--my);outline-offset:2px}
-#cs .m-idx{top:60px}
+#cs .m-idx{position:relative;top:auto}
 /* ===== المجرّة على الموبايل: تخفيف اللاج (بدون دوران/نبض/ضبابية تقيلة) ===== */
 @media (max-width:700px){
  #cs::before{animation:none}
