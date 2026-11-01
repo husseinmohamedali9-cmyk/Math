@@ -18573,8 +18573,8 @@ function solar(M){
  M.forEach(function(l,i){
   var c=LC[i%7],t=n>1?i/(n-1):.5,r=PH()?.21+.235*t:.18+.30*t,w=(r*200).toFixed(2),o=(50-r*100).toFixed(2),k=l.books.length,pl='';
   l.books.forEach(function(s,j){
-   var a=(-90+360*(j+.5)/k)*Math.PI/180,x=50+50*Math.cos(a),y=50+50*Math.sin(a);
-   pl+='<button type="button" class="cs-pl'+(kids(s).length?' big':'')+'" style="--i:'+(i+j*.3)+';left:'+x.toFixed(2)+'%;top:'+y.toFixed(2)+'%" data-cs-open="'+E(s.id)+'" data-id="'+E(s.id)+'" aria-label="'+E(s.title)+'"><i></i><span>'+(s.icon?E(s.icon)+' ':'')+E(s.title)+'</span></button>';
+   var a0=(360*(j+.5)/k).toFixed(2);
+   pl+='<button type="button" class="cs-pl'+(kids(s).length?' big':'')+'" style="--i:'+(i+j*.3)+';--a0:'+a0+'deg;--R:'+(r*100).toFixed(2)+'cqw" data-cs-open="'+E(s.id)+'" data-id="'+E(s.id)+'" aria-label="'+E(s.title)+'"><i></i><span>'+(s.icon?E(s.icon)+' ':'')+E(s.title)+'</span></button>';
   });
   h+='<div class="cs-orb" style="--lc:'+c+';--i:'+i+';--sp:60s;--dir:normal;width:'+w+'%;height:'+w+'%;left:'+o+'%;top:'+o+'%">'+pl+'</div>';
   if(l.name){var la=alOf('la'),th=(la==='r'?38:la==='l'?-38:0)*Math.PI/180,px=(50+r*100*Math.sin(th)).toFixed(2),py=(50-r*100*Math.cos(th)).toFixed(2);lb+='<span class="cs-on" style="--lc:'+c+';top:'+py+'%;left:'+px+'%">'+E(l.name)+'</span>'}
@@ -18841,38 +18841,19 @@ html[data-theme="dark"] #fxEI.ei-mp{background:#0B1220;color:#EAF0FA}
 
 
 
-/* ===== دوران سلس: المنظومة كلها بتلف كجسم واحد بنفس السرعة والاتجاه، والكواكب بتعاكس اللفّة عشان تفضل مستقيمة ===== */
-@keyframes csRot{to{transform:rotate(360deg)}}
-@keyframes csRotU{to{transform:rotate(-360deg)}}
-#cs .cs-rot{position:absolute;inset:0;pointer-events:none;--sp:80s}
-#cs .cs-sol.spin .cs-rot{animation:csRot var(--sp) linear infinite;will-change:transform}
-#cs .cs-sol.spin .cs-orb{animation:csIn .9s calc(var(--i)*.15s) both}
-#cs .cs-pl,#cs .cs-sol.spin .cs-pl{animation:none}
-/* الكواكب بتلف في المدار، والكلام اللي تحتها ثابت: كل كوكب بيعاكس لفّة المدار بنفس السرعة بالظبط فبيفضل مستقيم */
-#cs .cs-sol.spin .cs-pl{animation:csRotU var(--sp) linear infinite!important;animation-direction:normal!important;will-change:transform;backface-visibility:hidden}
+/* ===== دوران الكواكب: كل كوكب بيمشي على مداره بحركة واحدة (دوران حوالين مركز المدار)، والكوكب نفسه واسمه ثابتين مستقيمين ===== */
+@keyframes csRev{
+ from{transform:rotate(var(--a0)) translateY(calc(var(--R)*-1)) rotate(calc(var(--a0)*-1))}
+ to{transform:rotate(calc(var(--a0) + 360deg)) translateY(calc(var(--R)*-1)) rotate(calc(var(--a0)*-1 - 360deg))}
+}
+#cs .cs-sol{container-type:inline-size}
+#cs .cs-rot{animation:none!important;will-change:auto}
+#cs .cs-sol .cs-orb,#cs .cs-sol.spin .cs-orb{animation:csIn .9s calc(var(--i)*.15s) both!important}
+#cs .cs-sol .cs-pl{--sp:80s;left:50%;top:50%;transform:rotate(var(--a0)) translateY(calc(var(--R)*-1)) rotate(calc(var(--a0)*-1));animation:none!important}
+#cs .cs-sol.spin .cs-pl{animation:csRev var(--sp) linear infinite!important;will-change:transform;backface-visibility:hidden}
 #cs .cs-sun{animation:csIn .8s both}
-html.cs-rd #cs .cs-rot,html.cs-rd #cs .cs-pl,html.cs-rd #cs::before{animation-play-state:paused!important}
-
-/* ===== الميترو: التحكم في مكان العنوان الكبير واسم الخط (يمين/وسط/شمال) من أزرار الأدمن ===== */
-#mt[data-ha="c"] .m-board{text-align:center}
-#mt[data-ha="l"] .m-board{text-align:left}
-#mt[data-ha="c"] .m-board h1,#mt[data-ha="c"] .m-board p,#mt[data-ha="c"] .m-dots{margin-left:auto;margin-right:auto}
-#mt[data-ha="l"] .m-board h1,#mt[data-ha="l"] .m-board p,#mt[data-ha="l"] .m-dots{margin-left:0;margin-right:auto}
-#mt[data-ha="r"] .m-board h1,#mt[data-ha="r"] .m-board p,#mt[data-ha="r"] .m-dots{margin-left:auto;margin-right:0}
-#mt[data-la="c"] .m-lh{justify-content:center}
-#mt[data-la="l"] .m-lh{justify-content:flex-end}
-#mt[data-la="r"] .m-lh{justify-content:flex-start}
-
-/* ===== المجرّة: مكان العنوان الكبير (يمين/وسط/شمال) + منع أي تحرّك للصفحة وقت الدوران ===== */
-#cs[data-ha="c"] .m-board{text-align:center}
-#cs[data-ha="l"] .m-board{text-align:left}
-#cs[data-ha="c"] .m-board h1,#cs[data-ha="c"] .m-board p,#cs[data-ha="c"] .m-dots{margin-left:auto;margin-right:auto}
-#cs[data-ha="l"] .m-board h1,#cs[data-ha="l"] .m-board p,#cs[data-ha="l"] .m-dots{margin-left:0;margin-right:auto}
-#cs[data-ha="r"] .m-board h1,#cs[data-ha="r"] .m-board p,#cs[data-ha="r"] .m-dots{margin-left:auto;margin-right:0}
-#cs .cs-sol{overflow:clip;overflow-clip-margin:48px;contain:layout style}
-#cs .cs-rot{border-radius:50%}
-#cs #csMap{overflow-x:clip}
-
+html.cs-rd #cs .cs-pl,html.cs-rd #cs::before{animation-play-state:paused!important}
+@media (max-width:700px){#cs .cs-sol .cs-pl{--sp:100s}}
 /* ===== شاشة القراءة: من غير شريط علوي — زرار ✕ بس على الشمال ===== */
 #cs .m-rt{position:sticky;top:0;height:0;padding:0;margin:0;gap:0;background:none;border:0;overflow:visible;z-index:20}
 #cs .m-rt::after{display:none}
