@@ -19265,6 +19265,8 @@ html.fx-skin-ab .sx-btn{background:#FFF3D0;border:2px solid #8a5a2a;color:#3B241
 html.ab-gm .fab,html.ab-gm [class*="chat"],html.ab-gm [id*="bot"],html.ab-gm [id*="Bot"]{display:none!important}
 html.ab-gm.ab-rd #ab .m-r{z-index:90}
 html.ab-rd :is(#fxTbBtn,#fxTbPanel,#fxTbar,#fxTopGrp,#fxFab,#fxProfC,#fxProfL,#fxQzBtn,#fxPrBtn,#sxTopBtn,.hamburger,.top-ico,.notif-btn,.mode-btn,.poster-btn),html.ab-rd [data-abh]{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+html.ab-gm :is(#fxTbBtn,#fxTbPanel,#fxTbar,#fxTopGrp,#fxFab,#fxProfC,#fxProfL,#fxQzBtn,#fxPrBtn,#sxTopBtn,.hamburger,.top-ico,.notif-btn,.mode-btn,.poster-btn),html.ab-gm [data-abh]{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+html.ab-gm #topbar,html.ab-gm #brandWrap,html.ab-gm #brandLogo{display:none!important}
 html.ab-rd #topbar,html.ab-rd .top-ico,html.ab-rd [data-hdr],html.ab-rd #hamburgerBtn,html.ab-rd #modeBtn,html.ab-rd #posterBtn,html.ab-rd #gamesTopBtn,html.ab-rd #lectTopBtn,html.ab-rd #notifBtn,html.ab-rd #brandWrap{display:none!important}
 
 
@@ -19441,9 +19443,9 @@ function layout(){
  var books=(sel>=0&&M[sel])?M[sel].books:[],ch='';tgt=[];
  if(gmode){
   H=st.clientHeight||340;
-  var gp=8,n=books.length,bn=$('abBanner');if(bn)bn.innerHTML=bannerHtml(M);
+  var gp=0,n=books.length,bn=$('abBanner');if(bn)bn.innerHTML=bannerHtml(M);
   var top0=Math.max(50,(bn?bn.offsetTop+bn.offsetHeight:44)+8),lim=H-gr-12,gapB=2*BRAD+8,xMin=14,xMax=W-14,best=null;
-  function crate(b,k,x,y,w,h){var rot=((hsh(b.id)%5)-2)*.8,big=kids(b).length;
+  function crate(b,k,x,y,w,h){var rot=0,big=kids(b).length;
    tgt.push({id:b.id,x:x,y:y,w:w,h:h});
    ch+='<button type="button" class="ab-crate'+(big?' big':'')+'" data-ab-shoot="'+E(b.id)+'" style="left:'+x.toFixed(1)+'px;top:'+y.toFixed(1)+'px;width:'+w+'px;height:'+h+'px;--i:'+k+';--r:'+rot+'deg" aria-label="'+E(b.title)+'"><span>'+(b.icon?E(b.icon)+' ':'')+E(b.title)+'</span>'+(big?'<i class="ab-star" title="فيها أقسام فرعية">★</i>':'')+'</button>'}
   /* ترتيب على شكل L: عمود طويل على يمين الشاشة + صف بالعرض فوق — مفيش صندوق قدام صندوق، وبين الصف والعمود فتحة يعدّي منها العصفور */
@@ -19577,15 +19579,15 @@ function setRot(){
  var land=innerWidth>=innerHeight;st.classList.toggle('rot',!land);
  if(!land){st.style.width=innerHeight+'px';st.style.height=innerWidth+'px'}else{st.style.width='';st.style.height=''}
 }
-function enterGame(){
+function enterGame(){hideTL(1);
  var st=$('abStage');if(!st||busy||isGm())return;
  st.classList.add('gm');document.documentElement.classList.add('ab-gm');document.body.style.overflow='hidden';
- try{var de=document.documentElement,rf=de.requestFullscreen||de.webkitRequestFullscreen;if(rf)rf.call(de)}catch(e){}
+ 
  var after=function(){setRot();layout()};
  try{var p=screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape');if(p&&p.then)p.then(function(){setTimeout(after,250)},function(){setTimeout(after,250)});else setTimeout(after,250)}catch(e){setTimeout(after,250)}
  setRot();layout();
 }
-function exitGame(keepScroll){
+function exitGame(keepScroll){if(!openId&&isGm())hideTL(0);
  var st=$('abStage');if(!st||!st.classList.contains('gm'))return;
  st.classList.remove('gm','rot');st.style.width='';st.style.height='';document.documentElement.classList.remove('ab-gm');
  if(!openId)document.body.style.overflow='';
