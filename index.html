@@ -17979,7 +17979,7 @@ function lineOp(op,id,d){
  persist();paintMap();
 }
 function paintHead(){
- var b=$('brandName');$('mtBrand').textContent=(b&&b.textContent)||site.meta.title||'';
+ applyAl();var b=$('brandName');$('mtBrand').textContent=(b&&b.textContent)||site.meta.title||'';
  var lg=$('mtLogo');if(site.meta.logo){lg.src=site.meta.logo;lg.hidden=false}else lg.hidden=true;
  $('mtT').textContent=site.meta.heroTitle||site.meta.title||'';$('mtS').textContent=site.meta.heroSub||'';
  $('mtTr').innerHTML=[['math1','Math 1'],['math2','Math 2'],['math3','Math 3'],['both','الكل']].map(function(t){return'<button type="button" class="m-trb'+(currentTrack===t[0]?' on':'')+'" data-act="choose-track" data-track="'+t[0]+'">'+t[1]+'</button>'}).join('');
@@ -17989,9 +17989,13 @@ function paintTools(){
  var h=(isAdmin&&view==='home'?'<button type="button" class="m-tb'+(editing?' on':'')+'" data-mt-edit="1">'+(editing?'✔ تم الترتيب':'✎ ترتيب الخطوط')+'</button>':'')+'<button type="button" class="m-tb'+(view==='ask'?' on':'')+'" data-mt="'+(view==='ask'?'home':'ask')+'">'+(view==='ask'?'الخريطة':'اسأل')+'</button>';
  if($('mtTools').innerHTML!==h)$('mtTools').innerHTML=h;
 }
+var ALN={r:'يمين',c:'وسط',l:'شمال'};
+function alOf(k){var z=Z();var v=z&&z[k];return v==='c'||v==='l'?v:'r'}
+function applyAl(){try{root.setAttribute('data-ha',alOf('ha'));root.setAttribute('data-la',alOf('la'))}catch(e){}}
+function alBtns(){return '<button type="button" class="m-tb" data-mt-al="ha">↔ مكان العنوان الكبير: '+ALN[alOf('ha')]+'</button><button type="button" class="m-tb" data-mt-al="la">↔ مكان اسم الخط: '+ALN[alOf('la')]+'</button>'}
 function paintEdit(){
- var eb=$('mtEdit');if(!isAdmin)editing=false;eb.hidden=!isAdmin;
- eb.innerHTML=isAdmin?'<button type="button" class="m-tb'+(editing?' on':'')+'" data-mt-edit="1">'+(editing?'✔ تم الترتيب':'✎ ترتيب الخطوط')+'</button>'+(editing?'<button type="button" class="m-tb" data-mt-add="1">＋ خط جديد</button><span class="m-eh">اسحب المحطات بين الخطوط أو استخدم الأسهم. التغييرات بتتحفظ للكل تلقائي.</span>':''):'';
+ var eb=$('mtEdit');if(!isAdmin)editing=false;eb.hidden=!isAdmin;applyAl();
+ eb.innerHTML=isAdmin?alBtns()+'<button type="button" class="m-tb'+(editing?' on':'')+'" data-mt-edit="1">'+(editing?'✔ تم الترتيب':'✎ ترتيب الخطوط')+'</button>'+(editing?'<button type="button" class="m-tb" data-mt-add="1">＋ خط جديد</button><span class="m-eh">اسحب المحطات بين الخطوط أو استخدم الأسهم. التغييرات بتتحفظ للكل تلقائي.</span>':''):'';
 }
 function paintMap(){
  var secs=visibleSections(),qq=q.trim().toLowerCase();
@@ -18064,8 +18068,9 @@ function onScroll(){
 }
 function go(v,fp){view=v;if(openId)closeSt(true);$('mtHome').hidden=v!=='home';$('mtAskV').hidden=v!=='ask';paintTools();window.scrollTo(0,0);if(!fp){if(v==='home')hLeave();else hEnter({fxm:'a'})}}
 root.addEventListener('click',function(e){
- var t=e.target.closest&&e.target.closest('[data-mt-open],[data-mt],[data-mt-go],[data-mt-mv],[data-mt-shmv],[data-mt-shdel],[data-mt-add],[data-mt-edit],[data-mt-fold],[data-mt-foldall],[data-mt-fdef]');if(!t)return;
+ var t=e.target.closest&&e.target.closest('[data-mt-open],[data-mt],[data-mt-go],[data-mt-mv],[data-mt-shmv],[data-mt-shdel],[data-mt-add],[data-mt-edit],[data-mt-fold],[data-mt-foldall],[data-mt-fdef],[data-mt-al]');if(!t)return;
  var d=t.dataset;
+ if(d.mtAl){var z=ensure(),k=d.mtAl==='la'?'la':'ha',o=['r','c','l'],c=alOf(k);z[k]=o[(o.indexOf(c)+1)%3];persist();paintEdit();return}
  if(d.mtFold){toggleFold(d.mtFold);return}
  if(d.mtFoldall){foldAll();return}
  if(d.mtFdef){toggleDefault();return}
@@ -18838,9 +18843,20 @@ html[data-theme="dark"] #fxEI.ei-mp{background:#0B1220;color:#EAF0FA}
 #cs .cs-sol.spin .cs-rot{animation:csRot var(--sp) linear infinite;will-change:transform}
 #cs .cs-sol.spin .cs-orb{animation:csIn .9s calc(var(--i)*.15s) both}
 #cs .cs-pl,#cs .cs-sol.spin .cs-pl{animation:none}
-#cs .cs-sol.spin .cs-pl{animation:csRotU var(--sp) linear infinite;will-change:transform}
+/* الكواكب من غير أي حركة خاصة بيها — بتلف مع المدار بس (أنيميشن واحد للمنظومة كلها) */
+#cs .cs-sol.spin .cs-pl{animation:none;will-change:auto}
 #cs .cs-sun{animation:csIn .8s both}
 html.cs-rd #cs .cs-rot,html.cs-rd #cs .cs-pl,html.cs-rd #cs::before{animation-play-state:paused!important}
+
+/* ===== الميترو: التحكم في مكان العنوان الكبير واسم الخط (يمين/وسط/شمال) من أزرار الأدمن ===== */
+#mt[data-ha="c"] .m-board{text-align:center}
+#mt[data-ha="l"] .m-board{text-align:left}
+#mt[data-ha="c"] .m-board h1,#mt[data-ha="c"] .m-board p,#mt[data-ha="c"] .m-dots{margin-left:auto;margin-right:auto}
+#mt[data-ha="l"] .m-board h1,#mt[data-ha="l"] .m-board p,#mt[data-ha="l"] .m-dots{margin-left:0;margin-right:auto}
+#mt[data-ha="r"] .m-board h1,#mt[data-ha="r"] .m-board p,#mt[data-ha="r"] .m-dots{margin-left:auto;margin-right:0}
+#mt[data-la="c"] .m-lh{justify-content:center}
+#mt[data-la="l"] .m-lh{justify-content:flex-end}
+#mt[data-la="r"] .m-lh{justify-content:flex-start}
 /* ===== شاشة القراءة: من غير شريط علوي — زرار ✕ بس على الشمال ===== */
 #cs .m-rt{position:sticky;top:0;height:0;padding:0;margin:0;gap:0;background:none;border:0;overflow:visible;z-index:20}
 #cs .m-rt::after{display:none}
@@ -18850,6 +18866,8 @@ html.cs-rd #cs .cs-rot,html.cs-rd #cs .cs-pl,html.cs-rd #cs::before{animation-pl
 #cs .m-idx{top:60px}
 /* ===== المجرّة على الموبايل: تخفيف اللاج (بدون دوران/نبض/ضبابية تقيلة) ===== */
 @media (max-width:700px){
+ #cs::before{animation:none}
+ #cs .cs-sol.spin .cs-rot{--sp:100s}
  #cs .cs-sun{animation:csIn .6s both;box-shadow:0 0 28px 2px rgba(255,160,60,.45)}
  #cs .cs-orb{box-shadow:none}
  #cs .cs-pl i{box-shadow:0 0 10px -2px var(--lc)}
