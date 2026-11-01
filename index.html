@@ -19261,6 +19261,8 @@ html.fx-skin-ab .sx-btn{background:#FFF3D0;border:2px solid #8a5a2a;color:#3B241
 #ab .ab-crate.pop{animation:abPop .24s ease-out forwards;pointer-events:none}
 @keyframes abPop{40%{transform:scale(1.12) rotate(3deg)}100%{transform:scale(1.4);opacity:0}}
 html.ab-gm .fab,html.ab-gm [class*="chat"],html.ab-gm [id*="bot"],html.ab-gm [id*="Bot"]{display:none!important}
+html.ab-gm.ab-rd #ab .m-r{z-index:90}
+html.ab-rd #topbar,html.ab-rd .top-ico,html.ab-rd [data-hdr],html.ab-rd #hamburgerBtn,html.ab-rd #modeBtn,html.ab-rd #posterBtn,html.ab-rd #gamesTopBtn,html.ab-rd #lectTopBtn,html.ab-rd #notifBtn,html.ab-rd #brandWrap{display:none!important}
 
 
 /* ===== واجهة الدخول «طيور المواد»: شاشة لعبة بزرار Continue ===== */
@@ -19437,7 +19439,7 @@ function layout(){
  if(gmode){
   H=st.clientHeight||340;
   var gp=8,n=books.length,bn=$('abBanner');if(bn)bn.innerHTML=bannerHtml(M);
-  var top0=Math.max(50,(bn?bn.offsetTop+bn.offsetHeight:44)+8),lim=H-gr-12,gapB=2*BRAD+8,xMin=Math.max(W*.3,150),xMax=W-14,best=null;
+  var top0=Math.max(50,(bn?bn.offsetTop+bn.offsetHeight:44)+8),lim=H-gr-12,gapB=2*BRAD+8,xMin=14,xMax=W-14,best=null;
   function crate(b,k,x,y,w,h){var rot=((hsh(b.id)%5)-2)*.8,big=kids(b).length;
    tgt.push({id:b.id,x:x,y:y,w:w,h:h});
    ch+='<button type="button" class="ab-crate'+(big?' big':'')+'" data-ab-shoot="'+E(b.id)+'" style="left:'+x.toFixed(1)+'px;top:'+y.toFixed(1)+'px;width:'+w+'px;height:'+h+'px;--i:'+k+';--r:'+rot+'deg" aria-label="'+E(b.title)+'"><span>'+(b.icon?E(b.icon)+' ':'')+E(b.title)+'</span>'+(big?'<i class="ab-star" title="فيها أقسام فرعية">★</i>':'')+'</button>'}
@@ -19456,7 +19458,7 @@ function layout(){
    var chh=44,fit=Math.max(1,Math.floor((H-top0-gr-12)/(chh+gp))),cols=Math.max(1,Math.ceil(n/fit)),regW=W*.68-14,cw=Math.max(96,Math.min(172,Math.floor((regW-(cols-1)*gp)/cols)));
    books.forEach(function(b,k){var c=Math.floor(k/fit),r=k%fit;crate(b,k,W-14-cw-c*(cw+gp),top0+r*(chh+gp),cw,chh)});
   }
-  geo={W:W,H:H,gr:gr,A:{x:Math.max(74,W*.13),y:H-gr-46},gy:H-gr+10};
+  geo={W:W,H:H,gr:gr,A:{x:W/2,y:H-gr-46},gy:H-gr+10};
  }else{
   var cols2=W<430?3:(W<640?4:5),pad=12,gp2=8,cw2=Math.floor((W-2*pad-(cols2-1)*gp2)/cols2),chh2=W<430?56:60,rows=Math.ceil(books.length/cols2),top1=sel>=0?(W<430?104:90):0;
   H=Math.max(440,sel>=0?top1+rows*(chh2+gp2)+250+gr:440);st.style.height=H+'px';
@@ -19474,7 +19476,7 @@ function layout(){
  drawSling(null,null);
  var f=$('abFlyer');
  if(sel>=0&&M[sel]){f.innerHTML=window.abBird(sel);f.style.setProperty('--c',BC[sel%7]);f.hidden=false;f.classList.remove('gone','dg');place(geo.A.x,geo.A.y,0)}else f.hidden=true;
- root.querySelectorAll('.ab-pb').forEach(function(b,j){b.classList.toggle('sel',j===sel);b.style.setProperty('--x',((gmode?.3+.1*j:pbX(j,M.length))*100).toFixed(1)+'%')});
+ root.querySelectorAll('.ab-pb').forEach(function(b,j){b.classList.toggle('sel',j===sel);b.style.setProperty('--x',((gmode?.06+.09*j:pbX(j,M.length))*100).toFixed(1)+'%')});
 }
 function paintMap(){
  if(editing){paintMapList();return}
@@ -19546,7 +19548,7 @@ function miss(){var f=$('abFlyer');if(f)f.classList.add('gone');setTimeout(respa
 function boom(t,st){
  t.gone=true;var f=$('abFlyer');f.classList.add('gone');
  if(t.el)t.el.classList.add('boom');chips(t.x+t.w/2,t.y+t.h/2);
- setTimeout(function(){if(isGm())exitGame(true);openSt(t.id)},430);
+ setTimeout(function(){openSt(t.id)},200);setTimeout(function(){if(isGm())exitGame(true)},760);
  setTimeout(function(){t.gone=false;if(t.el){t.el.classList.remove('boom');t.el.classList.add('back')}respawn()},900);
 }
 function fire(id){
@@ -19632,7 +19634,7 @@ function paintReader(keep){
  +'<div class="m-cover"><div><small>'+E(ln||'خط '+(li+1))+' · محطة '+(bi+1)+'</small><h1>'+E(s.title)+'</h1>'+(s.desc?'<p>'+E(s.desc)+'</p>':'')+(s.icon?'<span class="m-ric">'+E(s.icon)+'</span>':'')+'</div></div>'
  +'<div class="m-rb">'
  +'<div class="m-doc">'+chHtml(s,0)
- +'<div class="m-next">'+nb(ord[n+1],'المحطة الجاية')+nb(ord[n-1],'المحطة اللي فاتت')+'</div></div></div>';
+ +'</div></div>';
  r.scrollTop=top;
 }
 var hist=0;function hEnter(st){try{if(hist)history.replaceState(st,'');else{history.pushState(st,'');hist=1}}catch(e){}}function hLeave(){if(hist){hist=0;try{history.back()}catch(e){}}}
