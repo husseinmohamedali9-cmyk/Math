@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" data-theme="light">
 <head>
+<script>(function(){var si=window.setInterval;window.setInterval=function(f,d){if(typeof f==="function"&&d>=500&&d<=950){var a=[].slice.call(arguments,2),g=f;return si.call(window,function(){if(document.hidden)return;return g.apply(this,a)},d)}return si.apply(window,arguments)}})();</script>
+
 <link rel="icon" type="image/png" href="./logo.png">
 <link rel="apple-touch-icon" href="./logo.png">
 <link rel="manifest" href="./manifest.json">
@@ -8120,11 +8122,16 @@ const Decor = {
   /* 🧱 شكل البلوكات (اتنقل هنا من لوحة الديزاين) */
   bkBlock() {
     const F = window.__fxBk; if (!F) return '';
-    const cur = F.get();
-    const opt = (v, ttl, sub) => `<button type="button" class="btn" data-dx="bkshape" data-v="${v}" style="display:block;width:100%;text-align:right;margin-top:8px;padding:11px 12px;height:auto;white-space:normal;border:2px solid ${cur === v ? 'var(--accent)' : 'var(--line)'};border-radius:14px"><b style="display:block;font-size:14.5px;margin-bottom:2px">${ttl}${cur === v ? ' <em style="font-style:normal;color:var(--accent);font-size:12px">✓ مختار</em>' : ''}</b><span style="font-size:12.5px;opacity:.8">${sub}</span></button>`;
-    return `<hr class="sep"><h4>🧱 شكل البلوكات</h4><p class="hint">الملاحظات والسبورة والكود وباقي البلوكات: تاخد شكل الديزاين ولا تفضل زي ما هي؟ وتقدر تغيّر ده لكل بلوك لوحده من «تعديل البلوك» ← «مع الديزاين». الاختيار هنا بيتطبق فوراً.</p>`
-      + opt('design', 'تاخد شكل الديزاين', 'كل بلوك بيتظبط على ألوان وستايل الديزاين الشغّال.')
-      + opt('keep', 'زي ما هي', 'البلوكات بتفضل بشكلها الأصلي في كل الديزاينات.');
+    const cur = F.get(), T = window.__bkxTools, tl = T ? T.get() : { rd: 1, s: 1, p: 1 };
+    const st = (on) => `display:block;width:100%;text-align:right;margin-top:8px;padding:11px 12px;height:auto;white-space:normal;border:2px solid ${on ? 'var(--accent)' : 'var(--line)'};border-radius:14px`;
+    const opt = (v, ttl, sub) => `<button type="button" class="btn" data-dx="bkshape" data-v="${v}" style="${st(cur === v)}"><b style="display:block;font-size:14.5px;margin-bottom:2px">${ttl}${cur === v ? ' <em style="font-style:normal;color:var(--accent);font-size:12px">✓ مختار</em>' : ''}</b><span style="font-size:12.5px;opacity:.8">${sub}</span></button>`;
+    const tool = (k, ttl) => `<button type="button" class="btn" data-dx="tool" data-t="${k}" style="${st(!!tl[k])}"><b>${ttl}</b> <em style="font-style:normal;color:var(--accent);font-size:12px">${tl[k] ? '✓ ظاهر للزوار' : '✗ مخفي'}</em></button>`;
+    return `<hr class="sep"><h4>🧱 شكل البلوكات</h4><p class="hint">اختار شكل البلوكات (الملاحظات والسبورة والكود وباقيهم) لكل الزوار. وتقدر تغيّر ده لكل بلوك لوحده من «تعديل البلوك» ← «مع الديزاين». الاختيار بيتطبق فوراً.</p>`
+      + opt('keep', '🧷 الأول خالص', 'البلوكات بشكلها الأصلي الأول من غير أي ستايل ديزاين.')
+      + opt('design', '🕰️ قبل التعديل', 'الشكل القديم: كل بلوك بيتظبط على ألوان وستايل الديزاين، من غير الزخارف الجديدة.')
+      + opt('creative', '✨ بعد التعديل', 'الشكل الإبداعي الجديد: بادجات وخامات وأشكال مختلفة لكل ديزاين.')
+      + `<hr class="sep"><h4>🧰 أدوات القراءة (تحت على اليمين)</h4><p class="hint">اتحكم أنهي أداة تظهر للزوار.</p>`
+      + tool('rd', 'Aa — تكبير الخط') + tool('s', '🔍 — بحث في المحتوى') + tool('p', '🖨️ — طباعة / PDF');
   },
   scrollEl() { const m = document.querySelector('#overlay .modal'); return m || document.getElementById('mBody'); },
   edPaint() {
@@ -8167,7 +8174,8 @@ const Decor = {
       if (d.bg.imgs.length >= 8) { toast('أقصى حد 8 صور'); return; }
       d.bg.imgs.push({ id: uid(), name: 'رابط', src: u }); if (!d.bg.active) d.bg.active = d.bg.imgs[0].id; d.bg.on = true; this.edPaint();
     }
-    else if (a === 'bkshape') { if (window.__fxBk) { window.__fxBk.set(t.dataset.v); toast(t.dataset.v === 'keep' ? 'البلوكات هتفضل زي ما هي ✅' : 'البلوكات هتاخد شكل الديزاين ✅'); } this.edPaint(); }
+    else if (a === 'bkshape') { if (window.__fxBk) { window.__fxBk.set(t.dataset.v); toast({ keep: 'رجعت الأول خالص ✅', design: 'رجعت زي قبل التعديل ✅', creative: 'الشكل الجديد اتفعّل ✅' }[t.dataset.v]); } this.edPaint(); }
+    else if (a === 'tool') { const T = window.__bkxTools; if (T) { T.set(t.dataset.t, !T.get()[t.dataset.t]); } this.edPaint(); }
     else if (a === 'prevbg') { this.applyBg(d); toast('👁 معاينة — اقفل النافذة تشوفها'); }
   }
 };
@@ -17010,8 +17018,8 @@ function draw(){
   +OPT('entry','pr','واجهة «القراصنة» 🏴‍☠️: ليل بقمر ونجوم بتلمع، بحر بثلاث موجات وسفينة بتعدّي، ومرساة بتتمايل. كل سنة صندوق كنز خشب بغطا بيتفتح وبيطلع منه الكتاب لما تقف عليه. شاشة اختيار السنة بعد الترحيب.')
   +pmsubHtml()+lgHtml()+lgmHtml()+txHtml()+layerHtml()+editHtml();
 }
-const BKV=()=>{let a=null,l=null;try{a=site.meta.fx.bk}catch(e){}try{l=JSON.parse(localStorage.getItem('fx_bk'))}catch(e){}const b=(a&&(!l||(+a.t||0)>=(+l.t||0)))?a:l;return b&&b.v==='keep'?'keep':'design'};
-function bkApply(){const H=document.documentElement;if(BKV()==='keep')H.setAttribute('data-bkg','k');else H.removeAttribute('data-bkg')}
+const BKV=()=>{let a=null,l=null;try{a=site.meta.fx.bk}catch(e){}try{l=JSON.parse(localStorage.getItem('fx_bk'))}catch(e){}const b=(a&&(!l||(+a.t||0)>=(+l.t||0)))?a:l;return b&&b.v==='keep'?'keep':(b&&b.v==='design'?'design':'creative')};
+function bkApply(){const H=document.documentElement,v=BKV();if(v==='keep')H.setAttribute('data-bkg','k');else if(v==='design')H.setAttribute('data-bkg','p');else H.removeAttribute('data-bkg')}
 function bkSet(v){const o={v,t:Date.now()};try{localStorage.setItem('fx_bk',JSON.stringify(o))}catch(e){}try{if(ADM()&&typeof site!=='undefined'&&site){site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{bk:o});if(typeof scheduleSave==='function')scheduleSave()}}catch(e){}bkApply()}
 function bkHtml(){const v=BKV();return '<h4>🧱 شكل البلوكات</h4><small>الملاحظات والسبورة والكود وباقي البلوكات: تاخد شكل الديزاين ولا تفضل زي ما هي؟ وتقدر تغيّر ده لكل بلوك لوحده من «تعديل البلوك» ← «مع الديزاين».</small>'
  +'<button type="button" class="v-opt '+(v==='design'?'on':'')+'" data-bk="design"><b>تاخد شكل الديزاين'+(v==='design'?'<em>✓ مختار</em>':'')+'</b><span>كل بلوك بيتظبط على ألوان وستايل الديزاين الشغّال.</span></button>'
@@ -18822,226 +18830,493 @@ html.fx-skin-cs .block{--bkc-r:22px;--bkc-g1:#7cf2d4;--bkc-g2:#8c7bff;--bkc-tint
 html.fx-skin-ab .block{--bkc-r:16px;--bkc-pad:20px 26px;--bkc-g1:#b07a3e;--bkc-g2:#8a5a2a;--bkc-bw:3px;--bkc-tint:color-mix(in srgb,#ffc93c 13%,var(--mp));--bkc-paper:repeating-linear-gradient(90deg,rgba(138,90,42,.07) 0 2px,transparent 2px 10px);--bkc-glow:0 6px 0 rgba(138,90,42,.35);--bkc-glow-h:0 8px 0 rgba(138,90,42,.45);--bkc-orn:"🐦";--bkc-badge:var(--mp);--bkc-ov:radial-gradient(circle at 12px 12px,#6b3f1d 0 2.6px,transparent 3.2px),radial-gradient(circle at calc(100% - 12px) 12px,#6b3f1d 0 2.6px,transparent 3.2px),radial-gradient(circle at 12px calc(100% - 12px),#6b3f1d 0 2.6px,transparent 3.2px),radial-gradient(circle at calc(100% - 12px) calc(100% - 12px),#6b3f1d 0 2.6px,transparent 3.2px)}
 html.fx-skin-tm .block{--bkc-r:8px 22px 8px 22px;--bkc-pad:20px 26px;--bkc-g1:#d8b46a;--bkc-g2:#8a5a2a;--bkc-bw:4px;--bkc-bs:double;--bkc-tint:color-mix(in srgb,#f2b632 12%,var(--mp));--bkc-paper:radial-gradient(ellipse at 18% 8%,rgba(255,255,255,.4),transparent 62%);--bkc-glow:0 6px 0 rgba(0,0,0,.16);--bkc-glow-h:0 9px 0 rgba(0,0,0,.2);--bkc-orn:"✘";--bkc-badge:var(--mp)}
 html.fx-skin-tm .block .b-note::after,html.fx-skin-tm .block .b-quote::after{color:#b3261e;font-weight:900}
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-note:not(.b-hasclr),
-html .block[data-bk="d"] .b-note:not(.b-hasclr),
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr),
-html #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr),
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr),
-html #cs .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr),
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr),
-html #ab .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr),
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr),
-html #tm .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr),
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-quote:not(.b-hasclr),
-html .block[data-bk="d"] .b-quote:not(.b-hasclr),
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr),
-html #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr),
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr),
-html #cs .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr),
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr),
-html #ab .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr),
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr),
-html #tm .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr){position:relative;padding:var(--bkc-pad);line-height:1.95;color:var(--bk-ink);border:var(--bkc-bw) var(--bkc-bs) transparent;border-radius:var(--bkc-r);background-image:var(--bkc-paper),linear-gradient(var(--bkc-tint),var(--bkc-tint)),linear-gradient(135deg,var(--bkc-g1),var(--bkc-g2));background-origin:padding-box,padding-box,border-box;background-clip:padding-box,padding-box,border-box;background-color:transparent;box-shadow:var(--bkc-glow);transition:transform .25s ease,box-shadow .25s ease}
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
-html .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
-html #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
-html #cs .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
-html #ab .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
-html #tm .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
-html .block[data-bk="d"] .b-quote:not(.b-hasclr)::before,
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
-html #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::before,
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
-html #cs .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::before,
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
-html #ab .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::before,
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
-html #tm .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background-image:var(--bkc-ov);background-repeat:no-repeat;opacity:.55}
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-note:not(.b-hasclr)::after,
-html .block[data-bk="d"] .b-note:not(.b-hasclr)::after,
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::after,
-html #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::after,
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::after,
-html #cs .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::after,
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::after,
-html #ab .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::after,
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::after,
-html #tm .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::after,
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-quote:not(.b-hasclr)::after,
-html .block[data-bk="d"] .b-quote:not(.b-hasclr)::after,
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::after,
-html #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::after,
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::after,
-html #cs .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::after,
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::after,
-html #ab .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::after,
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::after,
-html #tm .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::after{content:var(--bkc-orn);position:absolute;inset-block-start:-13px;inset-inline-end:18px;padding:1px 9px;font-size:18px;line-height:1.5;border-radius:999px;background:var(--bkc-badge);box-shadow:0 0 0 2px color-mix(in srgb,var(--bkc-g1) 55%,transparent);pointer-events:none}
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-note:not(.b-hasclr):hover,
-html .block[data-bk="d"] .b-note:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr):hover,
-html #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr):hover,
-html #cs .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr):hover,
-html #ab .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr):hover,
-html #tm .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr):hover,
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-quote:not(.b-hasclr):hover,
-html .block[data-bk="d"] .b-quote:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr):hover,
-html #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr):hover,
-html #cs .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr):hover,
-html #ab .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr):hover,
-html #tm .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr):hover{box-shadow:var(--bkc-glow-h)}
-html.fx-skin-mt:root:not([data-bkg="k"]) .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
-html.fx-skin-mt:root:not([data-bkg="k"]) .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
-html.fx-skin-mt:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
-html.fx-skin-mt:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
-html.fx-skin-mt #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
-html.fx-skin-mt #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::before{inset:0 auto 0 auto;inset-inline-start:12px;width:24px;border-radius:0;opacity:1;background-image:linear-gradient(var(--lc,#0067C8),var(--lc,#0067C8)),radial-gradient(circle at 50% 50%,var(--mp) 0 5px,var(--lc,#0067C8) 5.6px 9.4px,transparent 10px);background-size:6px 100%,24px 24px;background-position:50% 0,50% 50%;background-repeat:no-repeat}
-html.fx-skin-mt:root:not([data-bkg="k"]) .block:not([data-bk]) .b-note:not(.b-hasclr),
-html.fx-skin-mt:root:not([data-bkg="k"]) .block:not([data-bk]) .b-quote:not(.b-hasclr),
-html.fx-skin-mt:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr),
-html.fx-skin-mt:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr),
-html.fx-skin-mt #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr),
-html.fx-skin-mt #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr){padding-inline-start:54px}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-note:not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-note:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr),
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-quote:not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-quote:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr){position:relative;padding:var(--bkc-pad);line-height:1.95;color:var(--bk-ink);border:var(--bkc-bw) var(--bkc-bs) transparent;border-radius:var(--bkc-r);background-image:var(--bkc-paper),linear-gradient(var(--bkc-tint),var(--bkc-tint)),linear-gradient(135deg,var(--bkc-g1),var(--bkc-g2));background-origin:padding-box,padding-box,border-box;background-clip:padding-box,padding-box,border-box;background-color:transparent;box-shadow:var(--bkc-glow);transition:transform .25s ease,box-shadow .25s ease}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-quote:not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background-image:var(--bkc-ov);background-repeat:no-repeat;opacity:.55}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-note:not(.b-hasclr)::after,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-note:not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::after,
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-quote:not(.b-hasclr)::after,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-quote:not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::after{content:var(--bkc-orn);position:absolute;inset-block-start:-13px;inset-inline-end:18px;padding:1px 9px;font-size:18px;line-height:1.5;border-radius:999px;background:var(--bkc-badge);box-shadow:0 0 0 2px color-mix(in srgb,var(--bkc-g1) 55%,transparent);pointer-events:none}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-note:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-note:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr):hover,
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-quote:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-quote:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr):hover{box-shadow:var(--bkc-glow-h)}
+html.fx-skin-mt:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
+html.fx-skin-mt:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
+html.fx-skin-mt:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr)::before,
+html.fx-skin-mt:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr)::before,
+html.fx-skin-mt:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr)::before,
+html.fx-skin-mt:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr)::before{inset:0 auto 0 auto;inset-inline-start:12px;width:24px;border-radius:0;opacity:1;background-image:linear-gradient(var(--lc,#0067C8),var(--lc,#0067C8)),radial-gradient(circle at 50% 50%,var(--mp) 0 5px,var(--lc,#0067C8) 5.6px 9.4px,transparent 10px);background-size:6px 100%,24px 24px;background-position:50% 0,50% 50%;background-repeat:no-repeat}
+html.fx-skin-mt:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-note:not(.b-hasclr),
+html.fx-skin-mt:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-quote:not(.b-hasclr),
+html.fx-skin-mt:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-note:not(.b-hasclr),
+html.fx-skin-mt:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-quote:not(.b-hasclr),
+html.fx-skin-mt:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-note:not(.b-hasclr),
+html.fx-skin-mt:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-quote:not(.b-hasclr){padding-inline-start:54px}
 @keyframes bkcTw{from{opacity:.3}to{opacity:.95}}
 @keyframes bkcSheen{from{background-position:130% 0}to{background-position:-30% 0}}
 @media (prefers-reduced-motion:no-preference){
 html.fx-skin-cs .block .b-note::before,html.fx-skin-cs .block .b-quote::before{animation:bkcTw 3.6s ease-in-out infinite alternate}
 html.fx-skin-x4 .block .b-note::before,html.fx-skin-x4 .block .b-quote::before{background-size:260% 100%;animation:bkcSheen 7s linear infinite}
-.block .b-note:hover,.block .b-quote:hover{transform:translateY(-2px)}}
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-key:not(.b-hasclr),
-html .block[data-bk="d"] .b-key:not(.b-hasclr),
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr),
-html #mt .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr),
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr),
-html #cs .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr),
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr),
-html #ab .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr),
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr),
-html #tm .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr),
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-theorem:not(.b-hasclr),
-html .block[data-bk="d"] .b-theorem:not(.b-hasclr),
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr),
-html #mt .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr),
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr),
-html #cs .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr),
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr),
-html #ab .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr),
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr),
-html #tm .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr),
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-law:not(.b-hasclr),
-html .block[data-bk="d"] .b-law:not(.b-hasclr),
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr),
-html #mt .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr),
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr),
-html #cs .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr),
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr),
-html #ab .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr),
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr),
-html #tm .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr),
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-formula:not(.b-hasclr),
-html .block[data-bk="d"] .b-formula:not(.b-hasclr),
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr),
-html #mt .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr),
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr),
-html #cs .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr),
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr),
-html #ab .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr),
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr),
-html #tm .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr){border-radius:var(--bkc-r);box-shadow:var(--bkc-glow);line-height:1.9;transition:transform .25s ease,box-shadow .25s ease}
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-key:not(.b-hasclr):hover,
-html .block[data-bk="d"] .b-key:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr):hover,
-html #mt .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr):hover,
-html #cs .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr):hover,
-html #ab .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr):hover,
-html #tm .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr):hover,
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-theorem:not(.b-hasclr):hover,
-html .block[data-bk="d"] .b-theorem:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr):hover,
-html #mt .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr):hover,
-html #cs .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr):hover,
-html #ab .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr):hover,
-html #tm .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr):hover,
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-law:not(.b-hasclr):hover,
-html .block[data-bk="d"] .b-law:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr):hover,
-html #mt .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr):hover,
-html #cs .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr):hover,
-html #ab .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr):hover,
-html #tm .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr):hover,
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-formula:not(.b-hasclr):hover,
-html .block[data-bk="d"] .b-formula:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr):hover,
-html #mt .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr):hover,
-html #cs .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr):hover,
-html #ab .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr):hover,
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr):hover,
-html #tm .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr):hover{box-shadow:var(--bkc-glow-h)}
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-steps li:not(.b-hasclr),
-html .block[data-bk="d"] .b-steps li:not(.b-hasclr),
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-steps li:not(.b-hasclr),
-html #mt .m-doc .block[data-bk="d"] .b-steps li:not(.b-hasclr),
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-steps li:not(.b-hasclr),
-html #cs .m-doc .block[data-bk="d"] .b-steps li:not(.b-hasclr),
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-steps li:not(.b-hasclr),
-html #ab .m-doc .block[data-bk="d"] .b-steps li:not(.b-hasclr),
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-steps li:not(.b-hasclr),
-html #tm .m-doc .block[data-bk="d"] .b-steps li:not(.b-hasclr){border-radius:calc(var(--bkc-r) * .8);box-shadow:var(--bkc-glow)}
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-fx[class*="callout-"]:not(.b-hasclr),
-html .block[data-bk="d"] .b-fx[class*="callout-"]:not(.b-hasclr),
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-fx[class*="callout-"]:not(.b-hasclr),
-html #mt .m-doc .block[data-bk="d"] .b-fx[class*="callout-"]:not(.b-hasclr),
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-fx[class*="callout-"]:not(.b-hasclr),
-html #cs .m-doc .block[data-bk="d"] .b-fx[class*="callout-"]:not(.b-hasclr),
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-fx[class*="callout-"]:not(.b-hasclr),
-html #ab .m-doc .block[data-bk="d"] .b-fx[class*="callout-"]:not(.b-hasclr),
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-fx[class*="callout-"]:not(.b-hasclr),
-html #tm .m-doc .block[data-bk="d"] .b-fx[class*="callout-"]:not(.b-hasclr){padding:16px 22px;line-height:1.9;border:1px solid color-mix(in srgb,var(--c) 38%,transparent);border-inline-start:7px solid var(--c);border-radius:var(--bkc-r);background:color-mix(in srgb,var(--c) 9%,var(--bk-bg));box-shadow:0 12px 26px -18px var(--c)}
-html:root:not([data-bkg="k"]) .block:not([data-bk]) .b-code:not(.b-hasclr),
-html .block[data-bk="d"] .b-code:not(.b-hasclr),
-html:not([data-bkg="k"]) #mt .m-doc .block:not([data-bk]) .b-code:not(.b-hasclr),
-html #mt .m-doc .block[data-bk="d"] .b-code:not(.b-hasclr),
-html:not([data-bkg="k"]) #cs .m-doc .block:not([data-bk]) .b-code:not(.b-hasclr),
-html #cs .m-doc .block[data-bk="d"] .b-code:not(.b-hasclr),
-html:not([data-bkg="k"]) #ab .m-doc .block:not([data-bk]) .b-code:not(.b-hasclr),
-html #ab .m-doc .block[data-bk="d"] .b-code:not(.b-hasclr),
-html:not([data-bkg="k"]) #tm .m-doc .block:not([data-bk]) .b-code:not(.b-hasclr),
-html #tm .m-doc .block[data-bk="d"] .b-code:not(.b-hasclr){border-radius:var(--bkc-r);box-shadow:var(--bkc-glow)}
+html:not([data-bkg="k"]):not([data-bkg="p"]) .block .b-note:hover,html:not([data-bkg="k"]):not([data-bkg="p"]) .block .b-quote:hover{transform:translateY(-2px)}}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-key:not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-key:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr),
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-theorem:not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-theorem:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr),
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-law:not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-law:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr),
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-formula:not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-formula:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr){border-radius:var(--bkc-r);box-shadow:var(--bkc-glow);line-height:1.9;transition:transform .25s ease,box-shadow .25s ease}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-key:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-key:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-key:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-key:not(.b-hasclr):hover,
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-theorem:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-theorem:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-theorem:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-theorem:not(.b-hasclr):hover,
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-law:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-law:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-law:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-law:not(.b-hasclr):hover,
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-formula:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-formula:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-formula:not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-formula:not(.b-hasclr):hover{box-shadow:var(--bkc-glow-h)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-steps li:not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-steps li:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-steps li:not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-steps li:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-steps li:not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-steps li:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-steps li:not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-steps li:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-steps li:not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-steps li:not(.b-hasclr){border-radius:calc(var(--bkc-r) * .8);box-shadow:var(--bkc-glow)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx[class*="callout-"]:not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx[class*="callout-"]:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx[class*="callout-"]:not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx[class*="callout-"]:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx[class*="callout-"]:not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx[class*="callout-"]:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx[class*="callout-"]:not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx[class*="callout-"]:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx[class*="callout-"]:not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx[class*="callout-"]:not(.b-hasclr){padding:16px 22px;line-height:1.9;border:1px solid color-mix(in srgb,var(--c) 38%,transparent);border-inline-start:7px solid var(--c);border-radius:var(--bkc-r);background:color-mix(in srgb,var(--c) 9%,var(--bk-bg));box-shadow:0 12px 26px -18px var(--c)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-code:not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-code:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-code:not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-code:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-code:not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-code:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-code:not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-code:not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-code:not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-code:not(.b-hasclr){border-radius:var(--bkc-r);box-shadow:var(--bkc-glow)}
 </style>
-<script id="bkEarly">try{var _o=JSON.parse(localStorage.getItem("fx_bk")||"null");if(_o&&_o.v==="keep")document.documentElement.setAttribute("data-bkg","k")}catch(e){}</script>
-<script id="bkQuick">
-(function(){function lab(){var v=window.__fxBk&&window.__fxBk.get();return v==='keep'?'🧱 بلوكات: زي ما هي':'🧱 بلوكات: بشكل الديزاين'}
-function go(){try{if(!window.__fxBk||typeof isAdmin==='undefined'||!isAdmin)return;var top=document.querySelector('#adminbar .adminbar-top');if(!top)return;
-var b=document.getElementById('bkQuick');
-if(!b){b=document.createElement('button');b.type='button';b.id='bkQuick';b.className='btn';b.title='البلوكات تاخد شكل الديزاين ولا تفضل زي ما هي (اضغط للتبديل)';
-b.addEventListener('click',function(e){e.stopPropagation();var n=window.__fxBk.get()==='keep'?'design':'keep';window.__fxBk.set(n);b.textContent=lab();try{toast(n==='keep'?'البلوكات هتفضل زي ما هي في كل الديزاينات':'البلوكات هتاخد شكل الديزاين')}catch(_){}});
-var v=document.getElementById('visBtn');if(v&&v.parentNode===top)top.insertBefore(b,v.nextSibling);else top.appendChild(b)}
-var t=lab();if(b.textContent!==t)b.textContent=t}catch(e){}}
-setInterval(go,700);go()})();
+<style id="bkExtras">
+/* باقي البلوكات بروح الديزاين */
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-h::before{background:linear-gradient(var(--bkc-g1),var(--bkc-g2));width:6px;border-radius:6px}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-list li::marker{color:var(--bkc-g1);font-weight:800}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-tablewrap,html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-table{border-radius:var(--bkc-r)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-tablewrap{overflow:auto;box-shadow:var(--bkc-glow)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-table th{background:color-mix(in srgb,var(--bkc-g1) 15%,var(--bk-bg));color:var(--bk-ink)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-table tbody tr:nth-child(even){background:color-mix(in srgb,var(--bkc-g1) 5%,var(--bk-bg))}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) hr.b-divider,html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) div.b-divider:empty{border:0;height:4px;border-radius:4px;background:linear-gradient(90deg,transparent,var(--bkc-g1),var(--bkc-g2),transparent);opacity:.75}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-quiz,html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-flash,html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-tasks,html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-acc{border-radius:var(--bkc-r);box-shadow:var(--bkc-glow)}
+/* ظهور ناعم */
+.block.bkx-pre{opacity:0;transform:translateY(14px)}
+.block.bkx-pre.bkx-in{opacity:1;transform:none;transition:opacity .55s ease,transform .55s ease}
+@media (prefers-reduced-motion:reduce){.block.bkx-pre{opacity:1;transform:none}}
+/* قراءة مريحة */
+html[data-bkx-rd="1"] .block{font-size:1.1em;line-height:2.05}
+html[data-bkx-rd="2"] .block{font-size:1.24em;line-height:2.2}
+/* شريط التقدّم + أدوات القراءة */
+#bkxPg{position:fixed;top:0;inset-inline:0;height:3px;z-index:99990;pointer-events:none;background:transparent}
+#bkxPg i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent,#4f6bff),var(--gold,#f2b632));transition:width .1s linear}
+#bkxBar{position:fixed;inset-inline-start:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:99980;display:flex;gap:6px;align-items:center;direction:rtl}
+#bkxBar button{all:unset;cursor:pointer;min-width:38px;height:38px;border-radius:999px;display:grid;place-items:center;font:800 15px system-ui,sans-serif;background:var(--bk-bg,#fff);color:var(--bk-ink,#111);border:1.5px solid var(--line,rgba(128,128,128,.4));box-shadow:0 6px 16px -8px rgba(0,0,0,.45);opacity:.9}
+#bkxBar button:hover,#bkxBar button:focus-visible{opacity:1;outline:2px solid var(--accent,#4f6bff)}
+#bkxBar .bkx-s{display:none;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;background:var(--bk-bg,#fff);color:var(--bk-ink,#111);border:1.5px solid var(--line,rgba(128,128,128,.4));box-shadow:0 6px 16px -8px rgba(0,0,0,.45)}
+#bkxBar.so .bkx-s{display:flex}
+#bkxBar input{all:unset;width:130px;font:14px system-ui,sans-serif;color:inherit;padding:4px 6px}
+#bkxBar small{font:12px system-ui;opacity:.7;white-space:nowrap}
+.block.bkx-hit{outline:3px solid var(--gold,#f2b632);outline-offset:4px;border-radius:12px}
+@media print{#bkxBar,#bkxPg,.topbar,.adminbar,.hamburger,.topmenu,.block-tools,#decorBg,.math-bg{display:none!important}body{background:#fff!important;color:#000!important}.block{break-inside:avoid;opacity:1!important;transform:none!important}.b-note,.b-quote,.b-key,.b-theorem{box-shadow:none!important}}
+</style>
+<script id="bkExtras">
+(function(){if(window.__bkx)return;window.__bkx=1;
+var D=document,H=D.documentElement,RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){}}
+/* ظهور ناعم للبلوكات (مع أمان: لو ما ظهرتش في 3 ثواني تتظهر لوحدها) */
+var io=(!RM&&'IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var b=e.target;b.classList.add('bkx-in');io.unobserve(b);setTimeout(function(){b.classList.remove('bkx-pre','bkx-in')},700)}})},{threshold:.05}):null;
+function scan(){var bs=D.querySelectorAll('.block:not([data-bkx])');for(var i=0;i<bs.length;i++){var b=bs[i];b.setAttribute('data-bkx','1');if(io){b.classList.add('bkx-pre');io.observe(b)}}
+ if(bs.length&&io)setTimeout(function(){D.querySelectorAll('.block.bkx-pre').forEach(function(b){b.classList.remove('bkx-pre','bkx-in')})},3000);
+ bar(!!D.querySelector('.block'));tools()}
+/* شريط التقدّم */
+var pg=D.createElement('div');pg.id='bkxPg';pg.innerHTML='<i></i>';
+var tk=0;function prog(){if(tk)return;tk=requestAnimationFrame(function(){tk=0;var h=H.scrollHeight-innerHeight;pg.firstChild.style.width=(h>0?Math.min(100,scrollY/h*100):0)+'%'})}
+addEventListener('scroll',prog,{passive:true});
+/* أدوات القراءة: حجم الخط / بحث / طباعة */
+var bx=null,hits=[],hi=-1,rd=+ls('bkx_rd')||0;
+function TL(){var a=null,l=null;try{a=site.meta.fx.tools}catch(e){}try{l=JSON.parse(ls('fx_tools'))}catch(e){}var b=(a&&(!l||(+a.t||0)>=(+l.t||0)))?a:l;return Object.assign({rd:1,s:1,p:1},b||{})}
+function tools(){if(!bx)return;var t=TL(),q=function(x){return bx.querySelector(x)};q('[data-a=rd]').style.display=t.rd?'':'none';q('[data-a=p]').style.display=t.p?'':'none';q('[data-a=s]').style.display=t.s?'':'none';if(!t.s){bx.classList.remove('so');clr()}bx.style.display=(t.rd||t.s||t.p)?'':'none'}
+window.__bkxTools={get:TL,set:function(k,v){var o=TL();o[k]=v?1:0;o.t=Date.now();ls('fx_tools',JSON.stringify(o));try{if(typeof isAdmin!=='undefined'&&isAdmin&&typeof site!=='undefined'&&site){site.meta=site.meta||{};site.meta.fx=Object.assign({},site.meta.fx,{tools:o});if(typeof scheduleSave==='function')scheduleSave()}}catch(e){}tools()}};H.setAttribute('data-bkx-rd',rd);
+function bar(on){if(!on){if(bx){bx.remove();pg.remove();bx=null}return}if(bx)return;
+ bx=D.createElement('div');bx.id='bkxBar';
+ bx.innerHTML='<button type="button" data-a="rd" title="حجم الخط">Aa</button><button type="button" data-a="s" title="بحث في المحتوى">🔍</button><span class="bkx-s"><input type="search" placeholder="ابحث…" aria-label="بحث"><small></small><button type="button" data-a="n" title="التالي" style="min-width:28px;height:28px">▼</button></span><button type="button" data-a="p" title="طباعة / PDF">🖨️</button>';
+ D.body.appendChild(bx);D.body.appendChild(pg);prog();
+ bx.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var a=b.dataset.a;
+  if(a==='rd'){rd=(rd+1)%3;H.setAttribute('data-bkx-rd',rd);ls('bkx_rd',rd);b.textContent=rd?'A'+'+'.repeat(rd):'Aa'}
+  else if(a==='s'){bx.classList.toggle('so');if(bx.classList.contains('so'))bx.querySelector('input').focus();else clr()}
+  else if(a==='n')go(1);else if(a==='p')print()});
+ var inp=bx.querySelector('input');inp.addEventListener('input',function(){find(inp.value)});inp.addEventListener('keydown',function(e){if(e.key==='Enter')go(e.shiftKey?-1:1);if(e.key==='Escape'){bx.classList.remove('so');clr()}});
+ if(rd)bx.querySelector('[data-a=rd]').textContent='A'+'+'.repeat(rd);tools()}
+function clr(){D.querySelectorAll('.bkx-hit').forEach(function(b){b.classList.remove('bkx-hit')});hits=[];hi=-1;if(bx)bx.querySelector('small').textContent=''}
+function find(q){clr();q=(q||'').trim().toLowerCase();if(q.length<2)return;
+ hits=[].filter.call(D.querySelectorAll('.block'),function(b){return b.textContent.toLowerCase().indexOf(q)>-1});
+ bx.querySelector('small').textContent=hits.length?hits.length+' نتيجة':'مفيش نتيجة';if(hits.length)go(1)}
+function go(d){if(!hits.length)return;if(hi>-1)hits[hi].classList.remove('bkx-hit');hi=(hi+d+hits.length)%hits.length;var b=hits[hi];b.classList.add('bkx-hit');b.scrollIntoView({block:'center',behavior:RM?'auto':'smooth'});bx.querySelector('small').textContent=(hi+1)+'/'+hits.length}
+/* حارس الوضوح: أي كلام باهت جوا النوافذ يتغمّق/يتفتّح تلقائي */
+function L(c){var m=(c||'').match(/[\d.]+/g);if(!m||m.length<3)return null;var a=m.slice(0,3).map(function(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*a[0]+.7152*a[1]+.0722*a[2]}
+function bgL(el){while(el&&el.nodeType===1){var c=getComputedStyle(el).backgroundColor,m=c.match(/[\d.]+/g);if(m&&m.length>=3&&(m.length<4||+m[3]>.6))return L(c);el=el.parentElement}return 1}
+function guard(){var mb=D.getElementById('mBody');if(!mb)return;var bl=bgL(mb);
+ mb.querySelectorAll('h3,h4,label,summary,summary>span:not(.dx-ic),.hint,small,.fs-chk,.field>label').forEach(function(el){var cs=getComputedStyle(el),fl=L(cs.webkitTextFillColor&&cs.webkitTextFillColor.indexOf('rgb')===0?cs.webkitTextFillColor:cs.color);if(fl==null)return;
+  var hi_=Math.max(fl,bl),lo=Math.min(fl,bl);if((hi_+.05)/(lo+.05)<3){var d=bl>.5?'#13214a':'#f2f5ff';el.style.setProperty('color',d,'important');el.style.setProperty('-webkit-text-fill-color',d,'important')}})}
+var gt=0;function gd(){clearTimeout(gt);gt=setTimeout(guard,160)}
+function boot(){var mb=D.getElementById('mBody');if(mb)new MutationObserver(gd).observe(mb,{childList:true,subtree:true})}
+var st=0;new MutationObserver(function(){if(st)return;st=requestAnimationFrame(function(){st=0;if(D.querySelector('.block:not([data-bkx])')||(!D.querySelector('.block')&&bx))scan()})}).observe(H,{childList:true,subtree:true});
+if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',function(){boot();scan()});else{boot();scan()}
+})();
 </script>
+<style id="bkFx">
+/* أشكال بلوكات الـ fx حسب الديزاين */
+html .block{--fxo-glow:"✨";--fxo-paper:"📝";--fxo-str:"◆"}
+html.fx-skin-pm .block{--fxo-glow:"➗";--fxo-paper:"✏️";--fxo-str:"π";--fxs-tex:radial-gradient(circle,rgba(124,92,255,.16) 1.4px,transparent 1.9px);--fxs-ts:16px 16px}
+html.fx-skin-x4 .block{--fxo-glow:"⚡";--fxo-paper:"🌌";--fxo-str:"✦";--fxs-tex:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.08) 50%,transparent 62%)}
+html.fx-skin-zn .block{--fxo-glow:"🔖";--fxo-paper:"📑";--fxo-str:"§"}
+html.fx-skin-mt .block{--fxo-glow:"🎫";--fxo-paper:"🧾";--fxo-str:"●";--fxs-tex:repeating-linear-gradient(135deg,transparent 0 10px,color-mix(in srgb,var(--lc,#0067C8) 8%,transparent) 10px 20px)}
+html.fx-skin-cs .block{--fxo-glow:"☄️";--fxo-paper:"🔭";--fxo-str:"✧";--fxs-tex:radial-gradient(circle at 20% 30%,#fff 0 1px,transparent 1.6px);--fxs-ts:90px 90px}
+html.fx-skin-ab .block{--fxo-glow:"🪵";--fxo-paper:"📜";--fxo-str:"🔩"}
+html.fx-skin-tm .block{--fxo-glow:"💎";--fxo-paper:"🗺️";--fxo-str:"✘"}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr){position:relative;padding:var(--bkc-pad);line-height:1.95;color:var(--bk-ink);border:var(--bkc-bw) var(--bkc-bs) transparent;border-radius:var(--bkc-r);background-image:var(--fxs-tex,var(--bkc-paper)),linear-gradient(var(--bkc-tint),var(--bkc-tint)),linear-gradient(135deg,var(--bkc-g1),var(--bkc-g2));background-size:var(--fxs-ts,auto),auto,auto;background-origin:padding-box,padding-box,border-box;background-clip:padding-box,padding-box,border-box;background-color:transparent;box-shadow:var(--bkc-glow);text-shadow:none;filter:none;-webkit-text-fill-color:currentColor;animation:none;transition:transform .25s ease,box-shadow .25s ease}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr){background-image:var(--fxs-tex,var(--bkc-paper)),linear-gradient(135deg,color-mix(in srgb,var(--bkc-g1) 15%,var(--bk-bg)),color-mix(in srgb,var(--bkc-g2) 13%,var(--bk-bg))),linear-gradient(135deg,var(--bkc-g1),var(--bkc-g2));backdrop-filter:blur(5px);box-shadow:var(--bkc-glow),inset 0 0 26px -16px var(--bkc-g1)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::before,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::before{display:block;content:"";position:absolute;inset:7px;border:1.5px dashed color-mix(in srgb,var(--bkc-g1) 45%,transparent);border-radius:calc(var(--bkc-r) * .7);pointer-events:none;background:none;animation:none}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint):not(.b-hasclr)::after{display:block;content:var(--fxo-glow);position:absolute;inset-block-start:-13px;inset-inline-end:18px;padding:1px 9px;font-size:17px;line-height:1.5;border-radius:999px;background:var(--bkc-badge);box-shadow:0 0 0 2px color-mix(in srgb,var(--bkc-g1) 55%,transparent);pointer-events:none;background-clip:padding-box;animation:none}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold):not(.b-hasclr)::after{display:block;content:var(--fxo-paper);position:absolute;inset-block-start:-13px;inset-inline-end:18px;padding:1px 9px;font-size:17px;line-height:1.5;border-radius:999px;background:var(--bkc-badge);box-shadow:0 0 0 2px color-mix(in srgb,var(--bkc-g1) 55%,transparent);pointer-events:none;background-clip:padding-box;animation:none}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr)::after,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr)::after,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr)::after{display:block;content:var(--fxo-str);position:absolute;inset-block-start:-13px;inset-inline-end:18px;padding:1px 9px;font-size:17px;line-height:1.5;border-radius:999px;background:var(--bkc-badge);box-shadow:0 0 0 2px color-mix(in srgb,var(--bkc-g1) 55%,transparent);pointer-events:none;background-clip:padding-box;animation:none}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-double):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-double):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-double):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-double):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-double):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-double):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-double):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-double):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-double):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-double):not(.b-hasclr){border-style:double;border-width:5px}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-outline):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-outline):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-outline):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-outline):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-outline):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-outline):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-outline):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-outline):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-outline):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-outline):not(.b-hasclr){border-style:dashed}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-stripe):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-stripe):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-stripe):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-stripe):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-stripe):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-stripe):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-stripe):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-stripe):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-stripe):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-stripe):not(.b-hasclr){border-inline-start:11px solid var(--bkc-g1)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-ribbon):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-ribbon):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-ribbon):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-ribbon):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-ribbon):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-ribbon):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-ribbon):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-ribbon):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-ribbon):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-ribbon):not(.b-hasclr){border-inline-start:14px solid var(--bkc-g1)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-brutal):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-brutal):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-brutal):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-brutal):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-brutal):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-brutal):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-brutal):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-brutal):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-brutal):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-brutal):not(.b-hasclr){border-radius:6px;box-shadow:6px 6px 0 var(--bkc-g1)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-bubble):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-bubble):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-bubble):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-bubble):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-bubble):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-bubble):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-bubble):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-bubble):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-bubble):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-bubble):not(.b-hasclr){border-radius:30px}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-sticky):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-sticky):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-sticky):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-sticky):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-sticky):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-sticky):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-sticky):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-sticky):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-sticky):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-sticky):not(.b-hasclr){border-end-end-radius:34px;box-shadow:4px 8px 14px -8px rgba(0,0,0,.4)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-polaroid):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-polaroid):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-polaroid):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-polaroid):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-polaroid):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-polaroid):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-polaroid):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-polaroid):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-polaroid):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-polaroid):not(.b-hasclr){padding-bottom:34px;box-shadow:0 10px 22px -10px rgba(0,0,0,.45)}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-ticket):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-ticket):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-ticket):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-ticket):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-ticket):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-ticket):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-ticket):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-ticket):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-ticket):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-ticket):not(.b-hasclr){-webkit-mask:radial-gradient(circle 9px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;mask:radial-gradient(circle 9px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-tape):not(.b-hasclr)::before,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-tape):not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-tape):not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-tape):not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-tape):not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-tape):not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-tape):not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-tape):not(.b-hasclr)::before,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-tape):not(.b-hasclr)::before,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-tape):not(.b-hasclr)::before{display:block;content:"";position:absolute;inset:-11px auto auto 50%;width:84px;height:22px;border:0;border-radius:3px;transform:translateX(-50%) rotate(-3deg);background:color-mix(in srgb,var(--bkc-g1) 35%,transparent);pointer-events:none}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-graph,.b-fx-blueprint):not(.b-hasclr),
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-graph,.b-fx-blueprint):not(.b-hasclr){background-image:linear-gradient(color-mix(in srgb,var(--bkc-g1) 14%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--bkc-g1) 14%,transparent) 1px,transparent 1px),linear-gradient(var(--bkc-tint),var(--bkc-tint)),linear-gradient(135deg,var(--bkc-g1),var(--bkc-g2));background-size:22px 22px,22px 22px,auto,auto;background-origin:padding-box,padding-box,padding-box,border-box;background-clip:padding-box,padding-box,padding-box,border-box}
+html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover{box-shadow:var(--bkc-glow-h)}
+@media (prefers-reduced-motion:no-preference){html:root:not([data-bkg="k"]):not([data-bkg="p"]) .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="p"]) .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #mt .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #mt .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #cs .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #cs .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #ab .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #ab .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="k"]):not([data-bkg="p"]) #tm .m-doc .block:not([data-bk]) .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover,
+html:not([data-bkg="p"]) #tm .m-doc .block[data-bk="d"] .b-fx:is(.b-fx-glass,.b-fx-neon,.b-fx-aurora,.b-fx-holo,.b-fx-shimmer,.b-fx-glowline,.b-fx-spotlight,.b-fx-sweep,.b-fx-pulse,.b-fx-rainbow,.b-fx-midnight,.b-fx-sunset,.b-fx-ocean,.b-fx-mint,.b-fx-paper,.b-fx-notebook,.b-fx-sticky,.b-fx-sticker,.b-fx-tape,.b-fx-polaroid,.b-fx-ticket,.b-fx-tabfolder,.b-fx-ribbon,.b-fx-retro,.b-fx-typewriter,.b-fx-handwritten,.b-fx-stamp,.b-fx-gold,.b-fx-card,.b-fx-solid,.b-fx-lift,.b-fx-floaty,.b-fx-pop,.b-fx-bubble,.b-fx-double,.b-fx-outline,.b-fx-stripe,.b-fx-corner,.b-fx-marching,.b-fx-brutal,.b-fx-graph,.b-fx-blueprint):not(.b-hasclr):hover{transform:translateY(-2px)}}
+</style>
+<script id="bkEarly">try{var _o=JSON.parse(localStorage.getItem("fx_bk")||"null");if(_o&&_o.v==="keep")document.documentElement.setAttribute("data-bkg","k");else if(_o&&_o.v==="design")document.documentElement.setAttribute("data-bkg","p")}catch(e){}</script>
+
 
 
 <style id="csCss">
