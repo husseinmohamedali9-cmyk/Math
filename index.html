@@ -2226,8 +2226,8 @@ window.abBird=function(i){
  +'</svg>'};
 </script>
 <script id="fxEntryIntro">
-(function(){try{
-var v=window.__fxEntryV;if(v!=='sh'&&v!=='mp'&&v!=='cs'&&v!=='gx'&&v!=='ab')return;
+(function(){function run(v){try{
+if(v!=='sh'&&v!=='mp'&&v!=='cs'&&v!=='gx'&&v!=='ab')return;
 try{var _n=Date.now(),_l=+sessionStorage.getItem('fx_ei_t')||0;if(sessionStorage.getItem('fx_ei')===v&&_n-_l<6000)return;sessionStorage.setItem('fx_ei',v);sessionStorage.setItem('fx_ei_t',String(_n))}catch(e){}
 var H=document.documentElement,el=document.createElement('div');el.id='fxEI';el.className='ei-'+v;
 var ttl=(document.title||'').split(/[|\-–—]/)[0].trim()||'أهلاً بيك';
@@ -2253,8 +2253,12 @@ if(v==='ab'){var B=window.abBird||function(){return''},C=['#E4572E','#2E86DE','#
  +'<button type="button" class="ei-go">Continue <b>&#9654;</b></button></div>'}
 H.appendChild(el);
 var gone=false,out=function(){if(gone)return;gone=true;el.classList.add('out');setTimeout(function(){el.remove()},650)};
-if(v==='ab'){var cb=el.querySelector('.ei-go');if(cb){cb.addEventListener('click',function(e){e.stopPropagation();if(gone)return;var f=el.querySelector('.ei-fly');if(f)f.classList.add('go');setTimeout(out,560)});try{cb.focus({preventScroll:true})}catch(_e){}}}else{el.addEventListener('click',out);setTimeout(out,1000);setTimeout(function(){if(!gone)out()},2500)}
-}catch(e){}})();
+if(v==='ab'){var cb=el.querySelector('.ei-go');if(cb){cb.addEventListener('click',function(e){e.stopPropagation();if(gone)return;var f=el.querySelector('.ei-fly');if(f)f.classList.add('go');setTimeout(out,560)});try{cb.focus({preventScroll:true})}catch(_e){}}}else{el.addEventListener('click',out);setTimeout(out,3000);setTimeout(function(){if(!gone)out()},5000)}
+}catch(e){}}
+/* لو الزائر أول مرة يفتح الموقع (مفيش اختيار متخزّن عنده): بنستنى رد السيرفر لحد ~1.2 ثانية ونعرض الواجهة اللي الأدمن اختارها */
+var v0=window.__fxEntryV;
+if(v0){run(v0)}else{var n=0,iv=setInterval(function(){n++;var f=window.__fxEarlyFx;if((f&&f.entry)||window.__fxEarlyDone||n>12){clearInterval(iv);run(f&&f.entry||null)}},100)}
+})();
 </script>
 <div id="decorBg" aria-hidden="true"></div><div id="decorFx" aria-hidden="true"></div>
 
@@ -2658,8 +2662,7 @@ function playIntro(){
     try{ const sb = localStorage.getItem('site_intro_sub'); const is = el.querySelector('.intro-sub'); if(sb && is) is.textContent = sb; }catch(e){}
     let introMs = 2200;
     try{ const c = JSON.parse(localStorage.getItem('site_theme_cache')||'null'); if(c && c.introMs!=null) introMs = +c.introMs; }catch(e){}
-    if(introMs <= 0){ el.remove(); pageIn(); resolve(); return; }
-    introMs = 1000; /* شاشة الدخول بتاخد ثانية واحدة على كل الأجهزة */
+    introMs = 3000; /* شاشات الترحيب اللي بوقت بتاخد 3 ثواني على كل الأجهزة */
     el.style.setProperty('--intro-ms', (introMs-250)+'ms');
     try{ sessionStorage.setItem(INTRO_KEY,'1'); }catch(e){}
     document.body.style.overflow = 'hidden';
@@ -16882,7 +16885,7 @@ async function save(k,v){
 (function(){
   const h=document.documentElement;if(!h.classList.contains('fx-boot'))return;
   /* شاشة الدخول الأولى (الانترو) مغطّية الصفحة بالكامل، فمفيش داعي نخبّي الصفحة ونضيّع وقتها */
-  try{let on=window.__fxEntry!=='nd'&&window.__fxEntry!=='ra'&&window.__fxEntry!=='lg'&&!!document.getElementById('introSplash');if(on){const c=JSON.parse(localStorage.getItem('site_theme_cache')||'null');if(c&&c.introMs!=null&&+c.introMs<=0)on=false}if(on)h.classList.remove('fx-boot')}catch(e){}
+  try{let on=window.__fxEntry!=='nd'&&window.__fxEntry!=='ra'&&window.__fxEntry!=='lg'&&!!document.getElementById('introSplash');if(on){}if(on)h.classList.remove('fx-boot')}catch(e){}
   try{if(window.__fxEntry==='lg'&&window.__fxLgEarly)h.classList.remove('fx-boot')}catch(e){}
   let waited=0,okc=0,early=false;
   const iv=setInterval(()=>{
