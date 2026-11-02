@@ -19438,9 +19438,13 @@ function layout(quiet){
  var books=(sel>=0&&M[sel])?M[sel].books:[],ch='';tgt=[];
  if(gmode){
   H=st.clientHeight||340;
-  var chh=44,gp=8,top0=50,fit=Math.max(1,Math.floor((H-top0-gr-12)/(chh+gp))),n=books.length,cols=Math.max(1,Math.ceil(n/fit)),regW=W*.68-14,cw=Math.max(96,Math.min(172,Math.floor((regW-(cols-1)*gp)/cols)));
+  var chh=44,gp=8,top0=58,n=books.length,per=Math.min(6,Math.max(3,Math.floor((W-28+gp)/120))),cw=Math.floor((W-28-(per-1)*gp)/per),
+   yc=top0+chh+gp+10,cf=Math.max(1,Math.floor((H-gr-4-yc)/(chh+gp)));
   books.forEach(function(b,k){
-   var c=Math.floor(k/fit),r=k%fit,x=W-14-cw-c*(cw+gp),y=top0+r*(chh+gp),rot=((hsh(b.id)%5)-2)*.8,big=kids(b).length;
+   var x,y;
+   if(k<per){x=W-14-cw-k*(cw+gp);y=top0}
+   else{var j=k-per,c=Math.floor(j/cf),r=j%cf;x=W-14-cw-c*(cw+gp);y=yc+r*(chh+gp)}
+   var rot=((hsh(b.id)%5)-2)*.8,big=kids(b).length;
    tgt.push({id:b.id,x:x,y:y,w:cw,h:chh});
    ch+='<button type="button" class="ab-crate'+(big?' big':'')+'" data-ab-shoot="'+E(b.id)+'" style="left:'+x.toFixed(1)+'px;top:'+y+'px;width:'+cw+'px;height:'+chh+'px;--i:'+k+';--r:'+rot+'deg" aria-label="'+E(b.title)+'"><span>'+(b.icon?E(b.icon)+' ':'')+E(b.title)+'</span>'+(big?'<i class="ab-star" title="فيها أقسام فرعية">★</i>':'')+'</button>';
   });
