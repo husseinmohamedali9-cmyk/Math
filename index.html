@@ -16338,6 +16338,10 @@ html[data-theme="dark"] #trackSplash.lg{--paper:#0f1a30;--grid:#1b2c4a;--ink:#ea
 #trackSplash.lg .lgn-msg{min-height:26px;margin-top:12px;font-weight:700;font-size:15px}
 #trackSplash.lg .lgn-msg.e{color:var(--err)}#trackSplash.lg .lgn-msg.o{color:var(--teal)}
 #trackSplash.lg .lgn-adm{display:inline-block;margin-top:6px;color:var(--teal);font-weight:700;font-size:14px}
+/* موبايل: المعادلات تحت صندوق الدخول */
+@media(max-width:860px){#trackSplash.lg .lgn-page{gap:18px}#trackSplash.lg .lgn-side{display:contents}#trackSplash.lg .lgn-logo{margin-bottom:0}#trackSplash.lg .lgn-side p{margin:0}#trackSplash.lg .lgn-box{order:1}#trackSplash.lg .lgn-eqs{order:2;margin-top:6px}}
+/* أي قسم مفتوح: اخفي أيقونات الشمال (▾ / 🎨 / البروفايل) وتفضل في الرئيسية بس */
+html:has(.section.open) :is(#fxTbBtn,#fxTbPanel,#fxFab,#fxProfL,#fxProfC,#fxTopGrp){display:none!important}
 #fxDzPanel{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:#0008;padding:16px;direction:rtl}
 #fxDzPanel.open{display:flex}
 #fxDzPanel .v-box{width:min(480px,100%);max-height:90vh;overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 50px #0006;padding:16px}
