@@ -16338,8 +16338,8 @@ html[data-theme="dark"] #trackSplash.lg{--paper:#0f1a30;--grid:#1b2c4a;--ink:#ea
 #trackSplash.lg .lgn-msg{min-height:26px;margin-top:12px;font-weight:700;font-size:15px}
 #trackSplash.lg .lgn-msg.e{color:var(--err)}#trackSplash.lg .lgn-msg.o{color:var(--teal)}
 #trackSplash.lg .lgn-adm{display:inline-block;margin-top:6px;color:var(--teal);font-weight:700;font-size:14px}
-/* موبايل: المعادلات تحت صندوق الدخول */
-@media(max-width:860px){#trackSplash.lg .lgn-page{gap:18px}#trackSplash.lg .lgn-side{display:contents}#trackSplash.lg .lgn-logo{margin-bottom:0}#trackSplash.lg .lgn-side p{margin:0}#trackSplash.lg .lgn-box{order:1}#trackSplash.lg .lgn-eqs{order:2;margin-top:6px}}
+/* المعادلات والرموز كخلفية لمربع الدخول */
+#trackSplash.lg .lgn-box{position:relative;overflow:hidden;isolation:isolate}#trackSplash.lg .lgn-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;user-select:none;direction:ltr;overflow:hidden;color:var(--ink);opacity:.11;font-family:"Reem Kufi","Tajawal",serif;font-weight:700}#trackSplash.lg .lgn-bg span{position:absolute;white-space:nowrap;line-height:1}
 /* أي قسم مفتوح: اخفي أيقونات الشمال (▾ / 🎨 / البروفايل) وتفضل في الرئيسية بس */
 html.fx-insec :is(#fxTbBtn,#fxTbPanel,#fxFab,#fxProfL,#fxProfC,#fxTopGrp){display:none!important}
 #fxDzPanel{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:#0008;padding:16px;direction:rtl}
@@ -16800,8 +16800,8 @@ const cur=()=>({design:window.__fxSkin==='pm'?'pm':window.__fxSkin==='x4'?'x4':w
   sp.innerHTML='<button class="lgn-theme" type="button" data-act="toggle-mode" aria-label="تغيير الوضع">◐</button>'
    +'<div class="lgn-page"><div class="lgn-side"><div class="lgn-logo"><i>∑</i> منصة الرياضيات</div>'
    +'<h1>أهلاً بيك، يلا <mark>نكمل</mark> من حيث وقفت</h1><p>ادخل اسمك واختار سنتك عشان تتابع دروسك وتمارينك في مكان واحد.</p>'
-   +'<div class="lgn-eqs"><div>x² − 5x + 6 = 0</div><div>∫ 2x dx = x² + C</div><div>sin²θ + cos²θ = 1</div></div></div>'
-   +'<div class="lgn-box"><h2>ادخل للمنصة</h2>'
+   +'</div>'
+   +'<div class="lgn-box"><div class="lgn-bg" aria-hidden="true"><span style="top:6%;left:5%;font-size:24px;transform:rotate(-7deg)">x² − 5x + 6 = 0</span><span style="top:27%;left:34%;font-size:22px;transform:rotate(5deg)">∫ 2x dx = x² + C</span><span style="top:52%;left:4%;font-size:23px;transform:rotate(-5deg)">sin²θ + cos²θ = 1</span><span style="top:12%;left:78%;font-size:46px;transform:rotate(8deg)">∑</span><span style="top:40%;left:80%;font-size:52px;transform:rotate(-10deg)">π</span><span style="top:66%;left:58%;font-size:36px;transform:rotate(6deg)">√x</span><span style="top:78%;left:10%;font-size:48px;transform:rotate(-6deg)">∞</span><span style="top:86%;left:72%;font-size:44px;transform:rotate(9deg)">θ</span><span style="top:60%;left:28%;font-size:34px;transform:rotate(-9deg)">Δ</span><span style="top:90%;left:22%;font-size:20px;transform:rotate(4deg)">e^iπ + 1 = 0</span></div><h2>ادخل للمنصة</h2>'
    +'<form class="lgn-f" novalidate><label>الاسم</label><input class="lgn-nm" autocomplete="name" value="'+esc(nm)+'" placeholder="اكتب اسمك">'
    +'<label>السنة</label><select class="lgn-yr">'+Y.map(y=>'<option value="'+y[0]+'"'+(y[0]===last?' selected':'')+'>'+y[1]+'</option>').join('')+'</select>'
    +'<button class="lgn-go" type="submit">دخول</button><div class="lgn-msg" aria-live="polite"></div>'
