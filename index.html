@@ -20860,7 +20860,7 @@ var la=!!isAdmin;setInterval(function(){try{if(!!isAdmin!==la){la=!!isAdmin;pain
 (function(){var h=document.documentElement,t=0;
 function chk(){t=0;var sp=document.getElementById('trackSplash'),on=false;
 if(!(sp&&!sp.classList.contains('hide'))){var a=document.querySelectorAll('.section.open:not(.pinned)');
-for(var i=0;i<a.length;i++){var r=a[i].getBoundingClientRect();if(r.top<=60&&r.bottom>=60){on=true;break}}var nd=document.getElementById('ndApp');if(!on&&nd&&nd.getAttribute('data-view')==='sub'&&nd.offsetParent!==null)on=true}
+for(var i=0;i<a.length;i++){var r=a[i].getBoundingClientRect();if(r.top<=60&&r.bottom>=60){on=true;break}}var nd=document.getElementById('ndApp');if(!on&&nd&&nd.getAttribute('data-view')==='sub'&&nd.offsetParent!==null)on=true;if(!on){var R=['znR','mtR','abR','csR','tmR'];for(var j=0;j<R.length;j++){var e=document.getElementById(R[j]);if(e&&!e.hidden&&e.getClientRects().length){on=true;break}}}}
 if(h.classList.contains('fx-insec')!==on)h.classList.toggle('fx-insec',on)}
 function q(){if(!t)t=requestAnimationFrame(chk)}
 addEventListener('scroll',q,{passive:true});addEventListener('resize',q);addEventListener('click',function(){setTimeout(q,60);setTimeout(q,500)},true);
