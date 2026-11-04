@@ -16785,7 +16785,13 @@ html[data-theme="light"] #trackSplash.lg.bd,html[data-theme="light"] #bdWel{--b-
 #bdWel .q{margin-top:10px;font-family:'Tajawal',sans-serif;font-size:clamp(15px,3.6vw,20px);color:var(--b-soft);opacity:0;animation:bdUp2 .6s ease 1.7s forwards}
 #bdWel .q b{color:var(--b-c);font-weight:700}
 @keyframes bdUp2{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-@media(prefers-reduced-motion:reduce){#trackSplash.bd *{animation-duration:.01s!important;animation-delay:0s!important}}`;
+/* الأنيميشن شغال على كل الموبايلات حتى لو وضع تقليل الحركة مفعّل في الفون */
+#trackSplash.bd .gt-nm{transition:border-color .3s!important}
+#trackSplash.bd .bd-fl label{transition:.22s!important}
+#trackSplash.bd .bd-y .n{transition:.3s!important}
+#trackSplash.bd .bd-mk{transition:left .55s cubic-bezier(.45,0,.2,1)!important}
+#trackSplash.bd .gt-go{transition:.25s!important}
+#trackSplash.bd .bd-card{transition:opacity .6s,transform .6s!important}`;
 window.__bdBuild=function(nm,last,Y){
   if(!document.getElementById('fxBdCss')){const s=document.createElement('style');s.id='fxBdCss';s.textContent=CSS;document.head.appendChild(s);const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=Caveat:wght@500;700&family=Tajawal:wght@400;500;700&display=swap';document.head.appendChild(l)}
   const T=[['math1','Math 1','السنة الأولى','1'],['math2','Math 2','السنة الثانية','2'],['math3','Math 3','السنة الثالثة','3']];
