@@ -16735,6 +16735,7 @@ html[data-theme="light"] #trackSplash.lg.bd,html[data-theme="light"] #bdWel{--b-
 #trackSplash.bd .bd-sw{animation:bdSway 9s ease-in-out infinite alternate}
 @keyframes bdSway{to{transform:translateY(14px)}}
 #trackSplash.bd .bd-eqn{position:absolute;font-family:'Caveat','Segoe Script',cursive;font-size:clamp(17px,2.2vw,26px);color:var(--b-ink);opacity:0;white-space:nowrap;direction:ltr;animation:bdWrite 1.6s ease forwards var(--dl),bdBob 7s ease-in-out infinite alternate var(--dl)}
+@media(max-width:700px){#trackSplash.bd .bd-eqn{transform:translateX(calc(var(--x) * -1));font-size:clamp(15px,4.4vw,20px)}#trackSplash.bd .bd-wrap{width:min(420px,90vw)}#trackSplash.bd .bd-card{padding:16px 18px 14px}}
 @keyframes bdWrite{from{clip-path:inset(0 100% 0 0);opacity:.0}to{clip-path:inset(0);opacity:.42}}
 @keyframes bdBob{to{translate:0 -10px}}
 #trackSplash.bd .bd-dust{position:absolute;border-radius:50%;background:var(--b-ink);opacity:0;animation:bdDust var(--t) linear infinite var(--dl)}
@@ -16788,16 +16789,17 @@ html[data-theme="light"] #trackSplash.lg.bd,html[data-theme="light"] #bdWel{--b-
 window.__bdBuild=function(nm,last,Y){
   if(!document.getElementById('fxBdCss')){const s=document.createElement('style');s.id='fxBdCss';s.textContent=CSS;document.head.appendChild(s);const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=Caveat:wght@500;700&family=Tajawal:wght@400;500;700&display=swap';document.head.appendChild(l)}
   const T=[['math1','Math 1','السنة الأولى','1'],['math2','Math 2','السنة الثانية','2'],['math3','Math 3','السنة الثالثة','3']];
+  const VH=Math.max(600,Math.round(1000*innerHeight/Math.max(innerWidth,1))),CY=VH/2,K=VH/600;
   const P=(f)=>{let d='';for(let i=0;i<=100;i++){const X=i*10;d+=(i?'L':'M')+X+' '+f(X).toFixed(1)}return d};
-  let grid='';for(let i=0;i<=20;i++)grid+='M'+i*50+' 0V600';for(let j=0;j<=12;j++)grid+='M0 '+j*50+'H1000';
-  let tk='';for(let i=1;i<20;i++)tk+='M'+i*50+' 294V306';
-  const sv='<svg class="bd-svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><path class="bd-g" d="'+grid+'"/>'
-   +'<path class="bd-ax bd-draw" pathLength="1" style="--d:1.4s" d="M0 300H1000M500 0V600"/><path class="bd-ax" d="'+tk+'" opacity=".25"/>'
-   +'<g class="bd-sw"><path class="bd-draw" pathLength="1" style="--d:3.4s;--dl:.5s;stroke:var(--b-a);stroke-width:2.4;opacity:.6" d="'+P(X=>300-85*Math.sin(X/1000*Math.PI*4))+'"/></g>'
-   +'<path class="bd-draw" pathLength="1" style="--d:3.8s;--dl:1s;stroke:var(--b-b);stroke-width:2.2;opacity:.5" d="'+P(X=>70+Math.pow((X-500)/500,2)*400)+'"/>'
-   +'<path class="bd-draw" pathLength="1" style="--d:3.6s;--dl:1.4s;stroke:var(--b-c);stroke-width:2.2;opacity:.5" d="'+P(X=>300-Math.pow((X-500)/500,3)*220)+'"/></svg>';
+  let grid='';for(let i=0;i<=20;i++)grid+='M'+i*50+' 0V'+VH;for(let j=0;j<=Math.ceil(VH/50);j++)grid+='M0 '+j*50+'H1000';
+  let tk='';for(let i=1;i<20;i++)tk+='M'+i*50+' '+(CY-6)+'V'+(CY+6);
+  const sv='<svg class="bd-svg" viewBox="0 0 1000 '+VH+'" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><path class="bd-g" d="'+grid+'"/>'
+   +'<path class="bd-ax bd-draw" pathLength="1" style="--d:1.4s" d="M0 '+CY+'H1000M500 0V'+VH+'"/><path class="bd-ax" d="'+tk+'" opacity=".25"/>'
+   +'<g class="bd-sw"><path class="bd-draw" pathLength="1" style="--d:3.4s;--dl:.5s;stroke:var(--b-a);stroke-width:2.4;opacity:.6" d="'+P(X=>CY-85*K*Math.sin(X/1000*Math.PI*4))+'"/></g>'
+   +'<path class="bd-draw" pathLength="1" style="--d:3.8s;--dl:1s;stroke:var(--b-b);stroke-width:2.2;opacity:.5" d="'+P(X=>70*K+Math.pow((X-500)/500,2)*400*K)+'"/>'
+   +'<path class="bd-draw" pathLength="1" style="--d:3.6s;--dl:1.4s;stroke:var(--b-c);stroke-width:2.2;opacity:.5" d="'+P(X=>CY-Math.pow((X-500)/500,3)*220*K)+'"/></svg>';
   const E=[['e<sup>iπ</sup> + 1 = 0',8,5],['a² + b² = c²',13,70],['∫ sin x dx = −cos x + C',80,56],['Δ = b² − 4ac',68,3],['φ = (1 + √5) / 2',90,26],['Σ 1/n² = π²/6',30,80],['lim sin x / x = 1',47,2],['d/dx eˣ = eˣ',90,78]];
-  const eq=E.map((e,i)=>'<span class="bd-eqn" style="top:'+e[1]+'%;left:'+e[2]+'%;--dl:'+(1.2+i*.45)+'s">'+e[0]+'</span>').join('');
+  const eq=E.map((e,i)=>'<span class="bd-eqn" style="top:'+e[1]+'%;left:'+e[2]+'%;--x:'+e[2]+'%;--dl:'+(1.2+i*.45)+'s">'+e[0]+'</span>').join('');
   let du='';for(let i=0;i<22;i++){const s=2+Math.random()*3;du+='<i class="bd-dust" style="left:'+(Math.random()*100)+'%;top:'+(40+Math.random()*60)+'%;width:'+s+'px;height:'+s+'px;--t:'+(7+Math.random()*7)+'s;--dl:'+(Math.random()*8)+'s"></i>'}
   return '<div class="bd-bg">'+sv+eq+du+'</div><canvas class="bd-cv"></canvas>'
    +'<button class="bd-theme" type="button" data-act="toggle-mode" aria-label="تغيير الوضع">◐</button>'
