@@ -16341,7 +16341,7 @@ html[data-theme="dark"] #trackSplash.lg{--paper:#0f1a30;--grid:#1b2c4a;--ink:#ea
 /* موبايل: المعادلات تحت صندوق الدخول */
 @media(max-width:860px){#trackSplash.lg .lgn-page{gap:18px}#trackSplash.lg .lgn-side{display:contents}#trackSplash.lg .lgn-logo{margin-bottom:0}#trackSplash.lg .lgn-side p{margin:0}#trackSplash.lg .lgn-box{order:1}#trackSplash.lg .lgn-eqs{order:2;margin-top:6px}}
 /* أي قسم مفتوح: اخفي أيقونات الشمال (▾ / 🎨 / البروفايل) وتفضل في الرئيسية بس */
-html:has(.section.open:not(.pinned)) :is(#fxTbBtn,#fxTbPanel,#fxFab,#fxProfL,#fxProfC,#fxTopGrp){display:none!important}
+html.fx-insec :is(#fxTbBtn,#fxTbPanel,#fxFab,#fxProfL,#fxProfC,#fxTopGrp){display:none!important}
 #fxDzPanel{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:#0008;padding:16px;direction:rtl}
 #fxDzPanel.open{display:flex}
 #fxDzPanel .v-box{width:min(480px,100%);max-height:90vh;overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 50px #0006;padding:16px}
@@ -20856,3 +20856,12 @@ try{paint()}catch(e){console.warn('ab',e)}
 var la=!!isAdmin;setInterval(function(){try{if(!!isAdmin!==la){la=!!isAdmin;paintEdit();paintMap()}paintTools()}catch(e){}},700);
 })();
 </script>
+<script>/* اخفاء أيقونات الشمال طول ما انت جوا قسم، وترجع لما تطلع منه / ترجع للرئيسية */
+(function(){var h=document.documentElement,t=0;
+function chk(){t=0;var sp=document.getElementById('trackSplash'),on=false;
+if(!(sp&&!sp.classList.contains('hide'))){var a=document.querySelectorAll('.section.open:not(.pinned)');
+for(var i=0;i<a.length;i++){var r=a[i].getBoundingClientRect();if(r.top<=60&&r.bottom>=60){on=true;break}}}
+if(h.classList.contains('fx-insec')!==on)h.classList.toggle('fx-insec',on)}
+function q(){if(!t)t=requestAnimationFrame(chk)}
+addEventListener('scroll',q,{passive:true});addEventListener('resize',q);addEventListener('click',function(){setTimeout(q,60);setTimeout(q,500)},true);
+setInterval(chk,500);chk()})();</script>
