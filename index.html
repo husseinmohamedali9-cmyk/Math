@@ -16768,8 +16768,8 @@ html[data-pmsub=page] .overlay .modal{width:100%!important;max-width:none!import
 /* ===== ✏️ واجهة الدخول «سبّورة الرياضيات»: ألوان هادية + أنيميشن (اسم + سنة، من غير باسورد) ===== */
 (function(){
 const CSS=`
-#trackSplash.lg.bd,#bdWel{--b-bg1:#17332e;--b-bg2:#0d201d;--b-ink:#ece6d0;--b-soft:#a9b8ad;--b-a:#9fd8c7;--b-b:#f2b494;--b-c:#efd68a;--b-line:rgba(236,230,208,.38);--b-card:rgba(10,28,25,.5);--b-err:#f29a8f}
-html[data-theme="light"] #trackSplash.lg.bd,html[data-theme="light"] #bdWel{--b-bg1:#f8f3e5;--b-bg2:#e9e1ca;--b-ink:#2c4a43;--b-soft:#6d8179;--b-a:#3f917f;--b-b:#cf7f5a;--b-c:#b8962f;--b-line:rgba(44,74,67,.38);--b-card:rgba(255,252,242,.72);--b-err:#c4573f}
+#trackSplash.lg.bd,#bdWel{--b-bg1:#17332e;--b-bg2:#0d201d;--b-ink:#ece6d0;--b-soft:#a9b8ad;--b-a:#9fd8c7;--b-b:#f2b494;--b-c:#efd68a;--b-line:rgba(236,230,208,.38);--b-card:rgba(10,28,25,.86);--b-err:#f29a8f}
+html[data-theme="light"] #trackSplash.lg.bd,html[data-theme="light"] #bdWel{--b-bg1:#f8f3e5;--b-bg2:#e9e1ca;--b-ink:#2c4a43;--b-soft:#6d8179;--b-a:#3f917f;--b-b:#cf7f5a;--b-c:#b8962f;--b-line:rgba(44,74,67,.38);--b-card:rgba(255,252,242,.92);--b-err:#c4573f}
 #trackSplash.lg.bd{position:fixed;inset:0;display:flex;overflow-x:hidden;overflow-y:auto;padding:0;color:var(--b-ink);font-family:'Tajawal','Readex Pro',system-ui,sans-serif;font-size:16px;line-height:1.6;background:radial-gradient(110% 90% at 50% 20%,var(--b-bg1),var(--b-bg2))}
 #trackSplash.bd .bd-bg{position:fixed;inset:0;pointer-events:none;overflow:hidden}
 #trackSplash.bd .bd-svg{position:absolute;inset:0;width:100%;height:100%}
@@ -16839,7 +16839,12 @@ html[data-theme="light"] #trackSplash.lg.bd,html[data-theme="light"] #bdWel{--b-
 #trackSplash.bd .bd-y .n{transition:.3s!important}
 #trackSplash.bd .bd-mk{transition:left .55s cubic-bezier(.45,0,.2,1)!important}
 #trackSplash.bd .gt-go{transition:.25s!important}
-#trackSplash.bd .bd-card{transition:opacity .6s,transform .6s!important}`;
+#trackSplash.bd .bd-card{transition:opacity .6s,transform .6s!important}
+#trackSplash.bd .bd-card{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+#trackSplash.bd .bd-sw{animation:none!important}
+#trackSplash.bd .bd-bg{will-change:transform;transform:translateZ(0)}
+#trackSplash.bd .bd-cv{inset:auto 0 0 0;height:120px}
+#trackSplash.bd .bd-eqn,#trackSplash.bd .bd-dust{will-change:transform,opacity}`;
 window.__bdBuild=function(nm,last,Y){
   if(!document.getElementById('fxBdCss')){const s=document.createElement('style');s.id='fxBdCss';s.textContent=CSS;document.head.appendChild(s);const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=Caveat:wght@500;700&family=Tajawal:wght@400;500;700&display=swap';document.head.appendChild(l)}
   const T=[['math1','Math 1','السنة الأولى','1'],['math2','Math 2','السنة الثانية','2'],['math3','Math 3','السنة الثالثة','3']];
@@ -16854,7 +16859,7 @@ window.__bdBuild=function(nm,last,Y){
    +'<path class="bd-draw" pathLength="1" style="--d:3.6s;--dl:1.4s;stroke:var(--b-c);stroke-width:2.2;opacity:.5" d="'+P(X=>CY-Math.pow((X-500)/500,3)*220*K)+'"/></svg>';
   const E=[['e<sup>iπ</sup> + 1 = 0',8,5],['a² + b² = c²',13,70],['∫ sin x dx = −cos x + C',80,56],['Δ = b² − 4ac',68,3],['φ = (1 + √5) / 2',90,26],['Σ 1/n² = π²/6',30,80],['lim sin x / x = 1',47,2],['d/dx eˣ = eˣ',90,78]];
   const eq=E.map((e,i)=>'<span class="bd-eqn" style="top:'+e[1]+'%;left:'+e[2]+'%;--x:'+e[2]+'%;--dl:'+(1.2+i*.45)+'s">'+e[0]+'</span>').join('');
-  let du='';for(let i=0;i<22;i++){const s=2+Math.random()*3;du+='<i class="bd-dust" style="left:'+(Math.random()*100)+'%;top:'+(40+Math.random()*60)+'%;width:'+s+'px;height:'+s+'px;--t:'+(7+Math.random()*7)+'s;--dl:'+(Math.random()*8)+'s"></i>'}
+  let du='';for(let i=0;i<12;i++){const s=2+Math.random()*3;du+='<i class="bd-dust" style="left:'+(Math.random()*100)+'%;top:'+(40+Math.random()*60)+'%;width:'+s+'px;height:'+s+'px;--t:'+(7+Math.random()*7)+'s;--dl:'+(Math.random()*8)+'s"></i>'}
   return '<div class="bd-bg">'+sv+eq+du+'</div><canvas class="bd-cv"></canvas>'
    +'<button class="bd-theme" type="button" data-act="toggle-mode" aria-label="تغيير الوضع">◐</button>'
    +'<div class="bd-wrap"><form class="gt-f bd-card" novalidate>'
@@ -16889,16 +16894,19 @@ window.__bdJs=function(root,kind,t0){
 /* لو المتصفح (بعض الموبايلات) مجمّد CSS animations، نشغّل نفس الحركة بالجافاسكريبت */
 window.__bdGuard=function(root,kind,t0){
   setTimeout(function(){try{
-    if(kind==='splash'){const a=root.querySelector('.bd-draw');if(a&&parseFloat(getComputedStyle(a).strokeDashoffset)>0.97)window.__bdJs(root,'splash',t0)}
+    if(kind==='splash'){const a=root.querySelector('.bd-draw');if(a&&parseFloat(getComputedStyle(a).strokeDashoffset)>0.9)window.__bdJs(root,'splash',t0)}
     else{const w=root.querySelector('.w1');if(w&&/100%/.test(getComputedStyle(w).clipPath||''))window.__bdJs(root,'wel',t0)}
-  }catch(_){}},650);
+  }catch(_){}},1600);
 };
 window.__bdWelcome=function(n,done,fin){
   const e=String(n).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const o=document.createElement('div');o.id='bdWel';o.setAttribute('role','status');
   o.innerHTML='<div><b class="w1">أهلاً بيك يا <em>'+e+'</em></b><svg viewBox="0 0 300 20" preserveAspectRatio="none"><path pathLength="1" d="M5 12C50 2 90 20 140 10S230 4 295 11"/></svg><p class="q">∴ دخلت بنجاح — وهو المطلوب إثباته <b>∎</b></p></div>';
   document.body.appendChild(o);window.__bdGuard(o,'wel',performance.now());
-  setTimeout(()=>{try{done&&done()}catch(_){}try{o.animate([{opacity:1},{opacity:0}],{duration:350,fill:'forwards'})}catch(_){o.style.opacity='0'}setTimeout(()=>{o.remove();fin&&fin()},380)},3000);
+  setTimeout(()=>{try{done&&done()}catch(_){}
+    let fired=false;const fade=()=>{if(fired)return;fired=true;try{o.animate([{opacity:1},{opacity:0}],{duration:350,fill:'forwards'})}catch(_){o.style.opacity='0'}setTimeout(()=>{o.remove();fin&&fin()},380)};
+    requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>{if(window.requestIdleCallback)requestIdleCallback(fade,{timeout:900});else fade()},250)));
+    setTimeout(fade,1700)},2700);
 };
 window.__bdRun=function(sp,inp,sel,f){
   window.__bdGuard(sp,'splash',performance.now());
@@ -16907,7 +16915,7 @@ window.__bdRun=function(sp,inp,sel,f){
   let yi=Math.max(0,ids.indexOf(sel.value)),mul=1,th=0,buf=[],trail=[],old=[],fo=0,phi=0,wx=-50,D=Math.min(devicePixelRatio||1,2),W=0,H=0,WW=0,WH=0,C={},ct='',pl=-1,nlw=0;
   const gv=n=>getComputedStyle(sp).getPropertyValue(n).trim();
   function colors(){ct=document.documentElement.getAttribute('data-theme')||'';C={ink:gv('--b-ink'),a:gv('--b-a'),b:gv('--b-b'),c:gv('--b-c'),line:gv('--b-line')}}
-  function rs(){W=innerWidth;H=innerHeight;cv.width=W*D;cv.height=H*D;x.setTransform(D,0,0,D,0,0)}
+  const SH=120;function rs(){W=innerWidth;H=innerHeight;cv.width=W*D;cv.height=SH*D;x.setTransform(D,0,0,D,0,-(H-SH)*D)}
   addEventListener('resize',()=>{rs();nlw=0});rs();
   function place(i,anim){const c=chips[i];mk.style.left=(c.offsetLeft+c.offsetWidth/2)+'px';if(anim){mk.classList.remove('hop');void mk.offsetWidth;mk.classList.add('hop')}}
   chips.forEach((c,i)=>c.addEventListener('click',()=>{if(i===yi)return;yi=i;sel.value=ids[i];chips.forEach((k,j)=>k.classList.toggle('on',j===i));buf=[];eqEl.textContent=EQ[i]}));
@@ -18601,7 +18609,9 @@ html.fx-skin-wb:root{--wb-bg:#efe8d3;--wb-paper:#fbf7ea;--wb-ink:#2c4a43;--wb-so
 html.fx-skin-wb:root[data-theme="dark"]{--wb-bg:#0d201d;--wb-paper:#17332e;--wb-ink:#ece6d0;--wb-soft:#a9b8ad;--wb-line:#2d4c45;--wb-a:#9fd8c7;--wb-b:#f2b494;--wb-c:#efd68a;--wb-deep:#091613;--wb-grid:rgba(236,230,208,.055);--wb-sh:0 20px 44px -26px rgba(0,0,0,.85);
  --ink:#ece6d0;--ink-soft:#a9b8ad;--ink-faint:#7f948b;--bg:#0d201d;--surface:#17332e;--surface-2:#1d3f38;--line:#2d4c45;--accent:#9fd8c7;--accent-2:#f2b494;--accent-soft:#1d3f38;--gold:#efd68a;--danger:#f29a8f;--on-accent:#0d201d;--hero-bg:linear-gradient(135deg,#0f2723,#1d4a41)}
 html.fx-skin-wb .topbar,html.fx-skin-wb .hamburger,html.fx-skin-wb .topmenu,html.fx-skin-wb .menu-catcher,html.fx-skin-wb main,html.fx-skin-wb .math-bg,html.fx-skin-wb #decorBg{display:none!important}
-html.fx-skin-wb body{color:var(--wb-ink);background-color:var(--wb-bg);background-image:radial-gradient(60% 50% at 8% 100%,rgba(207,127,90,.16),transparent 70%),radial-gradient(55% 45% at 95% 0,rgba(139,111,158,.14),transparent 70%),linear-gradient(var(--wb-grid) 1px,transparent 1px),linear-gradient(90deg,var(--wb-grid) 1px,transparent 1px);background-size:100% 100%,100% 100%,34px 34px,34px 34px;background-attachment:fixed}
+html.fx-skin-wb{background:var(--wb-bg)}
+html.fx-skin-wb body{color:var(--wb-ink);background:transparent}
+#wb::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-color:var(--wb-bg);background-image:radial-gradient(60% 50% at 8% 100%,rgba(207,127,90,.16),transparent 70%),radial-gradient(55% 45% at 95% 0,rgba(139,111,158,.14),transparent 70%),linear-gradient(var(--wb-grid) 1px,transparent 1px),linear-gradient(90deg,var(--wb-grid) 1px,transparent 1px);background-size:100% 100%,100% 100%,34px 34px,34px 34px;transform:translateZ(0)}
 html.fx-skin-wb .adminbar{top:calc(env(safe-area-inset-top,0px) + 62px)}
 html.fx-skin-wb .overlay{z-index:80}html.fx-skin-wb .toast{z-index:90}
 #wb{--h:"Reem Kufi","Changa","Noto Sans Arabic",sans-serif;--b:"Tajawal","Noto Sans Arabic",system-ui,sans-serif;--hand:"Caveat","Segoe Script",cursive;font-family:var(--b);color:var(--wb-ink);min-height:100vh;position:relative}
