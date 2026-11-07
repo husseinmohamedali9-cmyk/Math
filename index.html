@@ -14844,6 +14844,54 @@ setInterval(()=>{try{ensureHub();placeBar()}catch(e){}},400);
 })();
 </script>
 
+<style id="fxQCss">
+#fxQHub{font-weight:800;font-size:19px;font-family:Georgia,'Times New Roman',serif}
+#fxQMenu{position:fixed;z-index:9996;direction:rtl;display:none;gap:8px;padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 36px #0006;font-family:inherit}
+#fxQMenu.open{display:flex;animation:fxDeenIn .22s cubic-bezier(.22,1,.36,1)}
+#fxQMenu button{display:flex;align-items:center;justify-content:center;min-width:76px;height:64px;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2,var(--surface));color:var(--ink);font:inherit;font-size:17px;font-weight:700;cursor:pointer}
+#fxQMenu button span{font-size:30px;line-height:1}
+#fxQMenu button:hover{border-color:var(--accent)}
+#fxQMenu button:active{transform:scale(.95)}
+</style>
+<script id="fxQHubJs">
+/* ===== أيقونة Q جوا البوكس (كل الديزاينات): بتفتح اختيارين Q&A (قايمة الأسئلة) | 🤖 (الـ AI) ===== */
+(function(){
+ var ID='fxQHub',menu=null,$=function(i){return document.getElementById(i)};
+ function ensureQ(){
+  if(!window.FXTB)return;
+  var b=$(ID);
+  if(!b){b=document.createElement('button');b.className='top-ico';b.id=ID;b.type='button';b.title='اسأل';b.setAttribute('aria-label','اسأل');b.textContent='Q';b.dataset.fxo='6.6';document.body.appendChild(b)}
+  var sp=$('trackSplash');b.hidden=!!(sp&&!sp.classList.contains('hide'));
+  FXTB.adopt(b);
+ }
+ function build(){
+  if(menu)return;
+  menu=document.createElement('div');menu.id='fxQMenu';
+  menu.innerHTML='<button type="button" data-q="qa" aria-label="قايمة الأسئلة">Q&amp;A</button><button type="button" data-q="ai" aria-label="اسأل الروبوت"><span>🤖</span></button>';
+  document.body.appendChild(menu);
+ }
+ function closeM(){if(menu)menu.classList.remove('open')}
+ function openM(b){
+  build();var r=b.getBoundingClientRect();menu.classList.add('open');
+  var w=menu.offsetWidth;menu.style.top=(r.bottom+8)+'px';menu.style.left=Math.max(8,Math.min(r.left,innerWidth-w-8))+'px';
+ }
+ function openAsk(){
+  try{if(typeof window.__fxAskOpen==='function'){window.__fxAskOpen();return}}catch(e){}
+  var q=$('qa-section');if(q){try{q.scrollIntoView({behavior:'smooth',block:'start'})}catch(e){q.scrollIntoView()}}
+ }
+ function openAI(){try{var p=MathBot.panel();if(p.hidden)MathBot.toggle()}catch(e){var f=$('mbFab');if(f)f.click()}}
+ document.addEventListener('click',function(e){
+  var t=e.target,hub=t.closest&&t.closest('#'+ID);
+  if(hub){var pn=$('fxTbPanel');if(pn&&pn.classList.contains('fx-ord'))return;e.stopPropagation();if(menu&&menu.classList.contains('open'))closeM();else openM(hub);return}
+  var o=t.closest&&t.closest('#fxQMenu [data-q]');
+  if(o){var k=o.dataset.q;closeM();if(k==='qa')openAsk();else openAI();return}
+  if(menu&&menu.classList.contains('open'))closeM();
+ });
+ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeM()});
+ setInterval(function(){try{ensureQ()}catch(e){}},600);
+ try{ensureQ()}catch(e){}
+})();
+</script>
 <style id="fxCards">
 /* ===== كروت المواد والأقسام (أيقونة + عنوان + «افتح المادة ←») ===== */
 #sections{display:flex;flex-direction:column;gap:12px;padding-block:6px}
@@ -18203,6 +18251,7 @@ function onScroll(){
  cs.forEach(function(c,i){if(c.getBoundingClientRect().top<=y)act=i});
  idx.forEach(function(b,i){b.classList.toggle('on',i===act)});
 }
+window.__fxAskOpen=function(){go('ask')};
 function go(v,fp){
  view=v;if(openId)closeBook(true);
  $('znHome').hidden=v!=='home';$('znAskV').hidden=v!=='ask';paintTools();window.scrollTo(0,0);
@@ -18549,6 +18598,7 @@ function onScroll(){
  cs.forEach(function(c,i){if(c.getBoundingClientRect().top<=y)act=i});
  idx.forEach(function(b,i){b.classList.toggle('on',i===act);b.classList.toggle('done',i<act)});
 }
+window.__fxAskOpen=function(){go('ask')};
 function go(v,fp){view=v;if(openId)closeSt(true);$('mtHome').hidden=v!=='home';$('mtAskV').hidden=v!=='ask';paintTools();window.scrollTo(0,0);if(!fp){if(v==='home')hLeave();else hEnter({fxm:'a'})}}
 root.addEventListener('click',function(e){
  var t=e.target.closest&&e.target.closest('[data-mt-open],[data-mt],[data-mt-go],[data-mt-mv],[data-mt-shmv],[data-mt-shdel],[data-mt-add],[data-mt-edit],[data-mt-fold],[data-mt-foldall],[data-mt-fdef],[data-mt-al]');if(!t)return;
@@ -18781,6 +18831,8 @@ html[dir="rtl"] #wb .wb-tab,#wb[dir="rtl"] .wb-tab{border-radius:16px 0 0 16px;b
 #wb:not([data-gp="0"])[data-ha="r"] .wb-art{margin-left:auto;margin-right:0}
 #wb:not([data-gp="0"])[data-ha="c"] .wb-art{margin-left:auto;margin-right:auto}
 #wb:not([data-gp="0"])[data-ha="l"] .wb-art{margin-left:0;margin-right:auto}
+
+#wb .wb-tools:empty{display:none}
 </style>
 <script id="wbJs">
 (function(){
@@ -18872,9 +18924,7 @@ function paintHead(){applyAl();
  paintTools();
 }
 function paintTools(){
- var h='<button type="button" class="wb-tb'+(view==='ask'?' on':'')+'" data-wb="'+(view==='ask'?'home':'ask')+'">'+(view==='ask'?'الدروس':'اسأل')+'</button>'
- +(isAdmin&&view==='home'?'<button type="button" class="wb-tb" data-act="add-section">＋ درس</button>':'')
- +'<button type="button" class="wb-tb" data-act="toggle-mode" aria-label="تبديل الوضع الفاتح/الداكن">◐</button>';
+ var h=isAdmin&&view==='home'?'<button type="button" class="wb-tb" data-act="add-section">＋ درس</button>':'';
  if($('wbTools').innerHTML!==h)$('wbTools').innerHTML=h;
 }
 function paintGrid(){
@@ -18931,6 +18981,7 @@ function onScroll(){
  cs.forEach(function(c,i){if(c.getBoundingClientRect().top<=y)act=i});
  idx.forEach(function(b,i){b.classList.toggle('on',i===act);b.classList.toggle('done',i<act)});
 }
+window.__fxAskOpen=function(){go('ask')};
 function go(v,fp){view=v;if(openId)closeSt(true);$('wbHome').hidden=v!=='home';$('wbAskV').hidden=v!=='ask';paintTools();window.scrollTo(0,0);if(!fp){if(v==='home')hLeave();else hEnter({fxm:'a'})}}
 root.addEventListener('click',function(e){
  var t=e.target.closest&&e.target.closest('[data-wb-open],[data-wb],[data-wb-go],[data-wb-fold],[data-wb-foldall],[data-wb-al],[data-wb-edit],[data-wb-add],[data-wb-mv],[data-wb-shmv],[data-wb-shdel],[data-wb-gp]');if(!t)return;
@@ -19440,6 +19491,7 @@ function onScroll(){
  cs.forEach(function(c,i){if(c.getBoundingClientRect().top<=y)act=i});
  idx.forEach(function(b,i){b.classList.toggle('on',i===act);b.classList.toggle('done',i<act)});
 }
+window.__fxAskOpen=function(){go('ask')};
 function go(v,fp){view=v;if(openId)closeSt(true);$('tmHome').hidden=v!=='home';$('tmAskV').hidden=v!=='ask';paintTools();window.scrollTo(0,0);if(!fp){if(v==='home')hLeave();else hEnter({fxm:'a'})}}
 root.addEventListener('click',function(e){
  var t=e.target.closest&&e.target.closest('[data-tm-open],[data-tm],[data-tm-go],[data-tm-mv],[data-tm-shmv],[data-tm-shdel],[data-tm-add],[data-tm-edit],[data-tm-fold],[data-tm-foldall],[data-tm-fdef],[data-tm-al]');if(!t)return;
@@ -20607,6 +20659,7 @@ function onScroll(){
  cs.forEach(function(c,i){if(c.getBoundingClientRect().top<=y)act=i});
  idx.forEach(function(b,i){b.classList.toggle('on',i===act);b.classList.toggle('done',i<act)});
 }
+window.__fxAskOpen=function(){go('ask')};
 function go(v,fp){view=v;if(openId)closeSt(true);$('csHome').hidden=v!=='home';$('csAskV').hidden=v!=='ask';paintTools();window.scrollTo(0,0);if(!fp){if(v==='home')hLeave();else hEnter({fxm:'a'})}}
 root.addEventListener('click',function(e){
  var t=e.target.closest&&e.target.closest('[data-cs-open],[data-cs],[data-cs-go],[data-cs-mv],[data-cs-shmv],[data-cs-shdel],[data-cs-add],[data-cs-edit],[data-cs-fold],[data-cs-foldall],[data-cs-fdef],[data-cs-spin],[data-cs-al]');if(!t)return;
@@ -21557,6 +21610,7 @@ function onScroll(){
  cs.forEach(function(c,i){if(c.getBoundingClientRect().top<=y)act=i});
  idx.forEach(function(b,i){b.classList.toggle('on',i===act);b.classList.toggle('done',i<act)});
 }
+window.__fxAskOpen=function(){go('ask')};
 function go(v,fp){view=v;if(openId)closeSt(true);$('abHome').hidden=v!=='home';if(v==='home')setTimeout(function(){try{if(geo&&!busy)layout()}catch(e){}},30);$('abAskV').hidden=v!=='ask';paintTools();window.scrollTo(0,0);if(!fp){if(v==='home')hLeave();else hEnter({fxm:'a'})}}
 root.addEventListener('click',function(e){
  var t=e.target.closest&&e.target.closest('[data-ab-open],[data-ab],[data-ab-go],[data-ab-mv],[data-ab-shmv],[data-ab-shdel],[data-ab-add],[data-ab-edit],[data-ab-fold],[data-ab-foldall],[data-ab-fdef],[data-ab-bird],[data-ab-shoot],[data-ab-play],[data-ab-exit]');if(!t)return;
