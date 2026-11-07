@@ -16831,6 +16831,8 @@ html[data-theme="light"] #trackSplash.lg.bd,html[data-theme="light"] #bdWel{--b-
 #bdWel .q b{color:var(--b-c);font-weight:700}
 @keyframes bdUp2{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 /* الأنيميشن شغال على كل الموبايلات حتى لو وضع تقليل الحركة مفعّل في الفون */
+#trackSplash.bd.bd-nocss .bd-draw,#trackSplash.bd.bd-nocss .bd-eqn,#trackSplash.bd.bd-nocss .bd-dust,#trackSplash.bd.bd-nocss .bd-st,#trackSplash.bd.bd-nocss .bd-card:not(.bad){animation:none!important}
+#bdWel.bd-nocss .w1,#bdWel.bd-nocss path,#bdWel.bd-nocss .q{animation:none!important}
 #trackSplash.bd .gt-nm{transition:border-color .3s!important}
 #trackSplash.bd .bd-fl label{transition:.22s!important}
 #trackSplash.bd .bd-y .n{transition:.3s!important}
@@ -16864,14 +16866,41 @@ window.__bdBuild=function(nm,last,Y){
    +'<a href="#" class="gt-adm">دخول الأدمن (وضع التحرير)</a></form></div>'
    +'<button class="gt-hid" type="button" data-act="choose-track" data-track="math1" hidden></button>';
 };
+window.__bdJs=function(root,kind,t0){
+  const E=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,num=(el,v)=>parseFloat(el.style.getPropertyValue(v))||0,items=[];
+  const add=(el,d,dl,fn,end)=>items.push({el:el,d:d*1000,dl:dl*1000,fn:fn,end:end,done:false});
+  root.classList.add('bd-nocss');
+  if(kind==='splash'){
+    root.querySelectorAll('.bd-draw').forEach(el=>{el.style.strokeDashoffset='1';add(el,num(el,'--d')||3,num(el,'--dl'),(e,p)=>{e.style.strokeDashoffset=String(1-E(p))},e=>{e.style.strokeDashoffset='0'})});
+    root.querySelectorAll('.bd-eqn').forEach(el=>{el.style.opacity='0';add(el,1.6,num(el,'--dl'),(e,p)=>{e.style.opacity=String(.42*p);e.style.clipPath='inset(0 '+(100-100*E(p))+'% 0 0)'},e=>{e.style.opacity='.42';e.style.clipPath='none'})});
+    root.querySelectorAll('.bd-dust').forEach(el=>{el.style.opacity='.22'});
+    const card=root.querySelector('.bd-card');
+    if(card){card.style.clipPath='circle(0% at 50% 38%)';add(card,1.3,.9,(e,p)=>{e.style.clipPath='circle('+(150*E(p))+'% at 50% 38%)'},e=>{e.style.clipPath=''})}
+    root.querySelectorAll('.bd-st').forEach(el=>{el.style.opacity='0';const i=num(el,'--i');add(el,.6,1.7+i*.12,(e,p)=>{e.style.opacity=String(p);e.style.transform='translateY('+(14*(1-E(p)))+'px)'},e=>{e.style.opacity='';e.style.transform=''})});
+  }else{
+    const w=root.querySelector('.w1'),pa=root.querySelector('path'),q=root.querySelector('.q');
+    if(w)add(w,1.1,.2,(e,p)=>{e.style.clipPath='inset(0 0 0 '+(100*(1-(1-Math.pow(1-p,2))))+'%)'},e=>{e.style.clipPath='inset(0)'});
+    if(pa)add(pa,.8,1.1,(e,p)=>{e.style.strokeDashoffset=String(1-E(p))},e=>{e.style.strokeDashoffset='0'});
+    if(q)add(q,.6,1.7,(e,p)=>{e.style.opacity=String(p);e.style.transform='translateY('+(12*(1-E(p)))+'px)'},e=>{e.style.opacity='1';e.style.transform='none'});
+  }
+  (function tick(){const now=performance.now()-t0;let left=0;items.forEach(it=>{if(it.done)return;const p=(now-it.dl)/it.d;if(p<=0){left++;return}if(p>=1){it.end(it.el);it.done=true;return}it.fn(it.el,p);left++});if(left)requestAnimationFrame(tick)})();
+};
+/* لو المتصفح (بعض الموبايلات) مجمّد CSS animations، نشغّل نفس الحركة بالجافاسكريبت */
+window.__bdGuard=function(root,kind,t0){
+  setTimeout(function(){try{
+    if(kind==='splash'){const a=root.querySelector('.bd-draw');if(a&&parseFloat(getComputedStyle(a).strokeDashoffset)>0.97)window.__bdJs(root,'splash',t0)}
+    else{const w=root.querySelector('.w1');if(w&&/100%/.test(getComputedStyle(w).clipPath||''))window.__bdJs(root,'wel',t0)}
+  }catch(_){}},650);
+};
 window.__bdWelcome=function(n,done,fin){
   const e=String(n).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const o=document.createElement('div');o.id='bdWel';o.setAttribute('role','status');
   o.innerHTML='<div><b class="w1">أهلاً بيك يا <em>'+e+'</em></b><svg viewBox="0 0 300 20" preserveAspectRatio="none"><path pathLength="1" d="M5 12C50 2 90 20 140 10S230 4 295 11"/></svg><p class="q">∴ دخلت بنجاح — وهو المطلوب إثباته <b>∎</b></p></div>';
-  document.body.appendChild(o);
+  document.body.appendChild(o);window.__bdGuard(o,'wel',performance.now());
   setTimeout(()=>{try{done&&done()}catch(_){}try{o.animate([{opacity:1},{opacity:0}],{duration:350,fill:'forwards'})}catch(_){o.style.opacity='0'}setTimeout(()=>{o.remove();fin&&fin()},380)},3000);
 };
 window.__bdRun=function(sp,inp,sel,f){
+  window.__bdGuard(sp,'splash',performance.now());
   const cv=sp.querySelector('.bd-cv'),x=cv.getContext('2d'),wv=sp.querySelector('.bd-wv'),w=wv.getContext('2d'),card=sp.querySelector('.bd-card'),chips=[].slice.call(sp.querySelectorAll('.bd-y')),mk=sp.querySelector('.bd-mk'),nl=sp.querySelector('.bd-nl'),eqEl=sp.querySelector('.bd-eq');
   const ids=['math1','math2','math3'],EQ=['y = sin θ','y = sin θ + ⅓ sin 3θ','y = sin θ + ⅓ sin 3θ + ⅕ sin 5θ'],SC=[1,1/3,1/5];
   let yi=Math.max(0,ids.indexOf(sel.value)),mul=1,th=0,buf=[],trail=[],old=[],fo=0,phi=0,wx=-50,D=Math.min(devicePixelRatio||1,2),W=0,H=0,WW=0,WH=0,C={},ct='',pl=-1,nlw=0;
