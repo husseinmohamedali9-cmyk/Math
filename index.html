@@ -18732,6 +18732,39 @@ html[dir="rtl"] #wb .wb-tab,#wb[dir="rtl"] .wb-tab{border-radius:16px 0 0 16px;b
  #wb .wb-pg::after{inset-inline-start:6px;width:14px}
  #wb .wb-nx{grid-template-columns:1fr}
 }
+
+/* ===== تحكّم الأدمن: مكان العنوان + ترتيب الخطوط ===== */
+#wb[data-ha="r"] .wb-hero-t{text-align:right;align-self:stretch}
+#wb[data-ha="c"] .wb-hero-t{text-align:center;align-self:stretch}
+#wb[data-ha="l"] .wb-hero-t{text-align:left;align-self:stretch}
+#wb[data-ha="r"] .wb-hero p,#wb[data-ha="r"] .wb-q{margin-left:auto;margin-right:0}
+#wb[data-ha="c"] .wb-hero p,#wb[data-ha="c"] .wb-q{margin-left:auto;margin-right:auto}
+#wb[data-ha="l"] .wb-hero p,#wb[data-ha="l"] .wb-q{margin-left:0;margin-right:auto}
+#wb .wb-gh::before{content:"";display:none;flex:1;height:10px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 10'%3E%3Cpath d='M0 5Q7.5 0 15 5T30 5T45 5T60 5' fill='none' stroke='%236d8179' stroke-width='1.6' opacity='.5'/%3E%3C/svg%3E") repeat-x center/60px 10px}
+#wb[data-la="c"] .wb-gh{justify-content:center}
+#wb[data-la="c"] .wb-gh::before,#wb[data-la="l"] .wb-gh::before{display:block}
+#wb[data-la="l"] .wb-gh::after{display:none}
+#wb .wb-edit{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 18px;padding:10px 12px;background:var(--wb-paper);border:1.5px dashed var(--wb-line);border-radius:14px}
+#wb .wb-edit[hidden]{display:none}
+#wb .wb-seg{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+#wb .wb-seg>b{font:700 13px var(--b);color:var(--wb-soft)}
+#wb .wb-eh{flex:1 0 100%;font:500 13px/1.6 var(--b);color:var(--wb-soft)}
+#wb .wb-gh.ed{flex-wrap:wrap}
+#wb .wb-gh.ed::before,#wb .wb-gh.ed::after{display:none}
+#wb .wb-lin{all:unset;box-sizing:border-box;flex:1 1 140px;min-width:0;font:700 clamp(18px,3vw,22px) var(--h);color:var(--wb-ink);border-bottom:2px dashed var(--wb-line);padding:2px 6px}
+#wb .wb-lin:focus{border-bottom-color:var(--wb-a)}
+#wb .wb-led{display:flex;gap:6px;flex:none}
+#wb .wb-gr.ed{min-height:90px}
+#wb .wb-gr.over{outline:2px dashed var(--wb-a);outline-offset:8px;border-radius:12px}
+#wb .wb-card.ed{cursor:default}
+#wb .wb-card.ed:hover{transform:rotate(var(--r,0deg));box-shadow:var(--wb-sh);border-color:var(--wb-line)}
+#wb .wb-card.drag{opacity:.35}
+#wb .wb-grip{position:absolute;top:6px;inset-inline-start:8px;z-index:2;padding:4px 8px;font:700 22px/1 var(--b);color:var(--wb-soft);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+#wb .wb-mvr{margin-top:auto;display:flex;gap:6px;justify-content:center;padding-top:8px;border-top:1.5px dashed var(--wb-line)}
+#wb .wb-mvr i{all:unset;box-sizing:border-box;cursor:pointer;width:32px;height:32px;display:grid;place-items:center;border-radius:9px;border:1.5px solid var(--wb-line);background:var(--wb-bg);color:var(--wb-ink);font:700 16px var(--b)}
+#wb .wb-mvr i:hover{border-color:var(--wb-a);color:var(--wb-a)}
+#wb .wb-hint{grid-column:1/-1;display:grid;place-items:center;min-height:70px;border:2px dashed var(--wb-line);border-radius:14px;color:var(--wb-soft);font:600 15px var(--b)}
+#wb .wb-ghost{position:fixed;z-index:200;pointer-events:none;margin:0;opacity:.92;transform:rotate(3deg);box-shadow:0 24px 40px -18px rgba(0,0,0,.5)}
 </style>
 <script id="wbJs">
 (function(){
@@ -18745,26 +18778,67 @@ var SINE='M0 12Q25 -2 50 12T100 12T150 12T200 12T250 12T300 12T350 12T400 12';
 root.innerHTML='<header class="wb-h"><div class="wb-brand"><img id="wbLogo" alt="" hidden><b id="wbBrand"></b></div><div class="wb-tools" id="wbTools"></div></header>'
 +'<div id="wbHome"><section class="wb-hero"><div class="wb-hero-t"><span class="wb-eq" dir="ltr">y = sin θ + ⅓ sin 3θ</span><h1 id="wbT"></h1><p id="wbS"></p><label class="wb-q"><span aria-hidden="true">⌕</span><input id="wbQ" type="search" placeholder="دوّر على درس…" aria-label="بحث"></label></div>'
 +'<svg class="wb-art" viewBox="0 0 320 200" aria-hidden="true"><path class="gd" d="M0 40H320M0 80H320M0 120H320M0 160H320M40 0V200M80 0V200M120 0V200M160 0V200M200 0V200M240 0V200M280 0V200"/><path class="ax" d="M0 100H320M160 0V200"/><path class="c1" d="M0 100C40 20 80 20 120 100S200 180 240 100 300 40 320 70"/><path class="c2" d="M0 170C60 160 120 120 180 70S280 20 320 10"/><path class="c3" d="M0 100C60 100 110 98 160 92S270 60 320 30"/></svg></section>'
-+'<div class="wb-body"><nav class="wb-tabs" id="wbTabs" aria-label="المسارات"></nav><div class="wb-main"><div id="wbExtras"></div><div id="wbGrid"></div></div></div></div>'
++'<div class="wb-body"><nav class="wb-tabs" id="wbTabs" aria-label="المسارات"></nav><div class="wb-main"><div id="wbExtras"></div><div class="wb-edit" id="wbEdit" hidden></div><div id="wbGrid"></div></div></div></div>'
 +'<div id="wbAskV" hidden><button type="button" class="wb-back" data-wb="home">← رجوع للدروس</button><div id="wbAsk"></div></div><div class="wb-r" id="wbR" hidden></div>';
 var ft=document.querySelector('footer');document.body.insertBefore(root,ft||null);
 ['siteAnn','progBox','dailyBox','funBox'].forEach(function(i){var e=$(i);if(e)$('wbExtras').appendChild(e)});
 var qa=$('qa-section');if(qa)$('wbAsk').appendChild(qa);
-var view='home',openId=null,q='',ov={},hist=0;
+var view='home',openId=null,q='',ov={},hist=0,editing=false,nameT=0,dg=null;
 function kids(s){return(s.children||[]).filter(function(c){return isAdmin||!secHidden(c)})}
 function find(l,id){for(var i=0;i<(l||[]).length;i++){if(l[i].id===id)return l[i];var r=find(l[i].children,id);if(r)return r}return null}
 function chapters(s,d,o){o.push({s:s,d:d});kids(s).forEach(function(k){chapters(k,d+1,o)});return o}
 function Z(){return site.meta&&site.meta.mt}
-function groups(secs){
+function groups(secs,keep){
  var z=Z(),map={},used={},out;secs.forEach(function(s){map[s.id]=s});
  if(z&&Array.isArray(z.lines)&&z.lines.length){
   out=z.lines.map(function(l){return{id:l.id,name:l.name||'',books:(l.ids||[]).filter(function(i){return map[i]&&!used[i]&&(used[i]=1)}).map(function(i){return map[i]})}});
   var left=secs.filter(function(s){return!used[s.id]});if(left.length)out[out.length-1].books=out[out.length-1].books.concat(left);
  }else out=[{id:'g1',name:'',books:secs}];
- return out.filter(function(g){return g.books.length});
+ return keep?out:out.filter(function(g){return g.books.length});
+}
+function persist(){var z=Z();if(z)z.t=Date.now();try{if(typeof scheduleSave==='function')scheduleSave()}catch(e){}}
+function ensure(){
+ var z=Z();if(z&&Array.isArray(z.lines)&&z.lines.length)return z;
+ var M=groups(visibleSections(),true),seen={};
+ var ls=M.map(function(m){return{id:m.id,name:m.name||'',ids:m.books.map(function(b){seen[b.id]=1;return b.id})}});
+ if(!ls.length)ls=[{id:'g1',name:'',ids:[]}];
+ site.sections.forEach(function(s){if(!seen[s.id])ls[ls.length-1].ids.push(s.id)});
+ site.meta=site.meta||{};site.meta.mt=Object.assign(site.meta.mt||{},{lines:ls,t:0});return site.meta.mt;
+}
+function placeAt(id,lid,beforeId){
+ var z=ensure(),t=null;z.lines.forEach(function(l){l.ids=(l.ids||[]).filter(function(x){return x!==id});if(l.id===lid)t=l});
+ if(!t)return;var i=beforeId?t.ids.indexOf(beforeId):-1;if(i<0)t.ids.push(id);else t.ids.splice(i,0,id);persist();
+}
+function mvSt(id,d){
+ var M=groups(visibleSections(),true),si=-1,bi=-1;
+ M.forEach(function(l,i){l.books.forEach(function(b,j){if(b.id===id){si=i;bi=j}})});if(si<0)return;
+ var l=M[si],B=l.books;
+ if(d==='r'&&bi>0)placeAt(id,l.id,B[bi-1].id);
+ else if(d==='l'&&bi<B.length-1)placeAt(id,l.id,B[bi+2]?B[bi+2].id:null);
+ else if(d==='u'&&si>0)placeAt(id,M[si-1].id,null);
+ else if(d==='d'&&si<M.length-1)placeAt(id,M[si+1].id,null);
+ paintGrid();
+}
+function lineOp(op,id,d){
+ var z=ensure(),a=z.lines,i=a.map(function(x){return x.id}).indexOf(id);
+ if(op==='add')a.push({id:'ln'+Date.now().toString(36),name:'',ids:[]});
+ else if(i>-1&&op==='del'&&a.length>1){
+  if(a[i].ids.length&&!confirm('الدروس اللي في الخط ده هتتنقل للخط اللي جنبه. تمام؟'))return;
+  var tg=a[i>0?i-1:i+1];tg.ids=tg.ids.concat(a[i].ids);a.splice(i,1)}
+ else if(i>-1&&op==='mv'){var j=d==='u'?i-1:i+1;if(j>=0&&j<a.length){var x=a[i];a[i]=a[j];a[j]=x}}
+ persist();paintGrid();
+}
+function alOf(k){var z=Z(),v=z&&z[k];return v==='c'||v==='l'?v:'r'}
+function applyAl(){try{root.setAttribute('data-ha',alOf('wha'));root.setAttribute('data-la',alOf('wla'))}catch(e){}}
+function setAl(k,v){if(k!=='wha'&&k!=='wla')return;site.meta=site.meta||{};site.meta.mt=site.meta.mt||{};site.meta.mt[k]=(v==='c'||v==='l')?v:'r';persist();applyAl();paintEdit()}
+function seg(k,lbl){var cur=alOf(k);return'<span class="wb-seg"><b>'+lbl+'</b>'+[['r','يمين'],['c','وسط'],['l','شمال']].map(function(o){return'<button type="button" class="wb-tb'+(cur===o[0]?' on':'')+'" data-wb-al="'+k+':'+o[0]+'">'+o[1]+'</button>'}).join('')+'</span>'}
+function paintEdit(){
+ var eb=$('wbEdit');if(!eb)return;if(!isAdmin)editing=false;eb.hidden=!isAdmin;applyAl();
+ var h=isAdmin?seg('wha','↔ مكان العنوان الكبير')+seg('wla','↔ مكان اسم الخط')+'<button type="button" class="wb-tb'+(editing?' on':'')+'" data-wb-edit="1">'+(editing?'✔ تم الترتيب':'✎ ترتيب الخطوط')+'</button>'+(editing?'<button type="button" class="wb-tb" data-wb-add="1">＋ خط جديد</button><span class="wb-eh">اسحب الدرس من ⠿ بين الخطوط أو استخدم الأسهم. التغييرات بتتحفظ للكل تلقائي.</span>':''):'';
+ eb.innerHTML=h;
 }
 function pad(n){return n<10?'0'+n:''+n}
-function paintHead(){
+function paintHead(){applyAl();
  var b=$('brandName');$('wbBrand').textContent=(b&&b.textContent)||site.meta.title||'';
  var lg=$('wbLogo');if(site.meta.logo){lg.src=site.meta.logo;lg.hidden=false}else lg.hidden=true;
  $('wbT').textContent=site.meta.heroTitle||site.meta.title||'';$('wbS').textContent=site.meta.heroSub||'';
@@ -18778,17 +18852,24 @@ function paintTools(){
  if($('wbTools').innerHTML!==h)$('wbTools').innerHTML=h;
 }
 function paintGrid(){
+ var ae=document.activeElement;if(editing&&ae&&ae.classList&&ae.classList.contains('wb-lin')&&root.contains(ae))return;
  var secs=visibleSections(),qq=q.trim().toLowerCase();
  if(qq)secs=secs.filter(function(s){return(s.title+' '+(s.desc||'')+' '+kids(s).map(function(k){return k.title}).join(' ')).toLowerCase().indexOf(qq)>-1});
- var G=groups(secs),h='',n=0,showH=G.length>1||(G[0]&&G[0].name);
+ var G=groups(secs,editing),h='',n=0,showH=editing||G.length>1||(G[0]&&G[0].name);
+ var mvb=function(id,d,l){return'<i data-wb-mv="'+d+'" data-id="'+E(id)+'" role="button" tabindex="0" aria-label="'+l+'">'+({r:'→',l:'←',u:'↑',d:'↓'})[d]+'</i>'};
  G.forEach(function(g,gi){
-  if(showH)h+='<h2 class="wb-gh"><i>'+(gi+1)+'</i>'+E(g.name||('الفصل '+(gi+1)))+'</h2>';
-  h+='<div class="wb-gr">'+g.books.map(function(s){
+  if(showH){
+   if(editing)h+='<h2 class="wb-gh ed"><i>'+(gi+1)+'</i><input class="wb-lin" data-wb-name="'+E(g.id)+'" value="'+E(g.name)+'" placeholder="اسم الخط (اختياري)" maxlength="40" aria-label="اسم الخط"><span class="wb-led"><button type="button" class="wb-tb" data-wb-shmv="u" data-id="'+E(g.id)+'" aria-label="ارفع الخط">▲</button><button type="button" class="wb-tb" data-wb-shmv="d" data-id="'+E(g.id)+'" aria-label="نزّل الخط">▼</button><button type="button" class="wb-tb" data-wb-shdel="1" data-id="'+E(g.id)+'">حذف الخط</button></span></h2>';
+   else h+='<h2 class="wb-gh"><i>'+(gi+1)+'</i>'+E(g.name||('الفصل '+(gi+1)))+'</h2>';
+  }
+  h+='<div class="wb-gr'+(editing?' ed':'')+'" data-sh="'+E(g.id)+'">'+(g.books.length?g.books.map(function(s){
    var c=PAL[n%7],rot=[-.9,.7,-.4,.9,-.7,.4][n%6],kn=kids(s).length;n++;
    var bg=s.badge?({'new':'جديد','hot':'مهم','soon':'قريباً'})[s.badge]:(isNewSec(s)?'جديد':'');
-   return'<button type="button" class="wb-card" style="--c:'+c+';--r:'+rot+'deg" data-wb-open="'+E(s.id)+'" aria-label="'+E(s.title)+'"><span class="wb-no">'+pad(n)+'</span>'+(s.icon?'<span class="wb-ic">'+E(s.icon)+'</span>':'')+'<b class="wb-ct">'+E(s.title)+'</b>'+(s.desc?'<span class="wb-cd">'+E(s.desc)+'</span>':'')+'<span class="wb-cf">'+(kn?'<i>'+kn+' أقسام</i>':'')+(bg?'<em>'+bg+'</em>':'')+'<u aria-hidden="true">←</u></span></button>'}).join('')+'</div>';
+   var inner='<span class="wb-no">'+pad(n)+'</span>'+(s.icon?'<span class="wb-ic">'+E(s.icon)+'</span>':'')+'<b class="wb-ct">'+E(s.title)+'</b>'+(s.desc?'<span class="wb-cd">'+E(s.desc)+'</span>':'');
+   if(editing)return'<div class="wb-card ed" style="--c:'+c+';--r:'+rot+'deg" data-id="'+E(s.id)+'" aria-label="'+E(s.title)+'"><b class="wb-grip" aria-label="اسحب لنقل الدرس" title="اسحب">⠿</b>'+inner+'<span class="wb-mvr">'+mvb(s.id,'u','للخط اللي فوق')+mvb(s.id,'d','للخط اللي تحت')+mvb(s.id,'r','لليمين')+mvb(s.id,'l','لليسار')+'</span></div>';
+   return'<button type="button" class="wb-card" style="--c:'+c+';--r:'+rot+'deg" data-wb-open="'+E(s.id)+'" aria-label="'+E(s.title)+'">'+inner+'<span class="wb-cf">'+(kn?'<i>'+kn+' أقسام</i>':'')+(bg?'<em>'+bg+'</em>':'')+'<u aria-hidden="true">←</u></span></button>'}).join(''):(editing?'<span class="wb-hint">اسحب دروس هنا</span>':''))+'</div>';
  });
- if(!n)h='<div class="wb-empty">'+(qq?'مفيش نتيجة لـ «'+E(q)+'». جرّب كلمة تانية.':'لسه مفيش دروس في '+E(trackLabel(currentTrack))+'.')+'</div>';
+ if(!n&&!editing)h='<div class="wb-empty">'+(qq?'مفيش نتيجة لـ «'+E(q)+'». جرّب كلمة تانية.':'لسه مفيش دروس في '+E(trackLabel(currentTrack))+'.')+'</div>';
  $('wbGrid').innerHTML=h;
 }
 function admTools(s){
@@ -18826,8 +18907,14 @@ function onScroll(){
 }
 function go(v,fp){view=v;if(openId)closeSt(true);$('wbHome').hidden=v!=='home';$('wbAskV').hidden=v!=='ask';paintTools();window.scrollTo(0,0);if(!fp){if(v==='home')hLeave();else hEnter({fxm:'a'})}}
 root.addEventListener('click',function(e){
- var t=e.target.closest&&e.target.closest('[data-wb-open],[data-wb],[data-wb-go],[data-wb-fold],[data-wb-foldall]');if(!t)return;
+ var t=e.target.closest&&e.target.closest('[data-wb-open],[data-wb],[data-wb-go],[data-wb-fold],[data-wb-foldall],[data-wb-al],[data-wb-edit],[data-wb-add],[data-wb-mv],[data-wb-shmv],[data-wb-shdel]');if(!t)return;
  var d=t.dataset;
+ if(d.wbAl){var pa=d.wbAl.split(':');if(isAdmin)setAl(pa[0],pa[1]);return}
+ if(d.wbEdit){if(!isAdmin)return;editing=!editing;paintEdit();paintGrid();return}
+ if(d.wbAdd){if(isAdmin)lineOp('add');return}
+ if(d.wbMv){if(isAdmin)mvSt(d.id,d.wbMv);return}
+ if(d.wbShmv){if(isAdmin)lineOp('mv',d.id,d.wbShmv);return}
+ if(d.wbShdel){if(isAdmin)lineOp('del',d.id);return}
  if(d.wbFold){var el=$('wbc-'+d.wbFold);if(el){setFold(el,!el.classList.contains('fold'));syncFoldBtn()}return}
  if(d.wbFoldall){foldAll();return}
  if(d.wbOpen){openSt(d.wbOpen);return}
@@ -18835,14 +18922,37 @@ root.addEventListener('click',function(e){
  if(d.wb==='close')closeSt();else go(d.wb);
 });
 root.addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target.dataset&&e.target.dataset.wbFold){e.preventDefault();var el=$('wbc-'+e.target.dataset.wbFold);if(el){setFold(el,!el.classList.contains('fold'));syncFoldBtn()}}});
+root.addEventListener('input',function(e){var n=e.target.dataset&&e.target.dataset.wbName;if(!n||!isAdmin)return;var z=ensure(),l=z.lines.filter(function(x){return x.id===n})[0];if(l){l.name=e.target.value;clearTimeout(nameT);nameT=setTimeout(persist,600)}});
+function railAt(x,y){var el=document.elementFromPoint(x,y);return el&&el.closest?el.closest('.wb-gr[data-sh]'):null}
+root.addEventListener('pointerdown',function(e){
+ if(!editing||!isAdmin||e.button>0)return;var gp=e.target.closest&&e.target.closest('.wb-grip');if(!gp)return;var st=gp.closest('.wb-card');if(!st)return;
+ e.preventDefault();dg={id:st.dataset.id,st:st,x:e.clientX,y:e.clientY,on:false,g:null,w:0,h:0};
+ document.addEventListener('pointermove',dmove);document.addEventListener('pointerup',dend);document.addEventListener('pointercancel',dend);
+});
+function dmove(e){
+ if(!dg)return;
+ if(!dg.on){if(Math.abs(e.clientX-dg.x)+Math.abs(e.clientY-dg.y)<8)return;
+  dg.on=true;var r=dg.st.getBoundingClientRect(),g=dg.st.cloneNode(true);g.classList.add('wb-ghost');g.style.width=r.width+'px';root.appendChild(g);dg.g=g;dg.w=r.width;dg.h=r.height;dg.st.classList.add('drag')}
+ dg.g.style.left=(e.clientX-dg.w/2)+'px';dg.g.style.top=(e.clientY-dg.h/2)+'px';
+ root.querySelectorAll('.wb-gr.over').forEach(function(x){x.classList.remove('over')});var rl=railAt(e.clientX,e.clientY);if(rl)rl.classList.add('over');
+}
+function dend(e){
+ document.removeEventListener('pointermove',dmove);document.removeEventListener('pointerup',dend);document.removeEventListener('pointercancel',dend);
+ var d=dg;dg=null;if(!d||!d.on)return;d.g.remove();
+ var rl=railAt(e.clientX,e.clientY);if(!rl){d.st.classList.remove('drag');root.querySelectorAll('.over').forEach(function(x){x.classList.remove('over')});return}
+ var sts=[].slice.call(rl.querySelectorAll('.wb-card')).filter(function(x){return x!==d.st}),before=null,best=1e9,bi=-1;
+ sts.forEach(function(x,i){var b=x.getBoundingClientRect(),dx=e.clientX-(b.left+b.width/2),dy=e.clientY-(b.top+b.height/2),dd=dx*dx+dy*dy;if(dd<best){best=dd;bi=i}});
+ if(bi>-1){var b=sts[bi].getBoundingClientRect();before=e.clientX>b.left+b.width/2?sts[bi].dataset.id:(sts[bi+1]?sts[bi+1].dataset.id:null)}
+ placeAt(d.id,rl.dataset.sh,before);paintGrid();
+}
 $('wbR').addEventListener('scroll',onScroll,{passive:true});
 $('wbQ').addEventListener('input',function(e){q=e.target.value;paintGrid()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&openId&&!document.querySelector('.overlay.open'))closeSt()});
 window.addEventListener('popstate',function(e){var st=e.state||{},k=st.fxm;if(k==='r'){hist=1;if(!openId&&find(site.sections,st.id)){if(view!=='home')go('home',1);openSt(st.id,1)}}else if(k==='a'){hist=1;if(openId)closeSt(1);if(view!=='ask')go('ask',1)}else{hist=0;if(openId)closeSt(1);if(view!=='home')go('home',1)}});
-function paint(){paintHead();paintGrid();if(openId)paintReader(true)}
+function paint(){paintHead();paintEdit();paintGrid();if(openId)paintReader(true)}
 try{var _r=render;render=function(){var r=_r.apply(this,arguments);try{paint()}catch(e){console.warn('wb',e)}return r}}catch(e){}
 try{paint()}catch(e){console.warn('wb',e)}
-var la=!!isAdmin;setInterval(function(){try{if(!!isAdmin!==la){la=!!isAdmin;paintGrid()}paintTools()}catch(e){}},700);
+var la=!!isAdmin;setInterval(function(){try{if(!!isAdmin!==la){la=!!isAdmin;paintEdit();paintGrid()}paintTools()}catch(e){}},700);
 })();
 </script>
 <style id="tmSkin">
