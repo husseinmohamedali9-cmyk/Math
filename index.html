@@ -18765,6 +18765,12 @@ html[dir="rtl"] #wb .wb-tab,#wb[dir="rtl"] .wb-tab{border-radius:16px 0 0 16px;b
 #wb .wb-mvr i:hover{border-color:var(--wb-a);color:var(--wb-a)}
 #wb .wb-hint{grid-column:1/-1;display:grid;place-items:center;min-height:70px;border:2px dashed var(--wb-line);border-radius:14px;color:var(--wb-soft);font:600 15px var(--b)}
 #wb .wb-ghost{position:fixed;z-index:200;pointer-events:none;margin:0;opacity:.92;transform:rotate(3deg);box-shadow:0 24px 40px -18px rgba(0,0,0,.5)}
+
+#wb .wb-tb[disabled]{opacity:.4;pointer-events:none}
+#wb:not([data-gp="0"]) .wb-art{order:0;align-self:auto;display:block;width:min(300px,80%);margin:14px 0 4px}
+#wb:not([data-gp="0"])[data-ha="r"] .wb-art{margin-left:auto;margin-right:0}
+#wb:not([data-gp="0"])[data-ha="c"] .wb-art{margin-left:auto;margin-right:auto}
+#wb:not([data-gp="0"])[data-ha="l"] .wb-art{margin-left:0;margin-right:auto}
 </style>
 <script id="wbJs">
 (function(){
@@ -18829,12 +18835,22 @@ function lineOp(op,id,d){
  persist();paintGrid();
 }
 function alOf(k){var z=Z(),v=z&&z[k];return v==='c'||v==='l'?v:'r'}
-function applyAl(){try{root.setAttribute('data-ha',alOf('wha'));root.setAttribute('data-la',alOf('wla'))}catch(e){}}
+function gpOf(){var z=Z(),v=z&&parseInt(z.wgp,10);return v>0&&v<=3?v:0}
+function applyArt(){
+ var art=root.querySelector('.wb-art'),ht=root.querySelector('.wb-hero-t'),hero=root.querySelector('.wb-hero');if(!art||!ht||!hero)return;
+ var k=gpOf(),par=k?ht:hero,ref=null;
+ if(k===1)ref=$('wbS');else if(k===2)ref=root.querySelector('.wb-q');
+ if(art.parentNode!==par||art.nextSibling!==ref)par.insertBefore(art,ref);
+ root.setAttribute('data-gp',k);
+}
+function setGp(d){var k=gpOf()+(d==='u'?-1:1);k=Math.max(0,Math.min(3,k));site.meta=site.meta||{};site.meta.mt=site.meta.mt||{};site.meta.mt.wgp=k;persist();applyArt();paintEdit()}
+function artCtl(){var k=gpOf();return'<span class="wb-seg"><b>↕ مكان الجراف</b><button type="button" class="wb-tb" data-wb-gp="u"'+(k<=0?' disabled':'')+'>▲ فوق</button><button type="button" class="wb-tb" data-wb-gp="d"'+(k>=3?' disabled':'')+'>▼ تحت</button></span>'}
+function applyAl(){try{root.setAttribute('data-ha',alOf('wha'));root.setAttribute('data-la',alOf('wla'));applyArt()}catch(e){}}
 function setAl(k,v){if(k!=='wha'&&k!=='wla')return;site.meta=site.meta||{};site.meta.mt=site.meta.mt||{};site.meta.mt[k]=(v==='c'||v==='l')?v:'r';persist();applyAl();paintEdit()}
 function seg(k,lbl){var cur=alOf(k);return'<span class="wb-seg"><b>'+lbl+'</b>'+[['r','يمين'],['c','وسط'],['l','شمال']].map(function(o){return'<button type="button" class="wb-tb'+(cur===o[0]?' on':'')+'" data-wb-al="'+k+':'+o[0]+'">'+o[1]+'</button>'}).join('')+'</span>'}
 function paintEdit(){
  var eb=$('wbEdit');if(!eb)return;if(!isAdmin)editing=false;eb.hidden=!isAdmin;applyAl();
- var h=isAdmin?seg('wha','↔ مكان العنوان الكبير')+seg('wla','↔ مكان اسم الخط')+'<button type="button" class="wb-tb'+(editing?' on':'')+'" data-wb-edit="1">'+(editing?'✔ تم الترتيب':'✎ ترتيب الخطوط')+'</button>'+(editing?'<button type="button" class="wb-tb" data-wb-add="1">＋ خط جديد</button><span class="wb-eh">اسحب الدرس من ⠿ بين الخطوط أو استخدم الأسهم. التغييرات بتتحفظ للكل تلقائي.</span>':''):'';
+ var h=isAdmin?seg('wha','↔ مكان العنوان الكبير')+seg('wla','↔ مكان اسم الخط')+artCtl()+'<button type="button" class="wb-tb'+(editing?' on':'')+'" data-wb-edit="1">'+(editing?'✔ تم الترتيب':'✎ ترتيب الخطوط')+'</button>'+(editing?'<button type="button" class="wb-tb" data-wb-add="1">＋ خط جديد</button><span class="wb-eh">اسحب الدرس من ⠿ بين الخطوط أو استخدم الأسهم. التغييرات بتتحفظ للكل تلقائي.</span>':''):'';
  eb.innerHTML=h;
 }
 function pad(n){return n<10?'0'+n:''+n}
@@ -18857,15 +18873,15 @@ function paintGrid(){
  if(qq)secs=secs.filter(function(s){return(s.title+' '+(s.desc||'')+' '+kids(s).map(function(k){return k.title}).join(' ')).toLowerCase().indexOf(qq)>-1});
  var G=groups(secs,editing),h='',n=0,showH=editing||G.length>1||(G[0]&&G[0].name);
  var mvb=function(id,d,l){return'<i data-wb-mv="'+d+'" data-id="'+E(id)+'" role="button" tabindex="0" aria-label="'+l+'">'+({r:'→',l:'←',u:'↑',d:'↓'})[d]+'</i>'};
- G.forEach(function(g,gi){
+ G.forEach(function(g,gi){var k=0;
   if(showH){
    if(editing)h+='<h2 class="wb-gh ed"><i>'+(gi+1)+'</i><input class="wb-lin" data-wb-name="'+E(g.id)+'" value="'+E(g.name)+'" placeholder="اسم الخط (اختياري)" maxlength="40" aria-label="اسم الخط"><span class="wb-led"><button type="button" class="wb-tb" data-wb-shmv="u" data-id="'+E(g.id)+'" aria-label="ارفع الخط">▲</button><button type="button" class="wb-tb" data-wb-shmv="d" data-id="'+E(g.id)+'" aria-label="نزّل الخط">▼</button><button type="button" class="wb-tb" data-wb-shdel="1" data-id="'+E(g.id)+'">حذف الخط</button></span></h2>';
    else h+='<h2 class="wb-gh"><i>'+(gi+1)+'</i>'+E(g.name||('الفصل '+(gi+1)))+'</h2>';
   }
   h+='<div class="wb-gr'+(editing?' ed':'')+'" data-sh="'+E(g.id)+'">'+(g.books.length?g.books.map(function(s){
-   var c=PAL[n%7],rot=[-.9,.7,-.4,.9,-.7,.4][n%6],kn=kids(s).length;n++;
+   var c=PAL[n%7],rot=[-.9,.7,-.4,.9,-.7,.4][n%6],kn=kids(s).length;n++;k++;
    var bg=s.badge?({'new':'جديد','hot':'مهم','soon':'قريباً'})[s.badge]:(isNewSec(s)?'جديد':'');
-   var inner='<span class="wb-no">'+pad(n)+'</span>'+(s.icon?'<span class="wb-ic">'+E(s.icon)+'</span>':'')+'<b class="wb-ct">'+E(s.title)+'</b>'+(s.desc?'<span class="wb-cd">'+E(s.desc)+'</span>':'');
+   var inner='<span class="wb-no">'+pad(k)+'</span>'+(s.icon?'<span class="wb-ic">'+E(s.icon)+'</span>':'')+'<b class="wb-ct">'+E(s.title)+'</b>'+(s.desc?'<span class="wb-cd">'+E(s.desc)+'</span>':'');
    if(editing)return'<div class="wb-card ed" style="--c:'+c+';--r:'+rot+'deg" data-id="'+E(s.id)+'" aria-label="'+E(s.title)+'"><b class="wb-grip" aria-label="اسحب لنقل الدرس" title="اسحب">⠿</b>'+inner+'<span class="wb-mvr">'+mvb(s.id,'u','للخط اللي فوق')+mvb(s.id,'d','للخط اللي تحت')+mvb(s.id,'r','لليمين')+mvb(s.id,'l','لليسار')+'</span></div>';
    return'<button type="button" class="wb-card" style="--c:'+c+';--r:'+rot+'deg" data-wb-open="'+E(s.id)+'" aria-label="'+E(s.title)+'">'+inner+'<span class="wb-cf">'+(kn?'<i>'+kn+' أقسام</i>':'')+(bg?'<em>'+bg+'</em>':'')+'<u aria-hidden="true">←</u></span></button>'}).join(''):(editing?'<span class="wb-hint">اسحب دروس هنا</span>':''))+'</div>';
  });
@@ -18875,7 +18891,7 @@ function paintGrid(){
 function admTools(s){
  if(!isAdmin)return'';var nest=s.allowChildren!==false;
  return'<div class="wb-adm"><button type="button" class="btn sm" data-act="sec-edit" data-id="'+s.id+'">تعديل القسم</button><button type="button" class="btn sm" data-act="add-block" data-sec="'+s.id+'">＋ محتوى</button>'+(nest?'<button type="button" class="btn sm" data-act="add-subsection" data-id="'+s.id+'" data-sec="'+s.id+'">＋ قسم فرعي</button>':'')+'<button type="button" class="btn sm danger" data-act="sec-del" data-id="'+s.id+'">حذف</button></div>'}
-function isFold(id){return ov[id]===true}
+function isFold(id){return id in ov?ov[id]===true:true}
 function setFold(el,f){if(!el)return;el.classList.toggle('fold',f);ov[el.id.replace(/^wbc-/,'')]=f;var h=el.querySelector('.wb-chhd');if(h)h.setAttribute('aria-expanded',String(!f))}
 function foldAll(){var r=$('wbR'),hs=r.querySelectorAll('.wb-sub'),anyOpen=!!r.querySelector('.wb-sub:not(.fold)');hs.forEach(function(h){setFold(h,anyOpen)});syncFoldBtn()}
 function syncFoldBtn(){var r=$('wbR'),b=r.querySelector('[data-wb-foldall]');if(!b)return;b.textContent=r.querySelector('.wb-sub:not(.fold)')?'▴ طي الكل':'▾ فتح الكل'}
@@ -18892,7 +18908,7 @@ function paintReader(keep){
  +'<div class="wb-rwrap"><article class="wb-pg"><header class="wb-cv"><small>الدرس '+(n+1)+'</small><h1>'+(s.icon?E(s.icon)+' ':'')+E(s.title)+'</h1>'+(s.desc?'<p>'+E(s.desc)+'</p>':'')+'</header><div class="wb-doc">'+sHtml(s,0)+'</div></article>'
  +'<aside class="wb-toc" aria-label="فهرس الدرس"><b>فهرس الدرس</b>'+ch.map(function(c,i){return'<button type="button" class="'+(i?'':'on')+'" style="--d:'+c.d+'" data-wb-go="wbc-'+E(c.s.id)+'">'+E(c.s.title)+'</button>'}).join('')+'</aside>'
  +'<div class="wb-nx">'+nb(secs[n+1],'الدرس الجاي')+nb(secs[n-1],'الدرس اللي فات')+'</div></div>';
- r.scrollTop=top;onScroll();
+ r.scrollTop=top;onScroll();syncFoldBtn();
 }
 function hEnter(st){try{if(hist)history.replaceState(st,'');else{history.pushState(st,'');hist=1}}catch(e){}}
 function hLeave(){if(hist){hist=0;try{history.back()}catch(e){}}}
@@ -18907,8 +18923,9 @@ function onScroll(){
 }
 function go(v,fp){view=v;if(openId)closeSt(true);$('wbHome').hidden=v!=='home';$('wbAskV').hidden=v!=='ask';paintTools();window.scrollTo(0,0);if(!fp){if(v==='home')hLeave();else hEnter({fxm:'a'})}}
 root.addEventListener('click',function(e){
- var t=e.target.closest&&e.target.closest('[data-wb-open],[data-wb],[data-wb-go],[data-wb-fold],[data-wb-foldall],[data-wb-al],[data-wb-edit],[data-wb-add],[data-wb-mv],[data-wb-shmv],[data-wb-shdel]');if(!t)return;
+ var t=e.target.closest&&e.target.closest('[data-wb-open],[data-wb],[data-wb-go],[data-wb-fold],[data-wb-foldall],[data-wb-al],[data-wb-edit],[data-wb-add],[data-wb-mv],[data-wb-shmv],[data-wb-shdel],[data-wb-gp]');if(!t)return;
  var d=t.dataset;
+ if(d.wbGp){if(isAdmin)setGp(d.wbGp);return}
  if(d.wbAl){var pa=d.wbAl.split(':');if(isAdmin)setAl(pa[0],pa[1]);return}
  if(d.wbEdit){if(!isAdmin)return;editing=!editing;paintEdit();paintGrid();return}
  if(d.wbAdd){if(isAdmin)lineOp('add');return}
