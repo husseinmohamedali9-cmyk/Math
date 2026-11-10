@@ -19116,7 +19116,7 @@ window.addEventListener('pointermove',function(e){ptr.tx=e.clientX;ptr.ty=e.clie
 document.addEventListener('pointerleave',function(){ptr.ta=0});
 window.addEventListener('pointerdown',function(e){if(mi===4||lvl>=2)return;rip.push({x:e.clientX,y:e.clientY,r:6,a:.5});if(rip.length>4)rip.shift()},{passive:true});
 /* الرسم بيقف لحظياً وقت السكرول عشان السكرول يفضل ناعم */
-window.addEventListener('scroll',function(){lastScroll=performance.now()},{capture:true,passive:true});
+
 
 function scrollY(){return H0.classList.contains('wb-rd')?R.scrollTop:(window.scrollY||0)}
 
@@ -19210,7 +19210,6 @@ function draw(dt){
 function frame(now){
  raf=0;if(mi===4||lvl>=2)return;
  raf=requestAnimationFrame(frame);
- if(now-lastScroll<140){last=now;return}
  var rd=H0.classList.contains('wb-rd'),minDt=(LITE||lvl||rd)?32:15;
  if(now-lastDraw<minDt)return;
  var dt=Math.min(.08,(now-(lastDraw||now-16))/1000);lastDraw=now;last=now;
